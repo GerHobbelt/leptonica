@@ -149,9 +149,17 @@ add_subdirectory(src)
 ###############################################################################
 
 set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(namespace "${PROJECT_NAME}::")
+set(targets_export_name "${PROJECT_NAME}Targets")
 
 install(
     FILES "${project_config}" "${version_config}"
+    DESTINATION "${config_install_dir}"
+)
+
+install(
+    EXPORT "${targets_export_name}"
+    NAMESPACE "${namespace}"
     DESTINATION "${config_install_dir}"
 )
 
