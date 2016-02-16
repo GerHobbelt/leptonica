@@ -119,5 +119,28 @@ if (UNIX)
 endif()
 export(TARGETS leptonica FILE ${CMAKE_BINARY_DIR}/LeptonicaTargets.cmake)
 
+###############################################################################
+#
+# install
+#
+###############################################################################
+
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(include_install_dir "include")
+
+install(
+    TARGETS leptonica
+    EXPORT "${targets_export_name}"
+    LIBRARY DESTINATION "lib"
+    ARCHIVE DESTINATION "lib"
+    RUNTIME DESTINATION "bin"
+    INCLUDES DESTINATION "${include_install_dir}"
+)
+
+install(
+    FILES ${leptonica_hdr}
+    DESTINATION "${include_install_dir}"
+)
+
 ################################################################################
 

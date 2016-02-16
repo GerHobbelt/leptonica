@@ -10,6 +10,13 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
+include("cmake/HunterGate.cmake")
+
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.12.22.tar.gz"
+    SHA1 "868408f1f3d8deeaab13f4ebca28b02ec2dfcade"
+)
+
 # In-source builds are disabled.
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL_ERROR
@@ -46,9 +53,27 @@ set(VERSION_PLAIN ${VERSION_MAJOR}.${VERSION_MINOR})
 
 find_package(GIF)
 find_package(JPEG)
-find_package(PNG)
-find_package(TIFF)
-find_package(ZLIB)
+
+if(BUILD_WITH_PNG)
+  hunter_add_package(PNG)
+  find_package(PNG REQUIRED)
+else()
+  find_package(PNG)
+endif()
+
+if(BUILD_WITH_TIFF)
+  hunter_add_package(tiff)
+  find_package(TIFF REQUIRED)
+else()
+  find_package(TIFF)
+endif()
+
+if(BUILD_WITH_ZLIB)
+  hunter_add_package(zlib)
+  find_package(ZLIB REQUIRED)
+else()
+  find_package(ZLIB)
+endif()
 
 find_package(PkgConfig)
 
