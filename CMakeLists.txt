@@ -153,5 +153,6 @@ set(config_install_dir "lib/cmake/${PROJECT_NAME}")
 install(
     FILES "${project_config}" "${version_config}"
     DESTINATION "${config_install_dir}"
+)
 
 ###############################################################################
