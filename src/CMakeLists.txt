@@ -82,7 +82,7 @@ set(leptonica_hdr
     stringcode.h sudoku.h watershed.h
 )
 
-add_library                     (leptonica ${LIBRARY_TYPE} ${leptonica_src} ${leptonica_hdr})
+add_library                     (leptonica ${leptonica_src} ${leptonica_hdr})
 set_target_properties           (leptonica PROPERTIES VERSION   ${VERSION_MAJOR}.${VERSION_MINOR})
 set_target_properties           (leptonica PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 if (WIN32)
