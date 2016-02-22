@@ -69,7 +69,7 @@ else()
 endif()
 
 if(BUILD_WITH_ZLIB)
-  hunter_add_package(zlib)
+  hunter_add_package(ZLIB)
   find_package(ZLIB REQUIRED)
 else()
   find_package(ZLIB)
