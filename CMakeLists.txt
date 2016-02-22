@@ -62,7 +62,7 @@ else()
 endif()
 
 if(BUILD_WITH_TIFF)
-  hunter_add_package(tiff)
+  hunter_add_package(TIFF)
   find_package(TIFF REQUIRED)
 else()
   find_package(TIFF)
