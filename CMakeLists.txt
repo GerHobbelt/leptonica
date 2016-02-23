@@ -117,13 +117,13 @@ set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 
 configure_file(
     ${CMAKE_SOURCE_DIR}/cmake/templates/LeptonicaConfig-version.cmake.in
-    ${CMAKE_BINARY_DIR}/LeptonicaConfig-version.cmake @ONLY)
+    ${CMAKE_BINARY_DIR}/leptonicaConfig-version.cmake @ONLY)
 configure_file(
     ${CMAKE_SOURCE_DIR}/cmake/templates/LeptonicaConfig.cmake.in
-    ${CMAKE_BINARY_DIR}/LeptonicaConfig.cmake @ONLY)
+    ${CMAKE_BINARY_DIR}/leptonicaConfig.cmake @ONLY)
 
-set(version_config "${CMAKE_BINARY_DIR}/LeptonicaConfig-version.cmake")
-set(project_config "${CMAKE_BINARY_DIR}/LeptonicaConfig.cmake")    
+set(version_config "${CMAKE_BINARY_DIR}/leptonicaConfig-version.cmake")
+set(project_config "${CMAKE_BINARY_DIR}/leptonicaConfig.cmake")    
     
 ###############################################################################
 #
