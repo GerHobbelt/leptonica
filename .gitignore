@@ -1,6 +1,22 @@
 # backup files
 *~
 
+_install
+_install/
+_install/**
+_framework
+_framework/
+_framework/**
+_builds
+_builds/
+_builds/**
+_logs
+_logs/
+_logs/**
+_tarballs
+_tarballs/
+_tarballs/**
+
 # build directories
 /build*
 /.cppan*

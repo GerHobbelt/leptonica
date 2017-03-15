@@ -26,7 +26,16 @@ if (NOT STATIC)
     target_compile_definitions  (leptonica PRIVATE -DLIBLEPT_EXPORTS)
 endif()
 
-if (GIF_LIBRARY)
+message(STATUS " [Sniper] **** LIBRARY_TYPE: ${LIBRARY_TYPE}")
+message(STATUS " [Sniper] **** STATIC: ${STATIC}")
+message(STATUS " [Sniper] **** GIF_LIBRARY: ${GIF_LIBRARY}")
+message(STATUS " [Sniper] **** JPEG_LIBRARY: ${JPEG_LIBRARY}")
+message(STATUS " [Sniper] **** JP2K_FOUND: ${JP2K_FOUND}")
+message(STATUS " [Sniper] **** PNG_LIBRARY: ${PNG_LIBRARY}")
+message(STATUS " [Sniper] **** TIFF_LIBRARY: ${TIFF_LIBRARY}")
+message(STATUS " [Sniper] **** ZLIB_LIBRARY: ${ZLIB_LIBRARY}")
+
+if(GIF_LIBRARY)
     target_link_libraries       (leptonica ${GIF_LIBRARY})
 endif()
 if (JPEG_LIBRARY)
@@ -66,6 +75,29 @@ else()
     file(WRITE ${CMAKE_BINARY_DIR}/LeptonicaTargets.cmake "include(${CMAKE_BINARY_DIR}/cppan.cmake)\n")
     export(TARGETS leptonica APPEND FILE ${CMAKE_BINARY_DIR}/LeptonicaTargets.cmake)
 endif()
+
+###############################################################################
+#
+# install
+#
+###############################################################################
+
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(include_install_dir "include")
+
+install(
+    TARGETS leptonica
+    EXPORT "${targets_export_name}"
+    LIBRARY DESTINATION "lib"
+    ARCHIVE DESTINATION "lib"
+    RUNTIME DESTINATION "bin"
+    INCLUDES DESTINATION "${include_install_dir}"
+)
+
+install(
+    FILES ${leptonica_hdr}
+    DESTINATION "${include_install_dir}"
+)
 
 ################################################################################
 
