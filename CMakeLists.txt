@@ -24,14 +24,16 @@ if("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
       "\n cmake ..")
 endif()
 
+include("cmake/HunterGate.cmake")
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.18.65.tar.gz"
+    SHA1 "59cd3223f10ee630bc3596709a22f2fea4926a7c"
+)
+
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
-
-# Use solution folders.
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake Targets")
 
 # ##############################################################################
 #
@@ -49,41 +51,32 @@ set(MINIMUM_WEBPMUX_VERSION 0.5.0)
 
 option(BUILD_PROG "Build utility programs" OFF)
 if(WIN32)
-  option(SW_BUILD "Build with sw" ON)
+  option(SW_BUILD "Build with sw" OFF)
 else()
   option(SW_BUILD "Build with sw" OFF)
 endif()
 if(UNIX OR MINGW)
   option(SYM_LINK "Create symlink leptonica -> lept on UNIX" OFF)
 endif()
-option(LIBWEBP_SUPPORT "Build with WebP support" ON)
-option(OPENJPEG_SUPPORT "Build with OpenJPEG support" ON)
+option(LIBWEBP_SUPPORT "Build with WebP support" OFF)
+option(OPENJPEG_SUPPORT "Build with OpenJPEG support" OFF)
 
 set(leptonica_INSTALL_CMAKE_DIR
     "lib/cmake/leptonica"
     CACHE STRING "Install destination for CMake package files")
 
 if(NOT SW_BUILD)
-  find_package(GIF)
-  if(GIF_FOUND)
-    set(libs_private "${libs_private} -lgif")
-  endif()
-  find_package(JPEG)
-  if(JPEG_FOUND)
-    set(libs_private "${libs_private} -ljpeg")
-  endif()
-  find_package(PNG)
-  if(PNG_FOUND)
-    set(libs_private "${libs_private} -lpng")
-  endif()
-  find_package(TIFF)
-  if(TIFF_FOUND)
-    set(libs_private "${libs_private} -ltiff")
-  endif()
+  hunter_add_package(giflib)
+  find_package(giflib CONFIG)
+  hunter_add_package(Jpeg)
+  find_package(JPEG CONFIG)
+  hunter_add_package(PNG)
+  find_package(PNG CONFIG)
+  hunter_add_package(TIFF)
+  find_package(TIFF CONFIG)
   find_package(ZLIB)
-  if(ZLIB_FOUND)
-    set(libs_private "${libs_private} -lz")
-  endif()
+  hunter_add_package(ZLIB)
+  find_package(ZLIB CONFIG)
   find_package(PkgConfig QUIET)
   if(LIBWEBP_SUPPORT)
     if(PKG_CONFIG_FOUND)
@@ -248,35 +241,12 @@ configure_file(${AUTOCONFIG_SRC} ${AUTOCONFIG} @ONLY)
 set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include"
                 "${CMAKE_INSTALL_PREFIX}/include/leptonica")
 
-# ##############################################################################
-#
-# Show summary
-#
-# ##############################################################################
-message(STATUS)
-message(STATUS "General configuration for Leptonica ${VERSION_PLAIN}")
-message(STATUS "--------------------------------------------------------")
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID}")
-message(STATUS "C compiler options:
-  ${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UP}} ${CMAKE_C_FLAGS}")
-message(STATUS "Linker options: ${CMAKE_EXE_LINKER_FLAGS}
-  ${CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE_UP}}")
-message(STATUS "Install directory: ${CMAKE_INSTALL_PREFIX}")
-message(STATUS)
-message(STATUS "Build with sw [SW_BUILD]: ${SW_BUILD}")
-message(STATUS "Build utility programs [BUILD_PROG]: ${BUILD_PROG}")
-if(NOT SW_BUILD)
-  message(STATUS "Used ZLIB library: ${ZLIB_LIBRARIES}")
-  message(STATUS "Used PNG library:  ${PNG_LIBRARIES}")
-  message(STATUS "Used JPEG library: ${JPEG_LIBRARIES}")
-  message(STATUS "Used JP2K library: ${JP2K_LIBRARIES}")
-  message(STATUS "Used TIFF library: ${TIFF_LIBRARIES}")
-  message(STATUS "Used GIF library:  ${GIF_LIBRARIES}")
-  message(STATUS "Used WEBP library: ${WEBP_LIBRARIES}")
-endif()
-message(STATUS "--------------------------------------------------------")
-message(STATUS)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/LeptonicaConfig-version.cmake.in
+    ${CMAKE_BINARY_DIR}/LeptonicaConfig-version.cmake @ONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/LeptonicaConfig.cmake.in
+    ${CMAKE_BINARY_DIR}/LeptonicaConfig.cmake @ONLY)
 
 # ##############################################################################
 #
