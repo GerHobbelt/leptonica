@@ -278,21 +278,9 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/LeptonicaConfig.cmake @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lept.pc DESTINATION lib/pkgconfig)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LeptonicaConfig.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/LeptonicaConfig-version.cmake
-        DESTINATION ${leptonica_INSTALL_CMAKE_DIR})
-
-# ##############################################################################
-# uninstall target
-# ##############################################################################
-if(NOT TARGET uninstall)
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/cmake_uninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" IMMEDIATE @ONLY)
-
-  add_custom_target(
-    uninstall COMMAND ${CMAKE_COMMAND} -P
-                      ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-endif()
+install(FILES
+    ${CMAKE_BINARY_DIR}/LeptonicaConfig.cmake
+    ${CMAKE_BINARY_DIR}/LeptonicaConfig-version.cmake
+    DESTINATION lib/cmake/${PROJECT_NAME})
 
 # ##############################################################################
