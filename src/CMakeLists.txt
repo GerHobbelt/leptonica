@@ -72,14 +72,13 @@ if (UNIX)
     endif(SYM_LINK)
 endif()
 
-<<<<<<< HEAD
 if (NOT SW_BUILD)
 #    export(TARGETS leptonica FILE ${CMAKE_BINARY_DIR}/LeptonicaTargets.cmake)
 else()
     target_link_libraries       (leptonica
         org.sw.demo.gif
         org.sw.demo.jpeg
-        org.sw.demo.glennrp.png
+        org.sw.demo.glennr=p.png
         org.sw.demo.tiff
         org.sw.demo.webmproject.webp
         org.sw.demo.uclouvain.openjpeg.openjp2
@@ -89,7 +88,7 @@ else()
 endif()
 
 install(TARGETS leptonica EXPORT LeptonicaTargets RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib INCLUDES DESTINATION include)
-install(EXPORT LeptonicaTargets DESTINATION lib/cmake/${PROJECT_NAME})
+install(EXPORT LeptonicaTargets NAMESPACE "Leptonica::" DESTINATION lib/cmake/${PROJECT_NAME})
 install(FILES
     ${hdr}
     ${CMAKE_BINARY_DIR}/src/endianness.h
