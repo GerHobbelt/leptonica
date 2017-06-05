@@ -50,6 +50,10 @@
  * for some gcc compiler versions in a warning.  The conflict is harmless
  * but we suppress it by undefining the variable. */
 #undef HAVE_STDLIB_H
+// Include basetsd.h first to ensure _BASETSD_H_ gets defined beffore jpeglib tries to define INT32 et al.
+#ifdef _MSC_VER
+#include <basetsd.h>
+#endif
 #include "jpeglib.h"
 #include "jerror.h"
 #endif
