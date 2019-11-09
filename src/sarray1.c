@@ -149,6 +149,10 @@
 #endif  /* ! _WIN32 */
 #include "allheaders.h"
 
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
 static const l_uint32  MaxPtrArraySize = 25000000;  /* 25 million */
 static const l_int32   InitialPtrArraySize = 50;      /*!< n'importe quoi */
 
