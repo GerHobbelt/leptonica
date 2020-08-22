@@ -85,7 +85,7 @@ L_STACK  *lstack;
 
     PROCNAME("lstackCreate");
 
-    if (n <= 0 || n > MaxPtrArraySize)
+    if (n <= 0 || n > (l_int32)MaxPtrArraySize)
         n = InitialPtrArraySize;
 
     lstack = (L_STACK *)LEPT_CALLOC(1, sizeof(L_STACK));

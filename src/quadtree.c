@@ -298,7 +298,7 @@ BOX       *boxc;
         return ERROR_INT("no pixels in box", procName, 1);
 
         /* Use up to 4 points in the accumulator */
-    norm = 1.0 / ((l_float32)(bw) * bh);
+    norm = 1.0f / ((l_float32)(bw) * bh);
     if (bx > 0 && by > 0) {
         pixGetPixel(pixma, bx + bw - 1, by + bh - 1, &val11);
         pixGetPixel(pixma, bx + bw - 1, by - 1, &val10);

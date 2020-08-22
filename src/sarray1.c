@@ -169,7 +169,7 @@ SARRAY  *sa;
 
     PROCNAME("sarrayCreate");
 
-    if (n <= 0 || n > MaxPtrArraySize)
+    if (n <= 0 || n > (l_int32)MaxPtrArraySize)
         n = InitialPtrArraySize;
 
     sa = (SARRAY *)LEPT_CALLOC(1, sizeof(SARRAY));
@@ -495,7 +495,7 @@ size_t  oldsize, newsize;
 
     if (!sa)
         return ERROR_INT("sa not defined", procName, 1);
-    if (sa->nalloc > MaxPtrArraySize)  /* belt & suspenders */
+    if (sa->nalloc > (l_int32)MaxPtrArraySize)  /* belt & suspenders */
         return ERROR_INT("sa has too many ptrs", procName, 1);
     oldsize = sa->nalloc * sizeof(char *);
     newsize = 2 * oldsize;
@@ -1420,7 +1420,7 @@ SARRAY  *sa;
         return (SARRAY *)ERROR_PTR("error on # strings", procName, NULL);
     if (n < 0)
         return (SARRAY *)ERROR_PTR("num string ptrs <= 0", procName, NULL);
-    if (n > MaxPtrArraySize)
+    if (n > (l_int32)MaxPtrArraySize)
         return (SARRAY *)ERROR_PTR("too many string ptrs", procName, NULL);
     if (n == 0) L_INFO("the sarray is empty\n", procName);
 

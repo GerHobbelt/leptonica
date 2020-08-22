@@ -412,7 +412,7 @@ PTA       *ptas1, *ptas2;
 
     if (!psame)
         return ERROR_INT("&same not defined", procName, 1);
-    *psame = 0.0;
+    *psame = 0.0f;
     if (!pta1 || !pta2)
         return ERROR_INT("pta1 and pta2 not both defined", procName, 1);
 

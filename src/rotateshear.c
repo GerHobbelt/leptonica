@@ -365,13 +365,13 @@ PIX       *pix1, *pix2, *pixd;
     }
 
     hangle = atan(sin(angle));
-    if ((pixd = pixVShear(NULL, pixs, xcen, angle / 2., incolor)) == NULL)
+    if ((pixd = pixVShear(NULL, pixs, xcen, angle / 2.f, incolor)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", procName, NULL);
     if ((pix1 = pixHShear(NULL, pixd, ycen, hangle, incolor)) == NULL) {
         pixDestroy(&pixd);
         return (PIX *)ERROR_PTR("pix1 not made", procName, NULL);
     }
-    pixVShear(pixd, pix1, xcen, angle / 2., incolor);
+    pixVShear(pixd, pix1, xcen, angle / 2.f, incolor);
     pixDestroy(&pix1);
 
     if (pixGetDepth(pixs) == 32 && pixGetSpp(pixs) == 4) {
@@ -442,9 +442,9 @@ l_float32  hangle;
     }
 
     hangle = atan(sin(angle));
-    pixHShearIP(pixs, ycen, angle / 2., incolor);
+    pixHShearIP(pixs, ycen, angle / 2.f, incolor);
     pixVShearIP(pixs, xcen, hangle, incolor);
-    pixHShearIP(pixs, ycen, angle / 2., incolor);
+    pixHShearIP(pixs, ycen, angle / 2.f, incolor);
     return 0;
 }
 

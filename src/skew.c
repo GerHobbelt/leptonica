@@ -848,7 +848,7 @@ PIX       *pixsw, *pixsch, *pixt1, *pixt2;
     numaAddNumber(natheta, centerangle + sweepdelta);
 
         /* Start the search */
-    delta = 0.5 * sweepdelta;
+    delta = 0.5f * sweepdelta;
     while (delta >= minbsdelta)
     {
             /* Get the left intermediate score */
@@ -896,7 +896,7 @@ PIX       *pixsw, *pixsch, *pixt1, *pixt2;
 
             /* Get new center angle and delta for next iteration */
         centerangle = centerangle + delta * (maxindex - 2);
-        delta = 0.5 * delta;
+        delta = 0.5f * delta;
     }
     *pangle = centerangle;
 
@@ -1073,7 +1073,7 @@ PIX       *pixr;
         *pangle = angle1;
         *pconf = conf1;
     } else {
-        *pangle = -90.0 + angle2;
+        *pangle = -90.0f + angle2;
         *pconf = conf2;
     }
 

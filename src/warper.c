@@ -681,7 +681,7 @@ PIX       *pixd;
         pixrss = pixTranslate(NULL, pixrs, zshiftt, 0, L_BRING_IN_WHITE);
     } else {
         angle = (l_float32)(zshiftb - zshiftt) /
-                L_MAX(1.0, (l_float32)pixGetHeight(pixrs));
+                L_MAX(1.0f, (l_float32)pixGetHeight(pixrs));
         zshift = (zshiftt + zshiftb) / 2;
         pix1 = pixTranslate(NULL, pixrs, zshift, 0, L_BRING_IN_WHITE);
         pixrss = pixHShearLI(pix1, h / 2, angle, L_BRING_IN_WHITE);
@@ -1108,8 +1108,8 @@ PIX       *pixd;
     wpld = pixGetWpl(pixd);
     wm = w - 1;
     hm = h - 1;
-    denom1 = 1. / (l_float32)h;
-    denom2 = 1. / (l_float32)(wm * wm);
+    denom1 = 1.f / (l_float32)h;
+    denom2 = 1.f / (l_float32)(wm * wm);
     for (j = 0; j < w; j++) {
         if (dir == L_WARP_TO_LEFT) {
             delrowt = (l_float32)(vmaxt * (wm - j) * (wm - j)) * denom2;
@@ -1232,8 +1232,8 @@ PIXCMAP   *cmap;
     wpld = pixGetWpl(pixd);
     wm = w - 1;
     hm = h - 1;
-    denom1 = 1.0 / (l_float32)h;
-    denom2 = 1.0 / (l_float32)(wm * wm);
+    denom1 = 1.0f / (l_float32)h;
+    denom2 = 1.0f / (l_float32)(wm * wm);
     for (j = 0; j < w; j++) {
         if (dir == L_WARP_TO_LEFT) {
             delrowt = (l_float32)(vmaxt * (wm - j) * (wm - j)) * denom2;

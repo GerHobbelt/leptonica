@@ -1324,7 +1324,7 @@ PIX     *pix1, *pixd;
         /* Blur the boundary of the input mask */
     pixInvert(pix1, pix1);
     pixd = pixDistanceFunction(pix1, 8, 8, L_BOUNDARY_FG);
-    pixMultConstantGray(pixd, 256.0 / dist);
+    pixMultConstantGray(pixd, 256.0f / dist);
     pixInvert(pixd, pixd);
     pixDestroy(&pix1);
     return pixd;
@@ -2599,7 +2599,7 @@ NUMA       *na;
     if ((na = numaCreate(bw)) == NULL)
         return (NUMA *)ERROR_PTR("na not made", procName, NULL);
     numaSetParameters(na, xstart, 1);
-    norm = 1. / (l_float32)bh;
+    norm = 1.f / (l_float32)bh;
     data = pixGetData(pix);
     wpl = pixGetWpl(pix);
     for (j = xstart; j < xend; j++) {

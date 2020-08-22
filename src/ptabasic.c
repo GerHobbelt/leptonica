@@ -123,7 +123,7 @@ PTA  *pta;
 
     PROCNAME("ptaCreate");
 
-    if (n <= 0 || n > MaxArraySize)
+    if (n <= 0 || n > (l_int32)MaxArraySize)
         n = InitialArraySize;
 
     pta = (PTA *)LEPT_CALLOC(1, sizeof(PTA));
@@ -384,7 +384,7 @@ size_t  oldsize, newsize;
 
     if (!pta)
         return ERROR_INT("pta not defined", procName, 1);
-    if (pta->nalloc > MaxArraySize)  /* belt & suspenders */
+    if (pta->nalloc > (l_int32)MaxArraySize)  /* belt & suspenders */
         return ERROR_INT("pta has too many ptrs", procName, 1);
     oldsize = pta->nalloc * sizeof(l_float32);
     newsize = 2 * oldsize;
@@ -730,7 +730,7 @@ PTA       *pta;
         return (PTA *)ERROR_PTR("not a pta file", procName, NULL);
     if (n < 0)
         return (PTA *)ERROR_PTR("num pts <= 0", procName, NULL);
-    if (n > MaxArraySize)
+    if (n > (l_int32)MaxArraySize)
         return (PTA *)ERROR_PTR("too many pts", procName, NULL);
     if (n == 0) L_INFO("the pta is empty\n", procName);
 
@@ -969,7 +969,7 @@ PTAA  *ptaa;
 
     PROCNAME("ptaaCreate");
 
-    if (n <= 0 || n > MaxPtrArraySize)
+    if (n <= 0 || n > (l_int32)MaxPtrArraySize)
         n = InitialArraySize;
 
     ptaa = (PTAA *)LEPT_CALLOC(1, sizeof(PTAA));
@@ -1396,7 +1396,7 @@ PTAA    *ptaa;
         return (PTAA *)ERROR_PTR("not a ptaa file", procName, NULL);
     if (n < 0)
         return (PTAA *)ERROR_PTR("num pta ptrs <= 0", procName, NULL);
-    if (n > MaxPtrArraySize)
+    if (n > (l_int32)MaxPtrArraySize)
         return (PTAA *)ERROR_PTR("too many pta ptrs", procName, NULL);
     if (n == 0) L_INFO("the ptaa is empty\n", procName);
 

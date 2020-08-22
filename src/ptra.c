@@ -147,7 +147,7 @@ L_PTRA  *pa;
 
     PROCNAME("ptraCreate");
 
-    if (n > MaxInitPtraSize) {
+    if (n > (l_int32)MaxInitPtraSize) {
         L_ERROR("n = %d > maxsize = %d\n", procName, n, MaxInitPtraSize);
         return NULL;
     }

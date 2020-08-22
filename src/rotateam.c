@@ -338,8 +338,8 @@ l_float32  sina, cosa;
     wm2 = w - 2;
     ycen = h / 2;
     hm2 = h - 2;
-    sina = 16. * sin(angle);
-    cosa = 16. * cos(angle);
+    sina = 16.f * sin(angle);
+    cosa = 16.f * cos(angle);
 
     for (i = 0; i < h; i++) {
         ydif = ycen - i;
@@ -409,8 +409,8 @@ l_float32  sina, cosa;
     wm2 = w - 2;
     ycen = h / 2;
     hm2 = h - 2;
-    sina = 16. * sin(angle);
-    cosa = 16. * cos(angle);
+    sina = 16.f * sin(angle);
+    cosa = 16.f * cos(angle);
 
     for (i = 0; i < h; i++) {
         ydif = ycen - i;
@@ -632,8 +632,8 @@ l_float32  sina, cosa;
 
     wm2 = w - 2;
     hm2 = h - 2;
-    sina = 16. * sin(angle);
-    cosa = 16. * cos(angle);
+    sina = 16.f * sin(angle);
+    cosa = 16.f * cos(angle);
 
     for (i = 0; i < h; i++) {
         lined = datad + i * wpld;
@@ -699,8 +699,8 @@ l_float32  sina, cosa;
 
     wm2 = w - 2;
     hm2 = h - 2;
-    sina = 16. * sin(angle);
-    cosa = 16. * cos(angle);
+    sina = 16.f * sin(angle);
+    cosa = 16.f * cos(angle);
 
     for (i = 0; i < h; i++) {
         lined = datad + i * wpld;
@@ -879,8 +879,8 @@ l_float32  sina, cosa;
     wm2 = w - 2;
     ycen = h / 2;
     hm2 = h - 2;
-    sina = 4. * sin(angle);
-    cosa = 4. * cos(angle);
+    sina = 4.f * sin(angle);
+    cosa = 4.f * cos(angle);
 
     for (i = 0; i < h; i++) {
         ydif = ycen - i;

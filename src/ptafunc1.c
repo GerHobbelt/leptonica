@@ -1077,7 +1077,7 @@ l_float32  *xa, *ya;
         factor = n * sxx - sx * sx;
         if (factor == 0.0)
             return ERROR_INT("no solution found", procName, 1);
-        factor = 1. / factor;
+        factor = 1.f / factor;
 
         a = factor * ((l_float32)n * sxy - sx * sy);
         b = factor * (sxx * sy - sx * sxy);

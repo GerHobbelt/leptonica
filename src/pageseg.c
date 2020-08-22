@@ -642,7 +642,7 @@ BOXA    *ba1, *ba2;
          * to a thin boundary on the left and right sides of the image,
          * in which case it is likely to be noise. */
     if (boxfg) {
-        boxin = boxCreate(0.1 * w, 0, 0.8 * w, h);
+        boxin = boxCreate(0.1f * w, 0, 0.8f * w, h);
         boxIntersects(boxfg, boxin, &intersects);
         boxDestroy(&boxin);
         if (!intersects) boxDestroy(&boxfg);
@@ -1006,7 +1006,7 @@ PIXA    *pixa1, *pixa2, *pixa3;
         L_INFO("Resolution is not set: setting to 300 ppi\n", procName);
         res = 300;
     }
-    csize = L_MIN(120., 60.0 * res / 300.0);
+    csize = L_MIN(120.f, 60.0f * res / 300.0f);
     snprintf(buf, sizeof(buf), "c%d.1 + o%d.1", csize, csize / 3);
     pix3 = pixMorphCompSequence(pix2, buf, 0);
     if (pixadb) pixaAddPix(pixadb, pix3, L_COPY);
@@ -1148,7 +1148,7 @@ PIXA    *pixa1, *pixa2;
 
         /* Filter to solidify the text lines within the x-height region.
          * The closing (csize) bridges gaps between words. */
-    csize = L_MIN(120., 60.0 * res / 300.0);
+    csize = L_MIN(120.f, 60.0f * res / 300.0f);
     snprintf(buf, sizeof(buf), "c%d.1", csize);
     pix3 = pixMorphCompSequence(pix2, buf, 0);
     if (pixadb) pixaAddPix(pixadb, pix3, L_COPY);
@@ -1259,10 +1259,10 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
     }
     if (res < 37) {
         L_WARNING("resolution %d very low\n", procName, res);
-        scalefact = 37.5 / res;
+        scalefact = 37.5f / res;
         pix1 = pixScale(pixs, scalefact, scalefact);
     } else {
-        redfact = (l_float32)res / 37.5;
+        redfact = (l_float32)res / 37.5f;
         if (redfact < 2.0)
             pix1 = pixClone(pixs);
         else if (redfact < 4.0)
@@ -1279,7 +1279,7 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
         /* Crop inner 80% of image */
     pixGetDimensions(pix1, &w, &h, NULL);
     box = boxCreate(clipfract * w, clipfract * h,
-                    (1.0 - 2 * clipfract) * w, (1.0 - 2 * clipfract) * h);
+                    (1.0f - 2 * clipfract) * w, (1.0f - 2 * clipfract) * h);
     pix2 = pixClipRectangle(pix1, box, NULL);
     pixGetDimensions(pix2, &w, &h, NULL);
     boxDestroy(&box);
@@ -1314,8 +1314,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
         *pncols = 0;
     } else {
         na2 = numaFindExtrema(na1, deltafract * (maxval - minval), &na3);
-        na4 = numaTransform(na2, 0, 1.0 / w);
-        na5 = numaTransform(na3, -minval, 1.0 / (maxval - minval));
+        na4 = numaTransform(na2, 0, 1.0f / w);
+        na5 = numaTransform(na3, -minval, 1.0f / (maxval - minval));
         n = numaGetCount(na4);
         for (i = 0, npeak = 0; i < n; i++) {
             numaGetFValue(na4, i, &val4);
@@ -1482,7 +1482,7 @@ SEL       *sel1;
          * conditions. */
     boxa2 = boxaSort(boxa1, L_SORT_BY_WIDTH, L_SORT_DECREASING, NULL);
     boxaGetBoxGeometry(boxa2, 1, NULL, NULL, &maxw, NULL);  /* 2nd longest */
-    boxa3 = boxaSelectBySize(boxa1, 0.4 * maxw, 0, L_SELECT_WIDTH,
+    boxa3 = boxaSelectBySize(boxa1, 0.4f * maxw, 0, L_SELECT_WIDTH,
                              L_SELECT_IF_GTE, NULL);
     boxa4 = boxaSelectBySize(boxa3, 0, 60, L_SELECT_HEIGHT,
                              L_SELECT_IF_LTE, NULL);
@@ -1889,8 +1889,8 @@ PIX       *pix1, *pix2, *pixm;
 
         /* Optionally crop inner part of image */
     if (edgecrop > 0.0) {
-        box = boxCreate(0.5 * edgecrop * w, 0.5 * edgecrop * h,
-                        (1.0 - edgecrop) * w, (1.0 - edgecrop) * h);
+        box = boxCreate(0.5f * edgecrop * w, 0.5f * edgecrop * h,
+                        (1.0f - edgecrop) * w, (1.0f - edgecrop) * h);
         pix2 = pixClipRectangle(pix1, box, NULL);
         boxDestroy(&box);
     } else {

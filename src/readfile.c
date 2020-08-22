@@ -1244,7 +1244,7 @@ PIXCMAP  *cmap;
          * result when a white background is visible through the
          * transparency layer. */
     if (pixGetSpp(pix) == 4) {
-        pixt = pixDisplayLayersRGBA(pix, 0xffffff00, 600.0);
+        pixt = pixDisplayLayersRGBA(pix, 0xffffff00, 600);
         pixDisplay(pixt, 100, 100);
         pixDestroy(&pixt);
     }

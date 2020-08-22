@@ -250,7 +250,7 @@ SELA  *sela;
 
     PROCNAME("selaCreate");
 
-    if (n <= 0 || n > MaxPtrArraySize)
+    if (n <= 0 || n > (l_int32)MaxPtrArraySize)
         n = InitialPtrArraySize;
 
         /* Make array of sel ptrs */
@@ -523,9 +523,9 @@ l_int32  **array;
 
     PROCNAME("create2dIntArray");
 
-    if (sx <= 0 || sx > MaxKernelSize)
+    if (sx <= 0 || sx > (l_int32)MaxKernelSize)
         return (l_int32 **)ERROR_PTR("sx out of bounds", procName, NULL);
-    if (sy <= 0 || sy > MaxKernelSize)
+    if (sy <= 0 || sy > (l_int32)MaxKernelSize)
         return (l_int32 **)ERROR_PTR("sy out of bounds", procName, NULL);
 
     if ((array = (l_int32 **)LEPT_CALLOC(sy, sizeof(l_int32 *))) == NULL)

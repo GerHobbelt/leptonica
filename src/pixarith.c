@@ -471,7 +471,7 @@ PIX       *pixd;
 
     if (norm <= 0.0) {
         pixGetExtremeValue(pixg, 1, L_SELECT_MAX, NULL, NULL, NULL, &maxgray);
-        norm = (maxgray > 0) ? 1.0 / (l_float32)maxgray : 1.0;
+        norm = (maxgray > 0) ? 1.0f / (l_float32)maxgray : 1.0f;
     }
 
     if ((pixd = pixCreateTemplate(pixs)) == NULL)
@@ -1312,7 +1312,7 @@ PIX        *pixd;
         /* Map to the full dynamic range */
     if (d == 4) {
         if (type == L_LINEAR_SCALE) {
-            factor = 255. / (l_float32)max;
+            factor = 255.f / (l_float32)max;
             for (i = 0; i < h; i++) {
                 lines = datas + i * wpls;
                 lined = datad + i * wpld;
@@ -1324,7 +1324,7 @@ PIX        *pixd;
             }
         } else {  /* type == L_LOG_SCALE) */
             tab = makeLogBase2Tab();
-            factor = 255. / getLogBase2(max, tab);
+            factor = 255.f / getLogBase2(max, tab);
             for (i = 0; i < h; i++) {
                 lines = datas + i * wpls;
                 lined = datad + i * wpld;
@@ -1338,7 +1338,7 @@ PIX        *pixd;
         }
     } else if (d == 8) {
         if (type == L_LINEAR_SCALE) {
-            factor = 255. / (l_float32)max;
+            factor = 255.f / (l_float32)max;
             for (i = 0; i < h; i++) {
                 lines = datas + i * wpls;
                 lined = datad + i * wpld;
@@ -1350,7 +1350,7 @@ PIX        *pixd;
             }
         } else {  /* type == L_LOG_SCALE) */
             tab = makeLogBase2Tab();
-            factor = 255. / getLogBase2(max, tab);
+            factor = 255.f / getLogBase2(max, tab);
             for (i = 0; i < h; i++) {
                 lines = datas + i * wpls;
                 lined = datad + i * wpld;
@@ -1364,7 +1364,7 @@ PIX        *pixd;
         }
     } else if (d == 16) {
         if (type == L_LINEAR_SCALE) {
-            factor = 255. / (l_float32)max;
+            factor = 255.f / (l_float32)max;
             for (i = 0; i < h; i++) {
                 lines = datas + i * wpls;
                 lined = datad + i * wpld;
@@ -1376,7 +1376,7 @@ PIX        *pixd;
             }
         } else {  /* type == L_LOG_SCALE) */
             tab = makeLogBase2Tab();
-            factor = 255. / getLogBase2(max, tab);
+            factor = 255.f / getLogBase2(max, tab);
             for (i = 0; i < h; i++) {
                 lines = datas + i * wpls;
                 lined = datad + i * wpld;
@@ -1390,7 +1390,7 @@ PIX        *pixd;
         }
     } else {  /* d == 32 */
         if (type == L_LINEAR_SCALE) {
-            factor = 255. / (l_float32)max;
+            factor = 255.f / (l_float32)max;
             for (i = 0; i < h; i++) {
                 lines = datas + i * wpls;
                 lined = datad + i * wpld;
@@ -1402,7 +1402,7 @@ PIX        *pixd;
             }
         } else {  /* type == L_LOG_SCALE) */
             tab = makeLogBase2Tab();
-            factor = 255. / getLogBase2(max, tab);
+            factor = 255.f / getLogBase2(max, tab);
             for (i = 0; i < h; i++) {
                 lines = datas + i * wpls;
                 lined = datad + i * wpld;
@@ -1476,7 +1476,7 @@ PIX        *pixd;
 
         /* Map to the full dynamic range */
     if (type == L_LINEAR_SCALE) {
-        factor = 255. / (l_float32)max;
+        factor = 255.f / (l_float32)max;
         for (i = 0; i < h; i++) {
             lines = datas + i * wpls;
             lined = datad + i * wpld;
@@ -1488,7 +1488,7 @@ PIX        *pixd;
         }
     } else {  /* type == L_LOG_SCALE) */
         tab = makeLogBase2Tab();
-        factor = 255. / getLogBase2(max, tab);
+        factor = 255.f / getLogBase2(max, tab);
         for (i = 0; i < h; i++) {
             lines = datas + i * wpls;
             lined = datad + i * wpld;
@@ -1621,9 +1621,9 @@ getLogBase2(l_int32     val,
     if (val < 0x100)
         return logtab[val];
     else if (val < 0x10000)
-        return 8.0 + logtab[val >> 8];
+        return 8.0f + logtab[val >> 8];
     else if (val < 0x1000000)
-        return 16.0 + logtab[val >> 16];
+        return 16.0f + logtab[val >> 16];
     else
-        return 24.0 + logtab[val >> 24];
+        return 24.0f + logtab[val >> 24];
 }

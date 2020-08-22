@@ -1238,14 +1238,14 @@ NUMA       *nad;
         sum = 0.0;
         right = left + binsize;
         ileft = (l_int32)left;
-        lfract = 1.0 - left + ileft;
+        lfract = 1.0f - left + ileft;
         if (lfract >= 1.0)  /* on left bin boundary */
             lfract = 0.0;
         iright = (l_int32)right;
         rfract = right - iright;
         iright = L_MIN(iright, n - 1);
         if (ileft == iright) {  /* both are within the same original sample */
-            sum += (lfract + rfract - 1.0) * array[ileft];
+            sum += (lfract + rfract - 1.0f) * array[ileft];
         } else {
             if (lfract > 0.0001)  /* left fraction */
                 sum += lfract * array[ileft];
@@ -1669,8 +1669,8 @@ l_float32  *fa;
     }
 
         /* Quadratic interpolation */
-    d1 = d3 = 0.5 / (deltax * deltax);
-    d2 = -2. * d1;
+    d1 = d3 = 0.5f / (deltax * deltax);
+    d2 = -2.f * d1;
     if (i == 0) {
         i1 = i;
         i2 = i + 1;
