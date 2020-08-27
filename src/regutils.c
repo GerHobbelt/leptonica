@@ -51,7 +51,7 @@
  *
  *  See regutils.h for how to use this.  Here is a minimal setup:
  *
- *  main(int argc, char **argv) {
+ *  main(int argc, const char **argv) {
  *  ...
  *  L_REGPARAMS  *rp;
  *
@@ -121,7 +121,7 @@ static char *getRootNameFromArgv0(const char *argv0);
  */
 l_ok
 regTestSetup(l_int32        argc,
-             char         **argv,
+	         const char   **argv,
              L_REGPARAMS  **prp)
 {
 char         *testname, *vers;
@@ -176,7 +176,7 @@ L_REGPARAMS  *rp;
     }
 
         /* Print out test name and both the leptonica and
-         * image libarary versions */
+         * image library versions */
     lept_stderr("\n////////////////////////////////////////////////\n"
                 "////////////////   %s_reg   ///////////////\n"
                 "////////////////////////////////////////////////\n",

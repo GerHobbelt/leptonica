@@ -911,7 +911,7 @@ NUMA      *nai, *nahist;
         /* Determine binsize */
     range = imaxval - iminval + 1;
     if (range > maxbins - 1) {
-        ratio = (l_float64)range / (l_float64)maxbins;
+        ratio = (l_float32)range / (l_float32)maxbins;
         binsize = 0;
         for (i = 0; i < NBinSizes; i++) {
             if (ratio < BinSizeArray[i]) {

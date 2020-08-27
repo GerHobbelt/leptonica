@@ -884,7 +884,7 @@ l_float32  factor;
     if (!vc)
         return ERROR_INT("vc not defined", procName, 1);
 
-    factor = 1. / (vc[6] * x + vc[7] * y + 1.f);
+    factor = 1.f / (vc[6] * x + vc[7] * y + 1.f);
     *pxp = (l_int32)(factor * (vc[0] * x + vc[1] * y + vc[2]) + 0.5f);
     *pyp = (l_int32)(factor * (vc[3] * x + vc[4] * y + vc[5]) + 0.5f);
     return 0;
@@ -919,7 +919,7 @@ l_float32  factor;
     if (!vc)
         return ERROR_INT("vc not defined", procName, 1);
 
-    factor = 1. / (vc[6] * x + vc[7] * y + 1.);
+    factor = 1.f / (vc[6] * x + vc[7] * y + 1.);
     *pxp = factor * (vc[0] * x + vc[1] * y + vc[2]);
     *pyp = factor * (vc[3] * x + vc[4] * y + vc[5]);
     return 0;

@@ -959,7 +959,7 @@ PIX       *pixd, *pixt0, *pixt1;
     max = L_MAX(maxval, -minval);
     if (max == 0.0)
         return (PIX *)ERROR_PTR("kernel elements all 0.0", procName, NULL);
-    norm = 255. / (l_float32)max;
+    norm = 255.f / (l_float32)max;
 
         /* Handle the 1 element/pixel case; typically with large kernels */
     if (size == 1 && gthick == 0) {
@@ -1119,7 +1119,7 @@ L_KERNEL  *kel;
     if ((kel = kernelCreate(height, width)) == NULL)
         return (L_KERNEL *)ERROR_PTR("kel not made", procName, NULL);
     kernelSetOrigin(kel, cy, cx);
-    normval = 1.0 / (l_float32)(height * width);
+    normval = 1.0f / (l_float32)(height * width);
     for (i = 0; i < height; i++) {
         for (j = 0; j < width; j++) {
             kernelSetElement(kel, i, j, normval);
@@ -1274,7 +1274,7 @@ L_KERNEL  *kel;
         for (j = 0; j < sx; j++) {
             squaredist = (l_float32)((i - halfh) * (i - halfh) +
                                      (j - halfw) * (j - halfw));
-            highnorm = 1. / (2 * stdev * stdev);
+            highnorm = 1.f / (2 * stdev * stdev);
             lownorm = highnorm / (ratio * ratio);
             val = (highnorm / pi) * expf(-(highnorm * squaredist))
                   - (lownorm / pi) * expf(-(lownorm * squaredist));
