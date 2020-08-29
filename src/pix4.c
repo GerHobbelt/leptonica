@@ -2525,6 +2525,9 @@ PIX       *pixt;
         return ERROR_INT("invalid fontsize", procName, 1);
 
     pixGetRankColorArray(pixs, nbins, color, factor, &carray, NULL, 0);
+    if (!carray)
+        return ERROR_INT("carray not made", procName, 1);
+
     if (fontsize > 0) {
         for (i = 0; i < nbins; i++)
             L_INFO("c[%d] = %x\n", procName, i, carray[i]);
@@ -2584,7 +2587,7 @@ PIX       *pixt;
  *          has %nbins colors.
  *      (3) Set the subsampling factor > 1 to reduce the amount of
  *          computation.  Typically you want at least 10,000 pixels
- *          for reasonable statistics.
+ *          for reasonable statistics.  Must be at least 10 samples/bin.
  *      (4) The rank color as a function of rank can then be found from
  *             rankint = (l_int32)(rank * (nbins - 1) + 0.5);
  *             extractRGBValues(array[rankint], &rval, &gval, &bval);
@@ -2603,7 +2606,7 @@ pixGetRankColorArray(PIX        *pixs,
                      PIXA       *pixadb,
                      l_int32     fontsize)
 {
-l_int32    ret;
+l_int32    ret, w, h, samplesperbin;
 l_uint32  *array;
 NUMA      *na, *nan, *narbin;
 PIX       *pix1, *pixc, *pixg, *pixd;
@@ -2634,6 +2637,12 @@ PIXCMAP   *cmap;
                       fontsize);
             fontsize = 6;
         }
+    }
+    pixGetDimensions(pixs, &w, &h, NULL);
+    samplesperbin = (w * h) / (factor * factor * nbins);
+    if (samplesperbin < 10) {
+        L_ERROR("samplesperbin = %d < 10\n", procName, samplesperbin);
+        return 1;
     }
 
         /* Downscale by factor and remove colormap if it exists */
@@ -2733,7 +2742,7 @@ PIXCMAP   *cmap;
  * \param[in]    pixs       32 bpp
  * \param[in]    pixg       8 bpp grayscale version of pixs
  * \param[in]    factor     sampling factor along pixel counting direction
- * \param[in]    nbins      number of intensity bins
+ * \param[in]    nbins      number of intensity bins, in {1,...,100}
  * \param[in]    nalut      LUT for mapping from intensity to bin number
  * \param[out]   pcarray    array of average color values in each bin
  * \param[in]    pixadb     [optional] debug: caller passes this in.
@@ -2747,7 +2756,8 @@ PIXCMAP   *cmap;
  *          a LUT from intensity to bin number, and the number of bins.
  *          It computes the average color for pixels whose intensity
  *          is in each bin.  This is returned as an array of l_uint32
- *          colors in our standard RGBA ordering.
+ *          colors in our standard RGBA ordering.  It requires at
+ *          least 10 pixels in each bin.
  *      (2) This function generates equal width intensity bins and
  *          finds the average color in each bin.  Compare this with
  *          pixGetRankColorArray(), which rank orders the pixels
@@ -2765,8 +2775,8 @@ pixGetBinnedColor(PIX        *pixs,
                   l_uint32  **pcarray,
                   PIXA       *pixadb)
 {
-l_int32     i, j, w, h, wpls, wplg, grayval, bin, rval, gval, bval, success;
-l_int32     npts, avepts, maxpts;
+l_int32     i, j, w, h, wpls, wplg, grayval, bin, success;
+l_int32     rval, gval, bval, npts, avepts, maxpts;
 l_uint32   *datas, *datag, *lines, *lineg, *carray;
 l_float64   norm;
 l_float64  *rarray, *garray, *barray, *narray;
@@ -2787,16 +2797,23 @@ PIX        *pix1;
         L_WARNING("sampling factor less than 1; setting to 1\n", procName);
         factor = 1;
     }
+    if (nbins < 1 || nbins > 100)
+        return ERROR_INT("nbins not in {1,...,100}", procName, 1);
 
         /* Find the color for each rank bin.  Note that we can have
          * multiple bins filled with pixels having the same gray value.
          * Therefore, because in general the mapping from gray value
          * to bin number is not unique, if a bin fills up (actually,
          * we allow it to slightly overfill), we roll the excess
-         * over to the next bin, etc. */
+         * over to the next bin, etc.  We require that on average each
+         * bin holds at least 10 points.  */
     pixGetDimensions(pixs, &w, &h, NULL);
     npts = (w + factor - 1) * (h + factor - 1) / (factor * factor);
     avepts = (npts + nbins - 1) / nbins;  /* average number of pts in a bin */
+    if (avepts < 10) {
+        L_ERROR("avepts = %d; must be >= 10\n", procName, avepts);
+        return 1;
+    }
     maxpts = (l_int32)((1.0 + 0.5 / (l_float32)nbins) * avepts);
     datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
@@ -2823,11 +2840,15 @@ PIX        *pix1;
     }
 
     for (i = 0; i < nbins; i++) {
-        norm = 1. / narray[i];
-        rarray[i] *= norm;
-        garray[i] *= norm;
-        barray[i] *= norm;
-/*        lept_stderr("narray[%d] = %f\n", i, narray[i]);  */
+        if (narray[i] == 0) {
+            L_WARNING("no colors in bin %d\n", procName, i);
+        } else {
+            norm = 1. / narray[i];
+            rarray[i] *= norm;
+            garray[i] *= norm;
+            barray[i] *= norm;
+/*            lept_stderr("narray[%d] = %f\n", i, narray[i]);  */
+        }
     }
 
     if (pixadb) {
@@ -2953,10 +2974,11 @@ PIXA    *pixa;
  *
  * <pre>
  * Notes:
- *      (1) This generates a pix where each column represents a strip of
- *          the input image.  If %direction == L_SCAN_HORIZONTAL, the
- *          input impage is tiled into vertical strips of width %size,
- *          where %size is a compromise between getting better spatial
+ *      (1) This generates a pix of height %nbins, where each column
+ *          represents a horizontal or vertical strip of the input image.
+ *          If %direction == L_SCAN_HORIZONTAL, the input image is
+ *          tiled into vertical strips of width %size, where %size is
+ *          chosen as a compromise between getting better spatial
  *          columnwise resolution (small %size) and getting better
  *          columnwise statistical information (larger %size).  Likewise
  *          with rows of the image if %direction == L_SCAN_VERTICAL.
@@ -2964,7 +2986,8 @@ PIXA    *pixa;
  *          median colors in each column that correspond to a vertical
  *          strip of width %size in the input image.
  *      (3) The color selection flag is one of: L_SELECT_RED, L_SELECT_GREEN,
- *          L_SELECT_BLUE, L_SELECT_MIN, L_SELECT_MAX, L_SELECT_AVERAGE.
+ *          L_SELECT_BLUE, L_SELECT_MIN, L_SELECT_MAX, L_SELECT_AVERAGE,
+ *          L_SELECT_HUE, L_SELECT_SATURATION.
  *          It determines how the rank ordering is done.
  *      (4) Typical input values might be %size = 5, %nbins = 10.
  * </pre>
@@ -2976,7 +2999,7 @@ pixRankBinByStrip(PIX     *pixs,
                   l_int32  nbins,
                   l_int32  type)
 {
-l_int32    i, j, w, h, nstrips;
+l_int32    i, j, w, h, mindim, nstrips;
 l_uint32  *array;
 BOXA      *boxa;
 PIX       *pix1, *pix2, *pixd;
@@ -2999,8 +3022,14 @@ PIXCMAP   *cmap;
         return (PIX *)ERROR_PTR("nbins must be at least 2", procName, NULL);
     if (type != L_SELECT_RED && type != L_SELECT_GREEN &&
         type != L_SELECT_BLUE && type != L_SELECT_MIN &&
-        type != L_SELECT_MAX && type != L_SELECT_AVERAGE)
+        type != L_SELECT_MAX && type != L_SELECT_AVERAGE &&
+        type != L_SELECT_HUE && type != L_SELECT_SATURATION)
         return (PIX *)ERROR_PTR("invalid type", procName, NULL);
+    pixGetDimensions(pixs, &w, &h, NULL);
+    mindim = L_MIN(w, h);
+    if (mindim < 20 || nbins > mindim)
+        return (PIX *)ERROR_PTR("pix too small and/or too many bins",
+                                procName, NULL);
 
         /* Downscale by factor and remove colormap if it exists */
     if (cmap)
@@ -3018,9 +3047,11 @@ PIXCMAP   *cmap;
         for (i = 0; i < nstrips; i++) {
             pix2 = pixaGetPix(pixa, i, L_CLONE);
             pixGetRankColorArray(pix2, nbins, type, 1, &array, NULL, 0);
-            for (j = 0; j < nbins; j++)
-                pixSetPixel(pixd, i, j, array[j]);
-            LEPT_FREE(array);
+            if (array) {
+                for (j = 0; j < nbins; j++)
+                    pixSetPixel(pixd, i, j, array[j]);
+                LEPT_FREE(array);
+            }
             pixDestroy(&pix2);
         }
     } else {  /* L_SCAN_VERTICAL */
@@ -3028,9 +3059,11 @@ PIXCMAP   *cmap;
         for (i = 0; i < nstrips; i++) {
             pix2 = pixaGetPix(pixa, i, L_CLONE);
             pixGetRankColorArray(pix2, nbins, type, 1, &array, NULL, 0);
-            for (j = 0; j < nbins; j++)
-                pixSetPixel(pixd, j, i, array[j]);
-            LEPT_FREE(array);
+            if (array) {
+                for (j = 0; j < nbins; j++)
+                    pixSetPixel(pixd, j, i, array[j]);
+                LEPT_FREE(array);
+            }
             pixDestroy(&pix2);
         }
     }
