@@ -143,6 +143,9 @@
 #include <sys/stat.h>
 #include <limits.h>  /* needed for realpath() */
 #include <stdlib.h>  /* needed for realpath() */
+#if defined(_MSC_VER)
+#include <crtdbg.h>
+#endif
 #endif  /* ! _WIN32 */
 #include "allheaders.h"
 

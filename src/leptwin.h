@@ -30,6 +30,9 @@
 
 #include "allheaders.h"
 #include <windows.h>
+#if defined(_MSC_VER)
+#include <crtdbg.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

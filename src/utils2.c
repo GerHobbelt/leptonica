@@ -180,9 +180,12 @@
 #endif  /* HAVE_CONFIG_H */
 
 #ifdef _MSC_VER
+#include <crtdbg.h>
 #include <process.h>
 #include <direct.h>
+#ifndef getcwd
 #define getcwd _getcwd  /* fix MSVC warning */
+#endif
 #else
 #include <unistd.h>
 #endif   /* _MSC_VER */
