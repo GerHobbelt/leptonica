@@ -266,6 +266,8 @@ PIX       *pixt;
         /* Prepare pixd as a copy of pixs if not identical */
     if ((pixd = pixCopy(pixd, pixs)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", procName, NULL);
+    pixSetPadBits(pixd, 0);  /* be safe: */
+    pixSetPadBits(pixm, 0);  /* avoid using uninitialized memory */
 
         /* pixt is used to test for completion */
     if ((pixt = pixCreateTemplate(pixs)) == NULL)
@@ -278,7 +280,6 @@ PIX       *pixt;
     wpld = pixGetWpl(pixd);
     wplm = pixGetWpl(pixm);
 
-    pixSetPadBits(pixm, 0);
 
     for (i = 0; i < MaxIters; i++) {
         pixCopy(pixt, pixd);
