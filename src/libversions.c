@@ -101,30 +101,28 @@
 char *
 getImagelibVersions(void)
 {
-#if HAVE_LIBGIF || HAVE_LIBJPEG
-char     buf[128];
-#endif
 l_int32  first = TRUE;
-#if HAVE_LIBJPEG || HAVE_LIBTIFF
-char    *versionNumP;
-char    *nextTokenP;
-#endif
 char    *versionStrP = NULL;
 
 #if HAVE_LIBGIF
-    first = FALSE;
-    stringJoinIP(&versionStrP, "libgif ");
-  #ifdef GIFLIB_MAJOR
-    snprintf(buf, sizeof(buf), "%d.%d.%d", GIFLIB_MAJOR, GIFLIB_MINOR,
-             GIFLIB_RELEASE);
-  #else
-    stringCopy(buf, "4.1.6(?)", sizeof(buf));
-  #endif
-    stringJoinIP(&versionStrP, buf);
+	{
+	char     buf[128];
+	first = FALSE;
+	stringJoinIP(&versionStrP, "libgif ");
+#ifdef GIFLIB_MAJOR
+	snprintf(buf, sizeof(buf), "%d.%d.%d", GIFLIB_MAJOR, GIFLIB_MINOR,
+		GIFLIB_RELEASE);
+#else
+	stringCopy(buf, "4.1.6(?)", sizeof(buf));
+#endif
+	stringJoinIP(&versionStrP, buf);
+	}
 #endif  /* HAVE_LIBGIF */
 
 #if HAVE_LIBJPEG
     {
+	char						*versionNumP;
+	char						*nextTokenP;
     struct jpeg_compress_struct  cinfo;
     struct jpeg_error_mgr        err;
     char                         buffer[JMSG_LENGTH_MAX];
@@ -160,7 +158,10 @@ char    *versionStrP = NULL;
 #endif  /* HAVE_LIBPNG */
 
 #if HAVE_LIBTIFF
-    if (!first) stringJoinIP(&versionStrP, " : ");
+	{
+	char* versionNumP;
+	char* nextTokenP;
+	if (!first) stringJoinIP(&versionStrP, " : ");
     first = FALSE;
     stringJoinIP(&versionStrP, "libtiff ");
     versionNumP = strtokSafe((char *)TIFFGetVersion(), " \n", &nextTokenP);
@@ -170,6 +171,7 @@ char    *versionStrP = NULL;
     versionNumP = strtokSafe(NULL, " \n", &nextTokenP);
     stringJoinIP(&versionStrP, versionNumP);
     LEPT_FREE(versionNumP);
+	}
 #endif  /* HAVE_LIBTIFF */
 
 #if HAVE_LIBZ

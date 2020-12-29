@@ -701,8 +701,7 @@ pixExtractBarcodeWidths2(PIX        *pixs,
                          NUMA      **pnac,
                          l_int32     debugflag)
 {
-l_int32  width;
-NUMA    *nac, *nacp, *nad;
+NUMA    *nacp, *nad;
 
     PROCNAME("pixExtractBarcodeWidths2");
 
