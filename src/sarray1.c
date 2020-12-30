@@ -1903,12 +1903,26 @@ struct stat     st;
 
     if (!dirname)
         return (SARRAY *)ERROR_PTR("dirname not defined", procName, NULL);
+    if (dirname[0] == '\0')
+        return (SARRAY *)ERROR_PTR("dirname is empty", procName, NULL);
 
-        /* It's nice to ignore directories.  fstatat() works with relative
-           directory paths, but stat() requires using the absolute path.
-           Also, do not pass NULL as the second parameter to realpath();
-           use a buffer of sufficient size. */
-    ignore = realpath(dirname, dir);  /* see note above */
+        /* Who would have thought it was this fiddly to open a directory
+           and get the files inside?  fstatat() works with relative
+           directory paths, and stat() requires using the absolute path.
+           realpath works as follows for files and directories:
+            * If the file or directory exists, realpath returns its path;
+              else it returns NULL.
+            * If the second arg to realpath is passed in, the canonical path
+              is returned there.  Use a buffer of sufficient size.  If the
+              second arg is NULL, the path is malloc'd and returned if the
+              file or directory exists.
+           We pass in a buffer for the second arg, and check that the canonical
+           directory path was made.  The existence of the directory is checked
+           later, after its actual path is returned by genPathname().  */
+    dir[0] = '\0';  /* init empty in case realpath() fails to write it */
+    ignore = realpath(dirname, dir);
+    if (dir[0] == '\0')
+        return (SARRAY *)ERROR_PTR("dir not made", procName, NULL);
     realdir = genPathname(dir, NULL);
     if ((pdir = opendir(realdir)) == NULL) {
         LEPT_FREE(realdir);

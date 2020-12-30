@@ -432,8 +432,10 @@ PIXA         *pixac;
                     sum += kern * nval;
                     norm += kern;
                 }
-                dval = (l_int32)((sum / norm) + 0.5);
-                SET_DATA_BYTE(linet, border + j, dval);
+                if (norm > 0.0) {
+                    dval = (l_int32)((sum / norm) + 0.5);
+                    SET_DATA_BYTE(linet, border + j, dval);
+                }
             }
         }
             /* Vertical convolution */
@@ -452,7 +454,10 @@ PIXA         *pixac;
                     sum += kern * nval;
                     norm += kern;
                 }
-                dval = (l_int32)((sum / norm) + 0.5);
+                if (norm > 0.0)
+                    dval = (l_int32)((sum / norm) + 0.5);
+                else
+                    dval = GET_DATA_BYTE(linet, border + j);
                 SET_DATA_BYTE(lined, j, dval);
             }
         }
