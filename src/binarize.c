@@ -922,8 +922,8 @@ PIX       *pix1, *pix2, *pix3;
     if (start <= 0) start = 80;
     if (end <= 0) end = 200;
     if (incr <= 0) incr = 10;
-    if (thresh48 <= 0.0) thresh48 = 0.01;
-    if (threshdiff <= 0.0) threshdiff = 0.01;
+    if (thresh48 <= 0.0) thresh48 = 0.01f;
+    if (threshdiff <= 0.0) threshdiff = 0.01f;
     if (start > end)
         return ERROR_INT("invalid start,end", procName, 1);
 
@@ -1073,7 +1073,7 @@ NUMA      *na1, *na2, *na3;
     if (factor < 1)
         return ERROR_INT("sampling must be >= 1", procName, 1);
     if (halfw <= 0) halfw = 20;
-    if (delta <= 0.0) delta = 0.1;
+    if (delta <= 0.0) delta = 0.1f;
 
         /* Make a histogram of pixel values where the largest peak
          * is normalized to a value of 1.0. */
