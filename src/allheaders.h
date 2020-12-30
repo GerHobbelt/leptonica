@@ -66,9 +66,6 @@ LEPT_DLL extern PIX * pixGlobalNormNoSatRGB ( PIX *pixd, PIX *pixs, l_int32 rval
 LEPT_DLL extern l_ok pixThresholdSpreadNorm ( PIX *pixs, l_int32 filtertype, l_int32 edgethresh, l_int32 smoothx, l_int32 smoothy, l_float32 gamma, l_int32 minval, l_int32 maxval, l_int32 targetthresh, PIX **ppixth, PIX **ppixb, PIX **ppixd );
 LEPT_DLL extern PIX * pixBackgroundNormFlex ( PIX *pixs, l_int32 sx, l_int32 sy, l_int32 smoothx, l_int32 smoothy, l_int32 delta );
 LEPT_DLL extern PIX * pixContrastNorm ( PIX *pixd, PIX *pixs, l_int32 sx, l_int32 sy, l_int32 mindiff, l_int32 smoothx, l_int32 smoothy );
-LEPT_DLL extern l_ok pixMinMaxTiles ( PIX *pixs, l_int32 sx, l_int32 sy, l_int32 mindiff, l_int32 smoothx, l_int32 smoothy, PIX **ppixmin, PIX **ppixmax );
-LEPT_DLL extern l_ok pixSetLowContrast ( PIX *pixs1, PIX *pixs2, l_int32 mindiff );
-LEPT_DLL extern PIX * pixLinearTRCTiled ( PIX *pixd, PIX *pixs, l_int32 sx, l_int32 sy, PIX *pixmin, PIX *pixmax );
 LEPT_DLL extern PIX * pixAffineSampledPta ( PIX *pixs, PTA *ptad, PTA *ptas, l_int32 incolor );
 LEPT_DLL extern PIX * pixAffineSampled ( PIX *pixs, l_float32 *vc, l_int32 incolor );
 LEPT_DLL extern PIX * pixAffinePta ( PIX *pixs, PTA *ptad, PTA *ptas, l_int32 incolor );
@@ -428,7 +425,6 @@ LEPT_DLL extern PIX * pixThinConnected ( PIX *pixs, l_int32 type, l_int32 connec
 LEPT_DLL extern PIX * pixThinConnectedBySet ( PIX *pixs, l_int32 type, SELA *sela, l_int32 maxiters );
 LEPT_DLL extern SELA * selaMakeThinSets ( l_int32 index, l_int32 debug );
 LEPT_DLL extern l_ok pixFindCheckerboardCorners ( PIX *pixs, l_int32 size, l_int32 dilation, l_int32 nsels, PIX **ppix_corners, PTA **ppta_corners, PIXA *pixadb );
-LEPT_DLL extern SELA * makeCheckerboardCornerSela ( l_int32 size, l_int32 dilation, l_int32 nsels, PIXA *pixadb );
 LEPT_DLL extern l_ok jbCorrelation ( const char *dirin, l_float32 thresh, l_float32 weight, l_int32 components, const char *rootname, l_int32 firstpage, l_int32 npages, l_int32 renderflag );
 LEPT_DLL extern l_ok jbRankHaus ( const char *dirin, l_int32 size, l_float32 rank, l_int32 components, const char *rootname, l_int32 firstpage, l_int32 npages, l_int32 renderflag );
 LEPT_DLL extern JBCLASSER * jbWordsInTextlines ( const char *dirin, l_int32 reduction, l_int32 maxwidth, l_int32 maxheight, l_float32 thresh, l_float32 weight, NUMA **pnatl, l_int32 firstpage, l_int32 npages );
@@ -845,8 +841,7 @@ LEPT_DLL extern l_int32 fmorphopgen_low_1 ( l_uint32 *datad, l_int32 w, l_int32 
 LEPT_DLL extern FPIX * fpixCreate ( l_int32 width, l_int32 height );
 LEPT_DLL extern FPIX * fpixCreateTemplate ( FPIX *fpixs );
 LEPT_DLL extern FPIX * fpixClone ( FPIX *fpix );
-LEPT_DLL extern FPIX * fpixCopy ( FPIX *fpixd, FPIX *fpixs );
-LEPT_DLL extern l_ok fpixResizeImageData ( FPIX *fpixd, FPIX *fpixs );
+LEPT_DLL extern FPIX * fpixCopy ( FPIX *fpixs );
 LEPT_DLL extern void fpixDestroy ( FPIX **pfpix );
 LEPT_DLL extern l_ok fpixGetDimensions ( FPIX *fpix, l_int32 *pw, l_int32 *ph );
 LEPT_DLL extern l_ok fpixSetDimensions ( FPIX *fpix, l_int32 w, l_int32 h );
@@ -875,8 +870,7 @@ LEPT_DLL extern l_ok fpixaSetPixel ( FPIXA *fpixa, l_int32 index, l_int32 x, l_i
 LEPT_DLL extern DPIX * dpixCreate ( l_int32 width, l_int32 height );
 LEPT_DLL extern DPIX * dpixCreateTemplate ( DPIX *dpixs );
 LEPT_DLL extern DPIX * dpixClone ( DPIX *dpix );
-LEPT_DLL extern DPIX * dpixCopy ( DPIX *dpixd, DPIX *dpixs );
-LEPT_DLL extern l_ok dpixResizeImageData ( DPIX *dpixd, DPIX *dpixs );
+LEPT_DLL extern DPIX * dpixCopy ( DPIX *dpixs );
 LEPT_DLL extern void dpixDestroy ( DPIX **pdpix );
 LEPT_DLL extern l_ok dpixGetDimensions ( DPIX *dpix, l_int32 *pw, l_int32 *ph );
 LEPT_DLL extern l_ok dpixSetDimensions ( DPIX *dpix, l_int32 w, l_int32 h );
@@ -2699,6 +2693,7 @@ LEPT_DLL extern l_ok l_binaryCompare ( const l_uint8 *data1, size_t size1, const
 LEPT_DLL extern l_ok fileCopy ( const char *srcfile, const char *newfile );
 LEPT_DLL extern l_ok fileConcatenate ( const char *srcfile, const char *destfile );
 LEPT_DLL extern l_ok fileAppendString ( const char *filename, const char *str );
+LEPT_DLL extern l_ok fileSplitLinesUniform ( const char *filename, l_int32 n, l_int32 save_empty, const char *rootpath, const char *ext );
 LEPT_DLL extern FILE * fopenReadStream ( const char *filename );
 LEPT_DLL extern FILE * fopenWriteStream ( const char *filename, const char *modestring );
 LEPT_DLL extern FILE * fopenReadFromMemory ( const l_uint8 *data, size_t size );
