@@ -1692,12 +1692,30 @@ l_uint8  *datad;
 }
 
 
+/*!
+ * \brief   l_binaryCompare()
+ *
+ * \param[in]    data1
+ * \param[in]    size1   of data1
+ * \param[in]    data2
+ * \param[in]    size2   of data1
+ * \param[out]   psame  (1 if the same, 0 if different)
+ * \return  0 if OK, 1 on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) This can also be used to compare C strings str1 and str2.
+ *          If the string lengths are not known, use strlen():
+ *            l_binaryCompare((l_uint8 *)str1, strlen(str1),
+                              (l_uint8 *)str2, strlen(str2));
+ * </pre>
+ */
 l_ok
 l_binaryCompare(const l_uint8  *data1,
                 size_t          size1,
                 const l_uint8  *data2,
                 size_t          size2,
-                l_int32  *psame)
+                l_int32        *psame)
 {
 l_int32  i;
 
@@ -3085,6 +3103,10 @@ size_t  len1, len2, len3, len4;
  *            * UNIX_PATH_SEPCHAR:  '\\' ==> '/'
  *            * WIN_PATH_SEPCHAR:   '/' ==> '\\'
  *      (3) Virtually all path operations in leptonica use unix separators.
+ *      (4) The backslash is a valid character in unix pathnames and should
+ *          not be converted.  Each backslash needs to be escaped with a
+ *          preceding backslash for the shell, but the actual filename
+ *          does not include these escape characters.
  * </pre>
  */
 l_ok
@@ -3102,10 +3124,12 @@ size_t   len;
 
     len = strlen(path);
     if (type == UNIX_PATH_SEPCHAR) {
+#ifdef _WIN32  /* only convert on windows */
         for (i = 0; i < len; i++) {
             if (path[i] == '\\')
                 path[i] = '/';
         }
+#endif  /* _WIN32 */
     } else {  /* WIN_PATH_SEPCHAR */
         for (i = 0; i < len; i++) {
             if (path[i] == '/')

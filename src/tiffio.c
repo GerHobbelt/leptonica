@@ -85,14 +85,22 @@
  *             l_int32    pixWriteMemTiff();
  *             l_int32    pixWriteMemTiffCustom();
  *
- *  Note:  To include all necessary functions, use libtiff version 3.7.4
- *         (or later)
- *  Note:  On Windows with 2 bpp or 4 bpp images, the bytes in the
- *         tiff-compressed file depend on the pad bits (but not the
- *         decoded raster image when read).  Because it is sometimes
- *         convenient to use a golden file with a byte-by-byte check
- *         to verify invariance, we set the pad bits to 0 before writing,
- *         in pixWriteToTiffStream().
+ *  Note 1: To include all necessary functions, use libtiff version 3.7.4
+ *          (from 2005) or later.
+ *  Note 2: What compression methods in tiff are supported?
+ *          * We support most methods that are fully implemented in the
+ *            tiff library, such as G3, G4, RLE and LZW.
+ *          * The exception is the old-style jpeg tiff format (OJPEG), which
+ *            is not supported.
+ *          * We support only one format, ZIP, that uses an external library.
+ *          * At present we do not support WEBP in tiff, which uses
+ *            libwebp and was added in tifflib 4.1.0 in 2019.
+ *  Note 3: On Windows with 2 bpp or 4 bpp images, the bytes in the
+ *          tiff-compressed file depend on the pad bits, but not on the
+ *          decoded raster image when read.  Because it is sometimes
+ *          convenient to use a golden file with a byte-by-byte check
+ *          to verify invariance, we set the pad bits to 0 before writing,
+ *          in pixWriteToTiffStream().
  * </pre>
  */
 
@@ -124,6 +132,9 @@ static const l_int32  ManyPagesInTiffFile = 3000;  /* warn if big */
     /* Verified that tiflib makes valid g4 files of this size */
 static const l_int32  MaxTiffWidth = 1 << 20;  /* 1M pixels */
 static const l_int32  MaxTiffHeight = 1 << 20;  /* 1M pixels */
+
+    /* Check g4 data size */
+static const size_t  MaxNumTiffBytes = (1 << 28) - 1;  /* 256 MB */
 
     /* All functions with TIFF interfaces are static. */
 static PIX      *pixReadFromTiffStream(TIFF *tif);
@@ -523,6 +534,14 @@ PIXCMAP   *cmap;
         L_ERROR("old style jpeg format is not supported\n", procName);
         return NULL;
     }
+
+        /* webp in tiff is in 4.1.0 and not yet supported in Adobe registry */
+#if defined(COMPRESSION_WEBP)
+    if (tiffcomp == COMPRESSION_WEBP) {
+        L_ERROR("webp in tiff not generally supported yet\n", procName);
+        return NULL;
+    }
+#endif  /* COMPRESSION_WEBP */
 
         /* Use default fields for bps and spp */
     TIFFGetFieldDefaulted(tif, TIFFTAG_BITSPERSAMPLE, &bps);
@@ -2173,6 +2192,12 @@ TIFF     *tif;
          * We skip the 8 byte header and take nbytes of data,
          * up to the beginning of the directory (at diroff)  */
     nbytes = diroff - 8;
+    if (nbytes > MaxNumTiffBytes) {
+        LEPT_FREE(inarray);
+        L_ERROR("requesting %zu bytes > %zu\n", procName,
+                nbytes, MaxNumTiffBytes);
+        return 1;
+    }
     *pnbytes = nbytes;
     if ((data = (l_uint8 *)LEPT_CALLOC(nbytes, sizeof(l_uint8))) == NULL) {
         LEPT_FREE(inarray);
