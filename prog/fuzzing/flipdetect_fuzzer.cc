@@ -9,27 +9,29 @@ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 	PIX *pixs_payload = pixReadMemSpix(data, size);
 	if(pixs_payload == NULL) return 0;
 	
+	l_float32 minupconf, minratio, conf1, conf2, upconf1, leftconf1, &upconf2, &leftconf2;
 	PIX *pix_pointer_payload, *return_pix;
+	
+	pix_pointer_payload = pixCopy(NULL, pixs_payload);
+	pixMirrorDetect(pix_pointer_payload, &conf1, 0, 1);
+	pixDestroy(&pix_pointer_payload);
 
 	pix_pointer_payload = pixCopy(NULL, pixs_payload);
-	return_pix = pixCloseGray3(pix_pointer_payload,  3,  1);
+	pixMirrorDetectDwa(pix_pointer_payload, &conf2, 0, 0);
 	pixDestroy(&pix_pointer_payload);
+
+	pix_pointer_payload = pixCopy(NULL, pixs_payload);
+	return_pix = pixOrientCorrect(pixs, minupconf, minratio, NULL, NULL, NULL, 1);
+	pixDestroy(&pix_pointer_payload);	
 	pixDestroy(&return_pix);
 
 	pix_pointer_payload = pixCopy(NULL, pixs_payload);
-	return_pix = pixDilateGray3(pix_pointer_payload,  3,  1);
+	pixOrientDetect(pix_pointer_payload, &upconf1, &leftconf1, 0, 0);
 	pixDestroy(&pix_pointer_payload);
-	pixDestroy(&return_pix);
 
 	pix_pointer_payload = pixCopy(NULL, pixs_payload);
-	return_pix = pixErodeGray3(pix_pointer_payload,  3,  1);
+	pixOrientDetectDwa(pix1, &upconf2, &leftconf2, 0, 0);
 	pixDestroy(&pix_pointer_payload);
-	pixDestroy(&return_pix);
-
-	pix_pointer_payload = pixCopy(NULL, pixs_payload);
-	return_pix = pixOpenGray3(pix_pointer_payload,  3,  1);
-	pixDestroy(&pix_pointer_payload);
-	pixDestroy(&return_pix);
 
 	pixDestroy(&pixs_payload);
 	return 0;
