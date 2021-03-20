@@ -49,7 +49,7 @@ set(MINIMUM_WEBPMUX_VERSION 0.5.0)
 
 option(BUILD_PROG "Build utility programs" OFF)
 if (WIN32)
-    option(SW_BUILD "Build with sw" ON)
+    option(SW_BUILD "Build with sw" OFF)
 else()
     option(SW_BUILD "Build with sw" OFF)
 endif()
