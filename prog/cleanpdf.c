@@ -145,7 +145,7 @@ static char  mainName[] = "cleanpdf";
         /* Get the names of the pdf files */
     if ((sa = getSortedPathnamesInDirectory(basedir, "pdf", 0, 0)) == NULL)
         return ERROR_INT("files not found", mainName, 1);
-    sarrayWriteStream(stderr, sa);
+    sarrayWriteStderr(sa);
     n = sarrayGetCount(sa);
 #endif
 
@@ -184,7 +184,7 @@ static char  mainName[] = "cleanpdf";
   #endif  /* USE_PDFTOPPM */
         lept_free(tail);
         lept_free(basename);
-        fprintf(stderr, "%s\n", buf);
+        lept_stderr("%s\n", buf);
         ret = system(buf);   /* pdfimages or pdftoppm */
     }
     sarrayDestroy(&sa);
@@ -193,7 +193,7 @@ static char  mainName[] = "cleanpdf";
 #if 1
         /* Clean, deskew and compress */
     sa = getSortedPathnamesInDirectory(imagedir, NULL, 0, 0);
-    sarrayWriteStream(stderr, sa);
+    sarrayWriteStderr(sa);
     n = sarrayGetCount(sa);
     firstpath = NULL;
     for (i = 0; i < n; i++) {
@@ -214,7 +214,7 @@ static char  mainName[] = "cleanpdf";
         splitPathAtDirectory(fname, NULL, &tail);
         splitPathAtExtension(tail, &basename, NULL);
         snprintf(buf, sizeof(buf), "%s/%s.tif", imagedir, basename);
-        fprintf(stderr, "%s\n", buf);
+        lept_stderr("%s\n", buf);
         pixWrite(buf, pix5, IFF_TIFF_G4);
         if (i == 0)  /* save full path to first image */
             firstpath = stringNew(buf);
@@ -236,7 +236,7 @@ static char  mainName[] = "cleanpdf";
          * page to be printed to cover an 8.5 x 11 inch sheet of paper.
          * We use flate encoding to avoid photometric reversal which
          * happens when encoded with G4 tiff.  */
-    fprintf(stderr, "Write output to %s\n", outfile);
+    lept_stderr("Write output to %s\n", outfile);
     pix1 = pixRead(firstpath);
     pixInferResolution(pix1, 11.0, &res);
     pixDestroy(&pix1);
