@@ -67,6 +67,7 @@ static l_float32 normalizeAngleForShear(l_float32 radang, l_float32 mindif);
 
 
 #ifndef  NO_CONSOLE_IO
+#undef DEBUG
 #define  DEBUG     0
 #endif  /* ~NO_CONSOLE_IO */
 
