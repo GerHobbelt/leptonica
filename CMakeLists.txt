@@ -10,6 +10,7 @@
 
 cmake_minimum_required(VERSION 3.1.3)
 cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0074 NEW) # find_package() uses <PackageName>_ROOT variables
 
 # In-source builds are disabled.
 if ("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
