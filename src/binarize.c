@@ -872,12 +872,12 @@ PIX     *pixg, *pix1, *pixd;
     if (!pixs || (d = pixGetDepth(pixs)) < 8)
         return (PIX *)ERROR_PTR("pixs undefined or d < 8 bpp", procName, NULL);
     if (d == 32)
-        pixg = pixConvertRGBToGray(pixs, 0.3, 0.4, 0.3);
+        pixg = pixConvertRGBToGray(pixs, 0.3f, 0.4f, 0.3f);
     else
         pixg = pixConvertTo8(pixs, 0);
 
     pix1 = pixContrastNorm(NULL, pixg, 50, 50, mindiff, 2, 2);
-    pixSauvolaBinarizeTiled(pix1, 25, 0.40, 1, 1, NULL, &pixd);
+    pixSauvolaBinarizeTiled(pix1, 25, 0.40f, 1, 1, NULL, &pixd);
     pixDestroy(&pixg);
     pixDestroy(&pix1);
     return pixd;
@@ -917,12 +917,12 @@ PIX       *pixg, *pix1, *pixd;
     if (!pixs || (d = pixGetDepth(pixs)) < 8)
         return (PIX *)ERROR_PTR("pixs undefined or d < 8 bpp", procName, NULL);
     if (d == 32)
-        pixg = pixConvertRGBToGray(pixs, 0.3, 0.4, 0.3);
+        pixg = pixConvertRGBToGray(pixs, 0.3f, 0.4f, 0.3f);
     else
         pixg = pixConvertTo8(pixs, 0);
 
         /* Use the entire image for the estimate; pix1 is 1x1 */
-    pixOtsuAdaptiveThreshold(pixg, 5000, 5000, 0, 0, 0.1, &pix1, NULL);
+    pixOtsuAdaptiveThreshold(pixg, 5000, 5000, 0, 0, 0.1f, &pix1, NULL);
     pixGetPixel(pix1, 0, 0, &val);
     ival = (l_int32)val;
     ival = L_MIN(ival, 110);

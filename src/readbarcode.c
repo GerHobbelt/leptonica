@@ -1029,7 +1029,7 @@ numaGetCrossingDistances(NUMA       *nas,
                          l_float32  *pmaxdist)
 {
 l_int32    i, n, nspan;
-l_float32  val, newval, mindist, maxdist, dist;
+l_float32  val, newval, mindist, maxdist;
 NUMA      *na1, *na2, *naedist, *naodist;
 
     PROCNAME("numaGetCrossingDistances");
@@ -1064,8 +1064,8 @@ NUMA      *na1, *na2, *naedist, *naodist;
     numaJoin(na1, naodist, 0, -1);  /* use both bars and spaces */
     nspan = numaGetCount(na1);
     na2 = numaMakeHistogram(na1, 100, NULL, NULL);
-    numaHistogramGetValFromRank(na2, 0.1, &mindist);
-    numaHistogramGetValFromRank(na2, 0.9, &maxdist);
+    numaHistogramGetValFromRank(na2, 0.1f, &mindist);
+    numaHistogramGetValFromRank(na2, 0.9f, &maxdist);
     numaDestroy(&na1);
     numaDestroy(&na2);
     L_INFO("mindist = %7.3f, maxdist = %7.3f\n", procName, mindist, maxdist);
