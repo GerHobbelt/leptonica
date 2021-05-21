@@ -52,11 +52,20 @@
  *          static PIX   *pixSauvolaGetThreshold()
  *          static PIX   *pixApplyLocalThreshold();
  *
+ *      Sauvola binarization on contrast normalization
+ *          PIX          *pixSauvolaOnContrastNorm()  8 bpp
+ *
+ *      Contrast normalization followed by bg normalization and thresholding
+ *          PIX          *pixThreshOnDoubleNorm()
+ *
  *      Global thresholding using connected components
  *          PIX          *pixThresholdByConnComp()
  *
  *      Global thresholding by histogram
  *          PIX          *pixThresholdByHisto()
+ *
+ *      Make threshold array for a given threshold result
+ *          PIX          *pixThresholdArrayFromResult()
  *
  *  Notes:
  *      (1) pixOtsuAdaptiveThreshold() computes a global threshold over each
@@ -835,6 +844,103 @@ PIX       *pixd;
 
 
 /*----------------------------------------------------------------------*
+ *      Contrast normalization followed by Sauvola binarization         *
+ *----------------------------------------------------------------------*/
+/*!
+ * \brief   pixSauvolaOnContrastNorm()
+ *
+ * \param[in]    pixs          8 or 32 bpp
+ * \param[in]    mindiff       minimum diff to accept as valid in contrast
+ *                             normalization.  Use ~130 for noisy images.
+ * \return  pixd    1 bpp thresholded image, or NULL on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) This composite operation is good for adaptively removing
+ *          dark background.
+ * </pre>
+ */
+PIX  *
+pixSauvolaOnContrastNorm(PIX     *pixs,
+                         l_int32  mindiff)
+{
+l_int32  d;
+PIX     *pixg, *pix1, *pixd;
+
+    PROCNAME("pixSauvolaOnContrastNorm");
+
+    if (!pixs || (d = pixGetDepth(pixs)) < 8)
+        return (PIX *)ERROR_PTR("pixs undefined or d < 8 bpp", procName, NULL);
+    if (d == 32)
+        pixg = pixConvertRGBToGray(pixs, 0.3, 0.4, 0.3);
+    else
+        pixg = pixConvertTo8(pixs, 0);
+
+    pix1 = pixContrastNorm(NULL, pixg, 50, 50, mindiff, 2, 2);
+    pixSauvolaBinarizeTiled(pix1, 25, 0.40, 1, 1, NULL, &pixd);
+    pixDestroy(&pixg);
+    pixDestroy(&pix1);
+    return pixd;
+}
+
+
+/*----------------------------------------------------------------------*
+ *      Contrast normalization followed by background normalization     *
+ *                            and thresholding                          *
+ *----------------------------------------------------------------------*/
+/*!
+ * \brief   pixTheshOnDoubleNorm()
+ *
+ * \param[in]    pixs          8 or 32 bpp
+ * \param[in]    mindiff       minimum diff to accept as valid in contrast
+ *                             normalization.  Use ~130 for noisy images.
+ * \return  pixd    1 bpp thresholded image, or NULL on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) This composite operation is good for adaptively removing
+ *          dark background.
+ *      (2) The threshold for the binarization uses an estimate based
+ *          on Otsu adaptive thresholding.
+ * </pre>
+ */
+PIX  *
+pixThreshOnDoubleNorm(PIX     *pixs,
+                      l_int32  mindiff)
+{
+l_int32    d, ival;
+l_uint32   val;
+PIX       *pixg, *pix1, *pixd;
+
+    PROCNAME("pixThreshOnDoubleNorm");
+
+    if (!pixs || (d = pixGetDepth(pixs)) < 8)
+        return (PIX *)ERROR_PTR("pixs undefined or d < 8 bpp", procName, NULL);
+    if (d == 32)
+        pixg = pixConvertRGBToGray(pixs, 0.3, 0.4, 0.3);
+    else
+        pixg = pixConvertTo8(pixs, 0);
+
+        /* Use the entire image for the estimate; pix1 is 1x1 */
+    pixOtsuAdaptiveThreshold(pixg, 5000, 5000, 0, 0, 0.1, &pix1, NULL);
+    pixGetPixel(pix1, 0, 0, &val);
+    ival = (l_int32)val;
+    ival = L_MIN(ival, 110);
+    pixDestroy(&pix1);
+
+        /* Double normalization */
+    pixContrastNorm(pixg, pixg, 50, 50, mindiff, 2, 2);
+    pix1 = pixBackgroundNormSimple(pixg, NULL, NULL);
+    pixDestroy(&pixg);
+
+/*    lept_stderr("ival = %d\n", ival); */
+    pixd = pixThresholdToBinary(pix1, ival);
+    pixDestroy(&pix1);
+    return pixd;
+}
+
+
+/*----------------------------------------------------------------------*
  *            Global thresholding using connected components            *
  *----------------------------------------------------------------------*/
 /*!
@@ -1097,5 +1203,79 @@ NUMA      *na1, *na2, *na3;
     if (*pthresh > 0 && ppixd)
         *ppixd = pixThresholdToBinary(pixs, *pthresh);
     return 0;
+}
+
+
+/*----------------------------------------------------------------------*
+ *        Make threshold value array for a given threshold result
+ *----------------------------------------------------------------------*/
+/*!
+ * \brief   pixThresholdArrayFromResult()
+ *
+ * \param[in]    pixs          gray 8 bpp, no colormap
+ * \param[in]    pixb          1 bpp
+ * \return  pixd, or null on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) This makes an 8 bpp pix whose values are thresholds
+ *          that when applied to each corresponding pixel in %pixs,
+ *          results in the pixel (0 or 1) in %pixb.
+ *      (2) The array %pixd is not unique.  For an 8 bpp pixel vals: if
+ *          thresholded to 0 (white), we can use any value less than or
+ *          equal to vals; if thresholded to 1 (black), any value greater
+ *          than vals can be used.  We choose values (vals - 1) for
+ *          the former and (vals + 1) for the latter.
+ *      (3) %pixb can be regenerated, pixel-by-pixel, from %pixs and %pixd:
+ *               pixel(b) = (pixel(s) < pixel(d)) ? 1 : 0;
+ *      (4) Usage in tesseract: in addition to running ocr on the
+ *          binarized image, this array %pixd is used with the original
+ *          8 bpp image %pixs to identify layout features.
+ * </pre>
+ */
+PIX  *
+pixThresholdArrayFromResult(PIX  *pixs,
+                            PIX  *pixb)
+{
+l_int32    i, j, w, h, wb, hb, wpls, wplb, wpld, vals, valb, vald;
+l_uint32  *datas, *datab, *datad, *lines, *lineb, *lined;
+PIX       *pixd;
+
+    PROCNAME("pixThresholdArrayFromResult");
+
+    if (!pixs || (pixGetDepth(pixs) != 8) || pixGetColormap(pixs))
+        return (PIX *)ERROR_PTR("pixs not 8 bpp or has cmap", procName, NULL);
+    if (!pixb || (pixGetDepth(pixb) != 1))
+        return (PIX *)ERROR_PTR("pixb undefined or not 1 bpp", procName, NULL);
+    pixGetDimensions(pixs, &w, &h, NULL);
+    pixGetDimensions(pixb, &wb, &hb, NULL);
+    if (w != wb || h != hb)
+        return (PIX *)ERROR_PTR("pixs and pixb sizes unequal", procName, NULL);
+
+    if ((pixd = pixCreate(w, h, 8)) == NULL)
+        return (PIX *)ERROR_PTR("pixd not made", procName, NULL);
+    datas = pixGetData(pixs);
+    datab = pixGetData(pixb);
+    datad = pixGetData(pixd);
+    wpls = pixGetWpl(pixs);
+    wplb = pixGetWpl(pixb);
+    wpld = pixGetWpl(pixd);
+    for (i = 0; i < h; i++) {
+        lines = datas + i * wpls;
+        lineb = datab + i * wplb;
+        lined = datad + i * wpld;
+        for (j = 0; j < w; j++) {
+            vals = GET_DATA_BYTE(lines, j);
+            valb = GET_DATA_BIT(lineb, j);
+            if (vals == 0)
+                vald = 1;
+            else if (vals == 255)
+                vald = 254;
+            else
+                vald = (valb == 0) ? vals - 1 : vals + 1;
+            SET_DATA_BYTE(lined, j, vald);
+        }
+    }
+    return pixd;
 }
 
