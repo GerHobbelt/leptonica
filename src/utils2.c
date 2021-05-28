@@ -2249,9 +2249,9 @@ l_uint32  attributes;
 #ifndef _WIN32
     ret = mkdir(dir, 0777);
 #else
-    attributes = GetFileAttributes(dir);
+    attributes = GetFileAttributesA(dir);
     if (attributes == INVALID_FILE_ATTRIBUTES)
-        ret = (CreateDirectory(dir, NULL) ? 0 : 1);
+        ret = (CreateDirectoryA(dir, NULL) ? 0 : 1);
 #endif
         /* Make all the subdirectories */
     for (i = 0; i < n; i++) {
@@ -2259,8 +2259,8 @@ l_uint32  attributes;
 #ifndef _WIN32
         ret += mkdir(tmpdir, 0777);
 #else
-        if (CreateDirectory(tmpdir, NULL) == 0)
-            ret += (GetLastError () != ERROR_ALREADY_EXISTS);
+        if (CreateDirectoryA(tmpdir, NULL) == 0)
+            ret += (GetLastError() != ERROR_ALREADY_EXISTS);
 #endif
         LEPT_FREE(dir);
         dir = tmpdir;
@@ -2344,7 +2344,7 @@ char    *realdir;
     LEPT_FREE(realdir);
 #else
     newpath = genPathname(dir, NULL);
-    ret = (RemoveDirectory(newpath) ? 0 : 1);
+    ret = (RemoveDirectoryA(newpath) ? 0 : 1);
     LEPT_FREE(newpath);
 #endif  /* !_WIN32 */
 
@@ -2392,7 +2392,7 @@ char  *realdir;
 #else  /* _WIN32 */
     {
     l_uint32  attributes;
-    attributes = GetFileAttributes(realdir);
+    attributes = GetFileAttributesA(realdir);
     if (attributes != INVALID_FILE_ATTRIBUTES &&
         (attributes & FILE_ATTRIBUTE_DIRECTORY))
         *pexists = 1;
@@ -2532,8 +2532,8 @@ l_int32  ret;
     ret = remove(filepath);
 #else
         /* Set attributes to allow deletion of read-only files */
-    SetFileAttributes(filepath, FILE_ATTRIBUTE_NORMAL);
-    ret = DeleteFile(filepath) ? 0 : 1;
+    SetFileAttributesA(filepath, FILE_ATTRIBUTE_NORMAL);
+    ret = DeleteFileA(filepath) ? 0 : 1;
 #endif  /* !_WIN32 */
 
     return ret;
@@ -2625,7 +2625,7 @@ l_int32  ret;
     LEPT_FREE(srctail);
 
         /* Overwrite any existing file at 'newpath' */
-    ret = MoveFileEx(srcpath, newpath,
+    ret = MoveFileExA(srcpath, newpath,
                      MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING) ? 0 : 1;
 #endif  /* ! _WIN32 */
 
@@ -2719,7 +2719,7 @@ l_int32  ret;
     LEPT_FREE(srctail);
 
         /* Overwrite any existing file at 'newpath' */
-    ret = CopyFile(srcpath, newpath, FALSE) ? 0 : 1;
+    ret = CopyFileA(srcpath, newpath, FALSE) ? 0 : 1;
 #endif   /* !_WIN32 */
 
     LEPT_FREE(srcpath);
@@ -3228,7 +3228,7 @@ size_t   size;
 #ifdef _WIN32
         l_int32 tmpdirlen;
         char tmpdir[MAX_PATH];
-        GetTempPath(sizeof(tmpdir), tmpdir);  /* get the windows temp dir */
+        GetTempPathA(sizeof(tmpdir), tmpdir);  /* get the windows temp dir */
         tmpdirlen = strlen(tmpdir);
         if (tmpdirlen > 0 && tmpdir[tmpdirlen - 1] == '\\') {
             tmpdir[tmpdirlen - 1] = '\0';  /* trim the trailing '\' */
@@ -3432,7 +3432,7 @@ char  dirname[240];
 {
     char  fname[MAX_PATH];
     FILE *fp;
-    if (GetTempFileName(dirname, "lp.", 0, fname) == 0)
+    if (GetTempFileNameA(dirname, "lp.", 0, fname) == 0)
         return (char *)ERROR_PTR("GetTempFileName failed", procName, NULL);
     if ((fp = fopen(fname, "wb")) == NULL)
         return (char *)ERROR_PTR("file cannot be written to", procName, NULL);
