@@ -62,8 +62,11 @@
 #include "tiffio.h"
 #endif
 
-#if HAVE_LIBZ
+#if HAVE_LIBZ && !HAVE_LIBZ_NG
 #include "zlib.h"
+#endif
+#if HAVE_LIBZ_NG
+#include "zlib-ng.h"
 #endif
 
 #if HAVE_LIBWEBP
@@ -174,11 +177,18 @@ char    *versionStrP = NULL;
 	}
 #endif  /* HAVE_LIBTIFF */
 
-#if HAVE_LIBZ
+#if HAVE_LIBZ && !HAVE_LIBZ_NG
     if (!first) stringJoinIP(&versionStrP, " : ");
     first = FALSE;
     stringJoinIP(&versionStrP, "zlib ");
     stringJoinIP(&versionStrP, ZLIB_VERSION);
+#endif  /* HAVE_LIBZ */
+
+#if HAVE_LIBZ_NG
+	if (!first) stringJoinIP(&versionStrP, " : ");
+	first = FALSE;
+	stringJoinIP(&versionStrP, "zlib-ng ");
+	stringJoinIP(&versionStrP, ZLIBNG_VERSION);
 #endif  /* HAVE_LIBZ */
 
 #if HAVE_LIBWEBP

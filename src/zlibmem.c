@@ -54,10 +54,15 @@
 #include "allheaders.h"
 
 /* --------------------------------------------*/
-#if  HAVE_LIBZ   /* defined in environ.h */
+#if  HAVE_LIBZ || HAVE_LIBZ_NG   /* defined in environ.h */
 /* --------------------------------------------*/
 
+#if HAVE_LIBZ && !HAVE_LIBZ_NG
 #include "zlib.h"
+#endif
+#if HAVE_LIBZ_NG
+#include "zlib-ng.h"
+#endif
 
 static const l_int32  L_BUF_SIZE = 32768;
 static const l_int32  ZLIB_COMPRESSION_LEVEL = 6;
@@ -99,7 +104,7 @@ l_int32     flush;
 size_t      nbytes;
 l_uint8    *bufferin, *bufferout;
 L_BBUFFER  *bbin, *bbout;
-z_stream    z;
+zng_stream    z;
 
     PROCNAME("zlibCompress");
 
@@ -130,7 +135,7 @@ z_stream    z;
     z.next_out = bufferout;
     z.avail_out = L_BUF_SIZE;
 
-    status = deflateInit(&z, ZLIB_COMPRESSION_LEVEL);
+    status = zng_deflateInit(&z, ZLIB_COMPRESSION_LEVEL);
     if (status != Z_OK) {
         L_ERROR("deflateInit failed\n", procName);
         success = FALSE;
@@ -147,7 +152,7 @@ z_stream    z;
             z.avail_in = nbytes;
         }
         flush = (bbin->n) ? Z_SYNC_FLUSH : Z_FINISH;
-        status = deflate(&z, flush);
+        status = zng_deflate(&z, flush);
 #if DEBUG
         lept_stderr(" status is %d, bytesleft = %u, totalout = %zu\n",
                   status, z.avail_out, z.total_out);
@@ -163,7 +168,7 @@ z_stream    z;
         z.avail_out = L_BUF_SIZE;
     } while (flush != Z_FINISH);
 
-    deflateEnd(&z);
+	zng_deflateEnd(&z);
 
 cleanup_arrays:
     if (success) {
@@ -202,7 +207,7 @@ l_uint8    *bufferin, *bufferout;
 l_int32     status, success;
 size_t      nbytes;
 L_BBUFFER  *bbin, *bbout;
-z_stream    z;
+zng_stream    z;
 
     PROCNAME("zlibUncompress");
 
@@ -232,8 +237,7 @@ z_stream    z;
     z.next_out = bufferout;
     z.avail_out = L_BUF_SIZE;
 
-    inflateInit(&z);
-
+	zng_inflateInit(&z);
 
     for ( ; ; ) {
         if (z.avail_in == 0) {
@@ -246,7 +250,7 @@ z_stream    z;
         }
         if (z.avail_in == 0)
             break;
-        status = inflate(&z, Z_SYNC_FLUSH);
+        status = zng_inflate(&z, Z_SYNC_FLUSH);
 #if DEBUG
         lept_stderr(" status is %d, bytesleft = %d, totalout = %d\n",
                 status, z.avail_out, z.total_out);
@@ -262,7 +266,7 @@ z_stream    z;
         z.avail_out = L_BUF_SIZE;
     }
 
-    inflateEnd(&z);
+	zng_inflateEnd(&z);
 
 cleanup_arrays:
     if (success) {

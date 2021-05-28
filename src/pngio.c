@@ -94,7 +94,7 @@
  *         -1    default compression  (equivalent to 6 in latest version)
  *         9     best compression
  *    Note that if you are using the defined constants in zlib instead
- *    of the compression integers given above, you must include zlib.h.
+ *    of the compression integers given above, you must include zlib-ng.h.
  *
  *    There is global for determining the size of retained samples:
  *             var_PNG_STRIP_16_to_8
@@ -130,9 +130,14 @@
 
 #include "png.h"
 
-#if  HAVE_LIBZ
+#if HAVE_LIBZ && !HAVE_LIBZ_NG
 #include "zlib.h"
-#else
+#endif
+#if HAVE_LIBZ_NG
+#include "zlib-ng.h"
+#endif
+
+#if !HAVE_LIBZ && !HAVE_LIBZ_NG
 #define  Z_DEFAULT_COMPRESSION (-1)
 #endif  /* HAVE_LIBZ */
 
@@ -1260,15 +1265,15 @@ char        *text;
  * <pre>
  * Notes:
  *      (1) Valid zlib compression values are in the interval [0 ... 9],
- *          where, as defined in zlib.h:
+ *          where, as defined in zlib-ng.h:
  *            0         Z_NO_COMPRESSION
  *            1         Z_BEST_SPEED    (poorest compression)
  *            9         Z_BEST_COMPRESSION
  *          For the default value, use either of these:
  *            6         Z_DEFAULT_COMPRESSION
  *           -1         (resolves to Z_DEFAULT_COMPRESSION)
- *      (2) If you use the defined constants in zlib.h instead of the
- *          compression integers given above, you must include zlib.h.
+ *      (2) If you use the defined constants in zlib-ng.h instead of the
+ *          compression integers given above, you must include zlib-ng.h.
  * </pre>
  */
 l_ok

@@ -115,14 +115,17 @@ typedef uintptr_t l_uintptr_t;
   #if !defined(HAVE_LIBZ)
   #define  HAVE_LIBZ          1
   #endif
-  #if !defined(HAVE_LIBGIF)
-  #define  HAVE_LIBGIF        0
+  #if !defined(HAVE_LIBZ_NG)
+  #define  HAVE_LIBZ_NG       1
+  #endif
+#if !defined(HAVE_LIBGIF)
+  #define  HAVE_LIBGIF        1
   #endif
   #if !defined(HAVE_LIBUNGIF)
   #define  HAVE_LIBUNGIF      0
   #endif
   #if !defined(HAVE_LIBWEBP)
-  #define  HAVE_LIBWEBP       0
+  #define  HAVE_LIBWEBP       1
   #endif
   #if !defined(HAVE_LIBWEBP_ANIM)
   #define  HAVE_LIBWEBP_ANIM  0
