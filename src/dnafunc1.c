@@ -526,6 +526,7 @@ L_HASHMAP *
 l_hmapCreateFromDna(L_DNA  *da)
 {
 l_int32      i, n;
+l_uint64     key;
 l_float64    dval;
 L_HASHITEM  *hitem;
 L_HASHMAP   *hmap;
@@ -566,6 +567,7 @@ l_dnaRemoveDupsByHmap(L_DNA       *das,
                       L_HASHMAP  **phmap)
 {
 l_int32      i, tabsize;
+l_uint64     key;
 l_float64    dval;
 L_DNA       *dad;
 L_HASHITEM  *hitem;
@@ -664,6 +666,7 @@ l_dnaIntersectionByHmap(L_DNA   *da1,
                         L_DNA  **pdad)
 {
 l_int32      i, n1, n2, n;
+l_uint64     key;
 l_float64    dval;
 L_DNA       *da_small, *da_big, *dad;
 L_HASHITEM  *hitem;
