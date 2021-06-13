@@ -810,8 +810,8 @@ l_int32                      w, h, d, wpl, spp, colorflag, rowsamples;
 l_uint32                    *ppixel, *line, *data;
 JSAMPROW                     rowbuffer;
 PIX                         *pix;
-struct jpeg_compress_struct  cinfo;
-struct jpeg_error_mgr        jerr;
+struct jpeg_compress_struct  cinfo = { 0 };
+struct jpeg_error_mgr        jerr = { 0 };
 char                        *text;
 jmp_buf                      jmpbuf;  /* must be local to the function */
 
@@ -930,7 +930,7 @@ jmp_buf                      jmpbuf;  /* must be local to the function */
         jpeg_write_marker(&cinfo, JPEG_COM, (const JOCTET *)text, strlen(text));
     }
 
-        /* Allocate row buffer */
+    /* Allocate row buffer */
     spp = cinfo.input_components;
     rowsamples = spp * w;
     if ((rowbuffer = (JSAMPROW)LEPT_CALLOC(sizeof(JSAMPLE), rowsamples))
