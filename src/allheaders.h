@@ -29,8 +29,8 @@
 
 
 #define LIBLEPT_MAJOR_VERSION   1
-#define LIBLEPT_MINOR_VERSION   81
-#define LIBLEPT_PATCH_VERSION   1
+#define LIBLEPT_MINOR_VERSION   82
+#define LIBLEPT_PATCH_VERSION   0
 
 #include "alltypes.h"
 
@@ -493,6 +493,7 @@ LEPT_DLL extern l_ok pixcmapSetAlpha ( PIXCMAP *cmap, l_int32 index, l_int32 ava
 LEPT_DLL extern l_int32 pixcmapGetIndex ( PIXCMAP *cmap, l_int32 rval, l_int32 gval, l_int32 bval, l_int32 *pindex );
 LEPT_DLL extern l_ok pixcmapHasColor ( PIXCMAP *cmap, l_int32 *pcolor );
 LEPT_DLL extern l_ok pixcmapIsOpaque ( PIXCMAP *cmap, l_int32 *popaque );
+LEPT_DLL extern l_ok pixcmapNonOpaqueColorsInfo ( PIXCMAP *cmap, l_int32 *pntrans, l_int32 *pmax_trans, l_int32 *pmin_opaque );
 LEPT_DLL extern l_ok pixcmapIsBlackAndWhite ( PIXCMAP *cmap, l_int32 *pblackwhite );
 LEPT_DLL extern l_ok pixcmapCountGrayColors ( PIXCMAP *cmap, l_int32 *pngray );
 LEPT_DLL extern l_ok pixcmapGetRankIntensity ( PIXCMAP *cmap, l_float32 rankval, l_int32 *pindex );
