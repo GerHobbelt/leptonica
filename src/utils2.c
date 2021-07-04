@@ -203,7 +203,7 @@
 #include <sys/types.h>
 #endif
 
-#ifdef OS_IOS
+#ifdef __APPLE__
 #include <unistd.h>
 #include <errno.h>
 #endif
@@ -3301,7 +3301,7 @@ size_t   pathlen;
 
     memset(result, 0, nbytes);
 
-#ifdef OS_IOS
+#ifdef __APPLE__
     {
         size_t n = confstr(_CS_DARWIN_USER_TEMP_DIR, result, nbytes);
         if (n == 0) {
@@ -3321,7 +3321,7 @@ size_t   pathlen;
         dir = pathJoin(tmpDir, subdir);
     }
     
-#endif /*  ~ OS_IOS */
+#endif /*  ~ __APPLE__ */
 
 #ifndef _WIN32
     path = stringNew(dir);
@@ -3330,7 +3330,7 @@ size_t   pathlen;
 #endif  /*  ~ _WIN32 */
     pathlen = strlen(path);
     if (pathlen < nbytes - 1) {
-        stringCat(result, nbytes, path);
+        stringCopy(result, path, nbytes);
     } else {
         L_ERROR("result array too small for path\n", procName);
         ret = 1;
