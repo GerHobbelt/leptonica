@@ -51,7 +51,7 @@
  *
  *  See regutils.h for how to use this.  Here is a minimal setup:
  *
- *  main(int argc, const char **argv) {
+ *  main(int argc, const char** argv) {
  *  ...
  *  L_REGPARAMS  *rp;
  *
