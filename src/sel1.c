@@ -975,7 +975,7 @@ selaGetCombName(SELA    *sela,
                 l_int32  size,
                 l_int32  direction)
 {
-char    *selname;
+char    *selname = NULL;
 char     combname[256];
 l_int32  i, nsels, sx, sy, found;
 SEL     *sel;
