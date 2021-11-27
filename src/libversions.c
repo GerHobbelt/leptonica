@@ -146,9 +146,9 @@ char    *versionStrP = NULL;
          *   https://gcc.gnu.org/onlinedocs/cpp/Stringification.html  */
   #define l_xstr(s) l_str(s)
   #define l_str(s) #s
-    snprintf(buf, sizeof(buf), " (libjpeg-turbo %s)",
+    snprintf(buffer, sizeof(buffer), " (libjpeg-turbo %s)",
              l_xstr(LIBJPEG_TURBO_VERSION));
-    stringJoinIP(&versionStrP, buf);
+    stringJoinIP(&versionStrP, buffer);
   #endif  /* LIBJPEG_TURBO_VERSION */
     }
 #endif  /* HAVE_LIBJPEG */
