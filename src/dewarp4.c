@@ -925,7 +925,7 @@ char       buf[256];
 l_int32    i, svd, shd;
 L_BMF     *bmf;
 L_DEWARP  *dew;
-PIX       *pixv, *pixvs, *pixh, *pixhs, *pixt, *pixd;
+PIX       *pixv, *pixvs, *pixh, *pixhs = NULL, *pixt, *pixd;
 PIXA      *pixa;
 
     PROCNAME("dewarpaShowArrays");

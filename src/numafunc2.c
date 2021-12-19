@@ -720,7 +720,7 @@ numaWindowedVariance(NUMA   *nam,
 {
 l_int32     i, nm, nms;
 l_float32   var;
-l_float32  *fam, *fams, *fav, *farv;
+l_float32  *fam, *fams, *fav = NULL, *farv = NULL;
 NUMA       *nav, *narv;  /* variance and square root of variance */
 
     PROCNAME("numaWindowedVariance");

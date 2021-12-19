@@ -454,7 +454,7 @@ pixaCopy(PIXA    *pixa,
          l_int32  copyflag)
 {
 l_int32  i, nb;
-BOX     *boxc;
+BOX     *boxc = NULL;
 PIX     *pixc;
 PIXA    *pixac;
 
@@ -1899,7 +1899,7 @@ pixaaCreateFromPixa(PIXA    *pixa,
 {
 l_int32  count, i, j, npixa;
 PIX     *pix;
-PIXA    *pixat;
+PIXA    *pixat = NULL;
 PIXAA   *paa;
 
     PROCNAME("pixaaCreateFromPixa");

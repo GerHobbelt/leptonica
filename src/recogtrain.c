@@ -1498,7 +1498,7 @@ recogTrainFromBoot(L_RECOG   *recogboot,
 char      *text;
 l_int32    i, n, same, maxd, scaleh, linew;
 l_float32  score;
-PIX       *pix1, *pix2, *pixdb;
+PIX       *pix1, *pix2, *pixdb = NULL;
 PIXA      *pixa1, *pixa2, *pixa3, *pixad;
 
     PROCNAME("recogTrainFromBoot");

@@ -422,7 +422,7 @@ l_int32   *cmaptab;
 l_uint32   octindex;
 l_uint32  *rtab, *gtab, *btab;
 l_uint32  *ppixel;
-l_uint32  *datas, *datad, *datam, *lines, *lined, *linem;
+l_uint32  *datas, *datad, *datam = NULL, *lines, *lined, *linem = NULL;
 PIXCMAP   *cmap;
 
     PROCNAME("pixAssignToNearestColor");

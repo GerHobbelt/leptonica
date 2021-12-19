@@ -1293,7 +1293,7 @@ pixWindowedVariance(PIX    *pixm,
 l_int32     i, j, w, h, ws, hs, ds, wplm, wplms, wplv, wplrv, valm, valms;
 l_float32   var;
 l_uint32   *linem, *linems, *datam, *datams;
-l_float32  *linev, *linerv, *datav, *datarv;
+l_float32  *linev = NULL, *linerv = NULL, *datav = NULL, *datarv = NULL;
 FPIX       *fpixv, *fpixrv;  /* variance and square root of variance */
 
     PROCNAME("pixWindowedVariance");

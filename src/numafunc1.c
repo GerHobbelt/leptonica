@@ -1921,7 +1921,7 @@ numaInterpolateEqxInterval(l_float32  startx,
 {
 l_int32     i, n;
 l_float32   x, yval, maxx, delx;
-NUMA       *nax, *nay;
+NUMA       *nax = NULL, *nay;
 
     PROCNAME("numaInterpolateEqxInterval");
 
@@ -2011,7 +2011,7 @@ l_int32     i, im, j, nx, ny, i1, i2, i3, sorted;
 l_int32    *index;
 l_float32   del, xval, yval, excess, fract, minx, maxx, d1, d2, d3;
 l_float32  *fax, *fay;
-NUMA       *nasx, *nasy, *nadx, *nady;
+NUMA       *nasx, *nasy, *nadx = NULL, *nady;
 
     PROCNAME("numaInterpolateArbxInterval");
 

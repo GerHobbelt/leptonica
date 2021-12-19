@@ -1378,7 +1378,7 @@ pixDecideIfText(PIX      *pixs,
 {
 l_int32    i, empty, maxw, w, h, n1, n2, n3, minlines, big_comp;
 l_float32  ratio1, ratio2;
-L_BMF     *bmf;
+L_BMF     *bmf = NULL;
 BOXA      *boxa1, *boxa2, *boxa3, *boxa4, *boxa5;
 PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 PIXA      *pixa1;

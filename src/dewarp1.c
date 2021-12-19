@@ -1176,7 +1176,7 @@ l_int32    version, sampling, redfactor, minlines, pageno, hasref, refpage;
 l_int32    w, h, nx, ny, vdispar, hdispar, nlines;
 l_int32    mincurv, maxcurv, leftslope, rightslope, leftcurv, rightcurv;
 L_DEWARP  *dew;
-FPIX      *fpixv, *fpixh;
+FPIX      *fpixv = NULL, *fpixh = NULL;
 
     PROCNAME("dewarpReadStream");
 

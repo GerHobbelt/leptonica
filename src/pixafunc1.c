@@ -2485,7 +2485,7 @@ pixaaFlattenToPixa(PIXAA   *paa,
 {
 l_int32  i, j, m, mb, n;
 BOX     *box;
-NUMA    *naindex;
+NUMA    *naindex = NULL;
 PIX     *pix;
 PIXA    *pixa, *pixat;
 

@@ -2667,7 +2667,7 @@ pixAverageInRect(PIX        *pixs,
 {
 l_int32    w, h, d, wpls, wm, hm, dm, wplm, val, count;
 l_int32    i, j, xstart, xend, ystart, yend;
-l_uint32  *datas, *datam, *lines, *linem;
+l_uint32  *datas, *datam = NULL, *lines, *linem = NULL;
 l_float64  sum;
 
     PROCNAME("pixAverageInRect");
@@ -2772,7 +2772,7 @@ pixAverageInRectRGB(PIX       *pixs,
 {
 l_int32    w, h, wpls, wm, hm, dm, wplm, i, j, xstart, xend, ystart, yend;
 l_int32    rval, gval, bval, rave, gave, bave, count;
-l_uint32  *datas, *datam, *lines, *linem;
+l_uint32  *datas, *datam = NULL, *lines, *linem = NULL;
 l_uint32   pixel;
 l_float64  rsum, gsum, bsum;
 

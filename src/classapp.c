@@ -672,7 +672,7 @@ boxaExtractSortedPattern(BOXA  *boxa,
 {
 l_int32  index, nbox, row, prevrow, x, y, w, h;
 BOX     *box;
-NUMA    *nad;
+NUMA    *nad = NULL;
 NUMAA   *naa;
 
     PROCNAME("boxaExtractSortedPattern");

@@ -232,7 +232,10 @@ PIX       *pix1, *pixr, *pixg, *pixb;
         return ERROR_INT("pix1 not returned", procName, 1);
 
     pixr = pixg = pixb = NULL;
-    pixGetDimensions(pix1, &w, &h, NULL);
+	datar = datag = datab = NULL;
+	liner = lineg = lineb = NULL;
+
+	pixGetDimensions(pix1, &w, &h, NULL);
     if (ppixr) {
         pixr = pixCreate(w, h, 8);
         datar = pixGetData(pixr);

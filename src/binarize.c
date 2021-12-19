@@ -490,7 +490,7 @@ pixSauvolaBinarizeTiled(PIX       *pixs,
                         PIX      **ppixd)
 {
 l_int32     i, j, w, h, xrat, yrat;
-PIX        *pixth, *pixd, *tileth, *tiled, *pixt;
+PIX        *pixth, *pixd, *tileth = NULL, *tiled = NULL, *pixt;
 PIX       **ptileth, **ptiled;
 PIXTILING  *pt;
 
@@ -618,7 +618,7 @@ pixSauvolaBinarize(PIX       *pixs,
                    PIX      **ppixd)
 {
 l_int32  w, h;
-PIX     *pixg, *pixsc, *pixm, *pixms, *pixth, *pixd;
+PIX     *pixg, *pixsc, *pixm = NULL, *pixms = NULL, *pixth = NULL, *pixd = NULL;
 
     PROCNAME("pixSauvolaBinarize");
 
@@ -725,11 +725,11 @@ pixSauvolaGetThreshold(PIX       *pixm,
 {
 l_int32     i, j, w, h, tabsize, wplm, wplms, wplsd, wpld, usetab;
 l_int32     mv, ms, var, thresh;
-l_uint32   *datam, *datams, *datasd, *datad;
-l_uint32   *linem, *linems, *linesd, *lined;
+l_uint32   *datam, *datams, *datasd = NULL, *datad;
+l_uint32   *linem, *linems, *linesd = NULL, *lined;
 l_float32   sd;
 l_float32  *tab;  /* of 2^16 square roots */
-PIX        *pixsd, *pixd;
+PIX        *pixsd = NULL, *pixd = NULL;
 
     PROCNAME("pixSauvolaGetThreshold");
 

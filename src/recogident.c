@@ -744,7 +744,7 @@ l_int32     sum, moment, count;
 l_int32    *tab, *area1, *arraysum, *arraymoment;
 l_float32   maxscore, score;
 l_float32  *ycent1;
-FPIX       *fpix;
+FPIX       *fpix = NULL;
 PIX        *pixt, *pixt1, *pixt2;
 
     PROCNAME("pixCorrelationBestShift");
@@ -1638,11 +1638,11 @@ char      *str, *text;
 l_int32    i, n, x1, x2, h_ovl, v_ovl, h_sep, v_sep;
 l_float32  score;
 BOX       *box, *prebox;
-BOXA      *ba;
+BOXA      *ba = NULL;
 BOXAA     *baa;
-NUMA      *nascore, *na;
+NUMA      *nascore, *na = NULL;
 NUMAA     *naa;
-SARRAY    *satext, *sa, *saout;
+SARRAY    *satext, *sa = NULL, *saout;
 
     PROCNAME("recogExtractNumbers");
 

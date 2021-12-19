@@ -2347,7 +2347,7 @@ l_int32    nc, nestim, i, j, vals, vald;
 l_int32   *lut;
 l_uint32  *datas, *datam, *datad, *lines, *linem, *lined;
 NUMA      *na;
-PIX       *pixmr;  /* resized mask */
+PIX       *pixmr = NULL;  /* resized mask */
 PIXCMAP   *cmap;
 
     PROCNAME("pixGrayQuantFromHisto");

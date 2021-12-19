@@ -182,7 +182,7 @@ l_float32  var, rvar;
 BOX       *box;
 BOXA      *boxa;
 BOXAA     *baa;
-FPIX      *fpixv, *fpixrv;
+FPIX      *fpixv = NULL, *fpixrv = NULL;
 PIX       *pix_mac;  /* copy of mean accumulator */
 DPIX      *dpix_msac;  /* msa clone */
 
@@ -663,7 +663,7 @@ char       buf[256];
 l_int32    nlevels, i, mag, w;
 L_BMF     *bmf;
 FPIX      *fpix;
-PIX       *pixt1, *pixt2, *pixt3, *pixt4, *pixd;
+PIX       *pixt1, *pixt2, *pixt3, *pixt4 = NULL, *pixd;
 PIXA      *pixat;
 
     PROCNAME("fpixaDisplayQuadtree");

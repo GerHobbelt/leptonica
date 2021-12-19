@@ -1002,7 +1002,7 @@ l_int32    i, j, w, h, wplt, hval, sval, nd;
 l_uint32   pixel;
 l_uint32  *datat, *linet;
 void     **lined32;
-NUMA      *nahue, *nasat;
+NUMA      *nahue = NULL, *nasat = NULL;
 PIX       *pixt, *pixd;
 
     PROCNAME("pixMakeHistoHS");
@@ -1093,7 +1093,7 @@ l_int32    i, j, w, h, wplt, hval, vval, nd;
 l_uint32   pixel;
 l_uint32  *datat, *linet;
 void     **lined32;
-NUMA      *nahue, *naval;
+NUMA      *nahue = NULL, *naval = NULL;
 PIX       *pixt, *pixd;
 
     PROCNAME("pixMakeHistoHV");
@@ -1176,7 +1176,7 @@ l_int32    i, j, w, h, wplt, sval, vval, nd;
 l_uint32   pixel;
 l_uint32  *datat, *linet;
 void     **lined32;
-NUMA      *nasat, *naval;
+NUMA      *nasat = NULL, *naval = NULL;
 PIX       *pixt, *pixd;
 
     PROCNAME("pixMakeHistoSV");

@@ -2071,7 +2071,7 @@ pixcmapToArrays(const PIXCMAP  *cmap,
                 l_int32       **pbmap,
                 l_int32       **pamap)
 {
-l_int32    *rmap, *gmap, *bmap, *amap;
+l_int32    *rmap, *gmap, *bmap, *amap = NULL;
 l_int32     i, ncolors;
 RGBA_QUAD  *cta;
 

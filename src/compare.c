@@ -3388,7 +3388,7 @@ l_int32    etransx, etransy, maxshift, dbint;
 l_int32   *stab, *ctab;
 l_float32  cx1, cx2, cy1, cy2, score;
 PIX       *pixb1, *pixb2, *pixt1, *pixt2, *pixt3, *pixt4;
-PIXA      *pixa1, *pixa2, *pixadb;
+PIXA      *pixa1, *pixa2, *pixadb = NULL;
 
     PROCNAME("pixCompareWithTranslation");
 
@@ -3544,7 +3544,7 @@ pixBestCorrelation(PIX        *pix1,
 l_int32    shiftx, shifty, delx, dely;
 l_int32   *tab;
 l_float32  maxscore, score;
-FPIX      *fpix;
+FPIX      *fpix = NULL;
 PIX       *pix3, *pix4;
 
     PROCNAME("pixBestCorrelation");
