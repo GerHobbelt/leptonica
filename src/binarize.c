@@ -490,7 +490,7 @@ pixSauvolaBinarizeTiled(PIX       *pixs,
                         PIX      **ppixd)
 {
 l_int32     i, j, w, h, xrat, yrat;
-PIX        *pixth, *pixd, *tileth = NULL, *tiled = NULL, *pixt;
+PIX        *pixth = NULL, *pixd = NULL, *tileth = NULL, *tiled = NULL, *pixt;
 PIX       **ptileth, **ptiled;
 PIXTILING  *pt;
 
@@ -728,7 +728,7 @@ l_int32     mv, ms, var, thresh;
 l_uint32   *datam, *datams, *datasd = NULL, *datad;
 l_uint32   *linem, *linems, *linesd = NULL, *lined;
 l_float32   sd;
-l_float32  *tab;  /* of 2^16 square roots */
+l_float32  *tab = NULL;  /* of 2^16 square roots */
 PIX        *pixsd = NULL, *pixd = NULL;
 
     PROCNAME("pixSauvolaGetThreshold");

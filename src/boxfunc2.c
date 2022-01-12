@@ -1650,7 +1650,7 @@ boxaaFlattenToBoxa(BOXAA   *baa,
 l_int32  i, j, m, n;
 BOXA    *boxa, *boxat;
 BOX     *box;
-NUMA    *naindex;
+NUMA    *naindex = NULL;
 
     PROCNAME("boxaaFlattenToBoxa");
 

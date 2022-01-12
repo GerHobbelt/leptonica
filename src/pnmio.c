@@ -1347,8 +1347,6 @@ static l_int32
 pnmReadNextAsciiValue(FILE     *fp,
                       l_int32  *pval)
 {
-l_int32   c, ignore;
-
     PROCNAME("pnmReadNextAsciiValue");
 
     if (!pval)
@@ -1444,7 +1442,6 @@ pnmReadNextString(FILE    *fp,
                   char    *buff,
                   l_int32  size)
 {
-l_int32   i, c;
 char fmtString[6];  /* must contain "%9999s" [*] */
 
     PROCNAME("pnmReadNextString");
