@@ -110,6 +110,9 @@
 #ifdef _WIN32
 #include <windows.h>
 #if defined(_MSC_VER)
+#ifndef _CRTDBG_MAP_ALLOC
+#define _CRTDBG_MAP_ALLOC
+#endif
 #include <crtdbg.h>
 #endif
 #endif  /* _WIN32 */

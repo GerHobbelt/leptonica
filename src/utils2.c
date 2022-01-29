@@ -183,6 +183,9 @@
 #endif  /* HAVE_CONFIG_H */
 
 #ifdef _MSC_VER
+#ifndef _CRTDBG_MAP_ALLOC
+#define _CRTDBG_MAP_ALLOC
+#endif
 #include <crtdbg.h>
 #include <process.h>
 #include <direct.h>
