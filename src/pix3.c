@@ -2003,7 +2003,8 @@ pixCountPixelsInRect(PIX      *pixs,
                      l_int32  *pcount,
                      l_int32  *tab8)
 {
-l_int32  bx, by, bw, bh;
+l_int32  w, h, bx, by, bw, bh;
+BOX     *box1;
 PIX     *pix1;
 
     PROCNAME("pixCountPixelsInRect");
@@ -2015,11 +2016,15 @@ PIX     *pix1;
         return ERROR_INT("pixs not defined or not 1 bpp", procName, 1);
 
     if (box) {
-        boxGetGeometry(box, &bx, &by, &bw, &bh);
+        pixGetDimensions(pixs, &w, &h, NULL);
+        if ((box1 = boxClipToRectangle(box, w, h)) == NULL)
+            return ERROR_INT("box1 not made", procName, 1);
+        boxGetGeometry(box1, &bx, &by, &bw, &bh);
         pix1 = pixCreate(bw, bh, 1);
         pixRasterop(pix1, 0, 0, bw, bh, PIX_SRC, pixs, bx, by);
         pixCountPixels(pix1, pcount, tab8);
         pixDestroy(&pix1);
+        boxDestroy(&box1);
     } else {
         pixCountPixels(pixs, pcount, tab8);
     }
@@ -3317,7 +3322,7 @@ l_uint32   val0, val1;
 /*!
  * \brief   pixCountArbInRect()
  *
- * \param[in]    pixs     8 bpp, or colormapped
+ * \param[in]    pixs     1,2,4,8 bpp; can be colormapped
  * \param[in]    box      [optional] over which count is made;
  *                        use entire image if NULL
  * \param[in]    val      pixel value to count
@@ -3340,7 +3345,7 @@ pixCountArbInRect(PIX      *pixs,
                   l_int32   factor,
                   l_int32  *pcount)
 {
-l_int32    i, j, bx, by, bw, bh, w, h, wpl, pixval;
+l_int32    i, j, bx, by, bw, bh, w, h, d, wpl, pixval;
 l_uint32  *data, *line;
 
     PROCNAME("pixCountArbInRect");
@@ -3350,21 +3355,34 @@ l_uint32  *data, *line;
     *pcount = 0;
     if (!pixs)
         return ERROR_INT("pixs not defined", procName, 1);
-    if (pixGetDepth(pixs) != 8 && !pixGetColormap(pixs))
-        return ERROR_INT("pixs neither 8 bpp nor colormapped",
-                                 procName, 1);
+    d = pixGetDepth(pixs);
+    if (d != 1 && d != 2 && d != 4 && d != 8)
+        return ERROR_INT("pixs not 1, 2, 4 or 8 bpp", procName, 1);
+    if (val < 0)
+        return ERROR_INT("val < 0", procName, 1);
+    if (d <= 8 && val > (1 << d) - 1) {
+        L_ERROR("invalid val = %d for depth %d\n", procName, val, d);
+        return 1;
+    }
     if (factor < 1)
         return ERROR_INT("sampling factor < 1", procName, 1);
 
     pixGetDimensions(pixs, &w, &h, NULL);
     data = pixGetData(pixs);
     wpl = pixGetWpl(pixs);
-
     if (!box) {
         for (i = 0; i < h; i += factor) {
             line = data + i * wpl;
             for (j = 0; j < w; j += factor) {
-                pixval = GET_DATA_BYTE(line, j);
+                if (d == 8) {
+                    pixval = GET_DATA_BYTE(line, j);
+                } else if (d == 1) {
+                    pixval = GET_DATA_BIT(line, j);
+                } else if (d == 2) {
+                    pixval = GET_DATA_DIBIT(line, j);
+                } else  /* d == 4 */  {
+                    pixval = GET_DATA_QBIT(line, j);
+                }
                 if (pixval == val) (*pcount)++;
             }
         }
@@ -3375,7 +3393,15 @@ l_uint32  *data, *line;
             line = data + (by + i) * wpl;
             for (j = 0; j < bw; j += factor) {
                 if (bx + j < 0 || bx + j >= w) continue;
-                pixval = GET_DATA_BYTE(line, bx + j);
+                if (d == 8) {
+                    pixval = GET_DATA_BYTE(line, bx + j);
+                } else if (d == 1) {
+                    pixval = GET_DATA_BIT(line, bx + j);
+                } else if (d == 2) {
+                    pixval = GET_DATA_DIBIT(line, bx + j);
+                } else  /* d == 4 */  {
+                    pixval = GET_DATA_QBIT(line, bx + j);
+                }
                 if (pixval == val) (*pcount)++;
             }
         }
