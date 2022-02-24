@@ -118,7 +118,7 @@ typedef uintptr_t l_uintptr_t;
   #if !defined(HAVE_LIBZ_NG)
   #define  HAVE_LIBZ_NG       1
   #endif
-#if !defined(HAVE_LIBGIF)
+  #if !defined(HAVE_LIBGIF)
   #define  HAVE_LIBGIF        1
   #endif
   #if !defined(HAVE_LIBUNGIF)
