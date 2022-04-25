@@ -120,6 +120,7 @@
 #include <time.h>
 #include "allheaders.h"
 #include <math.h>
+#include "environ.h"
 
     /* Global for controlling message output at runtime */
 LEPT_DLL l_int32  LeptMsgSeverity = DEFAULT_SEVERITY;

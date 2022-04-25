@@ -43,9 +43,15 @@
 
 
 #ifndef _MSC_VER
+
 #include <stdint.h>
 
 #else
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Note that _WIN32 is defined for both 32 and 64 bit applications,
    whereas _WIN64 is defined only for the latter */
 
@@ -61,6 +67,10 @@ typedef unsigned int uintptr_t;
 #if (_MSC_VER < 1400)
 #define powf(x, y) (float)pow((double)(x), (double)(y))
 #define expf(x) (float)exp((double)(x))
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* _MSC_VER */
@@ -85,6 +95,9 @@ typedef unsigned int uintptr_t;
   #include <stdint.h>
 #endif  /* _WIN32 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 typedef intptr_t l_intptr_t;
 typedef uintptr_t l_uintptr_t;
 
@@ -587,5 +600,8 @@ LEPT_DLL extern l_int32  LeptMsgSeverity;
 #define snprintf(buf, size, ...)  _snprintf_s(buf, size, _TRUNCATE, __VA_ARGS__)
 #endif
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LEPTONICA_ENVIRON_H */
