@@ -378,8 +378,7 @@ NUMA  *na;
         return;
 
         /* Decrement the ref count.  If it is 0, destroy the numa. */
-    numaChangeRefcount(na, -1);
-    if (numaGetRefcount(na) <= 0) {
+    if (--na->refcount == 0) {
         if (na->array)
             LEPT_FREE(na->array);
         LEPT_FREE(na);
@@ -432,7 +431,7 @@ numaClone(NUMA  *na)
     if (!na)
         return (NUMA *)ERROR_PTR("na not defined", procName, NULL);
 
-    numaChangeRefcount(na, 1);
+    ++na->refcount;
     return na;
 }
 
@@ -915,7 +914,7 @@ l_float32  *array;
 
 
 /*!
- * \brief   numaGetRefCount()
+ * \brief   numaGetRefcount()
  *
  * \param[in]    na
  * \return  refcount, or UNDEF on error
@@ -932,7 +931,7 @@ numaGetRefcount(NUMA  *na)
 
 
 /*!
- * \brief   numaChangeRefCount()
+ * \brief   numaChangeRefcount()
  *
  * \param[in]    na
  * \param[in]    delta    change to be applied
