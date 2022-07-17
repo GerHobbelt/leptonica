@@ -2564,11 +2564,12 @@ NUMA      *nav, *nad;
 /*!
  * \brief   numaFindLocForThreshold()
  *
- * \param[in]    nas      input histogram
- * \param[in]    skip     distance to skip to check for false min; 0 for default
- * \param[out]   pthresh  threshold value
- * \param[out]   pfract   [optional] fraction below or at threshold
- * \return  0 if OK, 1 on error
+ * \param[in]    nas       input histogram
+ * \param[in]    skip      look-ahead distance to avoid false mininma;
+ *                         use 0 for default
+ * \param[out]   pthresh   threshold value
+ * \param[out]   pfract    [optional] fraction below or at threshold
+ * \return  0 if OK, 1 on error or if no threshold can be found
  *
  * <pre>
  * Notes:
@@ -2580,7 +2581,7 @@ NUMA      *nav, *nad;
  *          to avoid false peak and valley detection due to noise.  For
  *          example, see pixThresholdByHisto().
  *      (3) A skip value can be input to determine the look-ahead distance
- *          to ignore a false peak on the descent from the first peak.
+ *          to ignore a false peak on the rise or descent from the first peak.
  *          Input 0 to use the default value (it assumes a histo size of 256).
  *      (4) Optionally, the fractional area under the first peak can
  *          be returned.
@@ -2592,8 +2593,8 @@ numaFindLocForThreshold(NUMA       *na,
                         l_int32    *pthresh,
                         l_float32  *pfract)
 {
-l_int32     i, n, start, index, minloc;
-l_float32   val, pval, jval, minval, sum, partsum;
+l_int32     i, n, start, index, minloc, found;
+l_float32   val, pval, jval, minval, maxval, sum, partsum;
 l_float32  *fa;
 
     if (pfract) *pfract = 0.0;
@@ -2604,8 +2605,16 @@ l_float32  *fa;
         return ERROR_INT("na not defined", __func__, 1);
     if (skip <= 0) skip = 20;
 
+        /* Test for constant value */
+    numaGetMin(na, &minval, NULL);
+    numaGetMax(na, &maxval, NULL);
+    if (minval == maxval)
+       return ERROR_INT("all array values are the same", __func__, 1);
+
         /* Look for the top of the first peak */
     n = numaGetCount(na);
+    if (n < 256)
+        L_WARNING("array size %d < 256\n", __func__, n);
     fa = numaGetFArray(na, L_NOCOPY);
     pval = fa[0];
     for (i = 1; i < n; i++) {
@@ -2617,24 +2626,31 @@ l_float32  *fa;
         pval = val;
     }
 
+    if (i > n - 5)  /* just an increasing function */
+       return ERROR_INT("top of first peak not found", __func__, 1);
+
         /* Look for the low point in the valley */
+    found = FALSE;
     start = i;
     pval = fa[start];
     for (i = start + 1; i < n; i++) {
         val = fa[i];
-        if (val <= pval) {  /* going down */
+        if (val <= pval) {  /* appears to be going down */
             pval = val;
-        } else {  /* going up */
+        } else {  /* appears to be going up */
             index = L_MIN(i + skip, n - 1);
-            jval = fa[index];  /* junp ahead 20 */
+            jval = fa[index];  /* junp ahead by 'skip' */
             if (val > jval) {  /* still going down; jump ahead */
                 pval = jval;
                 i = index;
             } else {  /* really going up; passed the min */
+                found = TRUE;
                 break;
             }
         }
     }
+    if (!found)
+       return ERROR_INT("no minimum found", __func__, 1);
 
         /* Find the location of the minimum in the interval */
     minloc = index;  /* likely passed the min; look backward */
@@ -2645,6 +2661,10 @@ l_float32  *fa;
             minloc = i;
         }
     }
+
+        /* Is the minimum very near the end of the array? */
+    if (minloc > n - 10)
+       return ERROR_INT("minimum at end of array; invalid", __func__, 1);
     *pthresh = minloc;
 
         /* Find the fraction under the first peak */
