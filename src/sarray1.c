@@ -48,8 +48,6 @@
  *          l_int32    sarrayGetCount()
  *          char     **sarrayGetArray()
  *          char      *sarrayGetString()
- *          l_int32    sarrayGetRefcount()
- *          l_int32    sarrayChangeRefcount()
  *
  *      Conversion back to string
  *          char      *sarrayToString()
@@ -155,6 +153,7 @@
 #endif
 #endif  /* ! _WIN32 */
 #include "allheaders.h"
+#include "array_internal.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -181,15 +180,13 @@ sarrayCreate(l_int32  n)
 {
 SARRAY  *sa;
 
-    PROCNAME("sarrayCreate");
-
     if (n <= 0 || n > (l_int32)MaxPtrArraySize)
         n = InitialPtrArraySize;
 
     sa = (SARRAY *)LEPT_CALLOC(1, sizeof(SARRAY));
     if ((sa->array = (char **)LEPT_CALLOC(n, sizeof(char *))) == NULL) {
         sarrayDestroy(&sa);
-        return (SARRAY *)ERROR_PTR("ptr array not made", procName, NULL);
+        return (SARRAY *)ERROR_PTR("ptr array not made", __func__, NULL);
     }
 
     sa->nalloc = n;
@@ -213,12 +210,10 @@ sarrayCreateInitialized(l_int32      n,
 l_int32  i;
 SARRAY  *sa;
 
-    PROCNAME("sarrayCreateInitialized");
-
     if (n <= 0)
-        return (SARRAY *)ERROR_PTR("n must be > 0", procName, NULL);
+        return (SARRAY *)ERROR_PTR("n must be > 0", __func__, NULL);
     if (!initstr)
-        return (SARRAY *)ERROR_PTR("initstr not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("initstr not defined", __func__, NULL);
 
     sa = sarrayCreate(n);
     for (i = 0; i < n; i++)
@@ -246,10 +241,8 @@ char     separators[] = " \n\t";
 l_int32  i, nsub, size, inword;
 SARRAY  *sa;
 
-    PROCNAME("sarrayCreateWordsFromString");
-
     if (!string)
-        return (SARRAY *)ERROR_PTR("textstr not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("textstr not defined", __func__, NULL);
 
         /* Find the number of words */
     size = strlen(string);
@@ -267,7 +260,7 @@ SARRAY  *sa;
     }
 
     if ((sa = sarrayCreate(nsub)) == NULL)
-        return (SARRAY *)ERROR_PTR("sa not made", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not made", __func__, NULL);
     sarraySplitString(sa, string, separators);
 
     return sa;
@@ -297,10 +290,8 @@ l_int32  i, nsub, size, startptr;
 char    *cstring, *substring;
 SARRAY  *sa;
 
-    PROCNAME("sarrayCreateLinesFromString");
-
     if (!string)
-        return (SARRAY *)ERROR_PTR("textstr not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("textstr not defined", __func__, NULL);
 
         /* Find the number of lines */
     size = strlen(string);
@@ -311,13 +302,13 @@ SARRAY  *sa;
     }
 
     if ((sa = sarrayCreate(nsub)) == NULL)
-        return (SARRAY *)ERROR_PTR("sa not made", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not made", __func__, NULL);
 
     if (blankflag) {  /* keep blank lines as null strings */
             /* Make a copy for munging */
         if ((cstring = stringNew(string)) == NULL) {
             sarrayDestroy(&sa);
-            return (SARRAY *)ERROR_PTR("cstring not made", procName, NULL);
+            return (SARRAY *)ERROR_PTR("cstring not made", __func__, NULL);
         }
             /* We'll insert nulls like strtok */
         startptr = 0;
@@ -330,7 +321,7 @@ SARRAY  *sa;
                     sarrayDestroy(&sa);
                     LEPT_FREE(cstring);
                     return (SARRAY *)ERROR_PTR("substring not made",
-                                                procName, NULL);
+                                                __func__, NULL);
                 }
                 sarrayAddString(sa, substring, L_INSERT);
 /*                lept_stderr("substring = %s\n", substring); */
@@ -342,7 +333,7 @@ SARRAY  *sa;
                 sarrayDestroy(&sa);
                 LEPT_FREE(cstring);
                 return (SARRAY *)ERROR_PTR("substring not made",
-                                           procName, NULL);
+                                           __func__, NULL);
             }
             sarrayAddString(sa, substring, L_INSERT);
 /*            lept_stderr("substring = %s\n", substring); */
@@ -374,10 +365,8 @@ sarrayDestroy(SARRAY  **psa)
 l_int32  i;
 SARRAY  *sa;
 
-    PROCNAME("sarrayDestroy");
-
     if (psa == NULL) {
-        L_WARNING("ptr address is NULL!\n", procName);
+        L_WARNING("ptr address is NULL!\n", __func__);
         return;
     }
     if ((sa = *psa) == NULL)
@@ -409,13 +398,11 @@ sarrayCopy(SARRAY  *sa)
 l_int32  i;
 SARRAY  *csa;
 
-    PROCNAME("sarrayCopy");
-
     if (!sa)
-        return (SARRAY *)ERROR_PTR("sa not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not defined", __func__, NULL);
 
     if ((csa = sarrayCreate(sa->nalloc)) == NULL)
-        return (SARRAY *)ERROR_PTR("csa not made", procName, NULL);
+        return (SARRAY *)ERROR_PTR("csa not made", __func__, NULL);
 
     for (i = 0; i < sa->n; i++)
         sarrayAddString(csa, sa->array[i], L_COPY);
@@ -433,10 +420,8 @@ SARRAY  *csa;
 SARRAY *
 sarrayClone(SARRAY  *sa)
 {
-    PROCNAME("sarrayClone");
-
     if (!sa)
-        return (SARRAY *)ERROR_PTR("sa not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not defined", __func__, NULL);
     ++sa->refcount;
     return sa;
 }
@@ -463,19 +448,17 @@ sarrayAddString(SARRAY      *sa,
 {
 l_int32  n;
 
-    PROCNAME("sarrayAddString");
-
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
     if (!string)
-        return ERROR_INT("string not defined", procName, 1);
+        return ERROR_INT("string not defined", __func__, 1);
     if (copyflag != L_INSERT && copyflag != L_NOCOPY && copyflag != L_COPY)
-        return ERROR_INT("invalid copyflag", procName, 1);
+        return ERROR_INT("invalid copyflag", __func__, 1);
 
     n = sarrayGetCount(sa);
     if (n >= sa->nalloc) {
         if (sarrayExtendArray(sa))
-            return ERROR_INT("extension failed", procName, 1);
+            return ERROR_INT("extension failed", __func__, 1);
     }
 
     if (copyflag == L_COPY)
@@ -504,12 +487,10 @@ sarrayExtendArray(SARRAY  *sa)
 {
 size_t  oldsize, newsize;
 
-    PROCNAME("sarrayExtendArray");
-
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
     if (sa->nalloc >= (l_int32)MaxPtrArraySize)  /* belt & suspenders */
-        return ERROR_INT("sa at maximum ptr size; can't extend", procName, 1);
+        return ERROR_INT("sa at maximum ptr size; can't extend", __func__, 1);
     oldsize = sa->nalloc * sizeof(char *);
     if (sa->nalloc > (l_int32)(MaxPtrArraySize / 2)) {
         newsize = MaxPtrArraySize * sizeof(char *);
@@ -520,7 +501,7 @@ size_t  oldsize, newsize;
     }
     if ((sa->array = (char **)reallocNew((void **)&sa->array,
                                          oldsize, newsize)) == NULL)
-        return ERROR_INT("new ptr array not returned", procName, 1);
+        return ERROR_INT("new ptr array not returned", __func__, 1);
 
     return 0;
 }
@@ -541,16 +522,14 @@ char    *string;
 char   **array;
 l_int32  i, n, nalloc;
 
-    PROCNAME("sarrayRemoveString");
-
     if (!sa)
-        return (char *)ERROR_PTR("sa not defined", procName, NULL);
+        return (char *)ERROR_PTR("sa not defined", __func__, NULL);
 
     if ((array = sarrayGetArray(sa, &nalloc, &n)) == NULL)
-        return (char *)ERROR_PTR("array not returned", procName, NULL);
+        return (char *)ERROR_PTR("array not returned", __func__, NULL);
 
     if (index < 0 || index >= n)
-        return (char *)ERROR_PTR("array index out of bounds", procName, NULL);
+        return (char *)ERROR_PTR("array index out of bounds", __func__, NULL);
 
     string = array[index];
 
@@ -593,17 +572,15 @@ sarrayReplaceString(SARRAY  *sa,
 char    *str;
 l_int32  n;
 
-    PROCNAME("sarrayReplaceString");
-
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
     n = sarrayGetCount(sa);
     if (index < 0 || index >= n)
-        return ERROR_INT("array index out of bounds", procName, 1);
+        return ERROR_INT("array index out of bounds", __func__, 1);
     if (!newstr)
-        return ERROR_INT("newstr not defined", procName, 1);
+        return ERROR_INT("newstr not defined", __func__, 1);
     if (copyflag != L_INSERT && copyflag != L_COPY)
-        return ERROR_INT("invalid copyflag", procName, 1);
+        return ERROR_INT("invalid copyflag", __func__, 1);
 
     LEPT_FREE(sa->array[index]);
     if (copyflag == L_INSERT)
@@ -626,10 +603,8 @@ sarrayClear(SARRAY  *sa)
 {
 l_int32  i;
 
-    PROCNAME("sarrayClear");
-
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
     for (i = 0; i < sa->n; i++) {  /* free strings and null ptrs */
         LEPT_FREE(sa->array[i]);
         sa->array[i] = NULL;
@@ -651,10 +626,8 @@ l_int32  i;
 l_int32
 sarrayGetCount(SARRAY  *sa)
 {
-    PROCNAME("sarrayGetCount");
-
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 0);
+        return ERROR_INT("sa not defined", __func__, 0);
     return sa->n;
 }
 
@@ -680,10 +653,8 @@ sarrayGetArray(SARRAY   *sa,
 {
 char  **array;
 
-    PROCNAME("sarrayGetArray");
-
     if (!sa)
-        return (char **)ERROR_PTR("sa not defined", procName, NULL);
+        return (char **)ERROR_PTR("sa not defined", __func__, NULL);
 
     array = sa->array;
     if (pnalloc) *pnalloc = sa->nalloc;
@@ -713,56 +684,17 @@ sarrayGetString(SARRAY  *sa,
                 l_int32  index,
                 l_int32  copyflag)
 {
-    PROCNAME("sarrayGetString");
-
     if (!sa)
-        return (char *)ERROR_PTR("sa not defined", procName, NULL);
+        return (char *)ERROR_PTR("sa not defined", __func__, NULL);
     if (index < 0 || index >= sa->n)
-        return (char *)ERROR_PTR("index not valid", procName, NULL);
+        return (char *)ERROR_PTR("index not valid", __func__, NULL);
     if (copyflag != L_NOCOPY && copyflag != L_COPY)
-        return (char *)ERROR_PTR("invalid copyflag", procName, NULL);
+        return (char *)ERROR_PTR("invalid copyflag", __func__, NULL);
 
     if (copyflag == L_NOCOPY)
         return sa->array[index];
     else  /* L_COPY */
         return stringNew(sa->array[index]);
-}
-
-
-/*!
- * \brief   sarrayGetRefcount()
- *
- * \param[in]    sa     string array
- * \return  refcount, or UNDEF on error
- */
-l_int32
-sarrayGetRefcount(SARRAY  *sa)
-{
-    PROCNAME("sarrayGetRefcount");
-
-    if (!sa)
-        return ERROR_INT("sa not defined", procName, UNDEF);
-    return sa->refcount;
-}
-
-
-/*!
- * \brief   sarrayChangeRefcount()
- *
- * \param[in]    sa      string array
- * \param[in]    delta   change to be applied
- * \return  0 if OK, 1 on error
- */
-l_ok
-sarrayChangeRefcount(SARRAY  *sa,
-                     l_int32  delta)
-{
-    PROCNAME("sarrayChangeRefcount");
-
-    if (!sa)
-        return ERROR_INT("sa not defined", procName, UNDEF);
-    sa->refcount += delta;
-    return 0;
 }
 
 
@@ -794,10 +726,8 @@ char *
 sarrayToString(SARRAY  *sa,
                l_int32  addnlflag)
 {
-    PROCNAME("sarrayToString");
-
     if (!sa)
-        return (char *)ERROR_PTR("sa not defined", procName, NULL);
+        return (char *)ERROR_PTR("sa not defined", __func__, NULL);
 
     return sarrayToStringRange(sa, 0, 0, addnlflag);
 }
@@ -834,12 +764,10 @@ sarrayToStringRange(SARRAY  *sa,
 char    *dest, *src, *str;
 l_int32  n, i, last, size, index, len;
 
-    PROCNAME("sarrayToStringRange");
-
     if (!sa)
-        return (char *)ERROR_PTR("sa not defined", procName, NULL);
+        return (char *)ERROR_PTR("sa not defined", __func__, NULL);
     if (addnlflag != 0 && addnlflag != 1 && addnlflag != 2 && addnlflag != 3)
-        return (char *)ERROR_PTR("invalid addnlflag", procName, NULL);
+        return (char *)ERROR_PTR("invalid addnlflag", __func__, NULL);
 
     n = sarrayGetCount(sa);
 
@@ -855,13 +783,13 @@ l_int32  n, i, last, size, index, len;
             else  /* addnlflag == 3) */
                 return stringNew(",");
         } else {
-            return (char *)ERROR_PTR("first not valid", procName, NULL);
+            return (char *)ERROR_PTR("first not valid", __func__, NULL);
         }
     }
 
         /* Determine the range of string indices to be used */
     if (first < 0 || first >= n)
-        return (char *)ERROR_PTR("first not valid", procName, NULL);
+        return (char *)ERROR_PTR("first not valid", __func__, NULL);
     if (nstrings == 0 || (nstrings > n - first))
         nstrings = n - first;  /* no overflow */
     last = first + nstrings - 1;
@@ -870,11 +798,11 @@ l_int32  n, i, last, size, index, len;
     size = 0;
     for (i = first; i <= last; i++) {
         if ((str = sarrayGetString(sa, i, L_NOCOPY)) == NULL)
-            return (char *)ERROR_PTR("str not found", procName, NULL);
+            return (char *)ERROR_PTR("str not found", __func__, NULL);
         size += strlen(str) + 2;
     }
     if ((dest = (char *)LEPT_CALLOC(size + 1, sizeof(char))) == NULL)
-        return (char *)ERROR_PTR("dest not made", procName, NULL);
+        return (char *)ERROR_PTR("dest not made", __func__, NULL);
 
         /* Construct the output */
     index = 0;
@@ -932,19 +860,17 @@ char    *str;
 NUMA    *na;
 SARRAY  *saout;
 
-    PROCNAME("sarrayConcatUniformly");
-
     if (!sa)
-        return (SARRAY *)ERROR_PTR("sa not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not defined", __func__, NULL);
     ntot = sarrayGetCount(sa);
     if (n < 1)
-        return (SARRAY *)ERROR_PTR("n must be >= 1", procName, NULL);
+        return (SARRAY *)ERROR_PTR("n must be >= 1", __func__, NULL);
     if (n > ntot) {
-        L_ERROR("n = %d > ntot = %d\n", procName, n, ntot);
+        L_ERROR("n = %d > ntot = %d\n", __func__, n, ntot);
         return NULL;
     }
     if (addnlflag != 0 && addnlflag != 1 && addnlflag != 2 && addnlflag != 3)
-        return (SARRAY *)ERROR_PTR("invalid addnlflag", procName, NULL);
+        return (SARRAY *)ERROR_PTR("invalid addnlflag", __func__, NULL);
 
     saout = sarrayCreate(0);
     na = numaGetUniformBinSizes(ntot, n);
@@ -981,18 +907,16 @@ sarrayJoin(SARRAY  *sa1,
 char    *str;
 l_int32  n, i;
 
-    PROCNAME("sarrayJoin");
-
     if (!sa1)
-        return ERROR_INT("sa1 not defined", procName, 1);
+        return ERROR_INT("sa1 not defined", __func__, 1);
     if (!sa2)
-        return ERROR_INT("sa2 not defined", procName, 1);
+        return ERROR_INT("sa2 not defined", __func__, 1);
 
     n = sarrayGetCount(sa2);
     for (i = 0; i < n; i++) {
         str = sarrayGetString(sa2, i, L_NOCOPY);
         if (sarrayAddString(sa1, str, L_COPY) == 1) {
-            L_ERROR("failed to add string at i = %d\n", procName, i);
+            L_ERROR("failed to add string at i = %d\n", __func__, i);
             return 1;
         }
     }
@@ -1026,12 +950,10 @@ sarrayAppendRange(SARRAY  *sa1,
 char    *str;
 l_int32  n, i;
 
-    PROCNAME("sarrayAppendRange");
-
     if (!sa1)
-        return ERROR_INT("sa1 not defined", procName, 1);
+        return ERROR_INT("sa1 not defined", __func__, 1);
     if (!sa2)
-        return ERROR_INT("sa2 not defined", procName, 1);
+        return ERROR_INT("sa2 not defined", __func__, 1);
 
     if (start < 0)
         start = 0;
@@ -1039,7 +961,7 @@ l_int32  n, i;
     if (end < 0 || end >= n)
         end = n - 1;
     if (start > end)
-        return ERROR_INT("start > end", procName, 1);
+        return ERROR_INT("start > end", __func__, 1);
 
     for (i = start; i <= end; i++) {
         str = sarrayGetString(sa2, i, L_NOCOPY);
@@ -1076,10 +998,8 @@ sarrayPadToSameSize(SARRAY      *sa1,
 {
 l_int32  i, n1, n2;
 
-    PROCNAME("sarrayPadToSameSize");
-
     if (!sa1 || !sa2)
-        return ERROR_INT("both sa1 and sa2 not defined", procName, 1);
+        return ERROR_INT("both sa1 and sa2 not defined", __func__, 1);
 
     n1 = sarrayGetCount(sa1);
     n2 = sarrayGetCount(sa2);
@@ -1137,10 +1057,8 @@ char     emptystring[] = "";
 l_int32  n, i, len, totlen;
 SARRAY  *sal, *saout;
 
-    PROCNAME("sarrayConvertWordsToLines");
-
     if (!sa)
-        return (SARRAY *)ERROR_PTR("sa not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not defined", __func__, NULL);
 
     saout = sarrayCreate(0);
     n = sarrayGetCount(sa);
@@ -1206,14 +1124,12 @@ sarraySplitString(SARRAY      *sa,
 {
 char  *cstr, *substr, *saveptr;
 
-    PROCNAME("sarraySplitString");
-
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
     if (!str)
-        return ERROR_INT("str not defined", procName, 1);
+        return ERROR_INT("str not defined", __func__, 1);
     if (!separators)
-        return ERROR_INT("separators not defined", procName, 1);
+        return ERROR_INT("separators not defined", __func__, 1);
 
     cstr = stringNew(str);  /* preserves const-ness of input str */
     saveptr = NULL;
@@ -1254,10 +1170,8 @@ char    *str;
 l_int32  n, i, offset, found;
 SARRAY  *saout;
 
-    PROCNAME("sarraySelectBySubstring");
-
     if (!sain)
-        return (SARRAY *)ERROR_PTR("sain not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sain not defined", __func__, NULL);
 
     n = sarrayGetCount(sain);
     if (!substr || n == 0)
@@ -1301,19 +1215,17 @@ char    *str;
 l_int32  n, i;
 SARRAY  *saout;
 
-    PROCNAME("sarraySelectRange");
-
     if (!sain)
-        return (SARRAY *)ERROR_PTR("sain not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sain not defined", __func__, NULL);
     if (first < 0) first = 0;
     n = sarrayGetCount(sain);
     if (last <= 0) last = n - 1;
     if (last >= n) {
-        L_WARNING("last > n - 1; setting to n - 1\n", procName);
+        L_WARNING("last > n - 1; setting to n - 1\n", __func__);
         last = n - 1;
     }
     if (first > last)
-        return (SARRAY *)ERROR_PTR("first must be >= last", procName, NULL);
+        return (SARRAY *)ERROR_PTR("first must be >= last", __func__, NULL);
 
     saout = sarrayCreate(0);
     for (i = first; i <= last; i++) {
@@ -1373,16 +1285,14 @@ sarrayParseRange(SARRAY      *sa,
 char    *str;
 l_int32  n, i, offset, found;
 
-    PROCNAME("sarrayParseRange");
-
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
     if (!pactualstart || !pend || !pnewstart)
-        return ERROR_INT("not all range addresses defined", procName, 1);
+        return ERROR_INT("not all range addresses defined", __func__, 1);
     n = sarrayGetCount(sa);
     *pactualstart = *pend = *pnewstart = n;
     if (!substr)
-        return ERROR_INT("substr not defined", procName, 1);
+        return ERROR_INT("substr not defined", __func__, 1);
 
         /* Look for the first string without the marker */
     if (start < 0 || start >= n)
@@ -1452,17 +1362,15 @@ sarrayRead(const char  *filename)
 FILE    *fp;
 SARRAY  *sa;
 
-    PROCNAME("sarrayRead");
-
     if (!filename)
-        return (SARRAY *)ERROR_PTR("filename not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("filename not defined", __func__, NULL);
 
     if ((fp = fopenReadStream(filename)) == NULL)
-        return (SARRAY *)ERROR_PTR("stream not opened", procName, NULL);
+        return (SARRAY *)ERROR_PTR("stream not opened", __func__, NULL);
     sa = sarrayReadStream(fp);
     fclose(fp);
     if (!sa)
-        return (SARRAY *)ERROR_PTR("sa not read", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not read", __func__, NULL);
     return sa;
 }
 
@@ -1491,26 +1399,24 @@ char    *stringbuf;
 l_int32  i, n, size, index, bufsize, version, ignore, success;
 SARRAY  *sa;
 
-    PROCNAME("sarrayReadStream");
-
     if (!fp)
-        return (SARRAY *)ERROR_PTR("stream not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("stream not defined", __func__, NULL);
 
     if (fscanf(fp, "\nSarray Version %d\n", &version) != 1)
-        return (SARRAY *)ERROR_PTR("not an sarray file", procName, NULL);
+        return (SARRAY *)ERROR_PTR("not an sarray file", __func__, NULL);
     if (version != SARRAY_VERSION_NUMBER)
-        return (SARRAY *)ERROR_PTR("invalid sarray version", procName, NULL);
+        return (SARRAY *)ERROR_PTR("invalid sarray version", __func__, NULL);
     if (fscanf(fp, "Number of strings = %d\n", &n) != 1)
-        return (SARRAY *)ERROR_PTR("error on # strings", procName, NULL);
+        return (SARRAY *)ERROR_PTR("error on # strings", __func__, NULL);
     if (n < 0)
-        return (SARRAY *)ERROR_PTR("num string ptrs <= 0", procName, NULL);
+        return (SARRAY *)ERROR_PTR("num string ptrs <= 0", __func__, NULL);
     if (n > (l_int32)MaxPtrArraySize)
-        return (SARRAY *)ERROR_PTR("too many string ptrs", procName, NULL);
-    if (n == 0) L_INFO("the sarray is empty\n", procName);
+        return (SARRAY *)ERROR_PTR("too many string ptrs", __func__, NULL);
+    if (n == 0) L_INFO("the sarray is empty\n", __func__);
 
     success = TRUE;
     if ((sa = sarrayCreate(n)) == NULL)
-        return (SARRAY *)ERROR_PTR("sa not made", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not made", __func__, NULL);
     bufsize = 512 + 1;
     stringbuf = (char *)LEPT_CALLOC(bufsize, sizeof(char));
 
@@ -1518,7 +1424,7 @@ SARRAY  *sa;
             /* Get the size of the stored string */
         if ((fscanf(fp, "%d[%d]:", &index, &size) != 2) || (size > (1 << 30))) {
             success = FALSE;
-            L_ERROR("error on string size\n", procName);
+            L_ERROR("error on string size\n", __func__);
             goto cleanup;
         }
             /* Expand the string buffer if necessary */
@@ -1530,7 +1436,7 @@ SARRAY  *sa;
             /* Read the stored string, plus leading spaces and trailing \n */
         if (fread(stringbuf, 1, size + 3, fp) != size + 3) {
             success = FALSE;
-            L_ERROR("error reading string\n", procName);
+            L_ERROR("error reading string\n", __func__);
             goto cleanup;
         }
             /* Remove the \n that was added by sarrayWriteStream() */
@@ -1561,16 +1467,14 @@ sarrayReadMem(const l_uint8  *data,
 FILE    *fp;
 SARRAY  *sa;
 
-    PROCNAME("sarrayReadMem");
-
     if (!data)
-        return (SARRAY *)ERROR_PTR("data not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("data not defined", __func__, NULL);
     if ((fp = fopenReadFromMemory(data, size)) == NULL)
-        return (SARRAY *)ERROR_PTR("stream not opened", procName, NULL);
+        return (SARRAY *)ERROR_PTR("stream not opened", __func__, NULL);
 
     sa = sarrayReadStream(fp);
     fclose(fp);
-    if (!sa) L_ERROR("sarray not read\n", procName);
+    if (!sa) L_ERROR("sarray not read\n", __func__);
     return sa;
 }
 
@@ -1589,19 +1493,17 @@ sarrayWrite(const char  *filename,
 l_int32  ret;
 FILE    *fp;
 
-    PROCNAME("sarrayWrite");
-
     if (!filename)
-        return ERROR_INT("filename not defined", procName, 1);
+        return ERROR_INT("filename not defined", __func__, 1);
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
 
     if ((fp = fopenWriteStream(filename, "w")) == NULL)
-        return ERROR_INT("stream not opened", procName, 1);
+        return ERROR_INT("stream not opened", __func__, 1);
     ret = sarrayWriteStream(fp, sa);
     fclose(fp);
     if (ret)
-        return ERROR_INT("sa not written to stream", procName, 1);
+        return ERROR_INT("sa not written to stream", __func__, 1);
     return 0;
 }
 
@@ -1625,10 +1527,8 @@ sarrayWriteStream(FILE    *fp,
 {
 l_int32  i, n, len;
 
-    PROCNAME("sarrayWriteStream");
-
     if (!fp)
-        return ERROR_INT("stream not defined", procName, 1);
+        return ERROR_INT("stream not defined", __func__, 1);
     if (!sa)
         return sarrayWriteStderr(sa);
 
@@ -1656,10 +1556,8 @@ sarrayWriteStderr(SARRAY  *sa)
 {
 l_int32  i, n, len;
 
-    PROCNAME("sarrayWriteStderr");
-
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
 
     n = sarrayGetCount(sa);
     lept_stderr("\nSarray Version %d\n", SARRAY_VERSION_NUMBER);
@@ -1694,32 +1592,30 @@ sarrayWriteMem(l_uint8  **pdata,
 l_int32  ret;
 FILE    *fp;
 
-    PROCNAME("sarrayWriteMem");
-
     if (pdata) *pdata = NULL;
     if (psize) *psize = 0;
     if (!pdata)
-        return ERROR_INT("&data not defined", procName, 1);
+        return ERROR_INT("&data not defined", __func__, 1);
     if (!psize)
-        return ERROR_INT("&size not defined", procName, 1);
+        return ERROR_INT("&size not defined", __func__, 1);
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
 
 #if HAVE_FMEMOPEN
     if ((fp = open_memstream((char **)pdata, psize)) == NULL)
-        return ERROR_INT("stream not opened", procName, 1);
+        return ERROR_INT("stream not opened", __func__, 1);
     ret = sarrayWriteStream(fp, sa);
     fputc('\0', fp);
     fclose(fp);
     *psize = *psize - 1;
 #else
-    L_INFO("work-around: writing to a temp file\n", procName);
+    L_INFO("work-around: writing to a temp file\n", __func__);
   #ifdef _WIN32
     if ((fp = fopenWriteWinTempfile()) == NULL)
-        return ERROR_INT("tmpfile stream not opened", procName, 1);
+        return ERROR_INT("tmpfile stream not opened", __func__, 1);
   #else
     if ((fp = tmpfile()) == NULL)
-        return ERROR_INT("tmpfile stream not opened", procName, 1);
+        return ERROR_INT("tmpfile stream not opened", __func__, 1);
   #endif  /* _WIN32 */
     ret = sarrayWriteStream(fp, sa);
     rewind(fp);
@@ -1743,18 +1639,16 @@ sarrayAppend(const char  *filename,
 {
 FILE  *fp;
 
-    PROCNAME("sarrayAppend");
-
     if (!filename)
-        return ERROR_INT("filename not defined", procName, 1);
+        return ERROR_INT("filename not defined", __func__, 1);
     if (!sa)
-        return ERROR_INT("sa not defined", procName, 1);
+        return ERROR_INT("sa not defined", __func__, 1);
 
     if ((fp = fopenWriteStream(filename, "a")) == NULL)
-        return ERROR_INT("stream not opened", procName, 1);
+        return ERROR_INT("stream not opened", __func__, 1);
     if (sarrayWriteStream(fp, sa)) {
         fclose(fp);
-        return ERROR_INT("sa not appended to stream", procName, 1);
+        return ERROR_INT("sa not appended to stream", __func__, 1);
     }
 
     fclose(fp);
@@ -1815,13 +1709,11 @@ getNumberedPathnamesInDirectory(const char  *dirname,
 l_int32  nfiles;
 SARRAY  *sa, *saout;
 
-    PROCNAME("getNumberedPathnamesInDirectory");
-
     if (!dirname)
-        return (SARRAY *)ERROR_PTR("dirname not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("dirname not defined", __func__, NULL);
 
     if ((sa = getSortedPathnamesInDirectory(dirname, substr, 0, 0)) == NULL)
-        return (SARRAY *)ERROR_PTR("sa not made", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not made", __func__, NULL);
     if ((nfiles = sarrayGetCount(sa)) == 0) {
         sarrayDestroy(&sa);
         return sarrayCreate(1);
@@ -1863,18 +1755,16 @@ char    *fname, *fullname;
 l_int32  i, n, last;
 SARRAY  *sa, *safiles, *saout;
 
-    PROCNAME("getSortedPathnamesInDirectory");
-
     if (!dirname)
-        return (SARRAY *)ERROR_PTR("dirname not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("dirname not defined", __func__, NULL);
 
     if ((sa = getFilenamesInDirectory(dirname)) == NULL)
-        return (SARRAY *)ERROR_PTR("sa not made", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not made", __func__, NULL);
     safiles = sarraySelectBySubstring(sa, substr);
     sarrayDestroy(&sa);
     n = sarrayGetCount(safiles);
     if (n == 0) {
-        L_WARNING("no files found\n", procName);
+        L_WARNING("no files found\n", __func__);
         return safiles;
     }
 
@@ -1923,10 +1813,8 @@ char    *fname, *str;
 l_int32  i, nfiles, num, index;
 SARRAY  *saout;
 
-    PROCNAME("convertSortedToNumberedPathnames");
-
     if (!sa)
-        return (SARRAY *)ERROR_PTR("sa not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("sa not defined", __func__, NULL);
     if ((nfiles = sarrayGetCount(sa)) == 0)
         return sarrayCreate(1);
 
@@ -1956,7 +1844,7 @@ SARRAY  *saout;
         str = sarrayGetString(saout, index, L_NOCOPY);
         if (str[0] != '\0') {
             L_WARNING("\n  Multiple files with same number: %d\n",
-                      procName, index);
+                      __func__, index);
         }
         sarrayReplaceString(saout, index, fname, L_COPY);
     }
@@ -2007,12 +1895,10 @@ struct dirent  *pdirentry;
 int             dfd, stat_ret;
 struct stat     st;
 
-    PROCNAME("getFilenamesInDirectory");
-
     if (!dirname)
-        return (SARRAY *)ERROR_PTR("dirname not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("dirname not defined", __func__, NULL);
     if (dirname[0] == '\0')
-        return (SARRAY *)ERROR_PTR("dirname is empty", procName, NULL);
+        return (SARRAY *)ERROR_PTR("dirname is empty", __func__, NULL);
 
         /* Who would have thought it was this fiddly to open a directory
            and get the files inside?  fstatat() works with relative
@@ -2030,11 +1916,11 @@ struct stat     st;
     dir[0] = '\0';  /* init empty in case realpath() fails to write it */
     ignore = realpath(dirname, dir);
     if (dir[0] == '\0')
-        return (SARRAY *)ERROR_PTR("dir not made", procName, NULL);
+        return (SARRAY *)ERROR_PTR("dir not made", __func__, NULL);
     realdir = genPathname(dir, NULL);
     if ((pdir = opendir(realdir)) == NULL) {
         LEPT_FREE(realdir);
-        return (SARRAY *)ERROR_PTR("pdir not opened", procName, NULL);
+        return (SARRAY *)ERROR_PTR("pdir not opened", __func__, NULL);
     }
     safiles = sarrayCreate(0);
     while ((pdirentry = readdir(pdir))) {
@@ -2046,7 +1932,7 @@ struct stat     st;
 #else
         size = strlen(realdir) + strlen(pdirentry->d_name) + 2;
         if (size > PATH_MAX) {
-            L_ERROR("size = %zu too large; skipping\n", procName, size);
+            L_ERROR("size = %zu too large; skipping\n", __func__, size);
             continue;
         }
         stat_path = (char *)LEPT_CALLOC(size, 1);
@@ -2077,10 +1963,8 @@ HANDLE            hFind = INVALID_HANDLE_VALUE;
 SARRAY           *safiles;
 WIN32_FIND_DATAA  ffd;
 
-    PROCNAME("getFilenamesInDirectory");
-
     if (!dirname)
-        return (SARRAY *)ERROR_PTR("dirname not defined", procName, NULL);
+        return (SARRAY *)ERROR_PTR("dirname not defined", __func__, NULL);
 
     realdir = genPathname(dirname, NULL);
     pszDir = stringJoin(realdir, "\\*");
@@ -2088,19 +1972,19 @@ WIN32_FIND_DATAA  ffd;
 
     if (strlen(pszDir) + 1 > MAX_PATH) {
         LEPT_FREE(pszDir);
-        return (SARRAY *)ERROR_PTR("dirname is too long", procName, NULL);
+        return (SARRAY *)ERROR_PTR("dirname is too long", __func__, NULL);
     }
 
     if ((safiles = sarrayCreate(0)) == NULL) {
         LEPT_FREE(pszDir);
-        return (SARRAY *)ERROR_PTR("safiles not made", procName, NULL);
+        return (SARRAY *)ERROR_PTR("safiles not made", __func__, NULL);
     }
 
     hFind = FindFirstFileA(pszDir, &ffd);
     if (INVALID_HANDLE_VALUE == hFind) {
         sarrayDestroy(&safiles);
         LEPT_FREE(pszDir);
-        return (SARRAY *)ERROR_PTR("hFind not opened", procName, NULL);
+        return (SARRAY *)ERROR_PTR("hFind not opened", __func__, NULL);
     }
 
     while (FindNextFileA(hFind, &ffd) != 0) {
