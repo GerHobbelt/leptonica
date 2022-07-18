@@ -568,6 +568,29 @@ ptaSetPt(PTA       *pta,
 
 
 /*!
+ * \brief   ptaUpdatePtYCoord() - only update the Y coordinate value for the given point.
+ *
+ * \param[in]    pta
+ * \param[in]    index    into arrays
+ * \param[in]    y
+ * \return  0 if OK; 1 on error
+ */
+l_ok
+ptaUpdatePtYCoord(PTA* pta,
+	l_int32    index,
+	l_float32  y)
+{
+	if (!pta)
+		return ERROR_INT("pta not defined", __func__, 1);
+	if (index < 0 || index >= pta->n)
+		return ERROR_INT("invalid index", __func__, 1);
+
+	pta->y[index] = y;
+	return 0;
+}
+
+
+/*!
  * \brief   ptaGetArrays()
  *
  * \param[in]    pta

@@ -2070,6 +2070,7 @@ LEPT_DLL extern l_int32 ptaGetCount ( PTA *pta );
 LEPT_DLL extern l_ok ptaGetPt ( PTA *pta, l_int32 index, l_float32 *px, l_float32 *py );
 LEPT_DLL extern l_ok ptaGetIPt ( PTA *pta, l_int32 index, l_int32 *px, l_int32 *py );
 LEPT_DLL extern l_ok ptaSetPt ( PTA *pta, l_int32 index, l_float32 x, l_float32 y );
+LEPT_DLL extern l_ok ptaUpdatePtYCoord (PTA *pta, l_int32 index, l_float32 y);
 LEPT_DLL extern l_ok ptaGetArrays ( PTA *pta, NUMA **pnax, NUMA **pnay );
 LEPT_DLL extern PTA * ptaRead ( const char *filename );
 LEPT_DLL extern PTA * ptaReadStream ( FILE *fp );
