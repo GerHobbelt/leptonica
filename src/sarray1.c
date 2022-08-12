@@ -156,7 +156,7 @@
 #include "array_internal.h"
 
 #ifndef PATH_MAX
-#define PATH_MAX 4096
+#define PATH_MAX 1024
 #endif
 
 static const l_uint32  MaxPtrArraySize = 50000000;    /* 50 million */
