@@ -143,7 +143,7 @@
 #ifndef _WIN32
 #include <dirent.h>     /* unix only */
 #include <sys/stat.h>
-#include <limits.h>  /* needed for realpath() */
+#include <limits.h>
 #include <stdlib.h>  /* needed for realpath() */
 #if defined(_MSC_VER)
 #ifndef _CRTDBG_MAP_ALLOC
