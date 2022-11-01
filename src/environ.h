@@ -189,18 +189,26 @@ typedef uintptr_t l_uintptr_t;
 
 
 /*-------------------------------------------------------------------------*
- * On linux systems, you can do I/O between Pix and memory.  Specifically,
- * you can compress (write compressed data to memory from a Pix) and
- * uncompress (read from compressed data in memory to a Pix).
- * For jpeg, png, jp2k, gif, pnm and bmp, these use the non-posix GNU
- * functions fmemopen() and open_memstream().  These functions are not
- * available on other systems.
- * To use these functions in linux, you must define HAVE_FMEMOPEN to 1.
- * To use them on MacOS, which does not support these functions, set it to 0.
+ * On linux, BSD, macOS (> 10.12), android (sdk >= 23) and iOS(>= 11.0),
+ * you can redirect writing data from a filestream to memory using
+ * open_memstream() and redirect reading data from a filestream to
+ * reading from memory using fmemopen().
+ * Specifically, you can compress (write compressed data to memory
+ * from raster data in a Pix) and uncompress (read from compressed data
+ * in memory to raster data in a Pix).
+ * For png, tiff and webp, data is compressed and uncompressed directly
+ * to memory without the use of the POSIX.1 (2008) functions fmemopen()
+ * and open_memstream().
+ * For jpeg, jp2k, gif, pnm and bmp, these functions are used on systems
+ * that support them, and for those we define HAVE_FMEMOPEN to 1.
  *-------------------------------------------------------------------------*/
-#if !defined(HAVE_CONFIG_H) && !defined(ANDROID_BUILD) && !defined(OS_IOS) && \
-    !defined(_WIN32) && (!defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || \
-                          __MAC_OS_X_VERSION_MIN_REQUIRED > 101200)
+#if !defined(HAVE_CONFIG_H) && \
+    (!defined(ANDROID_BUILD) || __ANDROID_API__ >= 23) && \
+    (!defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || \
+              __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) && \
+    (!defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || \
+              __MAC_OS_X_VERSION_MIN_REQUIRED > 101200) && \
+    !defined(_WIN32)
 #define  HAVE_FMEMOPEN    1
 #endif  /* ! HAVE_CONFIG_H etc. */
 
