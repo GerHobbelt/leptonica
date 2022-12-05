@@ -1418,7 +1418,7 @@ pnmReadNextString(FILE    *fp,
                   char    *buff,
                   l_int32  size)
 {
-char fmtString[6];  /* must contain "%9999s" [*] */
+char  fmtString[7];  /* must contain "%9999s" [*] */
 
     if (!buff)
         return ERROR_INT("buff not defined", __func__, 1);
@@ -1438,7 +1438,7 @@ char fmtString[6];  /* must contain "%9999s" [*] */
     if (pnmSkipCommentLines(fp))
         return ERROR_INT("end of file reached", __func__, 1);
 
-    snprintf(fmtString, 6, "%%%ds", size-1);
+    snprintf(fmtString, 7, "%%%ds", size - 1);
     if (fscanf(fp, fmtString, buff) == EOF)
         return 1;
 
