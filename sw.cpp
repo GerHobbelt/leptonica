@@ -19,7 +19,7 @@ void build(Solution &s)
         t += "org.sw.demo.webmproject.webp"_dep;
     };
 
-    auto &leptonica = s.addTarget<LibraryTarget>("danbloomberg.leptonica", "1.83.0");
+    auto &leptonica = s.addTarget<LibraryTarget>("danbloomberg.leptonica", "1.84.0");
     leptonica += Git("https://github.com/DanBloomberg/leptonica");
 
     {
@@ -354,6 +354,7 @@ void build(Solution &s)
             {"skewtest", {"skewtest.c"}},
             {"sorttest", {"sorttest.c"}},
             {"splitimage2pdf", {"splitimage2pdf.c"}},
+            {"splitpdf", {"splitpdf.c"}},
             {"sudokutest", {"sudokutest.c"}},
             {"textorient", {"textorient.c"}},
             {"tiffpdftest", {"tiffpdftest.c"}},
