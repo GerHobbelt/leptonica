@@ -129,19 +129,28 @@
 #include "allheaders.h"
 #include "pix_internal.h"
 
+ /* jconfig.h makes the error of setting
+  *   #define HAVE_STDLIB_H
+  * which conflicts with config_auto.h (where it is set to 1) and results
+  * for some gcc compiler versions in a warning.  The conflict is harmless
+  * but we suppress it by undefining the variable. */
+#undef HAVE_STDLIB_H
+#include "jpeglib.h"
+
+#if HAVE_MUPDF || defined(BUILD_MONOLITHIC)
+#include "mupdf/fitz.h"
+typedef void* backing_store_ptr;
+#include "../../../source/fitz/jmemcust.h"
+#define HAVE_JPEG_CUST_MEM_DATA  1
+#else
+typedef void* jpeg_cust_mem_data;
+#endif
+
 /* --------------------------------------------*/
 #if  HAVE_LIBJPEG   /* defined in environ.h */
 /* --------------------------------------------*/
 
 #include <setjmp.h>
-
-    /* jconfig.h makes the error of setting
-     *   #define HAVE_STDLIB_H
-     * which conflicts with config_auto.h (where it is set to 1) and results
-     * for some gcc compiler versions in a warning.  The conflict is harmless
-     * but we suppress it by undefining the variable. */
-#undef HAVE_STDLIB_H
-#include "jpeglib.h"
 
 static void jpeg_error_catch_all_1(j_common_ptr cinfo);
 static void jpeg_error_catch_all_2(j_common_ptr cinfo);
@@ -275,9 +284,12 @@ l_uint32                      *line, *ppixel;
 JSAMPROW                       rowbuffer;
 PIX                           *pix;
 PIXCMAP                       *cmap;
-struct jpeg_decompress_struct  cinfo;
-struct jpeg_error_mgr          jerr;
+struct jpeg_decompress_struct  cinfo = { 0 };
+struct jpeg_error_mgr          jerr = { 0 };
 jmp_buf                        jmpbuf;  /* must be local to the function */
+#ifdef HAVE_JPEG_CUST_MEM_DATA
+jpeg_cust_mem_data             jpeg_client_data = { 0 };
+#endif
 
     if (pnwarn) *pnwarn = 0;
     if (!fp)
@@ -297,7 +309,12 @@ jmp_buf                        jmpbuf;  /* must be local to the function */
         /* Modify the jpeg error handling to catch fatal errors  */
     cinfo.err = jpeg_std_error(&jerr);
     jerr.error_exit = jpeg_error_catch_all_1;
-    cinfo.client_data = (void *)&jmpbuf;
+#ifdef HAVE_JPEG_CUST_MEM_DATA
+	jpeg_client_data.priv_longjmp_ref = &jmpbuf;
+	cinfo.client_data = &jpeg_client_data;
+#else
+	cinfo.client_data = &jmpbuf;
+#endif
     if (setjmp(jmpbuf)) {
         jpeg_destroy_decompress(&cinfo);
         pixDestroy(&pix);
@@ -551,8 +568,8 @@ freadHeaderJpeg(FILE     *fp,
                 l_int32  *pcmyk)
 {
 l_int32                        spp, w, h;
-struct jpeg_decompress_struct  cinfo;
-struct jpeg_error_mgr          jerr;
+struct jpeg_decompress_struct  cinfo = { 0 };
+struct jpeg_error_mgr          jerr = { 0 };
 jmp_buf                        jmpbuf;  /* must be local to the function */
 
     if (pw) *pw = 0;
@@ -621,8 +638,8 @@ fgetJpegResolution(FILE     *fp,
                    l_int32  *pxres,
                    l_int32  *pyres)
 {
-struct jpeg_decompress_struct  cinfo;
-struct jpeg_error_mgr          jerr;
+struct jpeg_decompress_struct  cinfo = { 0 };
+struct jpeg_error_mgr          jerr = { 0 };
 jmp_buf                        jmpbuf;  /* must be local to the function */
 
     if (pxres) *pxres = 0;
@@ -678,9 +695,10 @@ l_int32
 fgetJpegComment(FILE      *fp,
                 l_uint8  **pcomment)
 {
-struct jpeg_decompress_struct  cinfo;
-struct jpeg_error_mgr          jerr;
-struct callback_data           cb_data;  /* contains local jmp_buf */
+struct jpeg_decompress_struct  cinfo = { 0 };
+struct jpeg_error_mgr          jerr = { 0 };
+struct callback_data           cb_data = { 0 };  /* contains local jmp_buf */
+jpeg_cust_mem_data             cust_data = { 0 };
 
     if (!pcomment)
         return ERROR_INT("&comment not defined", __func__, 1);
@@ -690,12 +708,14 @@ struct callback_data           cb_data;  /* contains local jmp_buf */
 
     rewind(fp);
 
-        /* Modify the jpeg error handling to catch fatal errors  */
+    /* Modify the jpeg error handling to catch fatal errors  */
     cinfo.err = jpeg_std_error(&jerr);
     jerr.error_exit = jpeg_error_catch_all_2;
     cb_data.comment = NULL;
-    cinfo.client_data = (void *)&cb_data;
-    if (setjmp(cb_data.jmpbuf)) {
+	cinfo.client_data = &cust_data;
+    cinfo.client_data->priv_ref_extra = &cb_data;
+	cinfo.client_data->priv_longjmp_ref = &cb_data.jmpbuf;
+	if (setjmp(cb_data.jmpbuf)) {
         LEPT_FREE(cb_data.comment);
         return ERROR_INT("internal jpeg error", __func__, 1);
     }
