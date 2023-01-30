@@ -268,7 +268,7 @@ static void lept_default_stderr_handler(const char *formatted_msg)
 
     /* The stderr callback handler is private to leptonica.
      * By default it writes to stderr.  */
-void (*stderr_handler)(const char *) = lept_default_stderr_handler;
+static void (*stderr_handler)(const char *) = lept_default_stderr_handler;
 
 
 /*!
