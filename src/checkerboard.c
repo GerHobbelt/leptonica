@@ -144,17 +144,20 @@ SELA    *sela;
 
         /* Do the hit-miss transform to find corner locations */
     pix1 = pixUnionOfMorphOps(pixs, sela, L_MORPH_HMT);
-    if (pixadb) pixaAddPix(pixadb, pix1, L_CLONE);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_CLONE);
     selaDestroy(&sela);
 
         /* Remove large noise c.c. */
     pix2 = pixSelectBySize(pix1, size, size, 8, L_SELECT_IF_BOTH,
                            L_SELECT_IF_LTE, NULL);
-    if (pixadb) pixaAddPix(pixadb, pix2, L_CLONE);
+    if (pixadb)
+		pixaAddPix(pixadb, pix2, L_CLONE);
 
         /* Thin remaining c.c. */
     pix3 = pixThinConnected(pix2, L_THIN_FG, 8, 0);
-    if (pixadb) pixaAddPix(pixadb, pix3, L_CLONE);
+    if (pixadb)
+		pixaAddPix(pixadb, pix3, L_CLONE);
 
         /* Extract the location of the center of each component */
     boxa1 = pixConnCompBB(pix3, 8);

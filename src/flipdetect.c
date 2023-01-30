@@ -645,7 +645,8 @@ SEL       *sel1, *sel2, *sel3, *sel4;
         *pconf = 2. * ((nup - ndown) / sqrt(nup + ndown));
 
     if (debug) {
-        if (pixm) pixWriteDebug("/tmp/lept/orient/pixm1.png", pixm, IFF_PNG);
+        if (pixm)
+			pixWriteDebug("/tmp/lept/orient/pixm1.png", pixm, IFF_PNG);
         lept_stderr("nup = %7.3f, ndown = %7.3f, conf = %7.3f\n",
                 nup, ndown, *pconf);
         if (*pconf > DefaultMinUpDownConf)

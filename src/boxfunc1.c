@@ -471,7 +471,8 @@ PIX     *pix1 = NULL;
     if (!boxas)
         return (BOXA *)ERROR_PTR("boxas not defined", __func__, NULL);
 
-    if (pixadb) boxaGetExtent(boxas, &w, &h, NULL);
+    if (pixadb)
+		boxaGetExtent(boxas, &w, &h, NULL);
 
     boxa1 = boxaCopy(boxas, L_COPY);
     n1 = boxaGetCount(boxa1);
@@ -509,7 +510,8 @@ PIX     *pix1 = NULL;
         boxaDestroy(&boxa1);
         boxa1 = boxa2;
         if (n1 == n2) {
-            if (pixadb) pixDestroy(&pix1);
+            if (pixadb)
+				pixDestroy(&pix1);
             break;
         }
         n1 = n2;

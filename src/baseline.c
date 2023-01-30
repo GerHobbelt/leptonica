@@ -137,7 +137,8 @@ PTA       *pta;
     pix1 = pixMorphSequence(pixs, "c25.1 + e15.1", 0);
 
         /* Estimate the resolution */
-    if (pixadb) pixaAddPix(pixadb, pixScale(pix1, 0.25, 0.25), L_INSERT);
+    if (pixadb)
+		pixaAddPix(pixadb, pixScale(pix1, 0.25, 0.25), L_INSERT);
 
         /* Save the difference of adjacent row sums.
          * The high positive-going peaks are the baselines */
@@ -220,7 +221,8 @@ PTA       *pta;
          * First, filter the boxes of text, where there may be
          * more than one box for a given textline. */
     pix2 = pixMorphSequence(pix1, "r11 + c20.1 + o30.1 +c1.3", 0);
-    if (pixadb) pixaAddPix(pixadb, pix2, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix2, L_COPY);
     boxa1 = pixConnComp(pix2, NULL, 4);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

@@ -1180,7 +1180,8 @@ L_RECOG  *recog;
         pixaaAddPixa(recog->pixaa_u, pixa1, L_INSERT);
         for (j = 0; j < ns; j++) {
             pix = pixaGetPix(pixa, j, L_CLONE);
-            if (debug) lept_stderr("pix[%d,%d]: text = %s\n", i, j, text);
+            if (debug)
+				lept_stderr("pix[%d,%d]: text = %s\n", i, j, text);
             pixaaAddPix(recog->pixaa_u, i, pix, NULL, L_INSERT);
         }
         pixaDestroy(&pixa);

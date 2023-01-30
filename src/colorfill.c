@@ -348,7 +348,8 @@ L_QUEUE   *lq;
     x = y = 1;  /* first row and column have been marked as visited */
     while (findNextUnvisited(pixv, &x, &y) == 1) {
             /* Flood fill this component, starting from (x,y) */
-        if (debug) lept_stderr("Start: x = %d, y = %d\n", x, y);
+        if (debug)
+			lept_stderr("Start: x = %d, y = %d\n", x, y);
         pixColorFillFromSeed(pixss, pixv, &pta1, x, y, lq, maxdiff,
                              minarea, debug);
         if (pta1) {  /* erode and add the pixels to pixm */
@@ -646,11 +647,13 @@ PTA      *pta;
          * a component and put it in the mask. */
     np = ptaGetCount(pta);
     if (np < minarea) {
-        if (debug) lept_stderr("  Too small. End: x = %d, y = %d, np = %d\n",
+        if (debug)
+			lept_stderr("  Too small. End: x = %d, y = %d, np = %d\n",
                                x, y, np);
         ptaDestroy(ppta);
     } else {
-        if (debug) lept_stderr("  Keep. End: x = %d, y = %d, np = %d\n",
+        if (debug)
+			lept_stderr("  Keep. End: x = %d, y = %d, np = %d\n",
                                x, y, np);
     }
 }

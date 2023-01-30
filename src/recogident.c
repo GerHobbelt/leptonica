@@ -505,7 +505,8 @@ l_int32    iter;
         if (debug)
             lept_stderr(" w1 = %d, w2 = %d, w3 = %d\n", w1, w2, w3);
         if (w1 < recog->minwidth_u - 4) {
-            if (debug) L_INFO("discarding width %d on left\n", __func__, w1);
+            if (debug)
+				L_INFO("discarding width %d on left\n", __func__, w1);
         } else {  /* extract and save left region */
             boxl = boxCreate(0, 0, bx + 1, h);
             pixl = pixClipRectangle(pixc, boxl, NULL);
@@ -515,7 +516,8 @@ l_int32    iter;
             boxDestroy(&boxl);
         }
         if (w3 < recog->minwidth_u - 4) {
-            if (debug) L_INFO("discarding width %d on right\n", __func__, w3);
+            if (debug)
+				L_INFO("discarding width %d on right\n", __func__, w3);
         } else {  /* extract and save left region */
             boxr = boxCreate(bx + bw - 1, 0, w3 + 1, h);
             pixr = pixClipRectangle(pixc, boxr, NULL);
@@ -1531,24 +1533,28 @@ l_float32  aspratio, fract;
          *    components with small area fill fraction */
     pixGetDimensions(pixs, &w, &h, NULL);
     if (w < recog->min_splitw) {
-        if (debug) L_INFO("w = %d < %d\n", __func__, w, recog->min_splitw);
+        if (debug)
+			L_INFO("w = %d < %d\n", __func__, w, recog->min_splitw);
         *premove = 1;
         return 0;
     }
     if (h < minh) {
-        if (debug) L_INFO("h = %d < %d\n", __func__, h, minh);
+        if (debug)
+			L_INFO("h = %d < %d\n", __func__, h, minh);
         *premove = 1;
         return 0;
     }
     aspratio = (l_float32)w / (l_float32)h;
     if (aspratio > recog->max_wh_ratio) {
-        if (debug) L_INFO("w/h = %5.3f too large\n", __func__, aspratio);
+        if (debug)
+			L_INFO("w/h = %5.3f too large\n", __func__, aspratio);
         *premove = 1;
         return 0;
     }
     pixFindAreaFraction(pixs, recog->sumtab, &fract);
     if (fract < minaf) {
-        if (debug) L_INFO("area fill fract %5.3f < %5.3f\n",
+        if (debug)
+			L_INFO("area fill fract %5.3f < %5.3f\n",
                           __func__, fract, minaf);
         *premove = 1;
         return 0;

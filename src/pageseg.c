@@ -142,7 +142,8 @@ PIX     *pixtb;    /* textblock mask */
 
         /* 2x reduce, to 150 -200 ppi */
     pixr = pixReduceRankBinaryCascade(pixs, 1, 0, 0, 0);
-    if (pixadb) pixaAddPix(pixadb, pixr, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixr, L_COPY);
 
         /* Get the halftone mask */
     pixhm2 = pixGenerateHalftoneMask(pixr, &pixtext, &htfound, pixadb);
@@ -163,7 +164,8 @@ PIX     *pixtb;    /* textblock mask */
         pixtbf2 = pixSelectBySize(pixtb2, 60, 60, 4, L_SELECT_IF_EITHER,
                                   L_SELECT_IF_GTE, NULL);
         pixDestroy(&pixtb2);
-        if (pixadb) pixaAddPix(pixadb, pixtbf2, L_COPY);
+        if (pixadb)
+			pixaAddPix(pixadb, pixtbf2, L_COPY);
     }
 
         /* Expand all masks to full resolution, and do filling or
@@ -173,20 +175,23 @@ PIX     *pixtb;    /* textblock mask */
     pixOr(pixhm, pixhm, pix1);
     pixDestroy(&pixhm2);
     pixDestroy(&pix1);
-    if (pixadb) pixaAddPix(pixadb, pixhm, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixhm, L_COPY);
 
     pix1 = pixExpandReplicate(pixtm2, 2);
     pixtm = pixDilateBrick(NULL, pix1, 3, 3);
     pixDestroy(&pixtm2);
     pixDestroy(&pix1);
-    if (pixadb) pixaAddPix(pixadb, pixtm, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixtm, L_COPY);
 
     if (pixtbf2) {
         pix1 = pixExpandReplicate(pixtbf2, 2);
         pixtb = pixDilateBrick(NULL, pix1, 3, 3);
         pixDestroy(&pixtbf2);
         pixDestroy(&pix1);
-        if (pixadb) pixaAddPix(pixadb, pixtb, L_COPY);
+        if (pixadb)
+			pixaAddPix(pixadb, pixtb, L_COPY);
     } else {
         pixtb = pixCreateTemplate(pixs);  /* empty mask */
     }
@@ -326,15 +331,18 @@ PIX     *pix1, *pix2, *pixhs, *pixhm, *pixd;
     pixhs = pixExpandReplicate(pix2, 4);  /* back to 2x reduction */
     pixDestroy(&pix1);
     pixDestroy(&pix2);
-    if (pixadb) pixaAddPix(pixadb, pixhs, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixhs, L_COPY);
 
         /* Compute mask for connected regions */
     pixhm = pixCloseSafeBrick(NULL, pixs, 4, 4);
-    if (pixadb) pixaAddPix(pixadb, pixhm, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixhm, L_COPY);
 
         /* Fill seed into mask to get halftone mask */
     pixd = pixSeedfillBinary(NULL, pixhs, pixhm, 4);
-    if (pixadb) pixaAddPix(pixadb, pixd, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixd, L_COPY);
 
 #if 0
     pixOpenBrick(pixd, pixd, 9, 9);
@@ -351,7 +359,8 @@ PIX     *pix1, *pix2, *pixhs, *pixhm, *pixd;
             *ppixtext = pixCopy(NULL, pixs);
         else
             *ppixtext = pixSubtract(NULL, pixs, pixd);
-        if (pixadb) pixaAddPix(pixadb, *ppixtext, L_COPY);
+        if (pixadb)
+			pixaAddPix(pixadb, *ppixtext, L_COPY);
     }
 
     pixDestroy(&pixhs);
@@ -415,7 +424,8 @@ PIX     *pix1, *pix2, *pixvws, *pixd;
          * textlines), and subtracting this from the bg. */
     pix2 = pixMorphCompSequence(pix1, "o80.60", 0);
     pixSubtract(pix1, pix1, pix2);
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
     pixDestroy(&pix2);
 
         /* Identify vertical whitespace by opening the remaining bg.
@@ -423,7 +433,8 @@ PIX     *pix1, *pix2, *pixvws, *pixd;
          * long vertical bg lines. */
     pixvws = pixMorphCompSequence(pix1, "o5.1 + o1.200", 0);
     *ppixvws = pixvws;
-    if (pixadb) pixaAddPix(pixadb, pixvws, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixvws, L_COPY);
     pixDestroy(&pix1);
 
         /* Three steps to getting text line mask:
@@ -431,10 +442,12 @@ PIX     *pix1, *pix2, *pixvws, *pixd;
          *   (2) open the vertical whitespace corridors back up
          *   (3) small opening to remove noise    */
     pix1 = pixMorphSequence(pixs, "c30.1", 0);
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
     pixd = pixSubtract(NULL, pix1, pixvws);
     pixOpenBrick(pixd, pixd, 3, 3);
-    if (pixadb) pixaAddPix(pixadb, pixd, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixd, L_COPY);
     pixDestroy(&pix1);
 
         /* Check if text line mask is empty */
@@ -498,7 +511,8 @@ PIX     *pix1, *pix2, *pix3, *pixd;
         L_INFO("no fg pixels in textblock mask\n", __func__);
         return NULL;
     }
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
 
         /* Solidify the textblock mask and remove noise:
          *   (1) For each cc, close the blocks and dilate slightly
@@ -508,12 +522,15 @@ PIX     *pix1, *pix2, *pix3, *pixd;
          *   (4) Remove small components. */
     pix2 = pixMorphSequenceByComponent(pix1, "c30.30 + d3.3", 8, 0, 0, NULL);
     pixCloseSafeBrick(pix2, pix2, 10, 1);
-    if (pixadb) pixaAddPix(pixadb, pix2, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix2, L_COPY);
     pix3 = pixSubtract(NULL, pix2, pixvws);
-    if (pixadb) pixaAddPix(pixadb, pix3, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix3, L_COPY);
     pixd = pixSelectBySize(pix3, 25, 5, 8, L_SELECT_IF_BOTH,
                             L_SELECT_IF_GTE, NULL);
-    if (pixadb) pixaAddPix(pixadb, pixd, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixd, L_COPY);
 
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -976,12 +993,14 @@ PIXA    *pixa1, *pixa2, *pixa3;
         L_INFO("no fg pixels in input image\n", __func__);
         return NULL;
     }
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
 
         /* Remove any very tall or very wide connected components */
     pix2 = pixSelectBySize(pix1, maxw, maxh, 8, L_SELECT_IF_BOTH,
                            L_SELECT_IF_LT, NULL);
-    if (pixadb) pixaAddPix(pixadb, pix2, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix2, L_COPY);
     pixDestroy(&pix1);
 
         /* Filter to solidify the text lines within the x-height region.
@@ -994,7 +1013,8 @@ PIXA    *pixa1, *pixa2, *pixa3;
     csize = L_MIN(120.f, 60.0f * res / 300.0f);
     snprintf(buf, sizeof(buf), "c%d.1 + o%d.1", csize, csize / 3);
     pix3 = pixMorphCompSequence(pix2, buf, 0);
-    if (pixadb) pixaAddPix(pixadb, pix3, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix3, L_COPY);
 
         /* Extract the connected components.  These should be dilated lines */
     boxa1 = pixConnComp(pix3, &pixa1, 4);
@@ -1121,12 +1141,14 @@ PIXA    *pixa1, *pixa2;
         L_INFO("no fg pixels in input image\n", __func__);
         return NULL;
     }
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
 
         /* Remove any very tall or very wide connected components */
     pix2 = pixSelectBySize(pix1, maxw, maxh, 8, L_SELECT_IF_BOTH,
                            L_SELECT_IF_LT, NULL);
-    if (pixadb) pixaAddPix(pixadb, pix2, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix2, L_COPY);
     pixDestroy(&pix1);
 
         /* Filter to solidify the text lines within the x-height region.
@@ -1134,7 +1156,8 @@ PIXA    *pixa1, *pixa2;
     csize = L_MIN(120.f, 60.0f * res / 300.0f);
     snprintf(buf, sizeof(buf), "c%d.1", csize);
     pix3 = pixMorphCompSequence(pix2, buf, 0);
-    if (pixadb) pixaAddPix(pixadb, pix3, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix3, L_COPY);
 
         /* Extract the connected components.  These should be dilated lines */
     boxa1 = pixConnComp(pix3, &pixa1, 4);
@@ -1230,7 +1253,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
         L_WARNING("peakfract not in [0.25 ... 0.9]\n", __func__);
     if (clipfract < 0.0 || clipfract >= 0.5)
         return ERROR_INT("clipfract not in [0.0 ... 0.5)\n", __func__, 1);
-    if (pixadb) pixaAddPix(pixadb, pixs, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixs, L_COPY);
 
         /* Scale to between 37.5 and 75 ppi */
     if ((res = pixGetXRes(pixs)) == 0) {
@@ -1255,7 +1279,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
         else
             pix1 = pixReduceRankBinaryCascade(pixs, 1, 2, 2, 2);
     }
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
 
         /* Crop inner 80% of image */
     pixGetDimensions(pix1, &w, &h, NULL);
@@ -1264,15 +1289,18 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
     pix2 = pixClipRectangle(pix1, box, NULL);
     pixGetDimensions(pix2, &w, &h, NULL);
     boxDestroy(&box);
-    if (pixadb) pixaAddPix(pixadb, pix2, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix2, L_COPY);
 
         /* Deskew */
     pix3 = pixDeskew(pix2, 0);
-    if (pixadb) pixaAddPix(pixadb, pix3, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix3, L_COPY);
 
         /* Close to increase column counts for text */
     pix4 = pixCloseSafeBrick(NULL, pix3, 5, 21);
-    if (pixadb) pixaAddPix(pixadb, pix4, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix4, L_COPY);
     pixInvert(pix4, pix4);
     na1 = pixCountByColumn(pix4, NULL);
 
@@ -1623,7 +1651,8 @@ PIX     *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8, *pix9;
          * at 175 ppi.  If an image is found, assume there is no table.  */
     pix1 = pixPrepare1bpp(pixs, box, 0.1f, 175);
     pix2 = pixGenerateHalftoneMask(pix1, NULL, &htfound, NULL);
-    if (htfound && pixadb) pixaAddPix(pixadb, pix2, L_COPY);
+    if (htfound && pixadb)
+		pixaAddPix(pixadb, pix2, L_COPY);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     if (htfound) {
@@ -1688,11 +1717,13 @@ PIX     *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8, *pix9;
 
         /* Remove the lines */
     pixSubtract(pix1, pix1, pix6);
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
 
         /* Remove noise pixels */
     pix7 = pixMorphSequence(pix1, "c4.1 + o8.1", 0);
-    if (pixadb) pixaAddPix(pixadb, pix7, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix7, L_COPY);
 
         /* Look for vertical white space.  Invert to convert white bg
          * to fg.  Use a single rank-1 2x reduction, which closes small
@@ -2366,14 +2397,16 @@ BOX       *box1;
 BOXA      *boxa1;
 PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
 
-    if (ppixm) *ppixm = NULL;
+    if (ppixm)
+		*ppixm = NULL;
     if (!pixs)
         return (PIX *)ERROR_PTR("pixs not defined", __func__, NULL);
     if (thresh == 0) thresh = 128;
 
     if ((pix1 = pixConvertTo1(pixs, thresh)) == NULL)
         return (PIX *)ERROR_PTR("pix1 not made", __func__, NULL);
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
 
         /* Identify regions for photo-inversion:
          * (1) Start with the halftone mask.
@@ -2405,7 +2438,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
         box1 = boxaGetBox(boxa1, i, L_COPY);
         pix5 = pixClipRectangle(pix1, box1, NULL);
         pixForegroundFraction(pix5, &fgfract);
-        if (pixadb) lept_stderr("fg fraction: %5.3f\n", fgfract);
+        if (pixadb)
+			lept_stderr("fg fraction: %5.3f\n", fgfract);
         boxGetGeometry(box1, &x, &y, &w, &h);
         if (fgfract < 0.6)  /* erase from the mask */
             pixRasterop(pix4, x, y, w, h, PIX_CLR, NULL, 0, 0);

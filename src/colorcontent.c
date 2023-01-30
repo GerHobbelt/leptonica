@@ -970,7 +970,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
     if (pixm) {
         pixForegroundFraction(pixm, &ratio);
         if (ratio > 0.7) {
-            if (pixadb) L_INFO("pixm has big fg: %f5.2\n", __func__, ratio);
+            if (pixadb)
+				L_INFO("pixm has big fg: %f5.2\n", __func__, ratio);
             return 0;
         }
     }
@@ -982,16 +983,19 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
     if (!carray)
         return ERROR_INT("rank color array not made", __func__, 1);
     extractRGBValues(carray[9], &rval, &gval, &bval);
-    if (pixadb) L_INFO("lightest background color: (r,g,b) = (%d,%d,%d)\n",
+    if (pixadb)
+		L_INFO("lightest background color: (r,g,b) = (%d,%d,%d)\n",
                        __func__, rval, gval, bval);
     proceed = TRUE;
     if ((rval < bval - 2) || (rval < gval - 2)) {
-        if (pixadb) L_INFO("background not reddish\n", __func__);
+        if (pixadb)
+			L_INFO("background not reddish\n", __func__);
         proceed = FALSE;
     }
     aveval = (rval + gval + bval) / 3;
     if (aveval < lightthresh) {
-        if (pixadb) L_INFO("background too dark\n", __func__);
+        if (pixadb)
+			L_INFO("background too dark\n", __func__);
         proceed = FALSE;
     }
     if (pixadb) {
@@ -1006,13 +1010,16 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
          * threshold using darkthresh; do a small dilation;
          * combine with pixm. */
     pix1 = pixConvertRGBToGray(pixs, 0.33f, 0.34f, 0.33f);
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
     pixm1 = pixThresholdToBinary(pix1, darkthresh);
     pixDilateBrick(pixm1, pixm1, 7, 7);
-    if (pixadb) pixaAddPix(pixadb, pixm1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixm1, L_COPY);
     if (pixm) {
         pixOr(pixm1, pixm1, pixm);
-        if (pixadb) pixaAddPix(pixadb, pixm1, L_COPY);
+        if (pixadb)
+			pixaAddPix(pixadb, pixm1, L_COPY);
     }
     pixDestroy(&pix1);
 
@@ -1020,18 +1027,22 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
            have a very large color saturation (max - min) value. */
     pixm2 = pixConvertRGBToBinaryArb(pixs, -1.0, 0.0, 1.0, mindiff,
                                      L_SELECT_IF_GTE);  /* b - r */
-    if (pixadb) pixaAddPix(pixadb, pixm2, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixm2, L_COPY);
     pix1 = pixConvertRGBToBinaryArb(pixs, -1.0, 1.0, 0.0, mindiff,
                                     L_SELECT_IF_GTE);  /* g - r */
-    if (pixadb) pixaAddPix(pixadb, pix1, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix1, L_COPY);
     pixOr(pixm2, pixm2, pix1);
     pixDestroy(&pix1);
     pix1 = pixConvertRGBToGrayMinMax(pixs, L_CHOOSE_MAXDIFF);
     pix2 = pixThresholdToBinary(pix1, colordiff);
     pixInvert(pix2, pix2);
-    if (pixadb) pixaAddPix(pixadb, pix2, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pix2, L_COPY);
     pixOr(pixm2, pixm2, pix2);
-    if (pixadb) pixaAddPix(pixadb, pixm2, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixm2, L_COPY);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
 
@@ -1039,7 +1050,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
          * pixm2 now holds all the color pixels of interest  */
     pixSubtract(pixm2, pixm2, pixm1);
     pixDestroy(&pixm1);
-    if (pixadb) pixaAddPix(pixadb, pixm2, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixm2, L_COPY);
 
         /* But we're not quite finished.  Remove pixels from any component
          * that is touching the image border.  False color pixels can
@@ -1055,7 +1067,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
         pixAnd(pixm3, pixm3, pix2);
         pixDestroy(&pix2);
     }
-    if (pixadb) pixaAddPix(pixadb, pixm3, L_COPY);
+    if (pixadb)
+		pixaAddPix(pixadb, pixm3, L_COPY);
 
         /* Get the fraction of light color pixels */
     pixCountPixels(pixm3, &count, NULL);
@@ -1162,9 +1175,12 @@ NUMA    *na;
     *pncolors = 0;
     if (!pixs || pixGetDepth(pixs) != 8)
         return ERROR_INT("pixs not defined or not 8 bpp", __func__, 1);
-    if (darkthresh < 0) darkthresh = 20;  /* defaults */
-    if (lightthresh < 0) lightthresh = 236;
-    if (minfract < 0.0) minfract = 0.0001f;
+    if (darkthresh < 0)
+		darkthresh = 20;  /* defaults */
+    if (lightthresh < 0)
+		lightthresh = 236;
+    if (minfract < 0.0)
+		minfract = 0.0001f;
     if (minfract > 1.0)
         return ERROR_INT("minfract > 1.0", __func__, 1);
     if (minfract >= 0.001)
@@ -1364,11 +1380,13 @@ PIXCMAP   *cmap;
          * should not be overly sensitive to their actual values. */
     if (d == 8) {
         pixSetMasked(pixg, pixm, 0xff);
-        if (debug) pixWrite("junkpix8.png", pixg, IFF_PNG);
+        if (debug)
+			pixWrite("junkpix8.png", pixg, IFF_PNG);
         pixNumSignificantGrayColors(pixg, 20, 236, 0.0001f, 1, pncolors);
     } else {  /* d == 32 */
         pixSetMasked(pixsc, pixm, 0xffffffff);
-        if (debug) pixWrite("junkpix32.png", pixsc, IFF_PNG);
+        if (debug)
+			pixWrite("junkpix32.png", pixsc, IFF_PNG);
         pixNumberOccupiedOctcubes(pixsc, 4, 20, -1, pncolors);
     }
 
