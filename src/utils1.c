@@ -201,7 +201,7 @@ returnErrorInt(const char  *msg,
                const char  *procname,
                l_int32      ival)
 {
-    lept_stderr("Error in %s: %s\n", procname, msg);
+    lept_stderr("Leptonica Error in %s: %s\n", procname, msg);
     return ival;
 }
 
@@ -219,7 +219,7 @@ returnErrorFloat(const char  *msg,
                  const char  *procname,
                  l_float32    fval)
 {
-    lept_stderr("Error in %s: %s\n", procname, msg);
+    lept_stderr("Leptonica Error in %s: %s\n", procname, msg);
     return fval;
 }
 
@@ -237,7 +237,7 @@ returnErrorPtr(const char  *msg,
                const char  *procname,
                void        *pval)
 {
-    lept_stderr("Error in %s: %s\n", procname, msg);
+    lept_stderr("Leptonica Error in %s: %s\n", procname, msg);
     return pval;
 }
 

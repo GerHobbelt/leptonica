@@ -1879,14 +1879,19 @@ FILE  *fp;
 
         /* Try input filename */
     fname = genPathname(filename, NULL);
-    fp = fopen(fname, "rb");
+	if (fname == NULL)
+		return NULL;
+	fp = fopen(fname, "rb");
     LEPT_FREE(fname);
     if (fp) return fp;
 
         /* Else, strip directory and try locally */
     splitPathAtDirectory(filename, NULL, &tail);
-    fp = fopen(tail, "rb");
+	if (tail == NULL)
+		return (FILE*)ERROR_PTR("allocation failure / out of memory / path tail extraction failure", __func__, NULL);
+	fp = fopen(tail, "rb");
     LEPT_FREE(tail);
+	LEPT_FREE(fname);
 
     if (!fp)
         return (FILE *)ERROR_PTR("file not found", __func__, NULL);
@@ -3092,7 +3097,9 @@ size_t   size;
             return (char *)ERROR_PTR("no current dir found", __func__, NULL);
     } else {
         cdir = stringNew(dir);
-    }
+		if (cdir == NULL)
+			return (char*)ERROR_PTR("allocation failure / out of memory", __func__, NULL);
+	}
 
         /* Convert to unix path separators, and remove the trailing
          * slash in the directory, except when dir == "/"  */
