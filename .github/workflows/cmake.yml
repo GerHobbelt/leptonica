@@ -12,10 +12,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Install dependencies on Linux
+      run: |
+           sudo apt-get install ninja-build -y
+           cmake --version
+      if: runner.os == 'Linux'
+      
+    - name: Install dependencies on macOS
+      run: |
+           brew install giflib
+           brew install ninja
+           cmake --version
+      if: runner.os == 'macOS'
+        
 
     - name: configure
-      run: cmake -Bbuild -DSW_BUILD=OFF -DBUILD_PROG=OFF -DBUILD_SHARED_LIBS=ON
+      run: cmake -Bbuild -G Ninja -DSW_BUILD=OFF -DBUILD_PROG=OFF -DBUILD_SHARED_LIBS=ON
 
 
     - name: build
-      run: cmake --build build --config Release --target install
+      run: sudo cmake --build build --config Release --target install
