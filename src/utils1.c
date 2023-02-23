@@ -318,6 +318,8 @@ l_int32  n;
 
     va_start(args, fmt);
     n = vsnprintf(msg, sizeof(msg), fmt, args);
+	// when error message is longer than the buffer can deal with, it's automatically marked as truncated this way:
+	strcpy(msg + sizeof(msg) - sizeof("(...truncated...)"), "(...truncated...)");
     va_end(args);
     if (n < 0)
         return;

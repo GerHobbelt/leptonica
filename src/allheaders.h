@@ -35,8 +35,9 @@
 #include "alltypes.h"
 
 #ifndef NO_PROTOS
+
 /*
- *  These prototypes were autogen'd by xtractprotos, v. 1.5
+ * These prototypes were autogen'd by xtractprotos, v. 1.5.1
  */
 #ifdef __cplusplus
 extern "C" {
@@ -186,9 +187,9 @@ LEPT_DLL extern l_ok bmfGetBaseline ( L_BMF *bmf, char chr, l_int32 *pbaseline )
 LEPT_DLL extern PIXA * pixaGetFont ( const char *dir, l_int32 fontsize, l_int32 *pbl0, l_int32 *pbl1, l_int32 *pbl2 );
 LEPT_DLL extern l_ok pixaSaveFont ( const char *indir, const char *outdir, l_int32 fontsize );
 LEPT_DLL extern PIX * pixReadStreamBmp ( FILE *fp );
-LEPT_DLL extern PIX * pixReadMemBmp ( const l_uint8 *cdata, size_t size );
 LEPT_DLL extern l_ok pixWriteStreamBmp ( FILE *fp, PIX *pix );
-LEPT_DLL extern l_ok pixWriteMemBmp ( l_uint8 **pfdata, size_t *pfsize, PIX *pixs );
+LEPT_DLL extern PIX * pixReadMemBmp ( const l_uint8 *cdata, size_t size );
+LEPT_DLL extern l_ok pixWriteMemBmp ( l_uint8 **pdata, size_t *psize, PIX *pix );
 LEPT_DLL extern PIXA * l_bootnum_gen1 ( void );
 LEPT_DLL extern PIXA * l_bootnum_gen2 ( void );
 LEPT_DLL extern PIXA * l_bootnum_gen3 ( void );
@@ -1065,7 +1066,7 @@ LEPT_DLL extern l_ok jbGetULCorners ( JBCLASSER *classer, PIX *pixs, BOXA *boxa 
 LEPT_DLL extern l_ok jbGetLLCorners ( JBCLASSER *classer );
 LEPT_DLL extern l_ok readHeaderJp2k ( const char *filename, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *pcodec );
 LEPT_DLL extern l_ok freadHeaderJp2k ( FILE *fp, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *pcodec );
-LEPT_DLL extern l_ok readHeaderMemJp2k ( const l_uint8 *data, size_t size, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *pcodec );
+LEPT_DLL extern l_ok readHeaderMemJp2k ( const l_uint8 *cdata, size_t size, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *pcodec );
 LEPT_DLL extern l_int32 fgetJp2kResolution ( FILE *fp, l_int32 *pxres, l_int32 *pyres );
 LEPT_DLL extern PIX * pixReadJp2k ( const char *filename, l_uint32 reduction, BOX *box, l_int32 hint, l_int32 debug );
 LEPT_DLL extern PIX * pixReadStreamJp2k ( FILE *fp, l_uint32 reduction, BOX *box, l_int32 hint, l_int32 debug );
@@ -1073,16 +1074,16 @@ LEPT_DLL extern l_ok pixWriteJp2k ( const char *filename, PIX *pix, l_int32 qual
 LEPT_DLL extern l_ok pixWriteStreamJp2k ( FILE *fp, PIX *pix, l_int32 quality, l_int32 nlevels, l_int32 codec, l_int32 hint, l_int32 debug );
 LEPT_DLL extern PIX * pixReadMemJp2k ( const l_uint8 *data, size_t size, l_uint32 reduction, BOX *box, l_int32 hint, l_int32 debug );
 LEPT_DLL extern l_ok pixWriteMemJp2k ( l_uint8 **pdata, size_t *psize, PIX *pix, l_int32 quality, l_int32 nlevels, l_int32 hint, l_int32 debug );
-LEPT_DLL extern PIX * pixReadJpeg ( const char *filename, l_int32 cmapflag, l_int32 reduction, l_int32 *pnwarn, l_int32 hint );
-LEPT_DLL extern PIX * pixReadStreamJpeg ( FILE *fp, l_int32 cmapflag, l_int32 reduction, l_int32 *pnwarn, l_int32 hint );
+LEPT_DLL extern PIX * pixReadJpeg ( const char *filename, l_int32 cmflag, l_int32 reduction, l_int32 *pnwarn, l_int32 hint );
+LEPT_DLL extern PIX * pixReadStreamJpeg ( FILE *fp, l_int32 cmflag, l_int32 reduction, l_int32 *pnwarn, l_int32 hint );
 LEPT_DLL extern l_ok readHeaderJpeg ( const char *filename, l_int32 *pw, l_int32 *ph, l_int32 *pspp, l_int32 *pycck, l_int32 *pcmyk );
 LEPT_DLL extern l_ok freadHeaderJpeg ( FILE *fp, l_int32 *pw, l_int32 *ph, l_int32 *pspp, l_int32 *pycck, l_int32 *pcmyk );
 LEPT_DLL extern l_int32 fgetJpegResolution ( FILE *fp, l_int32 *pxres, l_int32 *pyres );
 LEPT_DLL extern l_int32 fgetJpegComment ( FILE *fp, l_uint8 **pcomment );
 LEPT_DLL extern l_ok pixWriteJpeg ( const char *filename, PIX *pix, l_int32 quality, l_int32 progressive );
-LEPT_DLL extern l_ok pixWriteStreamJpeg ( FILE *fp, PIX *pixs, l_int32 quality, l_int32 progressive );
-LEPT_DLL extern PIX * pixReadMemJpeg ( const l_uint8 *data, size_t size, l_int32 cmflag, l_int32 reduction, l_int32 *pnwarn, l_int32 hint );
-LEPT_DLL extern l_ok readHeaderMemJpeg ( const l_uint8 *data, size_t size, l_int32 *pw, l_int32 *ph, l_int32 *pspp, l_int32 *pycck, l_int32 *pcmyk );
+LEPT_DLL extern l_ok pixWriteStreamJpeg ( FILE *fp, PIX *pix, l_int32 quality, l_int32 progressive );
+LEPT_DLL extern PIX * pixReadMemJpeg ( const l_uint8 *cdata, size_t size, l_int32 cmflag, l_int32 reduction, l_int32 *pnwarn, l_int32 hint );
+LEPT_DLL extern l_ok readHeaderMemJpeg ( const l_uint8 *cdata, size_t size, l_int32 *pw, l_int32 *ph, l_int32 *pspp, l_int32 *pycck, l_int32 *pcmyk );
 LEPT_DLL extern l_ok readResolutionMemJpeg ( const l_uint8 *data, size_t size, l_int32 *pxres, l_int32 *pyres );
 LEPT_DLL extern l_ok pixWriteMemJpeg ( l_uint8 **pdata, size_t *psize, PIX *pix, l_int32 quality, l_int32 progressive );
 LEPT_DLL extern l_ok pixSetChromaSampling ( PIX *pix, l_int32 sampling );
@@ -1431,13 +1432,13 @@ LEPT_DLL extern l_ok pixConvertToPdfData ( PIX *pix, l_int32 type, l_int32 quali
 LEPT_DLL extern l_ok ptraConcatenatePdfToData ( L_PTRA *pa_data, SARRAY *sa, l_uint8 **pdata, size_t *pnbytes );
 LEPT_DLL extern l_ok convertTiffMultipageToPdf ( const char *filein, const char *fileout );
 LEPT_DLL extern l_ok l_generateCIDataForPdf ( const char *fname, PIX *pix, l_int32 quality, L_COMP_DATA **pcid );
-LEPT_DLL extern l_ok l_generateCIData ( const char *fname, l_int32 type, l_int32 quality, l_int32 ascii85, L_COMP_DATA **pcid );
-LEPT_DLL extern L_COMP_DATA * l_generateFlateDataPdf ( const char *fname, PIX *pixs );
+LEPT_DLL extern L_COMP_DATA * l_generateFlateDataPdf ( const char *fname, PIX *pix );
 LEPT_DLL extern L_COMP_DATA * l_generateJpegData ( const char *fname, l_int32 ascii85flag );
 LEPT_DLL extern L_COMP_DATA * l_generateJpegDataMem ( l_uint8 *data, size_t nbytes, l_int32 ascii85flag );
-LEPT_DLL extern L_COMP_DATA * l_generateG4Data ( const char *fname, l_int32 ascii85flag );
+LEPT_DLL extern l_ok l_generateCIData ( const char *fname, l_int32 type, l_int32 quality, l_int32 ascii85, L_COMP_DATA **pcid );
 LEPT_DLL extern l_ok pixGenerateCIData ( PIX *pixs, l_int32 type, l_int32 quality, l_int32 ascii85, L_COMP_DATA **pcid );
 LEPT_DLL extern L_COMP_DATA * l_generateFlateData ( const char *fname, l_int32 ascii85flag );
+LEPT_DLL extern L_COMP_DATA * l_generateG4Data ( const char *fname, l_int32 ascii85flag );
 LEPT_DLL extern l_ok cidConvertToPdfData ( L_COMP_DATA *cid, const char *title, l_uint8 **pdata, size_t *pnbytes );
 LEPT_DLL extern void l_CIDataDestroy ( L_COMP_DATA **pcid );
 LEPT_DLL extern l_ok getPdfPageCount ( const char *fname, l_int32 *pnpages );
@@ -1997,9 +1998,9 @@ LEPT_DLL extern PIX * pixTilingGetTile ( PIXTILING *pt, l_int32 i, l_int32 j );
 LEPT_DLL extern l_ok pixTilingNoStripOnPaint ( PIXTILING *pt );
 LEPT_DLL extern l_ok pixTilingPaintTile ( PIX *pixd, l_int32 i, l_int32 j, PIX *pixs, PIXTILING *pt );
 LEPT_DLL extern PIX * pixReadStreamPng ( FILE *fp );
-LEPT_DLL extern l_ok readHeaderPng ( const char *filename, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *piscmap );
-LEPT_DLL extern l_ok freadHeaderPng ( FILE *fp, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *piscmap );
-LEPT_DLL extern l_ok readHeaderMemPng ( const l_uint8 *data, size_t size, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *piscmap );
+LEPT_DLL extern l_ok readHeaderPng ( const char *filename, l_int32 *pwidth, l_int32 *pheight, l_int32 *pbps, l_int32 *pspp, l_int32 *piscmap );
+LEPT_DLL extern l_ok freadHeaderPng ( FILE *fp, l_int32 *pwidth, l_int32 *pheight, l_int32 *pbps, l_int32 *pspp, l_int32 *piscmap );
+LEPT_DLL extern l_ok readHeaderMemPng ( const l_uint8 *data, size_t size, l_int32 *pwidth, l_int32 *pheight, l_int32 *pbps, l_int32 *pspp, l_int32 *piscmap );
 LEPT_DLL extern l_int32 fgetPngResolution ( FILE *fp, l_int32 *pxres, l_int32 *pyres );
 LEPT_DLL extern l_ok isPngInterlaced ( const char *filename, l_int32 *pinterlaced );
 LEPT_DLL extern l_ok fgetPngColormapInfo ( FILE *fp, PIXCMAP **pcmap, l_int32 *ptransparency );
@@ -2015,8 +2016,8 @@ LEPT_DLL extern l_ok freadHeaderPnm ( FILE *fp, l_int32 *pw, l_int32 *ph, l_int3
 LEPT_DLL extern l_ok pixWriteStreamPnm ( FILE *fp, PIX *pix );
 LEPT_DLL extern l_ok pixWriteStreamAsciiPnm ( FILE *fp, PIX *pix );
 LEPT_DLL extern l_ok pixWriteStreamPam ( FILE *fp, PIX *pix );
-LEPT_DLL extern PIX * pixReadMemPnm ( const l_uint8 *data, size_t size );
-LEPT_DLL extern l_ok readHeaderMemPnm ( const l_uint8 *data, size_t size, l_int32 *pw, l_int32 *ph, l_int32 *pd, l_int32 *ptype, l_int32 *pbps, l_int32 *pspp );
+LEPT_DLL extern PIX * pixReadMemPnm ( const l_uint8 *cdata, size_t size );
+LEPT_DLL extern l_ok readHeaderMemPnm ( const l_uint8 *cdata, size_t size, l_int32 *pw, l_int32 *ph, l_int32 *pd, l_int32 *ptype, l_int32 *pbps, l_int32 *pspp );
 LEPT_DLL extern l_ok pixWriteMemPnm ( l_uint8 **pdata, size_t *psize, PIX *pix );
 LEPT_DLL extern l_ok pixWriteMemPam ( l_uint8 **pdata, size_t *psize, PIX *pix );
 LEPT_DLL extern PIX * pixProjectiveSampledPta ( PIX *pixs, PTA *ptad, PTA *ptas, l_int32 incolor );
@@ -2071,7 +2072,7 @@ LEPT_DLL extern l_int32 ptaGetCount ( PTA *pta );
 LEPT_DLL extern l_ok ptaGetPt ( PTA *pta, l_int32 index, l_float32 *px, l_float32 *py );
 LEPT_DLL extern l_ok ptaGetIPt ( PTA *pta, l_int32 index, l_int32 *px, l_int32 *py );
 LEPT_DLL extern l_ok ptaSetPt ( PTA *pta, l_int32 index, l_float32 x, l_float32 y );
-LEPT_DLL extern l_ok ptaUpdatePtYCoord (PTA *pta, l_int32 index, l_float32 y);
+LEPT_DLL extern l_ok ptaUpdatePtYCoord ( PTA* pta, l_int32 index, l_float32 y );
 LEPT_DLL extern l_ok ptaGetArrays ( PTA *pta, NUMA **pnax, NUMA **pnay );
 LEPT_DLL extern PTA * ptaRead ( const char *filename );
 LEPT_DLL extern PTA * ptaReadStream ( FILE *fp );
@@ -2596,21 +2597,21 @@ LEPT_DLL extern l_ok bmfGetStringWidth ( L_BMF *bmf, const char *textstr, l_int3
 LEPT_DLL extern SARRAY * splitStringToParagraphs ( char *textstr, l_int32 splitflag );
 LEPT_DLL extern PIX * pixReadTiff ( const char *filename, l_int32 n );
 LEPT_DLL extern PIX * pixReadStreamTiff ( FILE *fp, l_int32 n );
-LEPT_DLL extern l_ok pixWriteTiff ( const char *filename, PIX *pix, l_int32 comptype, const char *modestr );
-LEPT_DLL extern l_ok pixWriteTiffCustom ( const char *filename, PIX *pix, l_int32 comptype, const char *modestr, NUMA *natags, SARRAY *savals, SARRAY *satypes, NUMA *nasizes );
+LEPT_DLL extern l_ok pixWriteTiff ( const char *filename, PIX *pix, l_int32 comptype, const char *modestring );
+LEPT_DLL extern l_ok pixWriteTiffCustom ( const char *filename, PIX *pix, l_int32 comptype, const char *modestring, NUMA *natags, SARRAY *savals, SARRAY *satypes, NUMA *nasizes );
 LEPT_DLL extern l_ok pixWriteStreamTiff ( FILE *fp, PIX *pix, l_int32 comptype );
 LEPT_DLL extern l_ok pixWriteStreamTiffWA ( FILE *fp, PIX *pix, l_int32 comptype, const char *modestr );
-LEPT_DLL extern PIX * pixReadFromMultipageTiff ( const char *fname, size_t *poffset );
+LEPT_DLL extern PIX * pixReadFromMultipageTiff ( const char *filename, size_t *poffset );
 LEPT_DLL extern PIXA * pixaReadMultipageTiff ( const char *filename );
-LEPT_DLL extern l_ok pixaWriteMultipageTiff ( const char *fname, PIXA *pixa );
+LEPT_DLL extern l_ok pixaWriteMultipageTiff ( const char *filename, PIXA *pixa );
 LEPT_DLL extern l_ok writeMultipageTiff ( const char *dirin, const char *substr, const char *fileout );
 LEPT_DLL extern l_ok writeMultipageTiffSA ( SARRAY *sa, const char *fileout );
 LEPT_DLL extern l_ok fprintTiffInfo ( FILE *fpout, const char *tiffile );
 LEPT_DLL extern l_ok tiffGetCount ( FILE *fp, l_int32 *pn );
 LEPT_DLL extern l_ok getTiffResolution ( FILE *fp, l_int32 *pxres, l_int32 *pyres );
-LEPT_DLL extern l_ok readHeaderTiff ( const char *filename, l_int32 n, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *pres, l_int32 *pcmap, l_int32 *pformat );
-LEPT_DLL extern l_ok freadHeaderTiff ( FILE *fp, l_int32 n, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *pres, l_int32 *pcmap, l_int32 *pformat );
-LEPT_DLL extern l_ok readHeaderMemTiff ( const l_uint8 *cdata, size_t size, l_int32 n, l_int32 *pw, l_int32 *ph, l_int32 *pbps, l_int32 *pspp, l_int32 *pres, l_int32 *pcmap, l_int32 *pformat );
+LEPT_DLL extern l_ok readHeaderTiff ( const char *filename, l_int32 n, l_int32 *pwidth, l_int32 *pheight, l_int32 *pbps, l_int32 *pspp, l_int32 *pres, l_int32 *pcmap, l_int32 *pformat );
+LEPT_DLL extern l_ok freadHeaderTiff ( FILE *fp, l_int32 n, l_int32 *pwidth, l_int32 *pheight, l_int32 *pbps, l_int32 *pspp, l_int32 *pres, l_int32 *pcmap, l_int32 *pformat );
+LEPT_DLL extern l_ok readHeaderMemTiff ( const l_uint8 *cdata, size_t size, l_int32 n, l_int32 *pwidth, l_int32 *pheight, l_int32 *pbps, l_int32 *pspp, l_int32 *pres, l_int32 *pcmap, l_int32 *pformat );
 LEPT_DLL extern l_ok findTiffCompression ( FILE *fp, l_int32 *pcomptype );
 LEPT_DLL extern l_ok extractG4DataFromFile ( const char *filein, l_uint8 **pdata, size_t *pnbytes, l_int32 *pw, l_int32 *ph, l_int32 *pminisblack );
 LEPT_DLL extern PIX * pixReadMemTiff ( const l_uint8 *cdata, size_t size, l_int32 n );
@@ -2647,7 +2648,7 @@ LEPT_DLL extern char * getLeptonicaVersion ( void );
 LEPT_DLL extern void startTimer ( void );
 LEPT_DLL extern l_float32 stopTimer ( void );
 LEPT_DLL extern L_TIMER startTimerNested ( void );
-LEPT_DLL extern l_float32 stopTimerNested ( L_TIMER rusage_start );
+LEPT_DLL extern l_float32 stopTimerNested ( L_TIMER utime_start );
 LEPT_DLL extern void l_getCurrentTime ( l_int32 *sec, l_int32 *usec );
 LEPT_DLL extern L_WALLTIMER * startWallTimer ( void );
 LEPT_DLL extern l_float32 stopWallTimer ( L_WALLTIMER **ptimer );
@@ -2694,7 +2695,7 @@ LEPT_DLL extern FILE * fopenWriteWinTempfile ( void );
 LEPT_DLL extern FILE * lept_fopen ( const char *filename, const char *mode );
 LEPT_DLL extern l_ok lept_fclose ( FILE *fp );
 LEPT_DLL extern void * lept_calloc ( size_t nmemb, size_t size );
-LEPT_DLL extern void lept_free ( void *ptr );
+LEPT_DLL extern void lept_free ( const void *ptr );
 LEPT_DLL extern l_int32 lept_mkdir ( const char *subdir );
 LEPT_DLL extern l_int32 lept_rmdir ( const char *subdir );
 LEPT_DLL extern void lept_direxists ( const char *dir, l_int32 *pexists );

@@ -91,28 +91,45 @@
 #include <string.h>
 #include "allheaders.h"
 
-#define L_BUFSIZE 512  /* hardcoded below in sscanf() */
-static const char *version = "1.5";
+#include "mupdf/fitz.h"
+#include "tessocr.h"
 
+
+#define L_BUFSIZE 5120
+
+static const char *version = "1.5.1";
+
+#if defined(BUILD_MONOLITHIC)
+#define main    lept_xtractprotos_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char     *filein, *str, *tempfile, *prestring, *outprotos, *protostr;
+const char     *filein, *str, *tempfile, *prestring, *outprotos, *protostr, *incstring;
 char      buf[L_BUFSIZE];
 l_int32   i, maxindex, in_line, nflags, protos_added, firstfile, len, ret;
 size_t    nbytes;
 L_BYTEA  *ba, *ba2;
 SARRAY   *sa;
+// include paths spec copy of the build environment for the leptonica project:
+char include_paths[L_BUFSIZE] = ".;../../thirdparty/leptonica/src;../../scripts/leptonica/include/leptonica;../../source/fitz;../../include;../../scripts/leptonica/include/leptonica;../../scripts/libjpeg-turbo;../../scripts/libpng;../../scripts/libtiff;../../thirdparty/leptonica/src;../../thirdparty/jbig2dec;../../thirdparty/owemdjee/libjpeg-turbo;../../thirdparty/openjpeg/src/lib/openjp2;../../thirdparty/libpng;../../thirdparty/libtiff/libtiff;../../thirdparty/zlib;../../scripts/zlib;../../thirdparty/owemdjee/libgif;../../thirdparty/owemdjee/libwebp/src;../../thirdparty/owemdjee/plf_nanotimer";
+
+	ocr_set_leptonica_mem(fz_get_global_context());
+	leptSetStderrHandler(NULL);
+
+	setPixMemoryManager(leptonica_malloc, leptonica_free);
 
     if (argc == 1) {
         lept_stderr(
-                "xtractprotos [-prestring=<string>] [-protos=<where>] "
-                "[list of C files]\n"
-                "where the prestring is prepended to each prototype, and \n"
+                "xtractprotos [-prestring=<string>] [-protos=<where>] [-include=<paths>] "
+                "[list of C files]/n"
+                "where the prestring is prepended to each prototype, and /n"
                 "protos can be either 'inline' or the name of an output "
-                "prototype file\n");
-        return 1;
+                "prototype file.\n"
+		        "The specified include paths are passed to the C preprocessor instead of "
+				"the default set\nbuilt-in into the tool.\n");
+			return 1;
     }
 
     setLeptDebugOK(1);
@@ -126,9 +143,11 @@ SARRAY   *sa;
     maxindex = L_MIN(3, argc);
     for (i = 1; i < maxindex; i++) {
         if (argv[i][0] == '-') {
+			char scanfbuf[100];
             if (!strncmp(argv[i], "-prestring", 10)) {
                 nflags++;
-                ret = sscanf(argv[i] + 1, "prestring=%490s", buf);
+				snprintf(scanfbuf, sizeof(scanfbuf), "prestring=%%%ds", (int)(L_BUFSIZE - 10));
+				ret = sscanf(argv[i] + 1, scanfbuf, buf);
                 if (ret != 1) {
                     lept_stderr("parse failure for prestring\n");
                     return 1;
@@ -140,18 +159,35 @@ SARRAY   *sa;
                     buf[len + 1] = '\0';
                     prestring = stringNew(buf);
                 }
-            } else if (!strncmp(argv[i], "-protos", 7)) {
-                nflags++;
-                ret = sscanf(argv[i] + 1, "protos=%490s", buf);
-                if (ret != 1) {
-                    lept_stderr("parse failure for protos\n");
-                    return 1;
-                }
-                outprotos = stringNew(buf);
-                if (!strncmp(outprotos, "inline", 7))
-                    in_line = TRUE;
-            }
-        }
+			}
+			else if (!strncmp(argv[i], "-protos", 7)) {
+				nflags++;
+				snprintf(scanfbuf, sizeof(scanfbuf), "protos=%%%ds", (int)(L_BUFSIZE - 10));
+				ret = sscanf(argv[i] + 1, scanfbuf, buf);
+				if (ret != 1) {
+					lept_stderr("parse failure for protos\n");
+					return 1;
+				}
+				outprotos = stringNew(buf);
+				if (!strncmp(outprotos, "inline", 7))
+					in_line = TRUE;
+			}
+			else if (!strncmp(argv[i], "-include", 8)) {
+				nflags++;
+				snprintf(scanfbuf, sizeof(scanfbuf), "include=%%%ds", (int)(L_BUFSIZE - 10));
+				ret = sscanf(argv[i] + 1, scanfbuf, buf);
+				if (ret != 1) {
+					lept_stderr("parse failure for include\n");
+					return 1;
+				}
+				if ((len = strlen(buf)) > L_BUFSIZE - 3) {
+					L_WARNING("include paths list too large; omitting!\n", __func__);
+				}
+				else {
+					strcpy(include_paths, buf);
+				}
+			}
+		}
     }
 
     if (argc - nflags < 2) {
@@ -159,6 +195,33 @@ SARRAY   *sa;
         return 1;
     }
 
+	// construct cpp (a.k.a.: gcc -E) command line include paths part *once* (as strtok() will nuke our source for this ;-) ):
+	strcpy(buf, "");
+
+	{
+		const char* incpath = strtok(include_paths, ";");
+		size_t blen = strlen(buf);
+		char* dst = buf + blen;
+
+		while (incpath && blen < L_BUFSIZE - 1)
+		{
+			snprintf(dst, L_BUFSIZE - blen, "-I%s ", incpath);
+			buf[L_BUFSIZE - 1] = 0;
+			blen += strlen(dst);
+			dst = buf + blen;
+
+			incpath = strtok(NULL, ";");
+		}
+		if (blen == L_BUFSIZE - 1)
+		{
+			lept_stderr("failure to construct cpp comman line: all combined include paths result in a too long command line: %s\n", buf);
+			return 1;
+		}
+		// nuke last separating space in the output:
+		buf[blen - 1] = 0;
+	}
+
+	incstring = stringNew(buf);
 
     /* ---------------------------------------------------------------- */
     /*                   Generate the prototype string                  */
@@ -169,7 +232,7 @@ SARRAY   *sa;
     sa = sarrayCreate(0);
     sarrayAddString(sa, "/*", L_COPY);
     snprintf(buf, L_BUFSIZE,
-             " *  These prototypes were autogen'd by xtractprotos, v. %s",
+             " * These prototypes were autogen'd by xtractprotos, v. %s",
              version);
     sarrayAddString(sa, buf, L_COPY);
     sarrayAddString(sa, " */", L_COPY);
@@ -193,8 +256,12 @@ SARRAY   *sa;
         len = strlen(filein);
         if (filein[len - 1] == 'h')  /* skip .h files */
             continue;
-        snprintf(buf, L_BUFSIZE, "cpp -ansi -DNO_PROTOS %s %s",
-                 filein, tempfile);
+
+		// construct cpp (a.k.a.: gcc -E) command line:
+        snprintf(buf, L_BUFSIZE, "cpp -DNO_PROTOS %s %s %s",
+                 incstring, filein, tempfile);
+		//fprintf(stderr, "EXEC:\n%s\n", buf);
+
         ret = system(buf);  /* cpp */
         if (ret) {
             lept_stderr("cpp failure for %s; continuing\n", filein);
@@ -232,8 +299,9 @@ SARRAY   *sa;
     /*                       Generate the output                        */
     /* ---------------------------------------------------------------- */
     if (!outprotos) {  /* just write to stdout */
-        lept_stderr("%s\n", protostr);
-        lept_free(protostr);
+        //lept_stderr("%s\n", protostr);    <-- will truncate the meessage and besides: we expect the output on STDOUT, **not** STDERR!
+		fprintf(stdout, "%s\n", protostr);
+		lept_free(protostr);
         return 0;
     }
 

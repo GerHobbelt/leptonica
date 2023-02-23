@@ -2120,7 +2120,7 @@ lept_calloc(size_t  nmemb,
  * </pre>
  */
 void
-lept_free(void *ptr)
+lept_free(const void *ptr)
 {
     if (!ptr) return;
     LEPT_FREE(ptr);

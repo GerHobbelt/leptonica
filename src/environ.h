@@ -387,7 +387,7 @@ typedef struct L_WallTimer  L_WALLTIMER;
   void *leptonica_malloc(size_t blocksize);
   void *leptonica_calloc(size_t numelem, size_t elemsize);
   void *leptonica_realloc(void *ptr, size_t blocksize);
-  void leptonica_free(void *ptr);
+  void leptonica_free(const void *ptr);
 #else
   #define LEPT_MALLOC(blocksize)           malloc(blocksize)
   #define LEPT_CALLOC(numelem, elemsize)   calloc(numelem, elemsize)
