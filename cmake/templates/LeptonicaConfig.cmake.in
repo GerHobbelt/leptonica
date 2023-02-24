@@ -20,6 +20,11 @@
 #
 # ===================================================================================
 
+include(CMakeFindDependencyMacro)
+if (@LIBWEBP_SUPPORT@)
+    find_dependency(WebP @MINIMUM_WEBPMUX_VERSION@ CONFIG)
+endif()
+
 include(${CMAKE_CURRENT_LIST_DIR}/LeptonicaTargets.cmake)
 
 # ======================================================
