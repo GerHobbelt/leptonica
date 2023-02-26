@@ -27,11 +27,6 @@
 #ifndef  LEPTONICA_PIX_H
 #define  LEPTONICA_PIX_H
 
-#if defined(HAVE_MUPDF)
-#include "mupdf/fitz/context.h"
-#endif
-
-
 /*!
  * \file pix.h
  *
@@ -1090,18 +1085,8 @@ enum {
 /*-------------------------------------------------------------------------*
  *               Pix allocator and deallocator function types              *
  *-------------------------------------------------------------------------*/
-
-#if !defined(FZDBG_DECL_ARGS)
-
-#define FZDBG_DECL_ARGS     
-#define FZDBG_PASS			
-#define FZDBG_THIS_POS()		
-#define FZDBG_DECL_THIS_POS()		(void)0
-
-#endif
-
 /*! Allocator function type */
-typedef void *(*alloc_fn)(size_t   FZDBG_DECL_ARGS);
+typedef void *(*alloc_fn)(size_t);
 
 /*! Deallocator function type */
 typedef void (*dealloc_fn)(void *);

@@ -244,7 +244,7 @@ static struct PixMemoryManager  pix_mem_manager = {
 };
 
 static void *
-pixdata_malloc(size_t  size   FZDBG_DECL_ARGS)
+pixdata_malloc(size_t  size)
 {
 #ifndef _MSC_VER
     return (*pix_mem_manager.allocator)(size);
@@ -352,7 +352,7 @@ l_uint32  *data;
     if ((pixd = pixCreateHeader(width, height, depth)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     wpl = pixGetWpl(pixd);
-    if ((data = (l_uint32 *)pixdata_malloc(4LL * wpl * height    FZDBG_THIS_POS())) == NULL) {
+    if ((data = (l_uint32 *)pixdata_malloc(4LL * wpl * height)) == NULL) {
         pixDestroy(&pixd);
         return (PIX *)ERROR_PTR("pixdata_malloc fail for data",
                                 __func__, NULL);
@@ -765,7 +765,7 @@ l_uint32  *data;
     pixGetDimensions(pixs, &w, &h, &d);
     wpl = pixGetWpl(pixs);
     bytes = 4 * wpl * h;
-    if ((data = (l_uint32 *)pixdata_malloc(bytes    FZDBG_THIS_POS())) == NULL)
+    if ((data = (l_uint32 *)pixdata_malloc(bytes)) == NULL)
         return ERROR_INT("pixdata_malloc fail for data", __func__, 1);
 
         /* OK, do it */
@@ -1758,7 +1758,7 @@ l_uint32  *data, *datas;
     } else {  /* refcount > 1; copy */
         bytes = 4 * pixGetWpl(pixs) * pixGetHeight(pixs);
         datas = pixGetData(pixs);
-        if ((data = (l_uint32 *)pixdata_malloc(bytes    FZDBG_THIS_POS())) == NULL)
+        if ((data = (l_uint32 *)pixdata_malloc(bytes)) == NULL)
             return (l_uint32 *)ERROR_PTR("data not made", __func__, NULL);
         memcpy(data, datas, bytes);
     }
