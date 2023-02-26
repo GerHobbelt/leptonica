@@ -27,6 +27,7 @@
 #ifndef  LEPTONICA_ENVIRON_H
 #define  LEPTONICA_ENVIRON_H
 
+
 /*------------------------------------------------------------------------*
  *  Defines and includes differ for Unix and Windows.  Also for Windows,  *
  *  differentiate between conditionals based on platform and compiler.    *
@@ -41,6 +42,10 @@
 
 /* MS VC++ does not provide stdint.h, so define the missing types here */
 
+
+#if defined(HAVE_MUPDF)
+#include "mupdf/fitz/context.h"
+#endif
 
 #ifndef _MSC_VER
 
@@ -379,14 +384,31 @@ typedef struct L_WallTimer  L_WALLTIMER;
  *      For such builds, define LEPTONICA_INTERCEPT_ALLOC, and provide    *
  *      custom leptonica_{malloc, calloc, realloc, free} functions.       *
  *------------------------------------------------------------------------*/
+
+#if !defined(FZDBG_DECL_ARGS)
+
+#define FZDBG_DECL_ARGS     
+#define FZDBG_PASS			
+#define FZDBG_THIS_POS()		
+#define FZDBG_DECL_THIS_POS()		(void)0
+
+#endif
+
 #ifdef LEPTONICA_INTERCEPT_ALLOC
-  #define LEPT_MALLOC(blocksize)           leptonica_malloc(blocksize)
-  #define LEPT_CALLOC(numelem, elemsize)   leptonica_calloc(numelem, elemsize)
-  #define LEPT_REALLOC(ptr, blocksize)     leptonica_realloc(ptr, blocksize)
-  #define LEPT_FREE(ptr)                   leptonica_free(ptr)
-  void *leptonica_malloc(size_t blocksize);
-  void *leptonica_calloc(size_t numelem, size_t elemsize);
-  void *leptonica_realloc(void *ptr, size_t blocksize);
+#if defined(FZDBG_HAS_TRACING)
+#define LEPT_MALLOC(blocksize)           leptonica_malloc(blocksize    FZDBG_THIS_POS())
+#define LEPT_CALLOC(numelem, elemsize)   leptonica_calloc(numelem, elemsize    FZDBG_THIS_POS())
+#define LEPT_REALLOC(ptr, blocksize)     leptonica_realloc(ptr, blocksize    FZDBG_THIS_POS())
+#define LEPT_FREE(ptr)                   leptonica_free(ptr)
+#else
+#define LEPT_MALLOC(blocksize)           leptonica_malloc(blocksize    FZDBG_THIS_POS())
+#define LEPT_CALLOC(numelem, elemsize)   leptonica_calloc(numelem, elemsize    FZDBG_THIS_POS())
+#define LEPT_REALLOC(ptr, blocksize)     leptonica_realloc(ptr, blocksize    FZDBG_THIS_POS())
+#define LEPT_FREE(ptr)                   leptonica_free(ptr)
+#endif
+  void *leptonica_malloc(size_t blocksize   FZDBG_DECL_ARGS);
+  void *leptonica_calloc(size_t numelem, size_t elemsize   FZDBG_DECL_ARGS);
+  void *leptonica_realloc(void *ptr, size_t blocksize   FZDBG_DECL_ARGS);
   void leptonica_free(const void *ptr);
 #else
   #define LEPT_MALLOC(blocksize)           malloc(blocksize)

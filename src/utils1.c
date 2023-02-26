@@ -108,6 +108,8 @@
 #endif  /* HAVE_CONFIG_H */
 
 #ifdef _WIN32
+// MSWin fix: make sure we include winsock2.h *before* windows.h implicitly includes the antique winsock.h and causes all kinds of weird errors at compile time:
+#include <winsock2.h>
 #include <windows.h>
 #if defined(_MSC_VER)
 #ifndef _CRTDBG_MAP_ALLOC
