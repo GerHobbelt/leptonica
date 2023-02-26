@@ -1,0 +1,22 @@
+name: cmake
+
+on: [push, pull_request]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, macos-12]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: configure
+      run: cmake -Bbuild -DSW_BUILD=OFF -DBUILD_PROG=OFF -DBUILD_SHARED_LIBS=ON
+
+
+    - name: build
+      run: cmake --build build --config Release --target install
