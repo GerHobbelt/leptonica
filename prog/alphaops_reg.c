@@ -52,11 +52,19 @@
 #include "allheaders.h"
 #include "pix_internal.h"
 
+#include "monolithic_examples.h"
+
+
 static PIX *DoBlendTest(PIX *pix, BOX *box, l_uint32 val, l_float32 gamma,
                         l_int32 minval, l_int32 maxval, l_int32 which);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_alphaops_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_uint8      *data;
 l_int32       w, h, n1, n2, n, i, minval, maxval;

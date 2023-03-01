@@ -48,6 +48,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Implementation is in this file */
 static l_int32
 pixFindColorRegionsLight(PIX *pixs, PIX *pixm, l_int32 factor,
@@ -55,8 +58,13 @@ pixFindColorRegionsLight(PIX *pixs, PIX *pixm, l_int32 factor,
                     l_int32 colordiff, l_float32 *pcolorfract,
                     PIX **pcolormask1, PIX **pcolormask2, PIXA *pixadb);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_find_colorregions_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_float32  fcolor;
 PIX       *pix1, *pix2, *pix3, *pix4;

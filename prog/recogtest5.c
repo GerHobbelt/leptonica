@@ -41,11 +41,19 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static PIX *GetBigComponent(PIX *pixs);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_recogtest5_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32   i, item;
 l_int32   example[6] = {17, 20, 21, 22, 23, 24};  /* for decoding */

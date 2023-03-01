@@ -51,11 +51,19 @@
 #include "allheaders.h"
 #include "string.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_replacebytes_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  start, nbytes;
-char    *filein, *fileout, *newstr;
+const char    *filein, *fileout, *newstr = NULL;
 
     if (argc != 5 && argc != 6)
         return ERROR_INT(

@@ -50,10 +50,18 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_maketile_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *dirin, *fileout, *fname, *fullname;
+const char      *dirin, *fileout, *fname, *fullname;
 l_int32    depth, width, background, i, nfiles;
 l_float32  scale;
 SARRAY    *safiles;

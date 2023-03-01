@@ -51,10 +51,18 @@
 
 #include "allheaders.h"
 
-l_int32 TestAll(L_REGPARAMS *rp, PIX *pixs, l_int32 symmetric);
+#include "monolithic_examples.h"
+
+
+static l_int32 TestAll(L_REGPARAMS *rp, PIX *pixs, l_int32 symmetric);
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_binmorph3_reg_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs;
 L_REGPARAMS  *rp;
@@ -70,7 +78,7 @@ L_REGPARAMS  *rp;
     return regTestCleanup(rp);
 }
 
-l_int32
+static l_int32
 TestAll(L_REGPARAMS  *rp,
         PIX          *pixs,
         l_int32       symmetric)

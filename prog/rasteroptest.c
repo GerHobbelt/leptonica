@@ -48,11 +48,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void GeneralTest(PIX *pix1, BOX *box1, BOX *box2, l_int32 op, l_int32 niters);
 void InplaceTest(PIX *pix1, BOX *box1, BOX *box2, l_int32 op, l_int32 niters);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rasteroptest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 BOX     *box1, *box2;
 PIX     *pix1;

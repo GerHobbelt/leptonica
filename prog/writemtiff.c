@@ -42,8 +42,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_writemtiff_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
     if (argc != 3 && argc != 4)
         return ERROR_INT(" Syntax:  writemtiff dirin [pattern] fileout",

@@ -37,6 +37,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Consts for second set */
 static const l_int32  SHIFTX_2 = 50;
 static const l_int32  SHIFTY_2 = 70;
@@ -52,11 +55,16 @@ static const l_float32  SCALEY_3 = 0.78;
 static const l_float32  ROTATION_3 = 0.11;   /* radian */
 
 
-l_int32 RenderTransformedBoxa(PIX *pixt, BOXA *boxa, l_int32 i);
+static l_int32 RenderTransformedBoxa(PIX *pixt, BOXA *boxa, l_int32 i);
 
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_xformbox_reg_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, n, ws, hs, w, h, rval, gval, bval, order;
 l_float32    *mat1, *mat2, *mat3;
@@ -301,7 +309,7 @@ L_REGPARAMS  *rp;
 }
 
 
-l_int32
+static l_int32
 RenderTransformedBoxa(PIX    *pixt,
                       BOXA   *boxa,
                       l_int32 i)

@@ -36,9 +36,17 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_dewarptest4_main
+#endif
 
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 L_DEWARP   *dew1, *dew2, *dew3;
 L_DEWARPA  *dewa1, *dewa2, *dewa3;

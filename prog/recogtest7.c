@@ -39,13 +39,21 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* All input templates are scaled to 20x30.  Here, we rescale the
      * height to 45 and let the width scale isotropically. */
 static const l_int32 scaledw = 0;
 static const l_int32 scaledh = 45;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_recogtest7_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32   same;
 PIX      *pix1, *pix2, *pix3;

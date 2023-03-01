@@ -41,6 +41,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* for GPLOT_STYLE, use one of the following set:
      *    GPLOT_LINES
      *    GPLOT_POINTS
@@ -58,8 +61,13 @@
 
 #define  GPLOT_OUTPUT   GPLOT_PNG
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_plottest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char      *str1, *str2, *pngname;
 l_int32    i;

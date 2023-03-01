@@ -36,13 +36,21 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  THRESHOLD = 130;
     /* nlevels for 4 bpp output; anything between 2 and 16 is allowed */
 static const l_int32  NLEVELS = 4;
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_grayquant_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 const char   *str;
 l_int32       index, w, h;

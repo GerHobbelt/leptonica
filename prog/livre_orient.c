@@ -38,6 +38,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *textsel1 = "x  oo "
                               "x oOo "
                               "x  o  "
@@ -62,8 +65,13 @@ static const char *textsel4 = "xxxxxx"
                               " oOo x"
                               " oo  x";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_livre_orient_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX   *pix1;
 SEL   *sel1, *sel2, *sel3, *sel4;

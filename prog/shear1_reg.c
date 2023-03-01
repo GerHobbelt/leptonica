@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   BINARY_IMAGE              "test1.png"
 #define   TWO_BPP_IMAGE             "weasel2.4c.png"
 #define   FOUR_BPP_IMAGE1           "weasel4.11c.png"
@@ -50,8 +53,13 @@ static PIX *shearTest2(PIX *pixs, L_REGPARAMS *rp);
 
 static const l_float32  ANGLE1 = 3.14159265 / 12.;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_shear1_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32       index;
 PIX          *pixs, *pix1, *pixc, *pixd;

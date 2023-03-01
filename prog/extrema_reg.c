@@ -38,8 +38,16 @@
 #include <math.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_extrema_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_uint8      *data;
 size_t        size;

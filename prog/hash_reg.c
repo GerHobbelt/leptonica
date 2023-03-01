@@ -44,6 +44,9 @@
 #include "allheaders.h"
 #include "array_internal.h"
 
+#include "monolithic_examples.h"
+
+
 static SARRAY *BuildShortStrings(l_int32 nchars);
 static PTA *BuildPointSet(l_int32 w, l_int32 h);
 
@@ -57,8 +60,13 @@ const l_int32  da_set = 48000;
 const l_int32  da_union = 80000;
 const l_int32  da_intersection = 16001;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_hash_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_uint8      *data1;
 l_int32       i, n, c1, c2, c3, c4, c5, s1;

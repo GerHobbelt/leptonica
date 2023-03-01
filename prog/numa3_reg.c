@@ -41,8 +41,16 @@
 #include <math.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_numa3_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          buf1[64], buf2[64];
 l_int32       i, hw, thresh, same, ival;

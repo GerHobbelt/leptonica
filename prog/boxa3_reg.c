@@ -39,6 +39,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char  *boxafiles[3] = {"boxap1.ba", "boxap2.ba", "boxap3.ba"};
 static l_float32  varp[3] = {0.0165, 0.0432, 0.0716};
 static l_float32  varm[3] = {0.0088, 0.0213, 0.0357};
@@ -47,8 +50,13 @@ static l_int32  same[3] = {1, -1, -1};
 static void TestBoxa(L_REGPARAMS *rp, l_int32 index);
 static void PlotBoxa(L_REGPARAMS *rp, l_int32 index);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_boxa3_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32       i;
 L_REGPARAMS  *rp;
@@ -75,7 +83,7 @@ TestBoxa(L_REGPARAMS  *rp,
 l_uint8   *data;
 l_int32    w, h, medw, medh, isame;
 size_t     size;
-l_float32  scalefact, devw, ratiowh, fvarp, fvarm;
+l_float32  scalefact, ratiowh, fvarp, fvarm;
 BOXA      *boxa1, *boxa2, *boxa3;
 PIX       *pix1;
 

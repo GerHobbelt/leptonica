@@ -42,6 +42,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *WeaselNames[] = {"weasel2.4c.png",
                                     "weasel2.4g.png",
                                     "weasel2.png",
@@ -53,8 +56,13 @@ static const char *WeaselNames[] = {"weasel2.4c.png",
                                     "weasel8.240c.png",
                                     "weasel8.png",
                                     "weasel32.png"};
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_psio_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, w, h;
 l_float32     factor, scale;

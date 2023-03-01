@@ -36,19 +36,27 @@
 
 #include "allheaders.h"
 
-void AddTextAndSave(PIXA *pixa, PIX *pixs,
+#include "monolithic_examples.h"
+
+
+static void AddTextAndSave(PIXA *pixa, PIX *pixs,
                     L_BMF *bmf, const char *textstr,
                     l_int32 location, l_uint32 val);
 
-const char  *textstr[] =
+static const char  *textstr[] =
            {"Downscaled with sharpening",
             "Subpixel scaling; horiz R-G-B",
             "Subpixel scaling; horiz B-G-R",
             "Subpixel scaling; vert R-G-B",
             "Subpixel scaling; vert B-G-R"};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_subpixel_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_float32     scalefact;
 L_BMF        *bmf, *bmftop;

@@ -36,16 +36,24 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  NTIMES             5
 #define  CONNECTIVITY       8
 #define  XS                 150
 #define  YS                 150
 #define  DFLAG              1
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_seedfilltest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein, *fileout;
+const char      *filein, *fileout;
 l_int32    i;
 l_uint32   val;
 l_float32  size;

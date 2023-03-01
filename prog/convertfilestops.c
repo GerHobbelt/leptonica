@@ -52,10 +52,18 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_convertfilestops_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *dirin, *substr, *fileout;
+const char    *dirin, *substr, *fileout;
 l_int32  res;
 
     if (argc != 5) {

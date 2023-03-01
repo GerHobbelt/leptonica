@@ -37,10 +37,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void TestProjection(L_REGPARAMS *rp, PIX *pix);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_projection_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs, *pix1, *pix2;
 L_REGPARAMS  *rp;

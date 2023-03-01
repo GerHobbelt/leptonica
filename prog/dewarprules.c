@@ -51,8 +51,16 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_dewarprules_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32     w, h, select, ndew;
 BOXA       *boxa1;

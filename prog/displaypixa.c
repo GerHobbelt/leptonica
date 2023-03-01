@@ -48,11 +48,19 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_displaypixa_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char       buf[32];
-char      *fileout, *textstr;
+const char      *fileout = NULL, *textstr;
 l_int32    n, i, same, maxd, ntext, border, lossless, display, showtext;
 l_float32  scalefact;
 L_BMF     *bmf;

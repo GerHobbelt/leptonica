@@ -130,17 +130,27 @@
 #include <sys/types.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Special version */
-PIX *pixConvertTo8Special(PIX *pix);
+static PIX *pixConvertTo8Special(PIX *pix);
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_cleanpdf_main
+#endif
 
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char     buf[256], sequence[32];
-char    *basedir, *fname, *tail, *basename, *imagedir, *title;
-char    *outfile, *firstpath;
+const char    *basedir, *title;
+char * fname, * tail, * basename, * imagedir;
+const char    *outfile;
+const char * firstpath;
 l_int32  thresh, res, rotation, darken, opensize, i, n, ret;
-PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
+PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 SARRAY  *sa;
 
     if (argc != 9)
@@ -314,7 +324,7 @@ SARRAY  *sa;
     /* A special version of pixConvertTo8() that returns an image without
      * a colormap and uses pixConvertRGBToGrayMinMax() to strongly
      * render color into black. */
-PIX *
+static PIX *
 pixConvertTo8Special(PIX  *pixs)
 {
     l_int32 d = pixGetDepth(pixs);

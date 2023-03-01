@@ -41,6 +41,9 @@
 #include "allheaders.h"
 #include "pix_internal.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *fnames[] = {"weasel32.png", "weasel2.4c.png",
                                "weasel4.16c.png", "weasel4.8g.png",
                                "weasel8.149g.png", "weasel8.16g.png"};
@@ -48,8 +51,13 @@ static const char *fnames[] = {"weasel32.png", "weasel2.4c.png",
 LEPT_DLL extern const char *ImageFileFormatExtensions[];
 static void get_format_data(l_int32 i, l_uint8 *data, size_t size);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixcomp_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_uint8      *data1, *data2;
 l_int32       i;

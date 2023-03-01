@@ -35,13 +35,21 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void GetImageMask(PIX *pixs, l_int32 res, BOXA **pboxa,
                          L_REGPARAMS *rp, const char *debugfile);
 static PIX * QuantizeNonImageRegion(PIX *pixs, PIX *pixm, l_int32 levels);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pdfio2_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_uint8      *data;
 l_int32       w, h, same;

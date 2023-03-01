@@ -36,10 +36,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_graymorphtest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein, *fileout;
+const char    *filein, *fileout;
 l_int32  wsize, hsize, w, h, d;
 PIX     *pixs, *pixd;
 

@@ -47,6 +47,9 @@
 #include "allheaders.h"
 #include "pix_internal.h"
 
+#include "monolithic_examples.h"
+
+
     /* for pixGenerateSelWithRuns() */
 static const l_int32  NumHorLines = 11;
 static const l_int32  NumVertLines = 8;
@@ -57,10 +60,15 @@ static const l_uint32  HitColor = 0xff880000;
 static const l_uint32  MissColor = 0x00ff8800;
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_findpattern1_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char     *filein, *fileout, *patternfile;
+const char     *filein, *fileout, *patternfile;
 l_int32   w, h, i, n;
 BOX      *box, *boxe;
 BOXA     *boxa1, *boxa2;

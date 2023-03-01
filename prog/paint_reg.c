@@ -39,12 +39,20 @@
 #include "allheaders.h"
 #include "pix_internal.h"
 
+#include "monolithic_examples.h"
+
+
 static PIX * ReconstructByValue(L_REGPARAMS *rp, const char *fname);
 static PIX * FakeReconstructByBand(L_REGPARAMS *rp, const char *fname);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_paint_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       index;
 l_uint32      val32;

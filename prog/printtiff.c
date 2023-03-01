@@ -58,14 +58,22 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   TEMP_PS       "print_tiff.ps"   /* in the temp directory */
 #define   FILL_FACTOR   0.95
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_printtiff_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32      ret;
-char        *filein, *tempfile, *printer;
+const char        *filein, *tempfile, *printer = NULL;
 char         buf[512];
 
     if (argc != 2 && argc != 3)

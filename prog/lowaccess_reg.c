@@ -54,12 +54,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void CompareResults(PIX *pixs, PIX *pix1, PIX *pix2,
                            l_int32 count1, l_int32 count2,
                            const char *descr, L_REGPARAMS *rp);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_lowaccess_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j, k, w, h, w2, w4, w8, w16, w32, wpl;
 l_int32       count1, count2, count3;

@@ -38,8 +38,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_colormask_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j, x, y, rval, gval, bval;
 l_uint32      pixel1, pixel2;

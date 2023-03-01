@@ -43,8 +43,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_splitcomp_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j, w, h;
 l_int32       minsum[5] =    { 2, 40, 50, 50, 70};

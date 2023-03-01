@@ -47,6 +47,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static L_AMAP *BuildMapHistogram(PIX *pix, l_int32 factor, l_int32 print);
 static void DisplayMapHistogram(L_AMAP *m, PIXCMAP *cmap,
                                 const char *rootname);
@@ -58,8 +61,13 @@ static void TestMapIterator4(L_AMAP *m, l_int32  print);
 static void TestMapIterator5(L_AMAP *m, l_int32  print);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_maptest_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32    i, n, w, h, ncolors;
 l_uint32   val32;

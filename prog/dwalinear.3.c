@@ -34,6 +34,9 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 PIX *pixMorphDwa_3(PIX *pixd, PIX *pixs, l_int32 operation, char *selname);
 PIX *pixFMorphopGen_3(PIX *pixd, PIX *pixs, l_int32 operation, char *selname);
 l_int32 fmorphopgen_low_3(l_uint32 *datad, l_int32 w,

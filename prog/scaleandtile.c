@@ -50,16 +50,24 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Change these and recompile if necessary */
 static const l_int32  BACKGROUND_COLOR = 0;
 static const l_int32  SPACING = 25;  /* between images and on outside */
 static const l_int32  BLACK_BORDER = 2;  /* surrounding each image */
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_scaleandtile_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *dirin, *substr, *fileout;
+const char    *dirin, *substr, *fileout;
 l_int32  depth, width, ncols;
 PIX     *pixd;
 PIXA    *pixa;

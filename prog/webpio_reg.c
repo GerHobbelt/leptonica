@@ -46,13 +46,21 @@
 #include "allheaders.h"
 #include <math.h>
 
-void DoWebpTest1(L_REGPARAMS *rp, const char *fname);
-void DoWebpTest2(L_REGPARAMS *rp, const char *fname, l_int32 quality,
+#include "monolithic_examples.h"
+
+
+static void DoWebpTest1(L_REGPARAMS *rp, const char *fname);
+static void DoWebpTest2(L_REGPARAMS *rp, const char *fname, l_int32 quality,
                  l_int32 lossless, l_float32 expected, l_float32 delta);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_webpio_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 L_REGPARAMS  *rp;
 
@@ -92,7 +100,7 @@ L_REGPARAMS  *rp;
 }
 
 
-void DoWebpTest1(L_REGPARAMS  *rp,
+static void DoWebpTest1(L_REGPARAMS  *rp,
                  const char   *fname)
 {
 char  buf[256];
@@ -118,7 +126,7 @@ PIX  *pixs, *pix1, *pix2;
     return;
 }
 
-void DoWebpTest2(L_REGPARAMS  *rp,
+static void DoWebpTest2(L_REGPARAMS  *rp,
                  const char   *fname,
                  l_int32       quality,
                  l_int32       lossless,

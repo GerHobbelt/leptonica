@@ -41,11 +41,19 @@
 #include "allheaders.h"
 #include "autogen.137.h"    /* this must be included */
 
+#include "monolithic_examples.h"
+
+
     /* Original serialized pixa, that were used by autogentest1.c */
 static const char  *files[2] = { "fonts/chars-6.pa", "fonts/chars-10.pa" };
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_autogentest2_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32  i, same;
 PIXA    *pixa;

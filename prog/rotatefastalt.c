@@ -46,6 +46,9 @@
 #include <math.h>   /* required for sin and tan */
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_float32  VERY_SMALL_ANGLE = 0.001;  /* radians; ~0.06 degrees */
 
 static PIX *pixRotateAMColorFast2(PIX *pixs, l_float32 angle, l_uint8 grayval);
@@ -55,10 +58,15 @@ static void rotateAMColorFastLow2(l_uint32  *datad, l_int32  w, l_int32  h,
                                   l_int32  wpls, l_float32  angle,
                                   l_uint8  grayval);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rotatefastalt_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein, *fileout;
+const char      *filein, *fileout;
 l_float32  angle, deg2rad;
 PIX       *pixs, *pixd;
 

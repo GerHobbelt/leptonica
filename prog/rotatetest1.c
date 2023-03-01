@@ -32,16 +32,24 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  NTIMES   180
 #define  NITERS   3
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rotatetest1_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32    i, w, h, d, rotflag;
 PIX       *pixs, *pixt, *pixd;
 l_float32  angle, deg2rad, ang;
-char      *filein, *fileout;
+const char      *filein, *fileout;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  rotatetest1 filein angle fileout",

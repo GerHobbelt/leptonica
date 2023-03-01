@@ -38,8 +38,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_comparepages_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  w, h, n, same;
 BOXA    *boxa1, *boxa2;

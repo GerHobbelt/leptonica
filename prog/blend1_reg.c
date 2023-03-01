@@ -39,15 +39,23 @@
 
 #include "allheaders.h"
 
-void GrayBlend(PIX  *pixs, PIX  *pixb, l_int32 op, l_float32 fract);
-void AdaptiveGrayBlend(PIX  *pixs, PIX  *pixb, l_float32 fract);
-void ColorBlend(PIX  *pixs, PIX  *pixb, l_float32 fract);
-PIX *MakeGrayWash(l_int32 w, l_int32 h);
-PIX *MakeColorWash(l_int32 w, l_int32 h, l_int32 color);
+#include "monolithic_examples.h"
 
+
+static void GrayBlend(PIX  *pixs, PIX  *pixb, l_int32 op, l_float32 fract);
+static void AdaptiveGrayBlend(PIX  *pixs, PIX  *pixb, l_float32 fract);
+static void ColorBlend(PIX  *pixs, PIX  *pixb, l_float32 fract);
+static PIX *MakeGrayWash(l_int32 w, l_int32 h);
+static PIX *MakeColorWash(l_int32 w, l_int32 h, l_int32 color);
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_blend1_reg_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs, *pixg, *pixc, *pix1;
 PIXA         *pixa;
@@ -188,7 +196,7 @@ L_REGPARAMS  *rp;
 }
 
 
-void
+static void
 GrayBlend(PIX       *pixs,
           PIX       *pixb,
           l_int32    op,
@@ -216,7 +224,7 @@ l_int32   i, j, wb, hb, ws, hs, delx, dely, x, y;
 }
 
 
-void
+static void
 AdaptiveGrayBlend(PIX       *pixs,
                   PIX       *pixb,
                   l_float32  fract)
@@ -243,7 +251,7 @@ l_int32   i, j, wb, hb, ws, hs, delx, dely, x, y;
 }
 
 
-void
+static void
 ColorBlend(PIX       *pixs,
            PIX       *pixb,
            l_float32  fract)
@@ -270,7 +278,7 @@ l_int32   i, j, wb, hb, ws, hs, delx, dely, x, y;
 }
 
 
-PIX *
+static PIX *
 MakeGrayWash(l_int32  w,
              l_int32  h)
 {
@@ -292,7 +300,7 @@ PIX       *pixd;
 }
 
 
-PIX *
+static PIX *
 MakeColorWash(l_int32  w,
               l_int32  h,
               l_int32  color)

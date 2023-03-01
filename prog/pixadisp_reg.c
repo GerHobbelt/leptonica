@@ -36,12 +36,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 const char *files[7] = {"brev.06.75.jpg", "brev.10.75.jpg", "brev.14.75.jpg",
                         "brev.20.75.jpg", "brev.36.75.jpg", "brev.53.75.jpg",
                         "brev.56.75.jpg"};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixadisp_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, ws, hs, ncols;
 char         *fname;

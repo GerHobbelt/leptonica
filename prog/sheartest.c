@@ -38,12 +38,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   NTIMES   10
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_sheartest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein, *fileout;
+const char      *filein, *fileout;
 l_int32    i, w, h, liney, linex, same;
 l_float32  angle, deg2rad;
 PIX       *pixt1, *pixt2, *pixs, *pixd;

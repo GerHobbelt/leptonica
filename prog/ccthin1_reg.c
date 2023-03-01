@@ -37,8 +37,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_ccthin1_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 BOX          *box;
 PIX          *pix1, *pix2;

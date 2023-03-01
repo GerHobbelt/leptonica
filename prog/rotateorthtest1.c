@@ -39,16 +39,24 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  NTIMES   10
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rotateorthtest1_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32    dir;
 PIX       *pixs, *pixd, *pixt;
 l_float32  pops;
-char      *filein, *fileout;
+const char      *filein, *fileout;
 
     if (argc != 3 && argc != 4)
         return ERROR_INT(" Syntax:  rotateorthtest1 filein fileout [direction]",

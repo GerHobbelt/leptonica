@@ -41,11 +41,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* All images scaled to this width  */
 static const l_int32  WIDTH = 800;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pdfseg_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32      h;
 l_float32    scalefactor;

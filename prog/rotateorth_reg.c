@@ -32,6 +32,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   BINARY_IMAGE        "test1.png"
 #define   FOUR_BPP_IMAGE      "weasel4.8g.png"
 #define   GRAYSCALE_IMAGE     "test8.jpg"
@@ -41,8 +44,13 @@
 void RotateOrthTest(PIX *pix, L_REGPARAMS *rp);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rotateorth_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs;
 L_REGPARAMS  *rp;

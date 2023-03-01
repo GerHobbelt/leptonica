@@ -50,6 +50,9 @@
 #include <math.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32 logging = FALSE;
 
 static const l_int32 ncopies = 2;
@@ -61,8 +64,13 @@ PIXA *GenerateSetOfMargePix(void);
 void CopyStoreClean(PIXA *pixas, l_int32 nlevels, l_int32 ncopies);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixalloc_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  i;
 BOXA    *boxa;

@@ -77,10 +77,18 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_convertsegfilestops_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *pagedir, *pagestr, *maskdir, *maskstr, *fileout;
+const char      *pagedir, *pagestr, *maskdir, *maskstr, *fileout;
 l_int32    threshold, page_numpre, mask_numpre, numpost, maxnum;
 l_float32  textscale, imagescale;
 

@@ -38,6 +38,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   DO_QUAD     1
 #define   DO_CUBIC    0
 #define   DO_QUARTIC  0
@@ -46,8 +49,13 @@
      * Set to 1 for linear LSF. */
 #define   LINEAR_FIT_ON_EDGES    0
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_dewarptest1_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 L_DEWARP   *dew1, *dew2;
 L_DEWARPA  *dewa;

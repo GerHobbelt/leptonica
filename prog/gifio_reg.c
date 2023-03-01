@@ -63,6 +63,9 @@
 
 #if HAVE_LIBGIF || HAVE_LIBUNGIF
 #include "gif_lib.h"
+
+#include "monolithic_examples.h"
+
 #endif  /* HAVE_LIBGIF || HAVE_LIBUNGIF */
 
 #define   FILE_1BPP     "feyn.tif"
@@ -77,8 +80,13 @@
 static void test_gif(const char *fname, PIXA *pixa, L_REGPARAMS *rp);
 static l_int32 test_mem_gif(const char *fname, l_int32 index);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_gifio_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          buf[64];
 l_int32       success;

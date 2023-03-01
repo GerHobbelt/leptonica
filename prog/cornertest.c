@@ -36,13 +36,21 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   LINE_SIZE   29
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_cornertest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein, *fileout;
+const char    *filein, *fileout;
 l_int32  x, y, n, i;
 PIX     *pixs;
 PTA     *pta;

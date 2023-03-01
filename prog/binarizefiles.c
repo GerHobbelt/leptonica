@@ -41,11 +41,20 @@
 #include <sys/types.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_binarizefiles_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char       buf[512], dirname[256];
-char      *dirin, *pattern, *subdirout, *fname, *tail, *basename;
+const char* dirin, * pattern, * subdirout;
+char * fname, * tail, * basename;
 l_int32    thresh, i, n;
 l_float32  scalefactor;
 PIX       *pix1, *pix2, *pix3, *pix4;

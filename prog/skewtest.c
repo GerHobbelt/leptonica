@@ -43,6 +43,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* binarization threshold */
 #define   BIN_THRESHOLD         130
 
@@ -62,10 +65,15 @@
 #define   SEARCH_MIN_DELTA      0.01   /* degrees */
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_skewtest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein;
+const char      *filein;
 l_int32    ret;
 l_float32  deg2rad;
 l_float32  angle, conf, score, endscore;

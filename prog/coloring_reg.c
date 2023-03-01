@@ -37,14 +37,22 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *bgcolors[] = {"255 255 235",
                                  "255 245 235",
                                  "255 235 245",
                                  "235 245 255"};
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_coloring_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char          buf[512];
 l_int32       i, n, index;

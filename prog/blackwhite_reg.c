@@ -36,16 +36,24 @@
 
 #include "allheaders.h"
 
-const char *fnames[11] = {"test1.png", "speckle2.png", "weasel2.4g.png",
+#include "monolithic_examples.h"
+
+
+static const char *fnames[11] = {"test1.png", "speckle2.png", "weasel2.4g.png",
                           "speckle4.png", "weasel4.11c.png",
                           "dreyfus8.png", "weasel8.240c.png",
                           "test16.tif", "marge.jpg",
                           "test-cmap-alpha.png", "test-gray-alpha.png"};
-const l_int32  setsize = 11;
+static const l_int32  setsize = 11;
 
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_blackwhite_reg_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, spp;
 l_uint32      bval, wval;

@@ -38,8 +38,16 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_colorcontent_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 //char         *fname[64];
 char          fname[] = "/tmp/lept/colorcontent/maskgen.pdf";

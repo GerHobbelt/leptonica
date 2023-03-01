@@ -36,13 +36,21 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static l_int32 pageno = 35;
 static l_int32 build_output = 0;
 static l_int32 apply_output = 0;
 static l_int32 map_output = 1;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_dewarptest5_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char        buf[64];
 BOXA       *boxa1, *boxa2, *boxa3, *boxa4;

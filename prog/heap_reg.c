@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 struct HeapElement {
     l_float32  distance;
     l_int32    x;
@@ -48,8 +51,13 @@ static const l_int32  NELEM = 50;
 NUMA *ExtractNumaFromHeap(L_HEAP  *lh);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_heap_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_uint8      *data;
 l_int32       i;

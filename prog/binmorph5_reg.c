@@ -39,15 +39,18 @@
 
 #include "allheaders.h"
 
-void  TestAll(L_REGPARAMS *rp, PIX *pixs, l_int32 symmetric);
+#include "monolithic_examples.h"
 
-l_int32 DoComparisonDwa1(L_REGPARAMS *rp,
+
+static void  TestAll(L_REGPARAMS *rp, PIX *pixs, l_int32 symmetric);
+
+static l_int32 DoComparisonDwa1(L_REGPARAMS *rp,
                          PIX *pixs, PIX *pix1, PIX *pix2, PIX *pix3,
                          PIX *pix4, PIX *pix5, PIX *pix6, l_int32 isize);
-l_int32 DoComparisonDwa2(L_REGPARAMS *rp,
+static l_int32 DoComparisonDwa2(L_REGPARAMS *rp,
                          PIX *pixs, PIX *pix1, PIX *pix2, PIX *pix3,
                          PIX *pix4, PIX *pix5, PIX *pix6, l_int32 size);
-void PixCompareDwa(L_REGPARAMS *rp,
+static void PixCompareDwa(L_REGPARAMS *rp,
                    l_int32 size, const char *type, PIX *pix1, PIX *pix2,
                    PIX *pix3, PIX *pix4, PIX *pix5, PIX *pix6);
 
@@ -70,8 +73,13 @@ void PixCompareDwa(L_REGPARAMS *rp,
      * operations, and this test passes with no added border for
      * asymmetric b.c. */
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_binmorph5_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX  *pixs;
 L_REGPARAMS  *rp;
@@ -86,7 +94,7 @@ L_REGPARAMS  *rp;
     return regTestCleanup(rp);
 }
 
-void
+static void
 TestAll(L_REGPARAMS  *rp,
         PIX          *pixs,
         l_int32       symmetric)
@@ -165,7 +173,7 @@ PIX     *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 }
 
 
-l_int32
+static l_int32
 DoComparisonDwa1(L_REGPARAMS  *rp,
                  PIX          *pixs,
                  PIX          *pix1,
@@ -235,7 +243,7 @@ l_int32   fact1, fact2, size;
 }
 
 
-l_int32
+static l_int32
 DoComparisonDwa2(L_REGPARAMS  *rp,
                  PIX          *pixs,
                  PIX          *pix1,
@@ -300,7 +308,7 @@ DoComparisonDwa2(L_REGPARAMS  *rp,
 }
 
 
-void
+static void
 PixCompareDwa(L_REGPARAMS  *rp,
               l_int32       size,
               const char   *type,

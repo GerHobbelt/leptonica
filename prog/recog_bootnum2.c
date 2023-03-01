@@ -40,13 +40,21 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *removeset = "4,7,9,21";
 
 void ProcessDigits(l_int32 i);
 void PixaDisplayNumbered(PIXA *pixa, const char *rootname);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_recog_bootnum2_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
     setLeptDebugOK(1);
     lept_mkdir("lept/digit");

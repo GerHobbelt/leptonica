@@ -63,15 +63,23 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  USE_COMPRESSED    1
 
     /* fill factor on 8.5 x 11 inch output page */
 static const l_float32   FILL_FACTOR = 0.95;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_printsplitimage_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char        *filein, *fname, *printer;
+const char        *filein, *fname, *printer;
 char         buf[512];
 l_int32      nx, ny, i, w, h, ws, hs, n, ignore, index;
 l_float32    scale;

@@ -40,13 +40,21 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_sharptest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX       *pixs, *pixd;
 l_int32    smooth;
 l_float32  fract;
-char      *filein, *fileout;
+const char      *filein, *fileout;
 
     if (argc != 5)
         return ERROR_INT(" Syntax:  sharptest filein smooth fract fileout",

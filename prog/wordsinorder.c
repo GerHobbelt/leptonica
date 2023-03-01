@@ -43,6 +43,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Input variables */
 static const l_int32  MIN_WORD_WIDTH = 6;
 static const l_int32  MIN_WORD_HEIGHT = 4;
@@ -52,11 +55,16 @@ static const l_int32  MAX_WORD_HEIGHT = 100;
 #define   BUF_SIZE                  512
 #define   RENDER_PAGES              1
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_wordsinorder_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char      filename[BUF_SIZE];
-char     *dirin, *rootname, *fname;
+const char     *dirin, *rootname, *fname;
 l_int32   i, j, w, h, firstpage, npages, nfiles, ncomp;
 l_int32   index, ival, rval, gval, bval;
 BOX      *box;

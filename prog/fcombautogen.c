@@ -50,10 +50,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_fcombautogen_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filename;
+const char    *filename;
 l_int32  index, ret;
 SELA    *sela;
 

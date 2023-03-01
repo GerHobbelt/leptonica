@@ -39,13 +39,21 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void BoxaSortTest(L_REGPARAMS *rp, const char *fname, l_int32 index,
                   const char *text);
 void PixaSortTest(L_REGPARAMS *rp, const char *fname, l_int32 index,
                   const char *text);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_ptra2_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 L_REGPARAMS  *rp;
 

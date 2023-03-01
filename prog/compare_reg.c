@@ -40,8 +40,16 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_compare_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32       delx, dely, etransx, etransy, w, h, area1, area2;
 l_int32      *stab, *ctab;

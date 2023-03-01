@@ -53,12 +53,20 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rotate_it_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32    icolor, itype, format, quads;
 l_float32  angle, deg2rad, anglerad;
-char      *filein, *fileout, *type, *incolor;
+const char      *filein, *fileout, *type = NULL, *incolor = NULL;
 PIX       *pixs, *pixd;
 
     if (argc != 4 && argc != 6)

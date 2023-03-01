@@ -34,8 +34,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_partifytest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
     if (argc != 1)
         return ERROR_INT("syntax: partifytest", __func__, 1);

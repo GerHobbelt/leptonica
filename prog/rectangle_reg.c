@@ -40,11 +40,19 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  NBoxes = 20;
 static const l_int32  Polarity = 0;  /* background */
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rectangle_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          buf[64];
 char         *newpath;

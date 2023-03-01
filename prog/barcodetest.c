@@ -42,10 +42,18 @@
 #include "allheaders.h"
 #include "readbarcode.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_barcodetest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein;
+	const char    *filein;
 PIX     *pixs;
 SARRAY  *saw1, *saw2, *sad1, *sad2;
 

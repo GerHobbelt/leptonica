@@ -36,10 +36,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_float32  gamma[] = {1.0, 2.0, 3.0};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_falsecolor_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j, val8, val16;
 NUMA         *na;

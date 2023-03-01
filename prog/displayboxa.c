@@ -47,10 +47,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_displayboxa_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein, *fileout;
+const char      *filein, *fileout;
 l_int32    w, h, width, sep, first, last;
 l_float32  scalefact;
 BOXA      *boxa1, *boxa2;

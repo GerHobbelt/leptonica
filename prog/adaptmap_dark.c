@@ -60,10 +60,18 @@
 #include "string.h"
 #include "allheaders.h"
 
-void GenCleans(const char *fname, l_int32  *pindex, l_int32 thresh, L_BMF *bmf);
+#include "monolithic_examples.h"
+
+
+static void GenCleans(const char *fname, l_int32  *pindex, l_int32 thresh, L_BMF *bmf);
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_adaptmap_dark_main
+#endif
 
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32  index;
 L_BMF   *bmf;
@@ -145,7 +153,7 @@ PIXAC   *pixac1, *pixac2, *pixac3;
     return 0;
 }
 
-void
+static void
 GenCleans(const char  *fname,
           l_int32     *pindex,
           l_int32      thresh,

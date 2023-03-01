@@ -65,6 +65,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   BMP_FILE             "test1.bmp"
 #define   FILE_1BPP            "feyn.tif"
 #define   FILE_2BPP            "speckle2.png"
@@ -94,8 +97,13 @@ static const char *get_tiff_compression_name(l_int32 format);
 
 LEPT_DLL extern const char *ImageFileFormatExtensions[];
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_ioformats_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          psname[256];
 char         *tempname;

@@ -54,6 +54,9 @@
     /* Needed for HAVE_LIBJPEG */
 #ifdef HAVE_CONFIG_H
 #include <config_auto.h>
+
+#include "monolithic_examples.h"
+
 #endif /* HAVE_CONFIG_H */
 
 void DoJpegTest1(L_REGPARAMS *rp, const char *fname);
@@ -62,8 +65,13 @@ void DoJpegTest3(L_REGPARAMS *rp, const char *fname);
 void DoJpegTest4(L_REGPARAMS *rp, const char *fname);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_jpegio_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 L_REGPARAMS  *rp;
 

@@ -50,12 +50,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_float32  FILL_FACTOR = 0.95;   /* fill factor on 8.5 x 11 page */
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_imagetops_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein, *fileout;
+const char      *filein, *fileout;
 l_int32    w, h, index, level;
 l_float32  scale;
 FILE      *fp;

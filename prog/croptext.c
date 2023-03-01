@@ -44,10 +44,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_croptext_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *dirin, *dirout, *infile, *outfile, *tail;
+const char    *dirin, *dirout, *infile, *outfile, *tail;
 l_int32  i, nfiles, border, x, y, w, h, xb, yb, wb, hb;
 BOX     *box1, *box2;
 BOXA    *boxa1, *boxa2;

@@ -36,8 +36,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixa2_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 const char   *name;
 l_int32       i, n;

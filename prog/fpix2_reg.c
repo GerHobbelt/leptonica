@@ -38,8 +38,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_fpix2_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 FPIX         *fpix1, *fpix2, *fpix3, *fpix4;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8;

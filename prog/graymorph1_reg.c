@@ -54,11 +54,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define     WSIZE              7
 #define     HSIZE              7
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_graymorph1_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          seq[512];
 l_int32       w, h;

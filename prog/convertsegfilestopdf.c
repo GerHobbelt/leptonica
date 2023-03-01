@@ -76,11 +76,19 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_convertsegfilestopdf_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *pagedir, *pagesubstr, *maskdir, *masksubstr;
-char      *title, *fileout, *boxaafile, *boxaapath;
+const char      *pagedir, *pagesubstr, *maskdir, *masksubstr;
+const char      *title, *fileout, *boxaafile, *boxaapath;
 l_int32    ret, res, type, thresh;
 l_float32  scalefactor;
 BOXAA     *baa;

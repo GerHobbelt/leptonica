@@ -36,12 +36,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32   BIN_SIZE = 1;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_numaranktest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein;
+const char      *filein;
 l_int32    i, j, w, h, d, sampling;
 l_float32  rank, rval;
 l_uint32   val;

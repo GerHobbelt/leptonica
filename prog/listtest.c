@@ -39,10 +39,18 @@
 #include "allheaders.h"
 #include "pix_internal.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_listtest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein;
+const char    *filein;
 l_int32  i, n, w, h, samecount, count;
 BOX     *box, *boxc;
 BOXA    *boxa, *boxan;

@@ -35,13 +35,21 @@
 #include "allheaders.h"
 #include "pix_internal.h"
 
+#include "monolithic_examples.h"
+
+
 static l_int32 TestTiling(PIX *pixd, PIX *pixs, l_int32 nx, l_int32 ny,
                           l_int32 w, l_int32 h, l_int32 xoverlap,
                           l_int32 yoverlap);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixtile_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX  *pixs, *pixd;
 

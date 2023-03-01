@@ -37,6 +37,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *image[10] = {"feyn-fract.tif",   /* 1 bpp */
                                 "weasel2.png",      /* 2 bpp; no cmap */
                                 "weasel2.4c.png",   /* 2 bpp; cmap */
@@ -57,8 +60,13 @@ static void AddScaledImages(PIXA *pixa, const char *fname, l_int32 width);
 static void PixaSaveDisplay(PIXA *pixa, L_REGPARAMS *rp);
 static void TestSmoothScaling(const char *fname, L_REGPARAMS *rp);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_scale_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i;
 PIX          *pixs, *pixc;

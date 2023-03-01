@@ -37,11 +37,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static PIX *PixDisplayWithColormap(PIX *pixs, l_int32 repl);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_percolatetest_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32  i, x, y, ncc, npta;
 NUMA    *na1;

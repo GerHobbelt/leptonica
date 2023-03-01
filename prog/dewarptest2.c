@@ -45,10 +45,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  NORMALIZE     1
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_dewarptest2_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32     d, method, pageno;
 L_DEWARP   *dew1;

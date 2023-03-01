@@ -55,11 +55,19 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_converttopdf_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  ret;
-char    *dirin, *substr, *fileout;
+const char    *dirin, *substr, *fileout;
 
     if (argc != 3 && argc != 4) {
         lept_stderr(

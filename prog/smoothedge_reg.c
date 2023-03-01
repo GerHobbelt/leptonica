@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static l_int32 MIN_JUMP = 2;
 static l_int32 MIN_REVERSAL = 3;
 
@@ -43,8 +46,13 @@ void PixAddEdgeData(PIXA *pixa, PIX *pixs, l_int32 side, l_int32 minjump,
                     l_int32 minreversal);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_smoothedge_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  w;
 PIX     *pixs, *pixt, *pixd;

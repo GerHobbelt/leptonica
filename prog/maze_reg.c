@@ -37,14 +37,22 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  NPATHS     6
 static const l_int32 x0[NPATHS] = {42, 73, 73, 42, 324, 471};
 static const l_int32 y0[NPATHS] = {117, 319, 319, 117, 170, 201};
 static const l_int32 x1[NPATHS] = {419, 419, 233, 326, 418, 128};
 static const l_int32 y1[NPATHS] = {383, 383, 112, 168, 371, 341};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_maze_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, w, h;
 PIX          *pixm, *pixg, *pixt, *pixd;

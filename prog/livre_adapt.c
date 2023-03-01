@@ -38,8 +38,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_livre_adapt_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX   *pixs, *pix1, *pix2, *pix3, *pixr, *pixg, *pixb, *pixsg, *pixsm;
 PIXA  *pixa;

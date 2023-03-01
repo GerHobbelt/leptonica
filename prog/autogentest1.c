@@ -51,14 +51,22 @@
 #include "allheaders.h"
 #include <string.h>
 
+#include "monolithic_examples.h"
+
+
 static const char  *files[2] = { "fonts/chars-6.pa", "fonts/chars-10.pa" };
 
 static const char *filetext = "# testnames\n"
                               "fonts/chars-6.pa\n"
                               "fonts/chars-10.pa";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_autogentest1_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32     i;
 L_STRCODE  *strc;

@@ -37,18 +37,26 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   NTIMES         100
 #define   IMAGE_SIZE     8.     /* megapixels */
 #define   SEL_SIZE       9
 #define   BASIC_OPS      1.     /* 1 for erosion/dilation; 2 for open/close */
 #define   CPU_SPEED      866.   /* MHz: set it for the machine you're using */
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_morphtest1_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32    i, index;
 l_float32  cputime, epo;
-char      *filein, *fileout;
+const char      *filein, *fileout;
 PIX       *pixs, *pixd;
 SEL       *sel;
 SELA      *sela;

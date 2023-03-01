@@ -825,8 +825,8 @@ LEPT_DLL extern l_ok pixMirrorDetect ( PIX *pixs, l_float32 *pconf, l_int32 minc
 LEPT_DLL extern l_ok fmorphautogen ( SELA *sela, l_int32 fileindex, const char *filename );
 LEPT_DLL extern l_ok fmorphautogen1 ( SELA *sela, l_int32 fileindex, const char *filename );
 LEPT_DLL extern l_int32 fmorphautogen2 ( SELA *sela, l_int32 fileindex, const char *filename );
-LEPT_DLL extern PIX * pixMorphDwa_1 ( PIX *pixd, PIX *pixs, l_int32 operation, char *selname );
-LEPT_DLL extern PIX * pixFMorphopGen_1 ( PIX *pixd, PIX *pixs, l_int32 operation, char *selname );
+LEPT_DLL extern PIX * pixMorphDwa_1 ( PIX *pixd, PIX *pixs, l_int32 operation, const char *selname );
+LEPT_DLL extern PIX * pixFMorphopGen_1 ( PIX *pixd, PIX *pixs, l_int32 operation, const char *selname );
 LEPT_DLL extern l_int32 fmorphopgen_low_1 ( l_uint32 *datad, l_int32 w, l_int32 h, l_int32 wpld, l_uint32 *datas, l_int32 wpls, l_int32 index );
 LEPT_DLL extern FPIX * fpixCreate ( l_int32 width, l_int32 height );
 LEPT_DLL extern FPIX * fpixCreateTemplate ( FPIX *fpixs );

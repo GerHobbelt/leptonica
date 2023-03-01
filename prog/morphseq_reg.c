@@ -37,6 +37,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  SEQUENCE1    "O1.3 + C3.1 + R22 + D2.2 + X4"
 #define  SEQUENCE2    "O2.13 + C5.23 + R22 + X4"
 #define  SEQUENCE3    "e3.3 + d3.3 + tw5.5"
@@ -46,8 +49,13 @@
 
 #define  DISPLAY_SEPARATION   0   /* use 250 to get images displayed */
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_morphseq_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX  *pixs, *pixg, *pixc, *pixd;
 

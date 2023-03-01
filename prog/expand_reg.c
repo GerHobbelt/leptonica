@@ -37,6 +37,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  BINARY_IMAGE             "test1.png"
 #define  TWO_BPP_IMAGE_NO_CMAP    "weasel2.4g.png"
 #define  TWO_BPP_IMAGE_CMAP       "weasel2.4c.png"
@@ -47,8 +50,13 @@
 #define  RGB_IMAGE                "marge.jpg"
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_expand_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32      i, w, h, format;
 char         filename[][64] = {BINARY_IMAGE,

@@ -55,6 +55,9 @@
 
 #ifdef _WIN32
 #include <windows.h>   /* for CreateDirectory() */
+
+#include "monolithic_examples.h"
+
 #endif
 
 static const l_int32  DEFAULT_THUMB_WIDTH = 120;
@@ -68,10 +71,15 @@ static l_int32 pixHtmlViewer(const char *dirin, const char *dirout,
 static void WriteFormattedPix(const char *fname, PIX *pix);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_htmlviewer_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *dirin, *dirout, *rootname;
+const char    *dirin, *dirout, *rootname;
 l_int32  thumbwidth, viewwidth;
 
     if (argc != 6)

@@ -40,12 +40,20 @@
 #include "allheaders.h"
 #include <string.h>
 
+#include "monolithic_examples.h"
+
+
 static const char *weasel_rev = "/tmp/lept/tiff/weasel_rev.tif";
 static const char *weasel_rev_rev = "/tmp/lept/tiff/weasel_rev_rev.tif";
 static const char *weasel_orig = "/tmp/lept/tiff/weasel_orig.tif";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_mtiff_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_uint8      *data;
 char         *fname, *filename;

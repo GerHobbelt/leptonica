@@ -48,6 +48,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Choose one of these */
 #define  COMPONENTS  JB_CONN_COMPS
 /* #define  COMPONENTS  JB_CHARACTERS */
@@ -63,11 +66,16 @@
 
 static const char  rootname[] = "/tmp/lept/jb/result";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_jbcorrelation_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char        filename[BUF_SIZE];
-char       *dirin;
+const char       *dirin;
 l_int32     i, firstpage, npages, nfiles;
 l_float32   thresh, weight;
 JBDATA     *data;

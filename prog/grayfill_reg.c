@@ -36,11 +36,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void PixTestEqual(L_REGPARAMS *rp, PIX *pixs1, PIX *pixs2, PIX *pixm,
                   l_int32 set, l_int32 connectivity);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_grayfill_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j;
 PIX          *pixm, *pixmi, *pixs1, *pixs1_8, *pix1;

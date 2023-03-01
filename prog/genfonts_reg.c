@@ -52,19 +52,27 @@
 #include "allheaders.h"
 #include "bmfdata.h"
 
+#include "monolithic_examples.h"
+
+
 #define   NFONTS        9
 
 const l_int32 sizes[] = {4, 6, 8, 10, 12, 14, 16, 18, 20};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_genfonts_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          buf[512];
 char         *pathname, *datastr, *formstr;
 l_uint8      *data1, *data2;
 l_int32       i, bl1, bl2, bl3, sbytes, formbytes, fontsize, rbytes;
 size_t        nbytes;
-PIX          *pix1, *pix2, *pixd;
+PIX          *pix1 = NULL, *pix2, *pixd;
 PIXA         *pixa;
 L_REGPARAMS  *rp;
 

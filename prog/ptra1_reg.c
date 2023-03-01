@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void MakePtrasFromPixa(PIXA *pixa, L_PTRA **ppapix, L_PTRA **ppabox,
                               l_int32 copyflag);
 static PIXA *ReconstructPixa1(L_REGPARAMS *rp, L_PTRA *papix, L_PTRA *pabox);
@@ -43,8 +46,13 @@ static PIXA *ReconstructPixa2(L_REGPARAMS *rp, L_PTRA *papix, L_PTRA *pabox);
 static PIX *SaveResult(PIXA *pixac, PIXA **ppixa, l_int32 w, l_int32 h,
                        l_int32 newline);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_ptra1_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, n, w, h, nactual, imax;
 BOX          *box;

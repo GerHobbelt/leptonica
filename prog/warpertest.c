@@ -39,6 +39,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char  *opstr[3] = {"", "interpolated", "sampled"};
 static const char  *dirstr[3] = {"", "to left", "to right"};
 
@@ -49,8 +52,13 @@ static const char  *dirstr[3] = {"", "to left", "to right"};
 #define  RUN_HORIZ_SHEAR          1
 #define  RUN_VERT_SHEAR           1
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_warpertest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char       buf[256];
 l_int32    w, h, i, j, k, index, op, dir, stretch;

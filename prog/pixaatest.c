@@ -37,12 +37,20 @@
 #include "allheaders.h"
 #include "pix_internal.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  nx = 10;
 static const l_int32  ny = 12;
 static const l_int32  ncols = 3;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixaatest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  w, d, tilewidth;
 PIX     *pixs;

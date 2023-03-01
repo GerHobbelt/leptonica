@@ -38,8 +38,16 @@
 #include "allheaders.h"
 #include "array_internal.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_bytea_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char         *str1, *str2;
 l_uint8      *data1, *data2;

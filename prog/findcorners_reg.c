@@ -53,6 +53,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static BOXA *LocateBarcodes(PIX *pixs, PIX **ppixd, l_int32 flag);
 static SELA *GetCornerSela(L_REGPARAMS *rp);
 
@@ -70,8 +73,13 @@ static const char *sel_cross = "     xxx     "
                                "     xxx     "
                                "     xxx     ";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_findcorners_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32       i, n, flag;
 l_float32     angle, conf, deg2rad;

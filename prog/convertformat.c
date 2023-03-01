@@ -67,10 +67,18 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_convertformat_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char        *filein, *fileout, *base, *ext;
+const char        *filein, *fileout, *base, *ext;
 const char  *formatstr;
 l_int32      format, d, change;
 PIX         *pixs;

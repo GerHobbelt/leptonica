@@ -27,7 +27,7 @@
 /*
  * contrasttest.c
  *
- *   This appplies @factor contrast enhancement to the input image.
+ *   This applies @factor contrast enhancement to the input image.
  *   It also plots atan curves for different width parameters.
  */
 
@@ -38,10 +38,18 @@
 #include <math.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_contrasttest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein, *fileout;
+const char      *filein, *fileout;
 char       buf[512];
 l_int32    iplot;
 l_float32  factor;    /* scaled width of atan curve */

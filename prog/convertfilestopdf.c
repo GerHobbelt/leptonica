@@ -56,10 +56,18 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_convertfilestopdf_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *dirin, *substr, *title, *fileout;
+const char      *dirin, *substr, *title, *fileout;
 l_int32    ret, res, type, quality;
 l_float32  scalefactor;
 

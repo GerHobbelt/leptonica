@@ -91,11 +91,20 @@
 #include <sys/types.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_concatpdf_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char       buf[256];
-char      *basedir, *fname, *tail, *basename, *imagedir, *title, *outfile;
+const char      *basedir, *title, *outfile;
+char      *fname, *tail, *basename, *imagedir;
 l_int32    res, quality, i, n, ret;
 l_float32  scalefactor;
 PIX       *pixs, *pix1;

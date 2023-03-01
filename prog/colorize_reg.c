@@ -40,11 +40,19 @@
 
 #include "allheaders.h"
 
-PIX *TestForRedColor(L_REGPARAMS *rp, const char *fname,
+#include "monolithic_examples.h"
+
+
+static PIX *TestForRedColor(L_REGPARAMS *rp, const char *fname,
                      l_float32 gold_red, L_BMF *bmf);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_colorize_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32       irval, igval, ibval;
 l_float32     rval, gval, bval, fract, fgfract;
@@ -264,7 +272,7 @@ L_REGPARAMS  *rp;
 }
 
 
-PIX *
+static PIX *
 TestForRedColor(L_REGPARAMS  *rp,
                 const char   *fname,
                 l_float32     gold_red,

@@ -37,7 +37,15 @@
 
 #include "allheaders.h"
 
-l_int32 main(l_int32  argc,
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pnmio_reg_main
+#endif
+
+int main(int  argc,
              char   **argv)
 {
 l_uint8      *data;

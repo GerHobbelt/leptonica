@@ -50,6 +50,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* for pixDisplayHitMissSel() */
 static const l_uint32  HitColor = 0x33aa4400;
 static const l_uint32  MissColor = 0xaa44bb00;
@@ -62,8 +65,13 @@ static const char *patname[2] = {
 l_int32 GeneratePattern(l_int32 patno, l_int32 red, L_REGPARAMS  *rp);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_findpattern_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32      patno, red;
 L_REGPARAMS  *rp;

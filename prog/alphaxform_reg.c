@@ -42,6 +42,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void MakePtas(l_int32 i, l_int32 npts, PTA **pptas, PTA **pptad);
 
 static const l_int32  x1[] =  {  300,   300,   300,    95,   32 };
@@ -62,8 +65,13 @@ static const l_int32  yp3[] = {  300,   300,   400,   490,   83 };
 static const l_int32  xp4[] = {  850,   1000, 1100,  1664,  487 };
 static const l_int32  yp4[] = {  350,    350,  400,   532,  114 };
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_alphaxform_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs2, *pixs3, *pixb1, *pixb2, *pixb3;
 PIX          *pixr2, *pixr3;

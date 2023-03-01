@@ -43,6 +43,9 @@
 #include <unistd.h>
 #else
 #include <direct.h>
+
+#include "monolithic_examples.h"
+
 #define getcwd _getcwd  /* fix MSVC warning */
 #endif  /* !_MSC_VER */
 
@@ -53,8 +56,13 @@ void TestLeptCpRm(L_REGPARAMS *rp, const char *srctail, const char *newdir,
 void TestGenPathname(L_REGPARAMS *rp, const char *dir, const char *fname,
                      const char *result);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_files_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32       exists;
 L_REGPARAMS  *rp;

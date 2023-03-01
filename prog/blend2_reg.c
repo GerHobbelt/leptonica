@@ -37,13 +37,21 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* In case libpng is not enabled */
 static const char fname_png[64] = "/tmp/lept/regout/blend2.14.png";
 static const char fname_bmp[64] = "/tmp/lept/regout/blend2.14.bmp";
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_blend2_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j, w1, h1, w2, h2, w, h;
 BOX          *box1, *box2;

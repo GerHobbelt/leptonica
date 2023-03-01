@@ -37,8 +37,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_nearline_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32       ret, i, n, similar, x1, y1, val1, val2, val3, val4;
 l_float32     minave, minave2, maxave, fract;

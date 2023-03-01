@@ -57,10 +57,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_displayboxes_on_pixa_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *fileout;
+const char    *fileout;
 l_int32  width, type, display;
 BOXAA   *baa;
 PIX     *pix1;

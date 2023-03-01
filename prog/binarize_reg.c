@@ -41,14 +41,22 @@
 
 #include "allheaders.h"
 
-PIX *PixTest1(PIX *pixs, l_int32 size, l_float32 factor, L_REGPARAMS *rp);
-PIX *PixTest2(PIX *pixs, l_int32 size, l_float32 factor, l_int32 nx,
+#include "monolithic_examples.h"
+
+
+static PIX *PixTest1(PIX *pixs, l_int32 size, l_float32 factor, L_REGPARAMS *rp);
+static PIX *PixTest2(PIX *pixs, l_int32 size, l_float32 factor, l_int32 nx,
               l_int32 ny, L_REGPARAMS *rp);
-void PixTest3(PIX *pixs, l_int32 size, l_float32 factor,
+static void PixTest3(PIX *pixs, l_int32 size, l_float32 factor,
               l_int32 nx, l_int32 ny, l_int32 paircount, L_REGPARAMS *rp);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_binarize_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa;
@@ -96,7 +104,7 @@ L_REGPARAMS  *rp;
     return regTestCleanup(rp);
 }
 
-PIX *PixTest1(PIX          *pixs,
+static PIX *PixTest1(PIX          *pixs,
               l_int32       size,
               l_float32     factor,
               L_REGPARAMS  *rp)
@@ -133,7 +141,7 @@ PIXA    *pixa;
     return pixd;
 }
 
-PIX *PixTest2(PIX          *pixs,
+static PIX *PixTest2(PIX          *pixs,
               l_int32       size,
               l_float32     factor,
               l_int32       nx,
@@ -172,7 +180,7 @@ PIXA    *pixa;
     return pixd;
 }
 
-void PixTest3(PIX          *pixs,
+static void PixTest3(PIX          *pixs,
               l_int32       size,
               l_float32     factor,
               l_int32       nx,

@@ -37,6 +37,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   BINARY_IMAGE              "test1.png"
 #define   TWO_BPP_IMAGE             "weasel2.4c.png"
 #define   FOUR_BPP_IMAGE1           "weasel4.11c.png"
@@ -52,8 +55,13 @@ static const l_float32  ANGLE2 = 3.14159265 / 7.;
 void RotateTest(PIX *pixs, l_float32 scale, L_REGPARAMS *rp);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rotate2_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs, *pixd;
 L_REGPARAMS  *rp;

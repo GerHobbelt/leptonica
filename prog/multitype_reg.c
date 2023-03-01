@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *fnames[10] = {"feyn-fract.tif", "speckle2.png",
                                  "weasel2.4g.png", "speckle4.png",
                                  "weasel4.16c.png", "dreyfus8.png",
@@ -58,8 +61,13 @@ static l_float32 *Generate4PtTransformVector(l_int32 type);
 
 #define  DO_ALL   1
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_multitype_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       w, h, x, y, i, n;
 l_float32    *vc;

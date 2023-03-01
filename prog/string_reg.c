@@ -42,12 +42,20 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 char strs[32] = "This is a gooood test!";
 char  substr1[2] = "o";
 char  substr2[4] = "00";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_string_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, loc, count;
 size_t        size1, size2;

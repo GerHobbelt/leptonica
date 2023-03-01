@@ -57,8 +57,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_paintmask_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 BOX          *box;
 PIX          *pixs, *pixs8, *pixm, *pixt1, *pixt2, *pixd;

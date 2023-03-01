@@ -52,6 +52,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Default binarization threshold */
 static const l_int32  DefaultThreshold = 130;
 
@@ -59,10 +62,15 @@ static const l_int32  DefaultThreshold = 130;
 static const l_float32  DefaultSweepRange = 7.0;    /* degrees */
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_deskew_it_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein, *fileout;
+const char      *filein, *fileout;
 l_int32    threshold, tryboth, format;
 l_float32  deg2rad, sweeprange, angle, conf;
 PIX       *pixs, *pix1, *pix2, *pixd;

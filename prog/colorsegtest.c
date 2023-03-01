@@ -55,18 +55,26 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32    MAX_DIST      = 120;
 static const l_int32    MAX_COLORS    = 15;
 static const l_int32    SEL_SIZE      = 4;
 static const l_int32    FINAL_COLORS  = 15;
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_colorsegtest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  max_dist, max_colors, sel_size, final_colors;
 PIX     *pixs, *pixd, *pixt;
-char    *filein, *fileout;
+const char    *filein, *fileout;
 
     if (argc != 3 && argc != 7)
         return ERROR_INT(

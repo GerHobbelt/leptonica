@@ -36,10 +36,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   DIRECTORY    "./fonts"
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_renderfonts_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char    *textstr;
 l_int32  width, wtext, overflow;

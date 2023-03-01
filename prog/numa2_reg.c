@@ -40,14 +40,22 @@
 #include <math.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   DO_ALL     0
 
 /* Tiny helper */
 void SaveColorSquare(PIXA *pixa, l_uint32  rgbval);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_numa2_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32      i, j;
 l_int32      w, h, bw, bh, wpls, rval, gval, bval, same;

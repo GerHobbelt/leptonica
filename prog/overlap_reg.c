@@ -39,6 +39,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Determines maximum size of randomly-generated boxes.  Note the
      * rapid change in results as the maximum box dimension approaches
      * the critical size of 28. */
@@ -48,8 +51,13 @@ static const l_float32  maxsize[] = {5.0, 10.0, 15.0, 20.0, 25.0, 26.0, 27.0};
 BOXA *boxaCombineOverlapsAlt(BOXA *boxas);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_overlap_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j, n, k, x, y, w, h, result, hovl, hsep, vovl, vsep;
 l_uint8      *data;

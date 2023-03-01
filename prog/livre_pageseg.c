@@ -48,16 +48,24 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Control the display output */
 #define   DFLAG        0
 
 
 l_int32 DoPageSegmentation(PIX *pixs, l_int32 which);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_livre_pageseg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein;
+const char    *filein;
 l_int32  i;
 PIX     *pixs;   /* input image should be at least 300 ppi */
 

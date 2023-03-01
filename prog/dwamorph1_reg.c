@@ -39,6 +39,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* defined in morph.c */
 LEPT_DLL extern l_int32 MORPH_BC;
 
@@ -47,8 +50,13 @@ PIX *pixMorphDwa_3(PIX *pixd, PIX *pixs, l_int32 operation, char *selname);
 PIX *pixFMorphopGen_3(PIX *pixd, PIX *pixs, l_int32 operation, char *selname);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_dwamorph1_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, nsels, same, xorcount;
 char         *selname;

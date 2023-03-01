@@ -38,16 +38,24 @@
 
 #include "allheaders.h"
 
-void MakeWordBoxes1(PIX *pixs, l_float32 scalefact, l_int32 thresh,
+#include "monolithic_examples.h"
+
+
+static void MakeWordBoxes1(PIX *pixs, l_float32 scalefact, l_int32 thresh,
                     l_int32 index, L_REGPARAMS *rp);
-void MakeWordBoxes2(PIX *pixs, l_float32 scalefact, l_int32 thresh,
+static void MakeWordBoxes2(PIX *pixs, l_float32 scalefact, l_int32 thresh,
                     L_REGPARAMS  *rp);
-void TestBoxaAdjacency(PIX *pixs, L_REGPARAMS  *rp);
+static void TestBoxaAdjacency(PIX *pixs, L_REGPARAMS  *rp);
 
 #define  DO_ALL   1
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_wordboxes_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 BOX          *box1, *box2;
 BOXA         *boxa1;
@@ -136,7 +144,7 @@ L_REGPARAMS  *rp;
     return regTestCleanup(rp);
 }
 
-void
+static void
 MakeWordBoxes1(PIX          *pixs,
                l_float32     scalefact,
                l_int32       thresh,
@@ -172,7 +180,7 @@ PIXA  *pixa1;
     pixaDestroy(&pixa1);
 }
 
-void
+static void
 MakeWordBoxes2(PIX          *pixs,
                l_float32     scalefact,
                l_int32       thresh,
@@ -226,7 +234,7 @@ PIXA    *pixa;
     boxaDestroy(&boxa2);
 }
 
-void
+static void
 TestBoxaAdjacency(PIX          *pixs,
                   L_REGPARAMS  *rp)
 {

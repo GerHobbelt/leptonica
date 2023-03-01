@@ -53,6 +53,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Mask at 4x reduction */
 static const char *mask_sequence = "r11";
     /* Seed at 4x reduction, formed by doing a 16x reduction,
@@ -63,10 +66,15 @@ static const char *dilation_sequence = "d3.3";
 
 #define  DFLAG     1
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pagesegtest2_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein, *fileout;
+const char    *filein, *fileout;
 l_int32  thresh;
 PIX     *pixs, *pixg, *pixb;
 PIX     *pixmask4, *pixseed4, *pixsf4, *pixd4, *pixd;

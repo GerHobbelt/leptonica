@@ -36,8 +36,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixmem_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_uint32     *data;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5;

@@ -48,6 +48,9 @@
     /* Needed for checking libraries */
 #ifdef HAVE_CONFIG_H
 #include <config_auto.h>
+
+#include "monolithic_examples.h"
+
 #endif /* HAVE_CONFIG_H */
 
 #define   FILE_1BPP             "rabi.png"
@@ -82,8 +85,13 @@ static l_int32 test_8bpp_trans(L_REGPARAMS  *rp);
 
 LEPT_DLL extern const char *ImageFileFormatExtensions[];
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pngio_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       success, failure;
 L_REGPARAMS  *rp;

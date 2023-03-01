@@ -33,14 +33,22 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   X     140
 #define   Y     40
 #define   ALL   1
 
 static PIX *BlendTest(const char *file1, const char *file2, l_float32 fract);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_blend3_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixt, *pixd;
 PIXA         *pixa;

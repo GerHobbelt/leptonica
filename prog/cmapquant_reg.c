@@ -40,11 +40,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  LEVEL       3
 #define  MIN_DEPTH   4
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_cmapquant_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 BOX          *box;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;

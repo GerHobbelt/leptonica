@@ -37,10 +37,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  HEIGHT = 32;  /* pixels */
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_digitprep1_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char       buf[16];
 l_int32    i, n, h;

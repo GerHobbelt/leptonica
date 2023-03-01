@@ -45,12 +45,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   SHOW    0
 
 static const size_t  zlibsize[5] = {1047868, 215039, 195778, 189709, 180987};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_misctest1_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32   w, h, bx, by, bw, bh, i, j;
 size_t    size;

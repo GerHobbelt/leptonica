@@ -46,10 +46,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  num_erodes = 8;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_circle_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, k, count, n, maxloc, maxval, minval;
 NUMA         *na;

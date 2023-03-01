@@ -39,8 +39,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_encoding_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 size_t        nbytes1, nbytes2, nbytes3, nbytes4, nbytes5, nbytes6, fbytes;
 char         *a85a, *a85c, *a85c2;

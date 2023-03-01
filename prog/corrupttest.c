@@ -60,17 +60,25 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *corruptfile = "/tmp/lept/corrupt/badfile";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_corrupttest_main
+#endif
+
 int main(int     argc,
-         char  **argv)
+         const char  **argv)
 {
 size_t     filesize;
 l_float32  loc, size;
 l_float32  coeff1[15], coeff2[25];
 l_int32    i, j, w, xres, yres, format, ret, nwarn, hint, deletion, show;
 l_uint8   *comment, *filedata;
-char      *filein;
+const char      *filein;
 size_t     nbytes;
 FILE      *fp;
 PIX       *pix;

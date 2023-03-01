@@ -41,14 +41,22 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void TestDistance(PIXA *pixa, PIX *pixs, l_int32 conn,
                          l_int32 depth, l_int32 bc, L_REGPARAMS *rp);
 
 #define  DEBUG    0
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_distance_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j, k, index, conn, depth, bc;
 BOX          *box;

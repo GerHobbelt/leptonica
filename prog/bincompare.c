@@ -36,16 +36,24 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* set one of these to 1 */
 #define   XOR                   1
 #define   SUBTRACT_1_FROM_2     0
 #define   SUBTRACT_2_FROM_1     0
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_bincompare_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  w, h, d, n;
-char    *filein1, *filein2, *fileout;
+const char    *filein1, *filein2, *fileout;
 PIX     *pixs1, *pixs2;
 
     if (argc != 4)

@@ -38,6 +38,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Choose one of these */
 #define  COMPONENTS  JB_CONN_COMPS
 /* #define  COMPONENTS  JB_CHARACTERS */
@@ -46,8 +49,13 @@
 static PIXA *PixaOutlineTemplates(PIXA *pixas, NUMA *na);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_jbclass_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32      i, w, h;
 BOX         *box;

@@ -36,10 +36,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32 CONNECTIVITY = 8;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixa1_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       size, i, n, n0;
 BOXA         *boxa;

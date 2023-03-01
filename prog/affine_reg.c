@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void MakePtas(l_int32 i, PTA **pptas, PTA **pptad);
 static l_int32 RenderHashedBoxa(PIX *pixt, BOXA *boxa, l_int32 i);
 
@@ -69,8 +72,13 @@ static const l_float32  ROTATION = 0.11;   /* radian */
 #define   ALL     1
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_affine_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, w, h;
 l_float32    *mat1, *mat2, *mat3, *mat1i, *mat2i, *mat3i, *matdinv;

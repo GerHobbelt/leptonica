@@ -35,13 +35,21 @@
 #include <math.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  MINVAL      30
 #define  MAXVAL      210
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_gammatest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein, *fileout;
+const char      *filein, *fileout;
 char       buf[512];
 l_int32    iplot, same;
 l_float32  gam;

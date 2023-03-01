@@ -36,12 +36,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void PixSave(PIX **ppixs, PIXA *pixa, l_int32 newrow,
              L_BMF *bmf, const char *textstr);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_shear2_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 L_BMF        *bmf;
 PIX          *pixs1, *pixs2, *pixg, *pixt, *pixd;

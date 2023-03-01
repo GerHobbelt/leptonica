@@ -37,11 +37,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define PRINT_FULL_TREE  0
 #define TRACE            0
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rbtreetest_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32    i;
 RB_TYPE    x, y;

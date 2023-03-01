@@ -38,12 +38,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_reducetest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX     *pixs, *pixd;
 l_int32  level1, level2, level3, level4;
-char    *filein, *fileout;
+const char    *filein, *fileout;
 
     if (argc != 7)
         return ERROR_INT(" Syntax:  reducetest filein fileout l1 l2 l3 l4",

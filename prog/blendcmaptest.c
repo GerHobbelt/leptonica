@@ -35,12 +35,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  NX = 4;
 static const l_int32  NY = 5;
 static const l_float32  FADE_FRACTION = 0.75;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_blendcmaptest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32   i, j, sindex, wb, hb, ws, hs, delx, dely, x, y, y0;
 PIX      *pixs, *pixb, *pix1, *pix2;

@@ -41,12 +41,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void  TestPartition(L_REGPARAMS *rp, const char *fname, l_int32 sorttype,
                     l_int32 maxboxes, l_int32 ovlap, const char *fileout,
                     PIXA  *pixad);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_partition_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pix1;
 PIXA         *pixad;

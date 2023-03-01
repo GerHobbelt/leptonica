@@ -36,10 +36,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_fileinfo_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char  *filein;
+const char  *filein;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  fileinfo filein", __func__, 1);

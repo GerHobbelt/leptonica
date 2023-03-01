@@ -52,11 +52,19 @@
 #include "array_internal.h"
 #include "pix_internal.h"
 
+#include "monolithic_examples.h"
+
+
 static SARRAY *BuildShortStrings(l_int32 nchars);
 static PTA *BuildPointSet(l_int32  w, l_int32 h);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_hashtest_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32     dnasize, ptasize, strsize, i, n, c1, c2, c3, s1;
 L_ASET     *set;

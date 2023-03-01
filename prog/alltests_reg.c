@@ -49,6 +49,9 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *tests[] = {
                               "adaptmap_reg",
                               "adaptnorm_reg",
@@ -211,10 +214,15 @@ static const char *header = {"\n=======================\n"
                              "Regression Test Results\n"
                              "======================="};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_alltests_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *str, *results_file;
+char    *str, *results_file = NULL;
 char     command[256], buf[256];
 l_int32  i, ntests, dotest, nfail, ret, start, stop;
 SARRAY  *sa;

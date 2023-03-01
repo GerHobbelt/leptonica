@@ -35,14 +35,22 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char  *kdatastr = " 20.3    50   80  50   20 "
                                " 51.4   100  140  100  50 "
                                " 92.5   160  200  160  90 "
                                " 53.7   100  140  100  50 "
                                " 24.9    50   80   50  20 ";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_kernel_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char         *str;
 l_int32       i, j, same, ok, plottype;

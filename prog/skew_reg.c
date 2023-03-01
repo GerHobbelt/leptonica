@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* deskew */
 #define   DESKEW_REDUCTION      4      /* 1, 2 or 4 */
 
@@ -54,8 +57,13 @@
 static const l_int32  BORDER = 150;
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_skew_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       w, h, wd, hd;
 l_float32     deg2rad, angle, conf;

@@ -50,10 +50,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_splitpdf_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein, *rootname;
+const char    *filein, *rootname;
 char     outname[512], buffer[1024];
 l_int32  i, n, npages, nfiles, ret, val, start, end;
 NUMA    *naeach;

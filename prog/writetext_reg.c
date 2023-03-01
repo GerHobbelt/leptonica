@@ -38,10 +38,13 @@
 
 #include "allheaders.h"
 
-void AddTextAndSave(PIXA *pixa, PIX *pixs, L_BMF *bmf, const char *textstr,
+#include "monolithic_examples.h"
+
+
+static void AddTextAndSave(PIXA *pixa, PIX *pixs, L_BMF *bmf, const char *textstr,
                     l_int32 location, l_uint32 val);
 
-const char  *textstr[] =
+static const char  *textstr[] =
            {"This is a simple test of text writing: 8 bpp",
             "This is a simple test of text writing: 32 bpp",
             "This is a simple test of text writing: 8 bpp cmapped",
@@ -51,20 +54,25 @@ const char  *textstr[] =
             "This is a simple test of text writing: 2 bpp",
             "This is a simple test of text writing: 1 bpp"};
 
-const char  *topstr[] =
+static const char  *topstr[] =
            {"Text is added above each image",
             "Text is added over the top of each image",
             "Text is added over the bottom of each image",
             "Text is added below each image"};
 
-const l_int32  loc[] = {1, 5, 6, 2};
+static const l_int32  loc[] = {1, 5, 6, 2};
 
-const l_uint32  colors[6] = {0x4090e000, 0x40e09000, 0x9040e000, 0x90e04000,
+static const l_uint32  colors[6] = {0x4090e000, 0x40e09000, 0x9040e000, 0x90e04000,
                              0xe0409000, 0xe0904000};
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_writetext_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          buf[512];
 l_int32       i;

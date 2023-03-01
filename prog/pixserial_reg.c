@@ -37,6 +37,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Use this set */
 static l_int32  nfiles = 10;
 static const char  *filename[] = {
@@ -52,8 +55,13 @@ static const char  *filename[] = {
                          "test24.jpg"        /* rgb */
                             };
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixserial_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          buf[256];
 size_t        size;

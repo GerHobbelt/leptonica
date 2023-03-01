@@ -56,12 +56,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define BUF_SIZE 512
 
 LEPT_DLL extern const char *ImageFileFormatExtensions[];
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_textorient_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char         buf[BUF_SIZE];
 const char  *filein, *fileout;

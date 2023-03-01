@@ -38,10 +38,18 @@
 #include <math.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void DoLocMinmax(L_REGPARAMS *rp, PIX *pixs, l_int32 minmax, l_int32 maxmin);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_locminmax_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j;
 l_float32     f;

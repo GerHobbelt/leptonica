@@ -42,6 +42,9 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Sets for training using boot recognizers */
 static char  trainset1[] = "recog/sets/train04.pa";  /* partial set */
 static char  trainset2[] = "recog/sets/train05.pa";  /* full set */
@@ -53,8 +56,13 @@ static const l_int32  linew = 0;  /* use scanned bitmaps */
 static const l_int32  linew = 5;  /* use generated lines */
 #endif
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_recogtest2_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char     *fname;
 l_int32   i;

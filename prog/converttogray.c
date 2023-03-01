@@ -35,11 +35,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_converttogray_main
+#endif
+
 int main(int    argc,
-          char **argv)
+          const char **argv)
 {
-char    *filein;
-char    *fileout = NULL;
+const char    *filein;
+const char    *fileout = NULL;
 l_int32  d, same;
 PIX     *pixs, *pixd, *pix1, *pix2, *pix3, *pix4;
 

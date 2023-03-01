@@ -47,6 +47,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* Eliminate very large "words" */
 static const l_int32  MAX_WORD_WIDTH = 500;
 static const l_int32  MAX_WORD_HEIGHT = 200;
@@ -58,11 +61,16 @@ static const l_int32  MAX_WORD_HEIGHT = 200;
 #define   RENDER_DEBUG              1
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_jbwords_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char        filename[BUF_SIZE];
-char       *dirin, *rootname;
+const char       *dirin, *rootname;
 l_int32     reduction, i, firstpage, npages;
 l_float32   thresh, weight;
 JBDATA     *data;

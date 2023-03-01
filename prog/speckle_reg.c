@@ -37,6 +37,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* HMT (with just misses) for speckle up to 2x2 */
 static const char *selstr2 = "oooo"
                              "oC o"
@@ -49,8 +52,13 @@ static const char *selstr3 = "ooooo"
                              "o   o"
                              "ooooo";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_speckle_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIX          *pix6, *pix7, *pix8, *pix9, *pix10;

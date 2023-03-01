@@ -35,6 +35,9 @@
 #include <math.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32 NTests = 5;
 static const l_int32 gaussmean1[5] = {20, 40, 60, 80, 60};
 static const l_int32 gaussstdev1[5] = {10, 20, 20, 20, 30};
@@ -46,8 +49,13 @@ static l_int32  GenerateSplitPlot(l_int32 i);
 static NUMA *MakeGaussian(l_int32 mean, l_int32 stdev, l_float32 fract);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_otsutest1_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  i;
 PIX     *pix;

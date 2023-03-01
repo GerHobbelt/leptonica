@@ -36,15 +36,23 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   SMOOTH_WIDTH_1       2  /* must be smaller */
 #define   SMOOTH_WIDTH_2       4  /* must be larger */
 #define   THRESHOLD            5  /* low works best */
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_showedges_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *infile, *outfile;
+const char    *infile, *outfile;
 l_int32  d;
 PIX     *pixs, *pixgr, *pixb;
 

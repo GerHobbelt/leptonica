@@ -40,6 +40,9 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 
 #define  TEST1   1
 #define  TEST2   1
@@ -47,8 +50,13 @@
 #define  TEST4   1
 #define  TEST5   1
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_histoduptest_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_uint8     *bytea1, *bytea2;
 l_int32      i, j, n, maxi, maxj, istext, w1, h1, w2, h2;

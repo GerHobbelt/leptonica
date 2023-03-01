@@ -46,11 +46,19 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static PIX *GetBigComponent(PIX *pixs);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_recogtest4_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char      buf[256];
 l_int32   i, item;

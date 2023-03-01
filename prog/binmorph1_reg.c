@@ -65,14 +65,22 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* set these ad lib. */
 #define    WIDTH            21    /* brick sel width */
 #define    HEIGHT           15    /* brick sel height */
 
-void TestAll(L_REGPARAMS *rp, PIX *pix, l_int32 symmetric);
+static void TestAll(L_REGPARAMS *rp, PIX *pix, l_int32 symmetric);
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_binmorph1_reg_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX  *pixs;
 L_REGPARAMS  *rp;
@@ -89,7 +97,7 @@ L_REGPARAMS  *rp;
 }
 
 
-void
+static void
 TestAll(L_REGPARAMS  *rp,
         PIX          *pixs,
         l_int32       symmetric)

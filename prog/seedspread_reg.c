@@ -37,10 +37,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  scalefact = 1.0;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_seedspread_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j, x, y, val;
 PIX          *pixsq, *pixs, *pixc, *pixd;

@@ -38,6 +38,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  mindif = 60;
 
 static l_int32 GetLeftCut(NUMA *narl, NUMA *nart, NUMA *nait,
@@ -45,10 +48,15 @@ static l_int32 GetLeftCut(NUMA *narl, NUMA *nart, NUMA *nait,
 static l_int32 GetRightCut(NUMA *narl, NUMA *nart, NUMA *nait,
                      l_int32 h, l_int32 *pright);
 
-const char *fnames[] = {"lyra.005.jpg", "lyra.036.jpg"};
+static const char *fnames[] = {"lyra.005.jpg", "lyra.036.jpg"};
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_crop_reg_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, pageno, w, h, left, right;
 BOX          *box1, *box2;

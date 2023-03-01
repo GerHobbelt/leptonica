@@ -36,10 +36,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  nbins = 10;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_lightcolortest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char      *name, *tail;
 l_int32    i, j, n, minval, maxval, rdiff, gdiff, bdiff, maxdiff;

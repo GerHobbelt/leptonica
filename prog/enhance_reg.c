@@ -42,9 +42,17 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_enhance_reg_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          textstr[256];
 l_int32       i, k, w, h;

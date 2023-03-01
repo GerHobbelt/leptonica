@@ -36,13 +36,21 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_trctest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX       *pixs, *pixd;
 l_int32    minval, maxval;
 l_float32  gamma;
-char      *filein, *fileout;
+const char      *filein, *fileout;
 
     if (argc != 6)
         return ERROR_INT(" Syntax:  trctest filein gamma minval maxval fileout",

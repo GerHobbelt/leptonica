@@ -37,14 +37,22 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void AddTestSet(PIXA *pixa, PIX *pixs,
                        l_int32 filtertype, l_int32 edgethresh,
                        l_int32 smoothx, l_int32 smoothy,
                        l_float32 gamma, l_int32 minval,
                        l_int32 maxval, l_int32 targetthresh);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_threshnorm_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs, *pixd;
 PIXA         *pixa;

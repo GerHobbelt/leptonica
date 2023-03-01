@@ -39,10 +39,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_uint32   LEPTONICA_YELLOW = 0xffffe400;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_blend5_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_uint32      val32;
 PIX          *pixs, *pix1, *pix2;

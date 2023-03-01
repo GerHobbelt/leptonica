@@ -35,11 +35,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void TestHardlight(const char *file1, const char *file2,
                           L_REGPARAMS *rp);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_hardlight_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 L_REGPARAMS  *rp;
 

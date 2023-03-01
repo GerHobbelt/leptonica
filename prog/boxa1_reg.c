@@ -37,10 +37,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static PIX *DisplayBoxa(BOXA  *boxa);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_boxa1_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_uint8      *data1, *data2;
 l_int32       same;

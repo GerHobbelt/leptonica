@@ -42,12 +42,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static L_ASET *BuildSet(PIX *pix, l_int32 factor, l_int32 print);
 static void TestSetIterator(L_ASET *s, l_int32  print);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_settest_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 L_ASET  *s;
 PIX     *pix;

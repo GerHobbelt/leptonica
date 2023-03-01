@@ -36,13 +36,21 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *files[] = {"underline1.jpg", "underline2.jpg",
                               "underline3.jpg", "underline4.jpg",
                               "underline5.jpg", "underline6.jpg",
                               "underline7.jpg"};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_underlinetest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  i;
 PIX     *pixs, *pixg, *pixg2, *pixb, *pixm, *pixsd, *pixsdd, *pixt, *pixd;

@@ -42,15 +42,23 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* defined in morph.c */
 LEPT_DLL extern l_int32 MORPH_BC;
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_fmorphauto_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  i, nsels, same, xorcount;
-char    *filein, *selname;
+const char    *filein, *selname;
 PIX     *pixs, *pixs1, *pixt1, *pixt2, *pixt3, *pixt4;
 SEL     *sel;
 SELA    *sela;

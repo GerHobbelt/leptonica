@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   BINARY_IMAGE        "test1.png"
 #define   GRAYSCALE_IMAGE     "test8.jpg"
 #define   FOUR_BPP_IMAGE      "weasel4.8g.png"
@@ -48,8 +51,13 @@ void TranslateAndSave1(PIXA *pixa, l_int32 depth, PIX *pix,
 void TranslateAndSave2(PIXA *pixa, PIX *pix, l_int32 xshift, l_int32 yshift);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_translate_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 BOX          *box;
 PIX          *pixs, *pixd;

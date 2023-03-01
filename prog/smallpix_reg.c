@@ -52,10 +52,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void SaveAndDisplayPix(L_REGPARAMS *rp, PIXA **ppixa, l_int32 x, l_int32 y);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_smallpix_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i;
 l_float32     pi, scale, angle;

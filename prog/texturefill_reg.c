@@ -49,11 +49,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
    /* Designed to work with amoris.2.150.jpg  */
 static PIX *MakeReplacementMask(PIX *pixs);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_texturefill_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32       bx, by, bw, bh;
 l_uint32      pixval;

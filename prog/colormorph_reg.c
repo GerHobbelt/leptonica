@@ -36,10 +36,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32  SIZE = 7;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_colormorph_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          buf[256];
 PIX          *pixs, *pix1, *pix2;

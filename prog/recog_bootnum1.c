@@ -61,11 +61,19 @@
 #include "allheaders.h"
 #include "bmfdata.h"
 
+#include "monolithic_examples.h"
+
+
 static PIXA  *MakeBootnum1(void);
 static PIXA  *MakeBootnum2(void);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_recog_bootnum1_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 PIX          *pix1;
 PIXA         *pixa1, *pixa2, *pixa3;

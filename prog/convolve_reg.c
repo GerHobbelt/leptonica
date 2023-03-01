@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char  *kel1str = " 20    50   80  50   20 "
                               " 50   100  140  100  50 "
                               " 90   160  200  160  90 "
@@ -52,8 +55,13 @@ static const char  *kel3xstr = " -70   40  100   40  -70 ";
 static const char  *kel3ystr = "  20  -70   40  100   40  -70  20 ";
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_convolve_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i, j, sizex, sizey, bias;
 FPIX         *fpixv, *fpixrv;

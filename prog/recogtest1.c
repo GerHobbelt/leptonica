@@ -40,6 +40,9 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32 scaledw = 0;
 static const l_int32 scaledh = 40;
 
@@ -47,8 +50,13 @@ static const l_float32  MinScore[] = {0.6f, 0.7f, 0.9f};
 static const l_int32  MinTarget[] = {4, 5, 4};
 static const l_int32  MinSize[] = {3, 2, 3};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_recogtest1_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32   i, linew, same;
 BOXA     *boxat;

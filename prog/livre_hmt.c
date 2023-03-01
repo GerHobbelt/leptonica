@@ -46,6 +46,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* for pixDisplayHitMissSel() */
 static const l_uint32  HitColor = 0x33aa4400;
 static const l_uint32  MissColor = 0xaa44bb00;
@@ -57,8 +60,13 @@ static const char *patname[3] = {
     "tribune-t.png"};     /* patno = 2 */
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_livre_hmt_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32  patno, reduction, width, cols, cx, cy;
 PIX     *pixs, *pixt, *pix, *pixr, *pixp, *pixsel, *pixhmt;

@@ -53,12 +53,20 @@
 #include "string.h"
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 LEPT_DLL extern const char *ImageFileFormatExtensions[];
 
 static const size_t  tiffsize[6] = {65674, 34872, 20482, 20998, 11178, 21500};
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_iomisc_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char         *text;
 l_int32       w, h, d, wpl, format, xres, yres;

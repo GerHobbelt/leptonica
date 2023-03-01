@@ -37,10 +37,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_arithtest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein;
+const char    *filein;
 l_int32  w, h;
 PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 

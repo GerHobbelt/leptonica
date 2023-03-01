@@ -55,13 +55,21 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  ALL    1
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_binarize_set_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char     *infile;
+const char     *infile;
 l_int32   w, d, threshval;
 PIX      *pixs, *pixg;
 PIX      *pix1, *pix2;

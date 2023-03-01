@@ -36,10 +36,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   DISPLAY      0    /* set to 1 to see the results */
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_scaletest2_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX     *pixs;
 l_int32  d;

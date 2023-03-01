@@ -52,6 +52,9 @@
     /* Needed for HAVE_LIBJP2K */
 #ifdef HAVE_CONFIG_H
 #include <config_auto.h>
+
+#include "monolithic_examples.h"
+
 #endif /* HAVE_CONFIG_H */
 
 void DoJp2kTest1(L_REGPARAMS *rp, const char *fname);
@@ -59,8 +62,13 @@ void DoJp2kTest2(L_REGPARAMS *rp, const char *fname);
 void DoJp2kTest3(L_REGPARAMS *rp, const char *fname);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_jp2kio_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 L_REGPARAMS  *rp;
 

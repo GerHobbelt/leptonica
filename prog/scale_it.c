@@ -75,10 +75,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_scale_it_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char      *filein, *fileout;
+const char      *filein, *fileout;
 l_int32    sharpen, antialias, togray, lossless, d;
 l_float32  scalex, scaley;
 PIX       *pixs, *pixd;

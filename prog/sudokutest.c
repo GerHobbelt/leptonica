@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *startsol = "3 8 7 2 6 4 1 9 5 "
                               "2 6 5 8 9 1 4 3 7 "
                               "1 4 9 5 3 7 6 8 2 "
@@ -46,8 +49,13 @@ static const char *startsol = "3 8 7 2 6 4 1 9 5 "
                               "4 3 1 6 7 9 5 2 8 "
                               "6 5 8 4 2 3 9 7 1";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_sudokutest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32    unique;
 l_int32   *array;

@@ -38,10 +38,18 @@
 #include <string.h>
 #include "allheaders.h"
 
-void RunCCBordTest(const char *fname, L_REGPARAMS *rp);
+#include "monolithic_examples.h"
+
+
+static void RunCCBordTest(const char *fname, L_REGPARAMS *rp);
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_ccbord_reg_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 L_REGPARAMS  *rp;
 
@@ -55,7 +63,7 @@ L_REGPARAMS  *rp;
 }
 
 /* ----------------------------------------------- */
-void RunCCBordTest(const char   *fname,
+static void RunCCBordTest(const char   *fname,
                    L_REGPARAMS  *rp)
 {
 char     *svgstr;

@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const l_int32 MAX_WIDTH = 350;
 static const char *image[4] = {"marge.jpg",
                                "test24.jpg",
@@ -46,8 +49,13 @@ static l_int32 TestImage(const char *filename, l_int32 i, L_REGPARAMS *rp);
 static void PixSave32(PIXA *pixa, PIX *pixc, L_REGPARAMS *rp);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_colorquant_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i;
 L_REGPARAMS  *rp;

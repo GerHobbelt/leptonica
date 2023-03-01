@@ -44,6 +44,9 @@
 #include "allheaders.h"
 #include "autogen.137.h"
 
+#include "monolithic_examples.h"
+
+
 /*---------------------------------------------------------------------*/
 /*                      Auto-generated deserializers                   */
 /*---------------------------------------------------------------------*/

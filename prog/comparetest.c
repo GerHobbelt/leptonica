@@ -58,12 +58,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_comparetest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32    type, comptype, d1, d2, same, first, last;
 l_float32  fract, diff, rmsdiff;
-char      *filein1, *filein2, *fileout;
+const char      *filein1, *filein2, *fileout;
 GPLOT     *gplot;
 NUMA      *na1, *na2;
 PIX       *pixs1, *pixs2, *pixd;

@@ -35,6 +35,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void MakePtas(l_int32 i, PTA **pptas, PTA **pptad);
 
     /* Sample values.
@@ -64,8 +67,13 @@ static const l_int32  yp4[] = { 300,  300,  250,  350,   83};
 #define   ALL     1
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_projective_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i;
 PIX          *pixs, *pixsc, *pixb, *pixg, *pixc, *pixcs, *pix1, *pix2, *pixd;

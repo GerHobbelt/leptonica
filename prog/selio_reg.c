@@ -38,6 +38,9 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *textsel1 = "x  oo "
                               "x oOo "
                               "x  o  "
@@ -70,8 +73,13 @@ static const char *textsel6 = "xxXxxx"
                               " oo  x";
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_selio_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_float32     val;
 PIX          *pix;

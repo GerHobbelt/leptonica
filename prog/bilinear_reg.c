@@ -34,6 +34,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void MakePtas(l_int32 i, PTA **pptas, PTA **pptad);
 
     /* Sample values.
@@ -61,8 +64,13 @@ static const l_int32  yp4[] = { 694,  624,  622};
 #define  ALL                        1
 #define  ADDED_BORDER_PIXELS      250
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_bilinear_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       i;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pixd;

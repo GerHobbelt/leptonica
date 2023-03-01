@@ -37,6 +37,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void  fdilate_3_0(l_uint32 *, l_int32, l_int32, l_int32, l_uint32 *, l_int32);
 static void  ferode_3_0(l_uint32 *, l_int32, l_int32, l_int32, l_uint32 *, l_int32);
 static void  fdilate_3_1(l_uint32 *, l_int32, l_int32, l_int32, l_uint32 *, l_int32);

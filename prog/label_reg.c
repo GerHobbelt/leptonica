@@ -39,11 +39,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void FindEMD(PIX *pix1, PIX *pix2, l_float32 *pdistr, l_float32 *pdistg,
              l_float32 *pdistb);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_label_reg_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_float32     dist, distr, distg, distb;
 NUMA         *na1, *na2;

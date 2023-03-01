@@ -34,8 +34,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_livre_tophat_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX   *pixs, *pixsg, *pix1, *pix2;
 PIXA  *pixa;

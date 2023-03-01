@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define  HALFWIDTH   3
 
     /* Complete set of linear brick dwa operations */
@@ -43,8 +46,13 @@ PIX *pixMorphDwa_3(PIX *pixd, PIX *pixs, l_int32 operation, char *selname);
 
 static const l_int32  NTIMES = 20;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_dwamorph2_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char      *selname;
 l_int32    i, j, nsels, sx, sy;

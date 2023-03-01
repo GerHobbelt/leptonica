@@ -36,12 +36,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 #define   NBLOCKS     11
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_buffertest_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char       *filein, *fileout;
+const char       *filein, *fileout;
 l_uint8    *array1, *array2, *dataout, *dataout2;
 l_int32     i, blocksize, same;
 size_t      nbytes, nout, nout2;

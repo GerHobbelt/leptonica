@@ -40,12 +40,20 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static const char *fileout = "/tmp/lept/fpix/fpixcontours.png";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_fpixcontours_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein;
+const char    *filein;
 l_int32  ncontours;
 FPIX    *fpix;
 PIX     *pix;

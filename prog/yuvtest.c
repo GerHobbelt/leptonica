@@ -40,12 +40,20 @@
 
 #include "allheaders.h"
 
-void AddTransformsRGB(PIXA *pixa, L_BMF *bmf, l_int32 gval);
-void AddTransformsYUV(PIXA *pixa, L_BMF *bmf, l_int32 yval);
+#include "monolithic_examples.h"
 
+
+static void AddTransformsRGB(PIXA *pixa, L_BMF *bmf, l_int32 gval);
+static void AddTransformsYUV(PIXA *pixa, L_BMF *bmf, l_int32 yval);
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_yuvtest_main
+#endif
 
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 l_int32     i, rval, gval, bval, yval, uval, vval;
 l_float32  *a[3], b[3];
@@ -146,7 +154,7 @@ PIXA       *pixa;
 }
 
 
-void
+static void
 AddTransformsRGB(PIXA    *pixa,
                  L_BMF   *bmf,
                  l_int32  gval)
@@ -183,7 +191,7 @@ PIXA      *pixat;
 }
 
 
-void
+static void
 AddTransformsYUV(PIXA    *pixa,
                  L_BMF   *bmf,
                  l_int32  yval)

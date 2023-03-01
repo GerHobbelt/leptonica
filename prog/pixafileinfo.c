@@ -37,8 +37,16 @@
 #include <string.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_pixafileinfo_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char     buf[64];
 char    *sn;
@@ -46,7 +54,7 @@ l_int32  i, n;
 PIX     *pix;
 PIXA    *pixa;
 PIXAC   *pac;
-char    *filein;
+const char    *filein;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  pixafileinfo filein", __func__, 1);

@@ -37,12 +37,20 @@
 
 #include "allheaders.h"
 
-void LocateCheckerboardCorners(L_REGPARAMS *rp,
+#include "monolithic_examples.h"
+
+
+static void LocateCheckerboardCorners(L_REGPARAMS *rp,
                                const char *fname,
                                l_int32 nsels);
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_checkerboard_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 L_REGPARAMS  *rp;
 
@@ -55,7 +63,7 @@ L_REGPARAMS  *rp;
 }
 
 
-void
+static void
 LocateCheckerboardCorners(L_REGPARAMS  *rp,
                           const char   *fname,
                           l_int32       nsels)

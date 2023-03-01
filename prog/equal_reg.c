@@ -40,6 +40,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
     /* use this set */
 #define   FEYN1            "feyn.tif"      /* 1 bpp */
 #define   DREYFUS2         "dreyfus2.png"  /* 2 bpp cmapped */
@@ -48,8 +51,13 @@
 #define   KAREN8           "karen8.jpg"    /* 8 bpp, not cmapped */
 #define   MARGE32          "marge.jpg"     /* rgb */
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_equal_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 L_REGPARAMS  *rp;

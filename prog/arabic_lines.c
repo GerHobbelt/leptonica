@@ -41,6 +41,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 
 /* Hit-miss transform that splits lightly touching lines */
 static const char *seltext = "xxxxxxx"
@@ -61,8 +64,13 @@ static const char *seltext = "xxxxxxx"
                              "   x   "
                              "xxxxxxx";
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_arabic_lines_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32    w, h, d, w2, h2, i, ncols, same;
 l_float32  angle, conf;

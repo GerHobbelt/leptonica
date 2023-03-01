@@ -36,11 +36,19 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static PIX *makeSmallTestPix(l_uint32 c1, l_uint32 c2);
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_colorfill_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 L_COLORFILL  *cf;
 PIX          *pix1, *pix2, *pix3, *pix4;

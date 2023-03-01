@@ -38,8 +38,16 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_colorspace_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char          label[512];
 l_int32       rval, gval, bval, w, h, i, j, rwhite, gwhite, bwhite, count;

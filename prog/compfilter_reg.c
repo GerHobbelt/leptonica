@@ -37,6 +37,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void Count_pieces(L_REGPARAMS *rp, PIX  *pix, l_int32 nexp);
 static void Count_pieces2(L_REGPARAMS *rp, BOXA *boxa, l_int32 nexp);
 static l_int32 Count_ones(L_REGPARAMS *rp, NUMA  *na, l_int32 nexp,
@@ -59,8 +62,13 @@ static const l_int32 total[12] = {24, 319, 809, 1626, 3394, 4356, 12527,
 #endif
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_compfilter_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       w, h, n, i, sum, sumi, empty;
 BOX          *box1, *box2, *box3, *box4;

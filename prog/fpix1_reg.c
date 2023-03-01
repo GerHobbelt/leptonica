@@ -39,6 +39,9 @@
 #include <math.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void MakePtasAffine(l_int32 i, PTA **pptas, PTA **pptad);
 static void MakePtas(l_int32 i, PTA **pptas, PTA **pptad);
 
@@ -61,8 +64,13 @@ static const l_int32  xd4[] = {1250, 1200, 1140, 1250,  412};
 static const l_int32  yd4[] = { 300,  300,  250,  350,   83};
 
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_fpix1_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_float32     sum, sumx, sumy, diff;
 L_DEWARP     *dew;

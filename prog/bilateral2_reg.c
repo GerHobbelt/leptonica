@@ -42,12 +42,20 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 static void DoTestsOnImage(PIX *pixs, L_REGPARAMS *rp);
 
 static const l_int32  ncomps = 10;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_bilateral2_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 PIX          *pixs;
 L_REGPARAMS  *rp;

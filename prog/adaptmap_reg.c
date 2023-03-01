@@ -36,6 +36,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
    /* Location of image region in wet-day.jpg */
 static const l_int32  XS = 151;
 static const l_int32  YS = 225;
@@ -51,8 +54,13 @@ static const l_int32  BGVAL = 200;
 static const l_int32  SMOOTH_X = 2;
 static const l_int32  SMOOTH_Y = 1;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_adaptmap_reg_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 l_int32       w, h;
 PIX          *pixs, *pixg, *pixim, *pixgm, *pixmi, *pix1, *pix2;

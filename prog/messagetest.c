@@ -92,6 +92,9 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
 void TestMessageControl(l_int32  severity);
 void TestStderrRedirect();
 

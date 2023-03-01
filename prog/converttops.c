@@ -38,10 +38,18 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_converttops_main
+#endif
+
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
-char    *filein, *fileout;
+const char    *filein, *fileout;
 char     error_msg[] = " ps level = {1,2,3}; level 2 is default";
 l_int32  level;
 
