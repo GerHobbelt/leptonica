@@ -58,9 +58,9 @@
 #endif
 
 int main(int  argc,
-             char   **argv)
+         const char   **argv)
 {
-char     *filein;
+const char     *filein;
 l_int32   i, n, count;
 BOX      *box;
 BOXA     *boxa;

@@ -46,7 +46,7 @@
 #endif
 
 int main(int  argc,
-             char   **argv)
+         const char   **argv)
 {
 l_uint8      *data;
 size_t        size;

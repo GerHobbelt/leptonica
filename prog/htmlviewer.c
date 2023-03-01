@@ -169,7 +169,7 @@ SARRAY    *safiles, *sathumbs, *saviews, *sahtml, *salink;
     snprintf(buf, sizeof(buf), "mkdir -p %s", dirout);
     ret = system(buf);
 #else
-    ret = CreateDirectory(dirout, NULL) ? 0 : 1;
+    ret = CreateDirectoryA(dirout, NULL) ? 0 : 1;
 #endif  /* !_WIN32 */
     if (ret) {
         L_ERROR("output directory %s not made\n", __func__, dirout);
