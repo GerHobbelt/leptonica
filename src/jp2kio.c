@@ -106,6 +106,17 @@
 #include <string.h>
 #include "allheaders.h"
 
+#if defined(BUILD_MONOLITHIC)
+#include <mupdf/fitz.h>
+
+// quick hack for tesseract:
+void opj_lock(fz_context* ctx);
+void opj_unlock(fz_context* ctx);
+#else
+#define opj_lock(c)       /**/
+#define opj_unlock(c)     /**/
+#endif
+
 /* --------------------------------------------*/
 #if  HAVE_LIBJP2K   /* defined in environ.h */
 /* --------------------------------------------*/
@@ -256,15 +267,19 @@ PIX               *pix = NULL;
     if (!fp)
         return (PIX *)ERROR_PTR("fp not defined", __func__, NULL);
 
+	opj_lock(fz_get_global_context());
+
     opjVersion = opj_version();
     if (opjVersion[0] != '2') {
         L_ERROR("version is %s; must be 2.0 or higher\n", __func__, opjVersion);
-        return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
     }
     if ((opjVersion[2] - 0x30) != OPJ_VERSION_MINOR) {
         L_ERROR("version %s: differs from minor = %d\n",
                 __func__, opjVersion, OPJ_VERSION_MINOR);
-         return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
      }
 
         /* Get the resolution, bits/sample and codec type */
@@ -274,12 +289,14 @@ PIX               *pix = NULL;
     rewind(fp);
     if (codec != L_J2K_CODEC && codec != L_JP2_CODEC) {
         L_ERROR("valid codec not identified\n", __func__);
-        return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
     }
 
     if (bps != 8) {
         L_ERROR("found %d bps; can only handle 8 bps\n", __func__, bps);
-        return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
     }
 
         /* Set decoding parameters to default values */
@@ -293,7 +310,8 @@ PIX               *pix = NULL;
     for (reduce = 0; (1L << reduce) < reduction; reduce++) { }
     if ((1L << reduce) != reduction) {
         L_ERROR("invalid reduction %d; not power of 2\n", __func__, reduction);
-        return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
     }
     parameters.cp_reduce = reduce;
 
@@ -304,7 +322,8 @@ PIX               *pix = NULL;
         l_codec = opj_create_decompress(OPJ_CODEC_J2K);
     if (!l_codec) {
         L_ERROR("failed to make the codec\n", __func__);
-        return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
     }
 
         /* Catch and report events using callbacks */
@@ -318,7 +337,8 @@ PIX               *pix = NULL;
     if (!opj_setup_decoder(l_codec, &parameters)){
         L_ERROR("failed to set up decoder\n", __func__);
         opj_destroy_codec(l_codec);
-        return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
     }
 
         /* Open decompression 'stream'.  In 2.0, we could call this:
@@ -327,7 +347,8 @@ PIX               *pix = NULL;
     if ((l_stream = opjCreateStream(fp, 1)) == NULL) {
         L_ERROR("failed to open the stream\n", __func__);
         opj_destroy_codec(l_codec);
-        return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
     }
 
         /* Read the main header of the codestream and, if necessary,
@@ -337,7 +358,8 @@ PIX               *pix = NULL;
         opj_stream_destroy(l_stream);
         opj_destroy_codec(l_codec);
         opj_image_destroy(image);
-        return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
     }
 
         /* Set up to decode a rectangular region */
@@ -349,7 +371,8 @@ PIX               *pix = NULL;
             opj_stream_destroy(l_stream);
             opj_destroy_codec(l_codec);
             opj_image_destroy(image);
-            return NULL;
+			opj_unlock(fz_get_global_context());
+			return NULL;
         }
     }
 
@@ -360,7 +383,8 @@ PIX               *pix = NULL;
         opj_destroy_codec(l_codec);
         opj_stream_destroy(l_stream);
         opj_image_destroy(image);
-        return NULL;
+		opj_unlock(fz_get_global_context());
+		return NULL;
     }
 
         /* Finished with the byte stream and the codec */
@@ -438,7 +462,9 @@ PIX               *pix = NULL;
         /* Free the opj image data structure */
     opj_image_destroy(image);
 
-    return pix;
+	opj_unlock(fz_get_global_context());
+
+	return pix;
 }
 
 
