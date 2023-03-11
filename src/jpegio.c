@@ -337,10 +337,7 @@ jmp_buf                        jmpbuf;  /* must be local to the function */
         rowbuffer = (JSAMPROW)LEPT_CALLOC(sizeof(JSAMPLE), w);
         pix = pixCreate(w, h, 8);
     }
-	if (!pix)
-		return (PIX*)ERROR_PTR("cannot load jpeg", __func__, NULL);
-
-	pixSetInputFormat(pix, IFF_JFIF_JPEG);
+    pix = NULL;  // TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!rowbuffer || !pix) {
         LEPT_FREE(rowbuffer);
         rowbuffer = NULL;
@@ -348,6 +345,7 @@ jmp_buf                        jmpbuf;  /* must be local to the function */
         jpeg_destroy_decompress(&cinfo);
         return (PIX *)ERROR_PTR("rowbuffer or pix not made", __func__, NULL);
     }
+    pixSetInputFormat(pix, IFF_JFIF_JPEG);
 
         /* Initialize decompression.
          * Set up a colormap for color quantization if requested.
