@@ -337,7 +337,6 @@ jmp_buf                        jmpbuf;  /* must be local to the function */
         rowbuffer = (JSAMPROW)LEPT_CALLOC(sizeof(JSAMPLE), w);
         pix = pixCreate(w, h, 8);
     }
-    pix = NULL;  // TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!rowbuffer || !pix) {
         LEPT_FREE(rowbuffer);
         rowbuffer = NULL;
