@@ -80,9 +80,20 @@ NUMA      *nax, *nay1, *nay2;
         return ERROR_INT(" Syntax:  custom_log_plot_test", __func__, 1);
 
     setLeptDebugOK(1);
-    lept_mkdir("lept/plot");
 
-        /* Generate plot data */
+	{
+		const char* message = "Demo-ing/Testing leptonica error+debug output redirected through a userland-code-provided custom handler system for those systems which don't have (or don't want to use) stderr & gnuplot.\nThe custom handler system outputs some rough HTML to file instead.\n";
+
+		fputs(message, stderr);
+		lept_stderr(message);
+	}
+
+	lept_mkdir("lept/plot");
+
+	// mix messages with images / plots:
+
+	lept_stderr("# Generate plot data\n");
+
     nax = numaCreate(0);
     nay1 = numaCreate(0);
     nay2 = numaCreate(0);
@@ -96,14 +107,16 @@ NUMA      *nax, *nay1, *nay2;
         numaAddNumber(nay2, y2);
     }
 
-        /* Show the plot */
+	lept_stderr("# Show the plot\n");
+
     gplot1 = gplotCreate("/tmp/lept/plot/set1", GPLOT_OUTPUT, "Example plots",
                          "theta", "f(theta)");
     gplotAddPlot(gplot1, nax, nay1, GPLOT_STYLE, "sin (2.4 * theta)");
     gplotAddPlot(gplot1, nax, nay2, GPLOT_STYLE, "cos (2.4 * theta)");
     gplotMakeOutput(gplot1);
 
-        /* Also save the plot to png */
+        /* ~~Also save the plot to png~~  <-- this SHOULD NOT happen as we should catch this in the custom handler! */
+
     gplot1->outformat = GPLOT_PNG;
     pngname = genPathname("/tmp/lept/plot", "set1.png");
     stringReplace(&gplot1->outname, pngname);
@@ -111,13 +124,15 @@ NUMA      *nax, *nay1, *nay2;
     l_fileDisplay("/tmp/lept/plot/set1.png", 100, 100, 1.0);
     lept_free(pngname);
 
-        /* Test gplot serialization */
-    gplotWrite("/tmp/lept/plot/plot1.gp", gplot1);
+	lept_stderr("# Test gplot serialization\n");
+
+	gplotWrite("/tmp/lept/plot/plot1.gp", gplot1);
     if ((gplot2 = gplotRead("/tmp/lept/plot/plot1.gp")) == NULL)
         return ERROR_INT("gplotRead failure!", __func__, 1);
     gplotWrite("/tmp/lept/plot/plot2.gp", gplot2);
 
-        /* Are the two written gplot files the same? */
+	lept_stderr("Are the two written gplot files the same?\n");
+
     str1 = (char *)l_binaryRead("/tmp/lept/plot/plot1.gp", &size1);
     str2 = (char *)l_binaryRead("/tmp/lept/plot/plot2.gp", &size2);
     if (size1 != size2)
@@ -138,13 +153,14 @@ NUMA      *nax, *nay1, *nay2;
     gplot3->outformat = GPLOT_PNG;
     gplotMakeOutput(gplot3);
 
-        /* Build gplot but do not make the output formatted stuff */
+	lept_stderr("Build gplot but do not make the output formatted stuff... erm...\n");
+
     gplot4 = gplotCreate("/tmp/lept/plot/set2", GPLOT_OUTPUT,
                          "Example plots 2", "theta", "f(theta)");
     gplotAddPlot(gplot4, nax, nay1, GPLOT_STYLE, "sin (2.4 * theta)");
     gplotAddPlot(gplot4, nax, nay2, GPLOT_STYLE, "cos (2.4 * theta)");
 
-        /* Write, read back, and generate the plot */
+        /* ~~Write, read back, and generate the plot~~   <-- we SHOULD NOT have any more o this write-and-read-back stuff happening... */
     gplotWrite("/tmp/lept/plot/plot4.gp", gplot4);
     if ((gplot5 = gplotRead("/tmp/lept/plot/plot4.gp")) == NULL)
         return ERROR_INT("gplotRead failure!", __func__, 1);
