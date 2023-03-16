@@ -1985,6 +1985,7 @@ l_float32  num1, num2, num1prev, num2prev;
 l_float32  val, minval, sum, fract1;
 l_float32  norm, score, minscore, maxscore;
 NUMA      *nascore, *naave1, *naave2, *nanum1, *nanum2;
+l_ok      rv = 0;
 
     if (psplitindex) *psplitindex = 0;
     if (pave1) *pave1 = 0.0;
@@ -2032,6 +2033,7 @@ NUMA      *nascore, *naave1, *naave2, *nanum1, *nanum2;
             ave2 = (num2prev * ave2prev - i * val) / num2;
         fract1 = num1 / sum;
         score = norm * (fract1 * (1 - fract1)) * (ave2 - ave1) * (ave2 - ave1);
+		//fprintf(stderr, "otsu stats analysis: %d / %d: val: %f, score: %f, norm: %f, ave1: %f, ave2 %f, fract1: %f\n", i, n, val, score, norm, ave1, ave2, fract1);
         numaAddNumber(nascore, score);
         if (pave1) numaAddNumber(naave1, ave1);
         if (pave2) numaAddNumber(naave2, ave2);
@@ -2078,6 +2080,46 @@ NUMA      *nascore, *naave1, *naave2, *nanum1, *nanum2;
          * we always choose the set with values below the threshold. */
     bestsplit = L_MIN(255, bestsplit + 1);
 
+	// when this histogram doesn't come with two humps, the max score will be 0.0.
+	// This is indicative of the histogram having a single hump only and is thus deemed to be all-background,
+	// so we choose the split point *above* the hump.
+	if (maxscore == 0.0) {
+#if 0
+		for (i = n - 1; i >= 0; i--) {
+			numaGetFValue(na, i, &val);
+			if (val != 0.0)
+				break;
+		}
+		// +2 correction instead of +1 at the end
+	    // to ensure otsu believes everything in the chunk is 'background'.
+		bestsplit = L_MIN(255, i + 2);
+#else
+		// almost numaClone(), but we need to tweak two edge values to get our way:
+		NUMA* na2 = numaCopy(na);
+		if (na2 == NULL) {
+			rv = ERROR_INT("histogram duplicate not made", __func__, 1);
+			goto ende;
+		}
+
+		// fake 2 humps at the histogram edges to force intended behaviour:
+		numaGetFValue(na, 0, &val);
+		val += 1 + sum / n;
+		numaSetValue(na2, 0, val);
+
+		numaGetFValue(na, n - 1, &val);
+		val += 1 + sum / n;
+		numaSetValue(na2, n - 1, val);
+
+		rv = numaSplitDistribution(na2, scorefract, &bestsplit, pave1, pave2, pnum1, pnum2, pnascore);
+		if (pnascore) {  /* debug mode */
+			numaDestroy(pnascore);
+		}
+		numaDestroy(&na2);
+		if (rv)
+			goto ende;
+#endif
+	}
+
     if (psplitindex) *psplitindex = bestsplit;
     if (pave1) numaGetFValue(naave1, bestsplit, pave1);
     if (pave2) numaGetFValue(naave2, bestsplit, pave2);
@@ -2086,7 +2128,9 @@ NUMA      *nascore, *naave1, *naave2, *nanum1, *nanum2;
 
     if (pnascore) {  /* debug mode */
         lept_stderr("minrange = %d, maxrange = %d\n", minrange, maxrange);
-        lept_stderr("minval = %10.0f\n", minval);
+		lept_stderr("minscore = %f, maxscore = %f\n", minscore, maxscore);
+		lept_stderr("bestsplit = %d\n", bestsplit);
+		lept_stderr("minval = %10.0f\n", minval);
         gplotSimple1(nascore, GPLOT_PNG, "/tmp/lept/nascore",
                      "Score for split distribution");
         *pnascore = nascore;
@@ -2094,11 +2138,12 @@ NUMA      *nascore, *naave1, *naave2, *nanum1, *nanum2;
         numaDestroy(&nascore);
     }
 
+ende:
     if (pave1) numaDestroy(&naave1);
     if (pave2) numaDestroy(&naave2);
     if (pnum1) numaDestroy(&nanum1);
     if (pnum2) numaDestroy(&nanum2);
-    return 0;
+    return rv;
 }
 
 
