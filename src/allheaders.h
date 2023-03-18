@@ -2658,6 +2658,7 @@ LEPT_DLL extern L_WALLTIMER * startWallTimer ( void );
 LEPT_DLL extern l_float32 stopWallTimer ( L_WALLTIMER **ptimer );
 LEPT_DLL extern char * l_getFormattedDate ( void );
 LEPT_DLL extern char * stringNew ( const char *src );
+LEPT_DLL extern void stringDestroy( const char **src_ref );
 LEPT_DLL extern l_ok stringCopy ( char *dest, const char *src, l_int32 n );
 LEPT_DLL extern char * stringCopySegment ( const char *src, l_int32 start, l_int32 nbytes );
 LEPT_DLL extern l_ok stringReplace ( char **pdest, const char *src );

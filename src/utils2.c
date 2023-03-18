@@ -50,6 +50,7 @@
  *           char      *stringReverse()
  *           char      *strtokSafe()
  *           l_int32    stringSplitOnToken()
+ *           void       stringDestroy()
  *
  *       Find and replace string and array procs
  *           l_int32    stringCheckForChars()
@@ -244,6 +245,28 @@ char    *dest;
 
     stringCopy(dest, src, len);
     return dest;
+}
+
+
+/*!
+ * \brief   stringDestroy()
+ *
+ * \param[in]    src_ref
+ */
+void
+stringDestroy(const char **src_ref)
+{
+	if (!src_ref) {
+		L_WARNING("src_ref not defined\n", __func__);
+		return;
+	}
+	if (!*src_ref) {
+		L_WARNING("src is NULL; is this a double free attempt?\n", __func__);
+		return;
+	}
+
+	LEPT_FREE(*src_ref);
+	*src_ref = NULL;
 }
 
 
