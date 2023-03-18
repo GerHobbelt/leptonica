@@ -239,17 +239,18 @@ SARRAY  *sa;
             "This currently tests %d regression test\n"
             "programs in the /prog directory.\n", ntests);
 
+	results_file = genPathname("/tmp/lept", "reg_results.txt");
+
         /* Clear the output file if we're doing the set of reg tests */
     dotest = strcmp(argv[1], "compare") ? 0 : 1;
     if (dotest) {
-        results_file = genPathname("/tmp/lept", "reg_results.txt");
         sa = sarrayCreate(3);
         sarrayAddString(sa, header, L_COPY);
         sarrayAddString(sa, getLeptonicaVersion(), L_INSERT);
         sarrayAddString(sa, getImagelibVersions(), L_INSERT);
         str = sarrayToString(sa, 1);
         sarrayDestroy(&sa);
-        l_binaryWrite("/tmp/lept/reg_results.txt", "w", str, strlen(str));
+        l_binaryWrite(results_file, "w", str, strlen(str));
         lept_free(str);
     }
 
@@ -264,7 +265,7 @@ SARRAY  *sa;
         if (ret) {
             snprintf(buf, sizeof(buf), "Failed to complete %s\n", tests[i]);
             if (dotest) {
-                l_binaryWrite("/tmp/lept/reg_results.txt", "a",
+                l_binaryWrite(results_file, "a",
                               buf, strlen(buf));
                 nfail++;
             }
@@ -279,11 +280,12 @@ SARRAY  *sa;
 #else
         snprintf(command, sizeof(command) - 2, "type \"%s\"", results_file);
 #endif  /* !_WIN32 */
-        lept_free(results_file);
         ret = system(command);
         lept_stderr("Success in %d of %d *_reg programs (output matches"
                 " the \"golden\" files)\n", ntests - nfail, ntests);
     }
+
+    stringDestroy(&results_file);
 
     l_getCurrentTime(&stop, NULL);
     lept_stderr("Time for all regression tests: %d sec\n", stop - start);

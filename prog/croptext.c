@@ -100,6 +100,7 @@ SARRAY  *safiles;
         pixDestroy(&pixd);
         boxaDestroy(&boxa1);
         boxaDestroy(&boxa2);
+		stringDestroy(&outfile);
     }
 
     return 0;
