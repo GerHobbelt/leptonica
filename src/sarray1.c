@@ -237,7 +237,7 @@ SARRAY  *sa;
 SARRAY *
 sarrayCreateWordsFromString(const char  *string)
 {
-char     separators[] = " \n\t";
+char     separators[] = " \r\n\t";
 l_int32  i, nsub, size, inword;
 SARRAY  *sa;
 
@@ -250,11 +250,11 @@ SARRAY  *sa;
     inword = FALSE;
     for (i = 0; i < size; i++) {
         if (inword == FALSE &&
-           (string[i] != ' ' && string[i] != '\t' && string[i] != '\n')) {
+           (string[i] != ' ' && string[i] != '\t' && string[i] != '\n' && string[i] != '\r')) {
            inword = TRUE;
            nsub++;
         } else if (inword == TRUE &&
-           (string[i] == ' ' || string[i] == '\t' || string[i] == '\n')) {
+           (string[i] == ' ' || string[i] == '\t' || string[i] == '\n' || string[i] == '\r')) {
            inword = FALSE;
         }
     }

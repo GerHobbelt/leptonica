@@ -173,7 +173,7 @@ SARRAY  *sa;
     x = 0;
     for (i = 0; i < nops; i++) {
         rawop = sarrayGetString(sa, i, L_NOCOPY);
-        op = stringRemoveChars(rawop, " \n\t");
+        op = stringRemoveChars(rawop, " \r\n\t");
         switch (op[0])
         {
         case 'd':
@@ -339,7 +339,7 @@ SARRAY  *sa;
     x = 0;
     for (i = 0; i < nops; i++) {
         rawop = sarrayGetString(sa, i, L_NOCOPY);
-        op = stringRemoveChars(rawop, " \n\t");
+        op = stringRemoveChars(rawop, " \r\n\t");
         switch (op[0])
         {
         case 'd':
@@ -486,7 +486,7 @@ SARRAY  *sa;
     x = 0;
     for (i = 0; i < nops; i++) {
         rawop = sarrayGetString(sa, i, L_NOCOPY);
-        op = stringRemoveChars(rawop, " \n\t");
+        op = stringRemoveChars(rawop, " \r\n\t");
         switch (op[0])
         {
         case 'd':
@@ -633,7 +633,7 @@ SARRAY  *sa;
     x = 0;
     for (i = 0; i < nops; i++) {
         rawop = sarrayGetString(sa, i, L_NOCOPY);
-        op = stringRemoveChars(rawop, " \n\t");
+        op = stringRemoveChars(rawop, " \r\n\t");
         switch (op[0])
         {
         case 'd':
@@ -746,7 +746,7 @@ l_int32  intlogbase2[5] = {1, 2, 3, 0, 4};  /* of arg/4 */
     border = 0;
     for (i = 0; i < nops; i++) {
         rawop = sarrayGetString(sa, i, L_NOCOPY);
-        op = stringRemoveChars(rawop, " \n\t");
+        op = stringRemoveChars(rawop, " \r\n\t");
         switch (op[0])
         {
         case 'd':
@@ -928,7 +928,7 @@ SARRAY  *sa;
     valid = TRUE;
     for (i = 0; i < nops; i++) {
         rawop = sarrayGetString(sa, i, L_NOCOPY);
-        op = stringRemoveChars(rawop, " \n\t");
+        op = stringRemoveChars(rawop, " \r\n\t");
         switch (op[0])
         {
         case 'd':
@@ -992,7 +992,7 @@ SARRAY  *sa;
     x = 0;
     for (i = 0; i < nops; i++) {
         rawop = sarrayGetString(sa, i, L_NOCOPY);
-        op = stringRemoveChars(rawop, " \n\t");
+        op = stringRemoveChars(rawop, " \r\n\t");
         switch (op[0])
         {
         case 'd':
@@ -1129,7 +1129,7 @@ SARRAY  *sa;
     valid = TRUE;
     for (i = 0; i < nops; i++) {
         rawop = sarrayGetString(sa, i, L_NOCOPY);
-        op = stringRemoveChars(rawop, " \n\t");
+        op = stringRemoveChars(rawop, " \r\n\t");
         switch (op[0])
         {
         case 'd':
@@ -1175,7 +1175,7 @@ SARRAY  *sa;
     x = 0;
     for (i = 0; i < nops; i++) {
         rawop = sarrayGetString(sa, i, L_NOCOPY);
-        op = stringRemoveChars(rawop, " \n\t");
+        op = stringRemoveChars(rawop, " \r\n\t");
         switch (op[0])
         {
         case 'd':
