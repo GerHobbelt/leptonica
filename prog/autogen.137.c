@@ -42,6 +42,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 #include "autogen.137.h"
 
 #include "monolithic_examples.h"

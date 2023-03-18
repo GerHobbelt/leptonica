@@ -50,6 +50,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
     /* Needed for HAVE_LIBJPEG */
 #ifdef HAVE_CONFIG_H

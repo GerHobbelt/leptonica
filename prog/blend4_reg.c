@@ -34,6 +34,7 @@
  */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -60,7 +61,7 @@ L_REGPARAMS  *rp;
     pixa = pixaCreate(0);
 
         /* Blending on a light image */
-    pix1 = pixRead("fish24.jpg");
+    pix1 = pixRead(DEMOPATH("fish24.jpg"));
     pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 3; i++) {
         pix2 = pixRead(blenders[i]);
@@ -82,7 +83,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix1);
 
         /* Blending on a dark image */
-    pix0 = pixRead("karen8.jpg");
+    pix0 = pixRead(DEMOPATH("karen8.jpg"));
     pix1 = pixScale(pix0, 2.0, 2.0);
     pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 2; i++) {

@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -69,7 +70,7 @@ L_REGPARAMS  *rp;
     lept_mkdir("lept/pnm");
 
         /* Test 1 bpp (pbm) read/write */
-    pix1 = pixRead("char.tif");
+    pix1 = pixRead(DEMOPATH("char.tif"));
     fp = lept_fopen("/tmp/lept/pnm/pix1.1.pnm", "wb");
     pixWriteStreamAsciiPnm(fp, pix1);
     lept_fclose(fp);
@@ -89,7 +90,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix4);
 
         /* Test 2, 4 and 8 bpp (pgm) read/write */
-    pix1 = pixRead("weasel8.png");
+    pix1 = pixRead(DEMOPATH("weasel8.png"));
     pix2 = pixThresholdTo2bpp(pix1, 4, 0);
     fp = lept_fopen("/tmp/lept/pnm/pix2.2.pnm", "wb");
     pixWriteStreamAsciiPnm(fp, pix2);
@@ -147,7 +148,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix4);
 
         /* Test ppm (24 bpp rgb) read/write */
-    pix1 = pixRead("marge.jpg");
+    pix1 = pixRead(DEMOPATH("marge.jpg"));
     fp = lept_fopen("/tmp/lept/pnm/pix1.24.pnm", "wb");
         /* write ascii */
     pixWriteStreamAsciiPnm(fp, pix1);
@@ -175,7 +176,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix4);
 
         /* Test pam (32 bpp rgba) read/write */
-    pix1 = pixRead("test32-alpha.png");
+    pix1 = pixRead(DEMOPATH("test32-alpha.png"));
     fp = lept_fopen("/tmp/lept/pnm/pix1.32.pnm", "wb");
     pixWriteStreamPam(fp, pix1);
     lept_fclose(fp);

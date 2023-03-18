@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -68,7 +69,7 @@ SELA      *selalinear;
         return ERROR_INT(" Syntax: dwamorph2_reg", __func__, 1);
     setLeptDebugOK(1);
 
-    pixs = pixRead("feyn-fract.tif");
+    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     pixt = pixCreateTemplate(pixs);
     selalinear = selaAddDwaLinear(NULL);
     nsels = selaGetCount(selalinear);

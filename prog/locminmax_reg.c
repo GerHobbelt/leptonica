@@ -37,6 +37,7 @@
 
 #include <math.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -69,7 +70,7 @@ L_REGPARAMS  *rp;
             pixSetPixel(pix1, j, i, (l_int32)f);
         }
     }
-    pix2 = pixRead("karen8.jpg");
+    pix2 = pixRead(DEMOPATH("karen8.jpg"));
     pix3 = pixBlockconv(pix2, 10, 10);
     DoLocMinmax(rp, pix1, 0, 0);  /* 0 - 2 */
     DoLocMinmax(rp, pix3, 50, 100);  /* 3 - 5 */

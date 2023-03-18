@@ -38,6 +38,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 #include <string.h>
 
 #include "monolithic_examples.h"
@@ -150,7 +151,7 @@ L_REGPARAMS  *rp;
          * is linear in the number of images, but the writing time is
          *  quadratic, and the actual wall clock time is significantly
          *  more than the printed value. */
-    pix1 = pixRead("char.tif");
+    pix1 = pixRead(DEMOPATH("char.tif"));
     startTimer();
     pixWriteTiff("/tmp/lept/tiff/junkm.tif", pix1, IFF_TIFF_G4, "w");
     for (i = 1; i < 1000; i++) {
@@ -194,7 +195,7 @@ L_REGPARAMS  *rp;
          * (4) tiff compresses pixa2 back to memory
          * (5) generates pixa3 by uncompressing the memory data
          * (6) compares pixa3 with pixa1   */
-    pix1 = pixRead("weasel8.240c.png");  /* (1) */
+    pix1 = pixRead(DEMOPATH("weasel8.240c.png"));  /* (1) */
     pixa1 = pixaCreate(10);
     for (i = 0; i < 10; i++)
         pixaAddPix(pixa1, pix1, L_COPY);
@@ -334,7 +335,7 @@ L_REGPARAMS  *rp;
     NUMA         *naflags, *nasizes;
     SARRAY       *savals, *satypes;
 
-    pix1 = pixRead("feyn.tif");
+    pix1 = pixRead(DEMOPATH("feyn.tif"));
     naflags = numaCreate(10);
     savals = sarrayCreate(10);
     satypes = sarrayCreate(10);

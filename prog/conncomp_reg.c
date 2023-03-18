@@ -41,6 +41,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -66,7 +67,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
 
     /* --------------------------------------------------------------- *
      *         Test pixConnComp() and pixCountConnComp(),              *
@@ -149,7 +150,7 @@ L_REGPARAMS  *rp;
      *  Test iterative covering of connected components by rectangles  *
      * --------------------------------------------------------------- */
     pixa1 = pixaCreate(0);
-    pix1 = pixRead("rabi.png");
+    pix1 = pixRead(DEMOPATH("rabi.png"));
     pix2 = pixReduceRankBinaryCascade(pix1, 1, 1, 1, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 12 -  */
     pixaAddPix(pixa1, pix2, L_INSERT);

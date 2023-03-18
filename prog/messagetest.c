@@ -91,6 +91,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -166,19 +167,19 @@ PIX  *pix1;
     L_INFO("test output 1 to stderr\n", "messagetest");
     L_WARNING("test output 1 to stderr\n", "messagetest");
     L_ERROR("test output 1 to stderr\n", "messagetest");
-    pix1 = pixRead("doesn't_exist");
+    pix1 = pixRead(DEMOPATH("doesn't_exist"));
         /* There is no "test output 2" */
     leptSetStderrHandler(send_to_devnull);
     L_INFO("test output 2 to stderr\n", "messagetest");
     L_WARNING("test output 2 to stderr\n", "messagetest");
     L_ERROR("test output 2 to stderr\n", "messagetest");
-    pix1 = pixRead("doesn't_exist");
+    pix1 = pixRead(DEMOPATH("doesn't_exist"));
     leptSetStderrHandler(NULL);
         /* Output is restored to stderr */
     L_INFO("test output 3 to stderr\n", "messagetest");
     L_WARNING("test output 3 to stderr\n", "messagetest");
     L_ERROR("test output 3 to stderr\n", "messagetest");
-    pix1 = pixRead("doesn't_exist");
+    pix1 = pixRead(DEMOPATH("doesn't_exist"));
     lept_stderr("---------------------------------\n");
 }
 

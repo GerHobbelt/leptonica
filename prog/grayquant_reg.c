@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -65,7 +66,7 @@ L_REGPARAMS  *rp;
 
     /* ------------------------------------------------------------- */
 
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     pixa = pixaCreate(0);
     pixaAddPix(pixa, pixs, L_INSERT);
 
@@ -144,7 +145,7 @@ L_REGPARAMS  *rp;
 
     /* ------------------------------------------------------------- */
 
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     pixa = pixaCreate(0);
     pixaAddPix(pixa, pixs, L_INSERT);
 
@@ -226,7 +227,7 @@ L_REGPARAMS  *rp;
 
     /* ------------------------------------------------------------- */
 
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     pixa = pixaCreate(0);
 
         /* Comparison 8 bpp jpeg with 2 bpp (highlight) */
@@ -326,7 +327,7 @@ L_REGPARAMS  *rp;
     /* ------------------------------------------------------------- */
 
        /* Thresholding with fixed and arbitrary bin boundaries */
-    pixs = pixRead("stampede2.jpg");
+    pixs = pixRead(DEMOPATH("stampede2.jpg"));
     pixa = pixaCreate(0);
 
     pixaAddPix(pixa, pixs, L_INSERT);
@@ -383,7 +384,7 @@ L_REGPARAMS  *rp;
 
     if (rp->display) {
             /* Upscale 2x and threshold to 1 bpp */
-        pixs = pixRead("test8.jpg");
+        pixs = pixRead(DEMOPATH("test8.jpg"));
         startTimer();
         pix1 = pixScaleGray2xLIThresh(pixs, THRESHOLD);
         lept_stderr(" time for scale/dither = %7.3f sec\n", stopTimer());

@@ -38,6 +38,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -77,7 +78,7 @@ PIXA      *pixa;
 
     /* --------   Stereoscopic warping --------------*/
 #if RUN_WARP
-    pixs = pixRead("german.png");
+    pixs = pixRead(DEMOPATH("german.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     pixa = pixaCreate(50);
     for (i = 0; i < 50; i++) {  /* need to test > 2 widths ! */
@@ -140,7 +141,7 @@ PIXA      *pixa;
 
     /* --------  Linear Horizontal stretching  --------------*/
 #if RUN_LIN_HORIZ_STRETCH
-    pixs = pixRead("german.png");
+    pixs = pixRead(DEMOPATH("german.png"));
     pixa = pixaCreate(50);
     for (k = 0; k < 2; k++) {
         for (i = 0; i < 25; i++) {
@@ -170,7 +171,7 @@ PIXA      *pixa;
 
     /* --------  Quadratic Horizontal stretching  --------------*/
 #if RUN_QUAD_HORIZ_STRETCH
-    pixs = pixRead("german.png");
+    pixs = pixRead(DEMOPATH("german.png"));
     pixa = pixaCreate(50);
     for (k = 0; k < 2; k++) {
         for (i = 0; i < 25; i++) {
@@ -200,7 +201,7 @@ PIXA      *pixa;
 
     /* --------  Horizontal Shear --------------*/
 #if RUN_HORIZ_SHEAR
-    pixs = pixRead("german.png");
+    pixs = pixRead(DEMOPATH("german.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     pixa = pixaCreate(50);
     for (i = 0; i < 25; i++) {
@@ -230,7 +231,7 @@ PIXA      *pixa;
 
     /* --------  Vertical Shear --------------*/
 #if RUN_VERT_SHEAR
-    pixs = pixRead("german.png");
+    pixs = pixRead(DEMOPATH("german.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     pixa = pixaCreate(50);
     for (i = 0; i < 25; i++) {

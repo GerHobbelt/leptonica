@@ -24,46 +24,24 @@
  -  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *====================================================================*/
 
-/*
- * displaypix.c
- *
- *   This calls pixDisplay(), which:
- *     (1) automatically downscales the image if necessary to display
- *         it without scrollbars, and
- *     (2) launches the selected viewer (default is xzgv)
- *
- *   Downscaling uses area mapping to avoid moire.
- */
+#ifndef  LEPTONICA_DEMO_SETTINGS_H
+#define  LEPTONICA_DEMO_SETTINGS_H
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
-#include "demo_settings.h"
-
-#include "monolithic_examples.h"
-
-
-
+#ifndef DEMOPATH
 #if defined(BUILD_MONOLITHIC)
-#define main   lept_displaypix_main
+#define DEMOPATH(p)				"bin/demo-data/" p
+#else
+#define DEMOPATH(p)				p
+#endif
 #endif
 
-int main(int    argc,
-         const char **argv)
-{
-PIX   *pixs;
-const char  *filein;
+#ifdef __cplusplus
+extern "C" {
+#endif  /* __cplusplus */
 
-    if (argc != 2)
-        return ERROR_INT(" Syntax: displaypix filein", __func__, 1);
-    filein = argv[1];
-    if ((pixs = pixRead(filein)) == NULL)
-        return ERROR_INT("pixs not made", __func__, 1);
 
-    setLeptDebugOK(1);
-    pixDisplay(pixs, 20, 20);
-    pixDestroy(&pixs);
-    return 0;
+#ifdef __cplusplus
 }
+#endif  /* __cplusplus */
+
+#endif

@@ -34,6 +34,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -59,8 +60,8 @@ PIXCMAP  *cmap;
     lept_mkdir("lept/blend");
     pixa = pixaCreate(0);
 
-    pixs = pixRead("rabi.png");  /* blendee */
-    pixb = pixRead("weasel4.11c.png");   /* blender */
+    pixs = pixRead(DEMOPATH("rabi.png"));  /* blendee */
+    pixb = pixRead(DEMOPATH("weasel4.11c.png"));   /* blender */
 
         /* Fade the blender */
     pixcmapShiftIntensity(pixGetColormap(pixb), FADE_FRACTION);

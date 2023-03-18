@@ -44,6 +44,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 #include <math.h>
 
 #include "monolithic_examples.h"

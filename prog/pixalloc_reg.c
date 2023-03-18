@@ -49,6 +49,7 @@
 
 #include <math.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -131,7 +132,7 @@ PIXA    *pixa, *pixas;
         pmsCreate(20, 40, nab, "/tmp/lept/alloc/file2.log");
     else
         pmsCreate(20, 40, nab, NULL);
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
 
     startTimer();
     for (i = 0; i < 5; i++) {
@@ -148,7 +149,7 @@ PIXA    *pixa, *pixas;
 
     /* ----------------- Standard with many small pix -----------------*/
     setPixMemoryManager(malloc, free);
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
 
     startTimer();
     for (i = 0; i < 5; i++) {
@@ -170,7 +171,7 @@ BOX   *box;
 PIX   *pixs, *pixt1, *pixt2, *pixt3, *pixt4;
 PIXA  *pixa;
 
-    pixs = pixRead("marge.jpg");
+    pixs = pixRead(DEMOPATH("marge.jpg"));
     box = boxCreate(130, 93, 263, 253);
     factor = sqrt(2.0);
     pixt1 = pixClipRectangle(pixs, box, NULL);  /* 266 KB */

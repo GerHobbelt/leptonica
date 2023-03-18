@@ -41,6 +41,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -63,7 +64,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     sela = selaAddHitMiss(NULL);
     nsels = selaGetCount(sela);
 

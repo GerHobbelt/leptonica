@@ -45,6 +45,7 @@
 #include <string.h>
 #include <math.h>   /* required for sin and tan */
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 

@@ -48,6 +48,8 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -75,7 +77,7 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Find a mask for repainting pixels */
-    pixs = pixRead("amoris.2.150.jpg");
+    pixs = pixRead(DEMOPATH("amoris.2.150.jpg"));
     pix1 = MakeReplacementMask(pixs);
     boxa = pixConnCompBB(pix1, 8);
     box1 = boxaGetBox(boxa, 0, L_COPY);

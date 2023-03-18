@@ -34,6 +34,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -84,7 +85,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     pixsc = pixScale(pixs, 0.3, 0.3);
 
 #if ALL
@@ -153,7 +154,7 @@ L_REGPARAMS  *rp;
         /* Test invertability of interpolation on color */
     lept_stderr("Test invertability of color interpolation\n");
     pixa = pixaCreate(0);
-    pixc = pixRead("test24.jpg");
+    pixc = pixRead(DEMOPATH("test24.jpg"));
     pixcs = pixScale(pixc, 0.3, 0.3);
     for (i = 0; i < 5; i++) {
         if (i == 2) continue;

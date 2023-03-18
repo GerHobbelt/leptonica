@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -56,7 +57,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     pixt = pixCopy(NULL, pixs);
 
         /* Copy, in-place and one COLUMN at a time, from the right
@@ -77,7 +78,7 @@ L_REGPARAMS  *rp;
 
         /* Show the mirrored border, which uses the general
            pixRasterop() on an image in-place.  */
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     pixt = pixRemoveBorder(pixs, 40);
     pixd = pixAddMirroredBorder(pixt, 40, 40, 40, 40);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */

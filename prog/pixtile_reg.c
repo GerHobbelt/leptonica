@@ -33,6 +33,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 #include "pix_internal.h"
 
 #include "monolithic_examples.h"
@@ -54,7 +55,7 @@ int main(int    argc,
 PIX  *pixs, *pixd;
 
     setLeptDebugOK(1);
-    pixs = pixRead("test24.jpg");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
     pixd = pixCreateTemplateNoInit(pixs);
 
     TestTiling(pixd, pixs, 1, 1, 0, 0, 183, 83);

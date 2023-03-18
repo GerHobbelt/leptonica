@@ -36,6 +36,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -86,7 +87,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixm);
 
     /* ---------------- Shortest path in gray maze ---------------- */
-    pixg = pixRead("test8.jpg");
+    pixg = pixRead(DEMOPATH("test8.jpg"));
     pixGetDimensions(pixg, &w, &h, NULL);
     ptaa = ptaaCreate(NPATHS);
     for (i = 0; i < NPATHS; i++) {

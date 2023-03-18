@@ -56,6 +56,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -80,8 +81,8 @@ L_REGPARAMS  *rp;
 
         /* Start with a 32 bpp image and a mask.  Use the
 	 * same mask for all clip/masked operations. */
-    pixs = pixRead("test24.jpg");
-    pixt1 = pixRead("rabi.png");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixt1 = pixRead(DEMOPATH("rabi.png"));
     box = boxCreate(303, 1983, 800, 500);
     pixm = pixClipRectangle(pixt1, box, NULL);
     pixInvert(pixm, pixm);
@@ -192,13 +193,13 @@ L_REGPARAMS  *rp;
          * pixels under this mask), and for the remainder, which
          * are the fg pixels in the 2nd, we paint them black (1).
          * So this is a simple and fast blending of two 1 bpp pix. */
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     box = boxCreate(670, 827, 800, 500);
     pixt2 = pixClipRectangle(pixs, box, NULL);
     regTestWritePixAndCheck(rp, pixt2, IFF_PNG);  /* 19 */
     pixaAddPix(pixa, pixt2, L_INSERT);
     boxDestroy(&box);
-    pixt1 = pixRead("rabi.png");
+    pixt1 = pixRead(DEMOPATH("rabi.png"));
     box = boxCreate(303, 1983, 800, 500);
     pixm = pixClipRectangle(pixt1, box, NULL);
     pixInvert(pixm, pixm);

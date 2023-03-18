@@ -49,6 +49,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -135,7 +136,7 @@ SEL     *selhm;
     pixDestroy(&pixd);
 
         /* Use the sel to find all instances in the page */
-    pix = pixRead("tribune-page-4x.png");  /* 4x reduced */
+    pix = pixRead(DEMOPATH("tribune-page-4x.png"));  /* 4x reduced */
     if (red == 4)
         pixr = pixClone(pix);
     else if (red == 8)

@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -78,7 +79,7 @@ L_REGPARAMS  *rp;
     pixa = pixaCreate(5);
     bmf = bmfCreate("./fonts", 6);
     bmftop = bmfCreate("./fonts", 10);
-    pixs = pixRead("lucasta.047.jpg");
+    pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
     pixg = pixScale(pixs, 0.4, 0.4);  /* 8 bpp grayscale */
     pix1 = pixConvertTo32(pixg);  /* 32 bpp rgb */
     AddTextAndSave(pixa, pix1, bmf, textstr[0], L_ADD_BELOW, 0xff000000);
@@ -111,7 +112,7 @@ L_REGPARAMS  *rp;
 
     /* ----------------- Test on 32 bpp rgb ---------------------*/
     pixa = pixaCreate(5);
-    pixs = pixRead("fish24.jpg");
+    pixs = pixRead(DEMOPATH("fish24.jpg"));
     pix1 = pixScale(pixs, 0.4, 0.4);
     AddTextAndSave(pixa, pix1, bmf, textstr[0], L_ADD_BELOW, 0xff000000);
     pix2 = pixConvertToSubpixelRGB(pixs, 0.4, 0.4, L_SUBPIXEL_ORDER_RGB);
@@ -146,7 +147,7 @@ L_REGPARAMS  *rp;
     /*   For these, it is better to apply a lowpass filter before scaling  */
         /* Normal scaling of 8 bpp grayscale */
     scalefact = 800. / 2320.;
-    pixs = pixRead("patent.png");   /* sharp, 300 ppi, 1 bpp image */
+    pixs = pixRead(DEMOPATH("patent.png"));   /* sharp, 300 ppi, 1 bpp image */
     pix1 = pixConvertTo8(pixs, FALSE);  /* use 8 bpp input */
     pix2 = pixScale(pix1, scalefact, scalefact);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 2 */

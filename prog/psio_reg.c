@@ -41,6 +41,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -99,7 +100,7 @@ L_REGPARAMS  *rp;
     factor = 0.95;
 
         /* Uncompressed PS with scaling but centered on the page */
-    pixs = pixRead("feyn-fract.tif");
+    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     pixGetDimensions(pixs, &w, &h, NULL);
     scale = L_MIN(factor * 2550 / w, factor * 3300 / h);
     fp1 = lept_fopen("/tmp/lept/regout/psio0.ps", "wb+");
@@ -109,7 +110,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* Uncompressed PS with scaling, with LL corner at (1500, 1500) mils */
-    pixs = pixRead("weasel4.11c.png");
+    pixs = pixRead(DEMOPATH("weasel4.11c.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     scale = L_MIN(factor * 2550 / w, factor * 3300 / h);
     box = boxCreate(1500, 1500, (l_int32)(1000 * scale * w / 300),
@@ -122,7 +123,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* DCT compressed PS with LL corner at (300, 1000) pixels */
-    pixs = pixRead("marge.jpg");
+    pixs = pixRead(DEMOPATH("marge.jpg"));
     pixt = pixConvertTo32(pixs);
     pixWrite("/tmp/lept/regout/psio2.jpg", pixt, IFF_JFIF_JPEG);
     convertJpegToPS("/tmp/lept/regout/psio2.jpg", "/tmp/lept/regout/psio3.ps",
@@ -173,7 +174,7 @@ L_REGPARAMS  *rp;
          * that we're painting black through.  If the text layer
          * is painted first, the following images occlude it; otherwise,
          * the images remain in the background of the text. */
-    pixs = pixRead("wyom.jpg");
+    pixs = pixRead(DEMOPATH("wyom.jpg"));
     pixt = pixScaleToSize(pixs, 2528, 3300);
     pixWrite("/tmp/lept/regout/psio5.jpg", pixt, IFF_JFIF_JPEG);
     pixDestroy(&pixs);

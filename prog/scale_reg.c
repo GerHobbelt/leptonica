@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -190,7 +191,7 @@ L_REGPARAMS  *rp;
     pixc = pixScale(pixs, 0.65, 0.65);
     regTestWritePixAndCheck(rp, pixc, IFF_JFIF_JPEG);  /* 34 */
     pixaAddPix(pixa, pixc, L_INSERT);
-    pixs = pixRead("graytext.png");
+    pixs = pixRead(DEMOPATH("graytext.png"));
     pixc = pixScaleToSize(pixs, 0, 32);  /* uses fast unsharp masking */
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 35 */
     pixaAddPix(pixa, pixc, L_INSERT);

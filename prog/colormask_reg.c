@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -80,7 +81,7 @@ L_REGPARAMS  *rp;
     }
 
         /* Place an image inside the frame and convert to HSV */
-    pix1 = pixRead("1555.003.jpg");
+    pix1 = pixRead(DEMOPATH("1555.003.jpg"));
     pix2 = pixScale(pix1, 0.5, 0.5);
     pixRasterop(pixs, 100, 100, 2000, 2000, PIX_SRC, pix2, 0, 0);
     pixDestroy(&pix1);

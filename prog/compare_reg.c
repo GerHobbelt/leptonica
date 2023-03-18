@@ -39,6 +39,7 @@
 
 #include "string.h"
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -66,7 +67,7 @@ L_REGPARAMS  *rp;
         return 1;
 
     /* ------------ Test of pixBestCorrelation() --------------- */
-    pix0 = pixRead("harmoniam100-11.png");
+    pix0 = pixRead(DEMOPATH("harmoniam100-11.png"));
     pix1 = pixConvertTo1(pix0, 160);
     pixGetDimensions(pix1, &w, &h, NULL);
 
@@ -107,7 +108,7 @@ L_REGPARAMS  *rp;
         /* Now use the pyramid to get the result.  Do a translation
          * to remove pixels at the bottom from pix2, so that the
          * centroids are initially far apart. */
-    pix1 = pixRead("harmoniam-11.tif");
+    pix1 = pixRead(DEMOPATH("harmoniam-11.tif"));
     pix2 = pixTranslate(NULL, pix1, -45, 25, L_BRING_IN_WHITE);
     l_pdfSetDateAndVersion(0);
     pixCompareWithTranslation(pix1, pix2, 160, &delx, &dely, &score, 1);
@@ -122,8 +123,8 @@ L_REGPARAMS  *rp;
     regTestCheckFile(rp, "/tmp/lept/regout/correl.pdf");  /* 6 */
 
     /* ------------ Test of pixGetPerceptualDiff() --------------- */
-    pix0 = pixRead("greencover.jpg");
-    pix1 = pixRead("redcover.jpg");  /* pre-scaled to the same size */
+    pix0 = pixRead(DEMOPATH("greencover.jpg"));
+    pix1 = pixRead(DEMOPATH("redcover.jpg"));  /* pre-scaled to the same size */
         /* Apply directly to the color images */
     pixGetPerceptualDiff(pix0, pix1, 1, 3, 20, &fract, &pix2, &pix3);
     lept_stderr("Fraction of color pixels = %f\n", fract);

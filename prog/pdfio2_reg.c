@@ -34,6 +34,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -85,7 +86,7 @@ L_REGPARAMS  *rp;
         /* Get the image region(s) for rabi.png.  There are two
          * small bogus regions at the top, but we'll keep them for
          * the demonstration. */
-    pix1 = pixRead("rabi.png");
+    pix1 = pixRead(DEMOPATH("rabi.png"));
     pix2 = pixScaleToGray2(pix1);
     pixWrite("/tmp/lept/pdf2/rabi8.jpg", pix2, IFF_JFIF_JPEG);
     pix3 = pixThresholdTo4bpp(pix2, 16, 1);
@@ -150,7 +151,7 @@ L_REGPARAMS  *rp;
     lept_stderr("\n*** Writing color segmented images\n");
     startTimer();
 
-    pix1 = pixRead("candelabrum.011.jpg");
+    pix1 = pixRead(DEMOPATH("candelabrum.011.jpg"));
     pix2 = pixScale(pix1, 3.0, 3.0);
     pixWrite("/tmp/lept/pdf2/candelabrum3.jpg", pix2, IFF_JFIF_JPEG);
     GetImageMask(pix2, 200, &boxa1, rp, "/tmp/lept/pdf2/seg1.jpg");
@@ -168,10 +169,10 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
     boxaDestroy(&boxa1);
 
-    pix1 = pixRead("lion-page.00016.jpg");
+    pix1 = pixRead(DEMOPATH("lion-page.00016.jpg"));
     pix2 = pixScale(pix1, 3.0, 3.0);
     pixWrite("/tmp/lept/pdf2/lion16.jpg", pix2, IFF_JFIF_JPEG);
-    pix3 = pixRead("lion-mask.00016.tif");
+    pix3 = pixRead(DEMOPATH("lion-mask.00016.tif"));
     boxa1 = pixConnComp(pix3, NULL, 8);
     boxa2 = boxaTransform(boxa1, 0, 0, 3.0, 3.0);
     convertToPdfSegmented("/tmp/lept/pdf2/lion16.jpg", 200, L_G4_ENCODE,
@@ -211,12 +212,12 @@ L_REGPARAMS  *rp;
          *     file3.tif:  g4 (1 bpp)
          *     file4.jpg:  dct (32 bpp)    */
     lept_mkdir("lept/image");
-    pix1 = pixRead("feyn.tif");
-    pix2 = pixRead("rabi.png");
+    pix1 = pixRead(DEMOPATH("feyn.tif"));
+    pix2 = pixRead(DEMOPATH("rabi.png"));
     pix3 = pixScaleToGray3(pix1);
     pix4 = pixScaleToGray3(pix2);
     pix5 = pixScale(pix1, 0.33, 0.33);
-    pix6 = pixRead("test24.jpg");
+    pix6 = pixRead(DEMOPATH("test24.jpg"));
     pixWrite("/tmp/lept/image/file1.png", pix3, IFF_PNG);  /* 10 colors */
     pixWrite("/tmp/lept/image/file2.jpg", pix4, IFF_JFIF_JPEG); /* 256 colors */
     pixWrite("/tmp/lept/image/file3.tif", pix5, IFF_TIFF_G4);

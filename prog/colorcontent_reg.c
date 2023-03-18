@@ -37,6 +37,7 @@
 
 #include "string.h"
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -67,7 +68,7 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Find the most populated colors */
-    pix1 = pixRead("fish24.jpg");
+    pix1 = pixRead(DEMOPATH("fish24.jpg"));
     pixGetMostPopulatedColors(pix1, 2, 3, 10, &colors, NULL);
     pix2 = pixDisplayColorArray(colors, 10, 200, 5, 6);
     pixDisplayWithTitle(pix2, 0, 0, NULL, rp->display);
@@ -88,7 +89,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix3);
 
         /* Do a simple color quantization with sigbits = 3 */
-    pix1 = pixRead("wyom.jpg");
+    pix1 = pixRead(DEMOPATH("wyom.jpg"));
     pixNumColors(pix1, 1, &ncolors);  /* >255, so should give 0 */
     regTestCompareValues(rp, ncolors, 132165, 0.0);  /* 4 */
     pix2 = pixSimpleColorQuantize(pix1, 3, 3, 20);
@@ -100,7 +101,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
 
         /* Find the number of perceptually significant gray intensities */
-    pix1 = pixRead("marge.jpg");
+    pix1 = pixRead(DEMOPATH("marge.jpg"));
     pix2 = pixConvertTo8(pix1, 0);
     pixNumSignificantGrayColors(pix2, 20, 236, 0.0001, 1, &ncolors);
     regTestCompareValues(rp, ncolors, 219, 0.0);  /* 7 */
@@ -108,7 +109,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
 
         /* Find background color in image with light color regions */
-    pix1 = pixRead("map.057.jpg");
+    pix1 = pixRead(DEMOPATH("map.057.jpg"));
     pixa1 = pixaCreate(0);
     pixFindColorRegions(pix1, NULL, 4, 200, 70, 10, 90, 0.05,
                           &fcolor, &pix2, NULL, pixa1);

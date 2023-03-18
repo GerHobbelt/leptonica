@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -57,7 +58,7 @@ PIXA  *pixa;
     setLeptDebugOK(1);
 
         /* Read the image in at 150 ppi. */
-    if ((pixs = pixRead("brothers.150.jpg")) == NULL)
+    if ((pixs = pixRead(DEMOPATH("brothers.150.jpg"))) == NULL)
         return ERROR_INT("pix not made", __func__, 1);
     pixa = pixaCreate(0);
     pixaAddPix(pixa, pixs, L_INSERT);

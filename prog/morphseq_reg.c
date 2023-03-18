@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -64,7 +65,7 @@ PIX  *pixs, *pixg, *pixc, *pixd;
 
     setLeptDebugOK(1);
     lept_mkdir("lept");
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
 
         /* 1 bpp */
     pixd = pixMorphSequence(pixs, SEQUENCE1, -1);
@@ -107,7 +108,7 @@ PIX  *pixs, *pixg, *pixc, *pixd;
     pixDestroy(&pixd);
 
         /* 32 bpp */
-    pixc = pixRead("wyom.jpg");
+    pixc = pixRead(DEMOPATH("wyom.jpg"));
     pixd = pixColorMorphSequence(pixc, SEQUENCE5, -7, 150);
     pixDestroy(&pixd);
     pixd = pixColorMorphSequence(pixc, SEQUENCE5, DISPLAY_SEPARATION, 450);

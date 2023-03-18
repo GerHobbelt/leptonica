@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -90,7 +91,7 @@ L_REGPARAMS  *rp;
         pixDestroy(&pixs);
     }
 
-    pixs = pixRead("test1.png");
+    pixs = pixRead(DEMOPATH("test1.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     for (i = 1; i <= 15; i++) {
         box = boxCreate(13 * i, 13 * i, w - 13 * i, h - 13 * i);
@@ -104,7 +105,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
     /* --------- Power of 2 expansion and reduction -------- */
-    pixs = pixRead("speckle.png");
+    pixs = pixRead(DEMOPATH("speckle.png"));
 
         /* Test 2x expansion of 1 bpp */
     pix1 = pixExpandBinaryPower2(pixs, 2);

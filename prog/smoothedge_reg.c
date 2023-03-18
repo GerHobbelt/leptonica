@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -58,7 +59,7 @@ l_int32  w;
 PIX     *pixs, *pixt, *pixd;
 PIXA    *pixa;
 
-    pixs = pixRead("raggededge.png");
+    pixs = pixRead(DEMOPATH("raggededge.png"));
     w = pixGetWidth(pixs);
     pixa = pixaCreate(0);
     PixAddEdgeData(pixa, pixs, L_FROM_RIGHT, MIN_JUMP, MIN_REVERSAL);

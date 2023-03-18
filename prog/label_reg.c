@@ -38,6 +38,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -74,7 +75,7 @@ L_REGPARAMS  *rp;
 
         /* Test connected component labelling */
     lept_stderr("Test c.c. labelling\n");
-    pix1 = pixRead("feyn-fract.tif");
+    pix1 = pixRead(DEMOPATH("feyn-fract.tif"));
     pix2 = pixConnCompTransform(pix1, 8, 8);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     pixDisplayWithTitle(pix2, 0, 0, NULL, rp->display);
@@ -107,7 +108,7 @@ L_REGPARAMS  *rp;
 
         /* Test color transform: 4-fold symmetry */
     lept_stderr("Test color transform: 4-fold symmetry\n");
-    pix1 = pixRead("form1.tif");
+    pix1 = pixRead(DEMOPATH("form1.tif"));
     pix2 = pixRotateOrth(pix1, 1);
     pix3 = pixRotateOrth(pix1, 2);
     pix4 = pixRotateOrth(pix1, 3);
@@ -148,7 +149,7 @@ L_REGPARAMS  *rp;
 
         /* Test color transform: same form with translation */
     lept_stderr("Test color transform with translation\n");
-    pix1 = pixRead("form1.tif");
+    pix1 = pixRead(DEMOPATH("form1.tif"));
     pix2 = pixLocToColorTransform(pix1);
     pixDisplayWithTitle(pix2, 0, 0, NULL, rp->display);
     pixTranslate(pix1, pix1, 10, 10, L_BRING_IN_WHITE);
@@ -167,7 +168,7 @@ L_REGPARAMS  *rp;
 
         /* Test color transform: same form with small rotation */
     lept_stderr("Test color transform with small rotation\n");
-    pix1 = pixRead("form1.tif");
+    pix1 = pixRead(DEMOPATH("form1.tif"));
     pix2 = pixLocToColorTransform(pix1);
     pixRotateShearCenterIP(pix1, 0.1, L_BRING_IN_WHITE);
     pix3 = pixLocToColorTransform(pix1);
@@ -185,10 +186,10 @@ L_REGPARAMS  *rp;
 
         /* Test color transform: 2 different forms */
     lept_stderr("Test color transform (2 forms)\n");
-    pix1 = pixRead("form1.tif");
+    pix1 = pixRead(DEMOPATH("form1.tif"));
     pix2 = pixLocToColorTransform(pix1);
     pixDisplayWithTitle(pix2, 0, 600, NULL, rp->display);
-    pix3 = pixRead("form2.tif");
+    pix3 = pixRead(DEMOPATH("form2.tif"));
     pix4 = pixLocToColorTransform(pix3);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 27 */
     pixDisplayWithTitle(pix4, 470, 600, NULL, rp->display);

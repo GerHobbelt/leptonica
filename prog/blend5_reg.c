@@ -38,6 +38,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -63,7 +64,7 @@ L_REGPARAMS  *rp;
     pixa = pixaCreate(0);
 
         /* First, snap the color directly on the input rgb image. */
-    pixs = pixRead("Leptonica.jpg");
+    pixs = pixRead(DEMOPATH("Leptonica.jpg"));
     pixaAddPix(pixa, pixs, L_COPY);
     pixDisplayWithTitle(pixs, 0, 0, NULL, rp->display);
     pix1 = pixSnapColor(NULL, pixs, 0xffffff00, LEPTONICA_YELLOW, 30);
@@ -82,7 +83,7 @@ L_REGPARAMS  *rp;
 
         /* Set the background of the google searchbox to yellow.
          * The input image is colormapped with all 256 colors used. */
-    pixs = pixRead("google-searchbox.png");
+    pixs = pixRead(DEMOPATH("google-searchbox.png"));
     pixaAddPix(pixa, pixs, L_INSERT);
     pixDisplayWithTitle(pixs, 0, 200, NULL, rp->display);
     pix1 = pixSnapColor(NULL, pixs, 0xffffff00, LEPTONICA_YELLOW, 30);
@@ -91,7 +92,7 @@ L_REGPARAMS  *rp;
     pixDisplayWithTitle(pix1, 220, 200, NULL, rp->display);
 
         /* A couple of more, setting pixels near white to strange colors */
-    pixs = pixRead("weasel4.11c.png");
+    pixs = pixRead(DEMOPATH("weasel4.11c.png"));
     pixaAddPix(pixa, pixs, L_INSERT);
     pixDisplayWithTitle(pixs, 0, 300, NULL, rp->display);
     pix1 = pixSnapColor(NULL, pixs, 0xfefefe00, 0x80800000, 50);
@@ -99,7 +100,7 @@ L_REGPARAMS  *rp;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
     pixDisplayWithTitle(pix1, 200, 300, NULL, rp->display);
 
-    pixs = pixRead("wyom.jpg");
+    pixs = pixRead(DEMOPATH("wyom.jpg"));
     pix1 = pixFixedOctcubeQuant256(pixs, 0);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */

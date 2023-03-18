@@ -47,6 +47,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -68,7 +69,7 @@ l_int32  niters, op, selectop;
 
     setLeptDebugOK(1);
 
-    pix1 = pixRead("test24.jpg");
+    pix1 = pixRead(DEMOPATH("test24.jpg"));
     box1 = boxCreate(243, 127, 513, 359);
     box2 = boxCreate(541, 312, 513, 359);
     niters = 10000;

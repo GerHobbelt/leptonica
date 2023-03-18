@@ -39,6 +39,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -63,7 +64,7 @@ L_REGPARAMS  *rp;
    if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("lucasta-frag.jpg");
+    pixs = pixRead(DEMOPATH("lucasta-frag.jpg"));
 
         /* Convert to 4 bpp with 6 levels and a colormap */
     pix1 = pixThresholdTo4bpp(pixs, 6, 1);

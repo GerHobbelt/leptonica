@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -64,7 +65,7 @@ PIXAA     *paa;
     }
 
     setLeptDebugOK(1);
-    if ((pixs = pixRead("barcode-digits.png")) == NULL)
+    if ((pixs = pixRead(DEMOPATH("barcode-digits.png"))) == NULL)
         return ERROR_INT("pixs not read", __func__, 1);
 
         /* Extract the digits and scale to HEIGHT */

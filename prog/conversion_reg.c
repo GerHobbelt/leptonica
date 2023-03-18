@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -61,15 +62,15 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs1 = pixRead("test1.png");
-    pixs2 = pixRead("dreyfus2.png");
-    pixc2 = pixRead("weasel2.4c.png");
-    pixs4 = pixRead("weasel4.16g.png");
-    pixc4 = pixRead("weasel4.11c.png");
-    pixs8 = pixRead("karen8.jpg");
-    pixc8 = pixRead("weasel8.240c.png");
-    pixs16 = pixRead("test16.tif");
-    pixs32 = pixRead("marge.jpg");
+    pixs1 = pixRead(DEMOPATH("test1.png"));
+    pixs2 = pixRead(DEMOPATH("dreyfus2.png"));
+    pixc2 = pixRead(DEMOPATH("weasel2.4c.png"));
+    pixs4 = pixRead(DEMOPATH("weasel4.16g.png"));
+    pixc4 = pixRead(DEMOPATH("weasel4.11c.png"));
+    pixs8 = pixRead(DEMOPATH("karen8.jpg"));
+    pixc8 = pixRead(DEMOPATH("weasel8.240c.png"));
+    pixs16 = pixRead(DEMOPATH("test16.tif"));
+    pixs32 = pixRead(DEMOPATH("marge.jpg"));
     error = FALSE;
     sa = sarrayCreate(0);
 

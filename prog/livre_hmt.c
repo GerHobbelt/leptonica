@@ -45,6 +45,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -107,7 +108,7 @@ SEL     *selhm;
     pixWrite("/tmp/lept/livre/pixsel1", pixsel, IFF_PNG);
 
         /* Use the Sel to find all instances in the page */
-    pix = pixRead("tribune-page-4x.png");  /* 4x reduced */
+    pix = pixRead(DEMOPATH("tribune-page-4x.png"));  /* 4x reduced */
     if (reduction == 4)
         pixr = pixClone(pix);
     else if (reduction == 8)

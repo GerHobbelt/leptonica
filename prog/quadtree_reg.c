@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -81,7 +82,7 @@ L_REGPARAMS  *rp;
     lept_free(data);
 
         /* Test quadtree stats generation */
-    pixs = pixRead("rabi.png");
+    pixs = pixRead(DEMOPATH("rabi.png"));
     pixg = pixScaleToGray4(pixs);
     pixDestroy(&pixs);
     pixQuadtreeMean(pixg, 8, NULL, &fpixam);

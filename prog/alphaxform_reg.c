@@ -41,6 +41,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -83,9 +84,9 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixc1 = pixRead("test24.jpg");
-    pixc2 = pixRead("wyom.jpg");
-    pixc3 = pixRead("marge.jpg");
+    pixc1 = pixRead(DEMOPATH("test24.jpg"));
+    pixc2 = pixRead(DEMOPATH("wyom.jpg"));
+    pixc3 = pixRead(DEMOPATH("marge.jpg"));
 
         /* Test alpha blend scaling */
     pixd = pixCreate(900, 400, 32);

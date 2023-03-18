@@ -39,6 +39,7 @@
 
 #include "string.h"
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -152,7 +153,7 @@ L_RECOG  *recog1, *recog2;
 #if 1
         /* Split touching characters */
     lept_stderr("Split touching\n");
-    pixd = pixRead("recog/digits/page.590.png");  /* 590 or 306 */
+    pixd = pixRead(DEMOPATH("recog/digits/page.590.png"));  /* 590 or 306 */
     recogIdentifyMultiple(recog1, pixd, 0, 0, &boxat, &pixa2, &pixdb, 1);
     pixDisplay(pixdb, 800, 800);
     boxaWriteStderr(boxat);

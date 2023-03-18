@@ -42,6 +42,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -96,17 +97,17 @@ L_REGPARAMS  *rp;
     convertToPdf("feyn.tif", L_G4_ENCODE, 0, "/tmp/lept/pdf1/file02.pdf",
                  0, 0, 300, "feyn.tif", NULL, 0);
 
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     pixConvertToPdf(pixs, L_G4_ENCODE, 0, "/tmp/lept/pdf1/file03.pdf", 0, 0, 300,
                     "feyn.tif", NULL, 0);
     pixDestroy(&pixs);
 
-    pixs = pixRead("test24.jpg");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
     pixConvertToPdf(pixs, L_JPEG_ENCODE, 5, "/tmp/lept/pdf1/file04.pdf",
                     0, 0, 72, "test24.jpg", NULL, 0);
     pixDestroy(&pixs);
 
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     pixt = pixScaleToGray2(pixs);
     pixWrite("/tmp/lept/pdf1/feyn8.png", pixt, IFF_PNG);
     convertToPdf("/tmp/lept/pdf1/feyn8.png", L_JPEG_ENCODE, 0,
@@ -118,7 +119,7 @@ L_REGPARAMS  *rp;
                  "/tmp/lept/pdf1/file06.pdf", 0, 0, 30,
                  "weasel4.16g.png", NULL, 0);
 
-    pixs = pixRead("test24.jpg");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
     pixg = pixConvertTo8(pixs, 0);
     box = boxCreate(100, 100, 100, 100);
     pixc = pixClipRectangle(pixs, box, NULL);
@@ -140,8 +141,8 @@ L_REGPARAMS  *rp;
 #if 1
     /* ---------------  Multiple image tests  ------------------- */
     lept_stderr("\n*** Writing multiple images as single page pdf files\n");
-    pix1 = pixRead("feyn-fract.tif");
-    pix2 = pixRead("weasel8.240c.png");
+    pix1 = pixRead(DEMOPATH("feyn-fract.tif"));
+    pix2 = pixRead(DEMOPATH("weasel8.240c.png"));
 
         /* First, write the 1 bpp image through the mask onto the weasels */
     for (i = 0; i < 5; i++) {
@@ -175,7 +176,7 @@ L_REGPARAMS  *rp;
 #if 1
     /* -------- pdf convert segmented with no image regions -------- */
     lept_stderr("\n*** Writing segmented images without image regions\n");
-    pix1 = pixRead("rabi.png");
+    pix1 = pixRead(DEMOPATH("rabi.png"));
     pix2 = pixScaleToGray2(pix1);
     pixWrite("/tmp/lept/pdf1/rabi8.jpg", pix2, IFF_JFIF_JPEG);
     pix3 = pixThresholdTo4bpp(pix2, 16, 1);
@@ -213,7 +214,7 @@ L_REGPARAMS  *rp;
 #if 1
     /* ----------  Generating from 1 bpp images (high-level) -------------- */
     lept_stderr("\n*** Writing 1 bpp images as pdf files (high-level)\n");
-    pix1 = pixRead("feyn-fract.tif");
+    pix1 = pixRead(DEMOPATH("feyn-fract.tif"));
     pixWrite("/tmp/lept/pdf1/feyn-nocmap.png", pix1, IFF_PNG);
     pix2 = pixCopy(NULL, pix1);
     cmap = pixcmapCreate(1);
@@ -243,7 +244,7 @@ L_REGPARAMS  *rp;
 #if 1
     /* ----------  Generating from 1 bpp images (low-level) -------------- */
     lept_stderr("\n*** Writing 1 bpp images as pdf files (low-level)\n");
-    pix1 = pixRead("cat-and-mouse.png");
+    pix1 = pixRead(DEMOPATH("cat-and-mouse.png"));
     pix2 = pixConvertRGBToCmapLossless(pix1);  /* restore the cmap */
 
         /* Add a black/white colormap */

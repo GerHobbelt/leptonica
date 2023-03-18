@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 #include "pix_internal.h"
 
 #include "monolithic_examples.h"
@@ -70,7 +71,7 @@ L_REGPARAMS  *rp;
     pixa = pixaCreate(0);
 
         /* Color non-white pixels on RGB */
-    pixs = pixRead("lucasta-frag.jpg");
+    pixs = pixRead(DEMOPATH("lucasta-frag.jpg"));
     pixt = pixConvert8To32(pixs);
     box = boxCreate(120, 30, 200, 200);
     pixColorGray(pixt, box, L_PAINT_DARK, 220, 0, 0, 255);
@@ -193,7 +194,7 @@ L_REGPARAMS  *rp;
     boxDestroy(&box);
 
         /* Colorize gray on cmapped image. */
-    pix1 = pixRead("lucasta.150.jpg");
+    pix1 = pixRead(DEMOPATH("lucasta.150.jpg"));
     pix2 = pixThresholdTo4bpp(pix1, 7, 1);
     box1 = boxCreate(73, 206, 140, 27);
     pixColorGrayCmap(pix2, box1, L_PAINT_LIGHT, 130, 207, 43);
@@ -238,7 +239,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* Make a gray image and identify the fg pixels (val > 230) */
-    pixs = pixRead("feyn-fract.tif");
+    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     pix1 = pixConvertTo8(pixs, 0);
     kel = makeGaussianKernel(2, 2, 1.5, 1.0);
     pix2 = pixConvolve(pix1, kel, 8, 1);

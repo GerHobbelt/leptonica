@@ -52,6 +52,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -94,7 +95,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("tickets.tif");
+    pixs = pixRead(DEMOPATH("tickets.tif"));
     flag = (rp->display) ? -1 : 0;
     boxa = LocateBarcodes(pixs, &pixd, flag);
     regTestWritePixAndCheck(rp, pixd, IFF_TIFF_G4);  /* 0 */

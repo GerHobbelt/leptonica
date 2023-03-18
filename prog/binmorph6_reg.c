@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -58,7 +59,7 @@ L_REGPARAMS  *rp;
 
         /* Test making sel from a pix */
     pixa = pixaCreate(10);
-    pix1 = pixRead("feyn-fract.tif");
+    pix1 = pixRead(DEMOPATH("feyn-fract.tif"));
     box1 = boxCreate(507, 65, 60, 36);
     pix2 = pixClipRectangle(pix1, box1, NULL);
     sel = selCreateFromPix(pix2, 6, 6, "life");  /* 610 hits */

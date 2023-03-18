@@ -39,6 +39,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -67,7 +68,7 @@ L_REGPARAMS  *rp;
         return 1;
 
     /* ---------------- Largest rectangles in image ---------------- */
-    pixs = pixRead("test1.png");
+    pixs = pixRead(DEMOPATH("test1.png"));
     pix1 = pixConvertTo8(pixs, FALSE);
     cmap = pixcmapCreateRandom(8, 1, 1);
     pixSetColormap(pix1, cmap);
@@ -102,7 +103,7 @@ L_REGPARAMS  *rp;
     boxaDestroy(&boxa);
 
     /* ----------- Rectangle(s) from connected component ----------- */
-    pixs = pixRead("singlecc.tif");
+    pixs = pixRead(DEMOPATH("singlecc.tif"));
     pix1 = pixScale(pixs, 0.5, 0.5);
     boxa = pixConnCompBB(pix1, 8);
     box1 = boxaGetBox(boxa, 0, L_COPY);

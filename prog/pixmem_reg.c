@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -58,9 +59,9 @@ L_REGPARAMS  *rp;
     pixa = pixaCreate(0);
 
         /* Copy with internal resizing: onto a cmapped image */
-    pix1 = pixRead("weasel4.16c.png");
-    pix2 = pixRead("feyn-fract.tif");
-    pix3 = pixRead("lucasta.150.jpg");
+    pix1 = pixRead(DEMOPATH("weasel4.16c.png"));
+    pix2 = pixRead(DEMOPATH("feyn-fract.tif"));
+    pix3 = pixRead(DEMOPATH("lucasta.150.jpg"));
     pixCopy(pix3, pix2);
     regTestComparePix(rp, pix2, pix3);  /* 0 */
     pixaAddPix(pixa, pix3, L_INSERT);
@@ -70,9 +71,9 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
 
         /* Copy with internal resizing: from a cmapped image */
-    pix1 = pixRead("weasel4.16c.png");
-    pix2 = pixRead("feyn-fract.tif");
-    pix3 = pixRead("lucasta.150.jpg");
+    pix1 = pixRead(DEMOPATH("weasel4.16c.png"));
+    pix2 = pixRead(DEMOPATH("feyn-fract.tif"));
+    pix3 = pixRead(DEMOPATH("lucasta.150.jpg"));
     pixCopy(pix2, pix1);
     regTestComparePix(rp, pix1, pix2);  /* 2 */
     pixaAddPix(pixa, pix2, L_INSERT);
@@ -83,9 +84,9 @@ L_REGPARAMS  *rp;
 
         /* Transfer of data pixs --> pixd, when pixs is not cloned.
          * pixs is destroyed.  */
-    pix1 = pixRead("weasel4.16c.png");
-    pix2 = pixRead("feyn-fract.tif");
-    pix3 = pixRead("lucasta.150.jpg");
+    pix1 = pixRead(DEMOPATH("weasel4.16c.png"));
+    pix2 = pixRead(DEMOPATH("feyn-fract.tif"));
+    pix3 = pixRead(DEMOPATH("lucasta.150.jpg"));
     pix4 = pixCopy(NULL, pix1);
     pixTransferAllData(pix2, &pix1, 0, 0);
     regTestComparePix(rp, pix2, pix4);  /* 4 */
@@ -97,9 +98,9 @@ L_REGPARAMS  *rp;
 
         /* Another transfer of data pixs --> pixd, when pixs is not cloned.
          * pixs is destroyed. */
-    pix1 = pixRead("weasel4.16c.png");
-    pix2 = pixRead("feyn-fract.tif");
-    pix3 = pixRead("lucasta.150.jpg");
+    pix1 = pixRead(DEMOPATH("weasel4.16c.png"));
+    pix2 = pixRead(DEMOPATH("feyn-fract.tif"));
+    pix3 = pixRead(DEMOPATH("lucasta.150.jpg"));
     pix4 = pixCopy(NULL, pix1);
     pixTransferAllData(pix2, &pix4, 0, 0);
     regTestComparePix(rp, pix1, pix2);  /* 6 */
@@ -111,9 +112,9 @@ L_REGPARAMS  *rp;
 
         /* Transfer of data pixs --> pixd, when pixs is cloned.
          * pixs has its refcount reduced by 1. */
-    pix1 = pixRead("weasel4.16c.png");
-    pix2 = pixRead("feyn-fract.tif");
-    pix3 = pixRead("lucasta.150.jpg");
+    pix1 = pixRead(DEMOPATH("weasel4.16c.png"));
+    pix2 = pixRead(DEMOPATH("feyn-fract.tif"));
+    pix3 = pixRead(DEMOPATH("lucasta.150.jpg"));
     pix4 = pixClone(pix1);
     pix5 = pixClone(pix2);
     pixTransferAllData(pix2, &pix4, 0, 0);
@@ -126,7 +127,7 @@ L_REGPARAMS  *rp;
 
         /* Extraction of data when pixs is not cloned, putting
          * the data into a new template of pixs. */
-    pix2 = pixRead("feyn-fract.tif");
+    pix2 = pixRead(DEMOPATH("feyn-fract.tif"));
     pix3 = pixCopy(NULL, pix2);  /* for later reference */
     data = pixExtractData(pix2);
     pix4 = pixCreateTemplateNoInit(pix2);
@@ -138,7 +139,7 @@ L_REGPARAMS  *rp;
 
         /* Extraction of data when pixs is cloned, putting
          * a copy of the data into a new template of pixs. */
-    pix1 = pixRead("weasel4.16c.png");
+    pix1 = pixRead(DEMOPATH("weasel4.16c.png"));
     pix2 = pixClone(pix1);  /* bump refcount of pix1 to 2 */
     data = pixExtractData(pix1);  /* should make a copy of data */
     pix3 = pixCreateTemplateNoInit(pix1);

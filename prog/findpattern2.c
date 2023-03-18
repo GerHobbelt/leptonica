@@ -43,6 +43,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -74,7 +75,7 @@ SEL  *selhm;
         /* -------------------------------------------- *
          * Extract the pattern for a single character   *
          * ---------------------------------------------*/
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     box = boxCreate(599, 1055, 18, 23);
     pixc = pixClipRectangle(pixs, box, NULL);
 

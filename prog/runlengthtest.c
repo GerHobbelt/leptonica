@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -59,7 +60,7 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 
         /* Set 1 */
     startTimer();
-    pix1 = pixRead("rabi.png");
+    pix1 = pixRead(DEMOPATH("rabi.png"));
     pix2 = pixRunlengthTransform(pix1, 0, L_HORIZONTAL_RUNS, 8);
     pix3 = pixRunlengthTransform(pix1, 0, L_VERTICAL_RUNS, 8);
     pix4 = pixMinOrMax(NULL, pix2, pix3, L_CHOOSE_MIN);
@@ -89,7 +90,7 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 
         /* Set 2 */
     startTimer();
-    pix1 = pixRead("test24.jpg");
+    pix1 = pixRead(DEMOPATH("test24.jpg"));
     pixWriteJpeg("/tmp/lept/run/junk24.jpg", pix1, 5, 0);
     pix2 = pixRead("/tmp/lept/run/junk24.jpg");
     pixCompareGrayOrRGB(pix1, pix2, L_COMPARE_ABS_DIFF, GPLOT_PNG,

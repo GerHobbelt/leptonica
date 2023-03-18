@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -64,8 +65,8 @@ L_REGPARAMS  *rp;
         return 1;
 
     pixa = pixaCreate(0);
-    pix32 = pixRead("marge.jpg");
-    pixs = pixRead("feyn.tif");
+    pix32 = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     box = boxCreate(683, 799, 970, 479);
     pix1 = pixClipRectangle(pixs, box, NULL);
     boxDestroy(&box);
@@ -154,7 +155,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix32);
 
         /* pixaMakeFromTiledPix() and pixaDisplayOnLattice()  */
-    pix1 = pixRead("sevens.tif");
+    pix1 = pixRead(DEMOPATH("sevens.tif"));
     pixa1 = pixaMakeFromTiledPix(pix1, 20, 30, 0, 0, NULL);
     pix2 = pixaDisplayOnLattice(pixa1, 20, 30, NULL, NULL);
     regTestComparePix(rp, pix1, pix2);  /* 10 */

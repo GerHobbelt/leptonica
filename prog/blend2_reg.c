@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -69,8 +70,8 @@ L_REGPARAMS  *rp;
             pixSetPixel(pixg, j, i, (l_int32)(0.775 * j) % 256);
 
         /* --- Set up the initial color images to be blended together --- */
-    pixs1 = pixRead("wyom.jpg");
-    pixs2 = pixRead("fish24.jpg");
+    pixs1 = pixRead(DEMOPATH("wyom.jpg"));
+    pixs2 = pixRead(DEMOPATH("fish24.jpg"));
     pixGetDimensions(pixs1, &w, &h, NULL);
     pixGetDimensions(pixs1, &w1, &h1, NULL);
     pixGetDimensions(pixs2, &w2, &h2, NULL);
@@ -136,7 +137,7 @@ L_REGPARAMS  *rp;
 
     /* --------- Test png read/write with alpha channel --------- */
         /* First make pix2, using pixg as the alpha channel */
-    pix1 = pixRead("fish24.jpg");
+    pix1 = pixRead(DEMOPATH("fish24.jpg"));
     box1 = boxCreate(0, 300, 660, 500);
     pix2 = pixClipRectangle(pix1, box1, NULL);
     boxDestroy(&box1);

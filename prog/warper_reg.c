@@ -34,6 +34,7 @@
 
 #include <math.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -67,7 +68,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("feyn-word.tif");
+    pixs = pixRead(DEMOPATH("feyn-word.tif"));
     pixt = pixAddBorder(pixs, 25, 0);
     pixg = pixConvertTo8(pixt, 0);
 

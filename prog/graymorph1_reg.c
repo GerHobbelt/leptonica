@@ -53,6 +53,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -79,7 +80,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("aneurisms8.jpg");
+    pixs = pixRead(DEMOPATH("aneurisms8.jpg"));
     pixa = pixaCreate(0);
 
     /* =========================================================== */
@@ -276,7 +277,7 @@ L_REGPARAMS  *rp;
     pixa = pixaCreate(0);
 
     /* ----  Tophat result on feynman stamp, to extract diagrams ----- */
-    pixs = pixRead("feynman-stamp.jpg");
+    pixs = pixRead(DEMOPATH("feynman-stamp.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
 
         /* Make output image to hold five intermediate images */

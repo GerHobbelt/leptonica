@@ -36,6 +36,7 @@
 
 #include "string.h"
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -78,7 +79,7 @@ L_REGPARAMS  *rp;
     bmf = bmfCreate("fonts", 8);
 
         /* Get the input image (100 ppi resolution) */
-    pix0 = pixRead("harmoniam100-11.png");
+    pix0 = pixRead(DEMOPATH("harmoniam100-11.png"));
     cmap = pixGetColormap(pix0);
     pixa = pixaCreate(0);
 

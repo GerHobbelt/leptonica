@@ -40,6 +40,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -84,7 +85,7 @@ L_REGPARAMS  *rp;
     baa = boxaaCreate(5);
 
         /* Image region input.  */
-    pix1 = pixRead("wet-day.jpg");
+    pix1 = pixRead(DEMOPATH("wet-day.jpg"));
     pix2 = pixScaleToSize(pix1, WIDTH, 0);
     pixWrite("/tmp/lept/pdfseg/0.jpg", pix2, IFF_JFIF_JPEG);
     regTestCheckFile(rp, "/tmp/lept/pdfseg/0.jpg");   /* 0 */
@@ -96,7 +97,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
 
         /* Compute image region at w = 2 * WIDTH */
-    pix1 = pixRead("candelabrum.011.jpg");
+    pix1 = pixRead(DEMOPATH("candelabrum.011.jpg"));
     pix2 = pixScaleToSize(pix1, WIDTH, 0);
     pix3 = pixConvertTo1(pix2, 100);
     pix4 = pixExpandBinaryPower2(pix3, 2);  /* w = 2 * WIDTH */
@@ -121,11 +122,11 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix9);
 
         /* Use mask to find image region */
-    pix1 = pixRead("lion-page.00016.jpg");
+    pix1 = pixRead(DEMOPATH("lion-page.00016.jpg"));
     pix2 = pixScaleToSize(pix1, WIDTH, 0);
     pixWrite("/tmp/lept/pdfseg/2.jpg", pix2, IFF_JFIF_JPEG);
     regTestCheckFile(rp, "/tmp/lept/pdfseg/2.jpg");   /* 2 */
-    pix3 = pixRead("lion-mask.00016.tif");
+    pix3 = pixRead(DEMOPATH("lion-mask.00016.tif"));
     pix4 = pixScaleToSize(pix3, WIDTH, 0);
     boxa1 = pixConnComp(pix4, NULL, 8);
     boxaaAddBoxa(baa, boxa1, L_INSERT);
@@ -135,7 +136,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix4);
 
         /* Compute image region at full res */
-    pix1 = pixRead("rabi.png");
+    pix1 = pixRead(DEMOPATH("rabi.png"));
     scalefactor = (l_float32)WIDTH / (l_float32)pixGetWidth(pix1);
     pix2 = pixScaleToGray(pix1, scalefactor);
     pixWrite("/tmp/lept/pdfseg/3.jpg", pix2, IFF_JFIF_JPEG);
@@ -152,7 +153,7 @@ L_REGPARAMS  *rp;
     boxaDestroy(&boxa1);
 
         /* Page with no image regions */
-    pix1 = pixRead("lucasta.047.jpg");
+    pix1 = pixRead(DEMOPATH("lucasta.047.jpg"));
     pix2 = pixScaleToSize(pix1, WIDTH, 0);
     boxa1 = boxaCreate(1);
     pixWrite("/tmp/lept/pdfseg/4.jpg", pix2, IFF_JFIF_JPEG);
@@ -162,7 +163,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
 
         /* Page that is all image */
-    pix1 = pixRead("map1.jpg");
+    pix1 = pixRead(DEMOPATH("map1.jpg"));
     pix2 = pixScaleToSize(pix1, WIDTH, 0);
     pixWrite("/tmp/lept/pdfseg/5.jpg", pix2, IFF_JFIF_JPEG);
     regTestCheckFile(rp, "/tmp/lept/pdfseg/5.jpg");   /* 5 */

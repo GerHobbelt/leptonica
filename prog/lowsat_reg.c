@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -60,7 +61,7 @@ L_REGPARAMS  *rp;
 
     lept_mkdir("lept/lowsat");
     pixa = pixaCreate(0);
-    pix1 = pixRead("zier.jpg");
+    pix1 = pixRead(DEMOPATH("zier.jpg"));
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     pixDisplayWithTitle(pix1, 0, 100, NULL, rp->display);
     pixaAddPix(pixa, pix1, L_INSERT);

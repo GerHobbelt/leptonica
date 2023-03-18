@@ -38,6 +38,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -63,7 +64,7 @@ PIX     *pixs, *pixsd, *pixt1, *pixt2, *pixt3;
         return ERROR_INT(" Syntax:  binmorph2_reg", __func__, 1);
 
     setLeptDebugOK(1);
-    pixs = pixRead("feyn-fract.tif");
+    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     pixsd = pixMorphCompSequence(pixs, "d5.5", 0);
     success = TRUE;
     for (i = 1; i < MAX_SEL_SIZE; i++) {

@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -57,7 +58,7 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Test orthogonal rotations */
-    pix1 = pixRead("marge.jpg");
+    pix1 = pixRead(DEMOPATH("marge.jpg"));
     pix2 = pixConvertTo8(pix1, 0);
     fpix1 = pixConvertToFPix(pix2, 1);
 
@@ -94,7 +95,7 @@ L_REGPARAMS  *rp;
     fpixDestroy(&fpix4);
 
         /* Test adding various borders */
-    pix1 = pixRead("marge.jpg");
+    pix1 = pixRead(DEMOPATH("marge.jpg"));
     pix2 = pixConvertTo8(pix1, 0);
     fpix1 = pixConvertToFPix(pix2, 1);
 

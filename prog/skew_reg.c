@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -77,7 +78,7 @@ L_REGPARAMS  *rp;
     deg2rad = 3.1415926535 / 180.;
 
     pixa = pixaCreate(0);
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     pixSetOrClearBorder(pixs, 100, 250, 100, 0, PIX_CLR);
     pixb1 = pixReduceRankBinaryCascade(pixs, 2, 2, 0, 0);
     regTestWritePixAndCheck(rp, pixb1, IFF_PNG);  /* 0 */

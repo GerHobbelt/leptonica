@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 #include "pix_internal.h"
 
 #include "monolithic_examples.h"
@@ -71,7 +72,7 @@ PIXAA   *pixaa1, *pixaa2;
          *      you add a red boundary, you will see errors in the boundary
          *      width.
          */
-    pixs = pixRead("test24.jpg");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
     pixGetDimensions(pixs, &w, NULL, &d);
     pixa = pixaSplitPix(pixs, nx, ny, 0, 0);
 /*    pixa = pixaSplitPix(pixs, nx, ny, 2, 0xff000000);  */ /* red border */

@@ -49,6 +49,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -93,8 +94,8 @@ L_REGPARAMS  *rp;
 #endif  /* abort */
 
         /* Source for generating images */
-    pixs = pixRead("pageseg2.tif");   /* 1 bpp */
-    pixc = pixRead("tetons.jpg");     /* 32 bpp */
+    pixs = pixRead(DEMOPATH("pageseg2.tif"));   /* 1 bpp */
+    pixc = pixRead(DEMOPATH("tetons.jpg"));     /* 32 bpp */
 
         /* Get a halftone segmentation mask for pixs */
     pixGetRegionsBinary(pixs, &pixht, NULL, NULL, 0);

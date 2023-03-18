@@ -39,6 +39,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -74,7 +75,7 @@ L_REGPARAMS  *rp;
               return 1;
 
     pixa = pixaCreate(0);
-    pixs = pixRead("breviar.38.150.jpg");
+    pixs = pixRead(DEMOPATH("breviar.38.150.jpg"));
     pixaAddPix(pixa, pixs, L_CLONE);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 0 */
     pixDisplayWithTitle(pixs, 0, 0, "Input image", rp->display);

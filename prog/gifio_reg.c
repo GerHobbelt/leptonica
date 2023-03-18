@@ -60,6 +60,7 @@
 
 #include <math.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #if HAVE_LIBGIF || HAVE_LIBUNGIF
 #include "gif_lib.h"

@@ -46,6 +46,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -72,7 +73,7 @@ PIXA      *pixa;
     lept_mkdir("lept/binding");
     pixa = pixaCreate(0);
 
-    pix1 = pixRead("binding-example.45.jpg");
+    pix1 = pixRead(DEMOPATH("binding-example.45.jpg"));
     pix2 = pixConvertTo8(pix1, 0);
 
         /* Find the skew angle */

@@ -41,6 +41,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -61,7 +62,7 @@ L_ASET  *s;
 PIX     *pix;
 
     setLeptDebugOK(1);
-    pix = pixRead("weasel8.240c.png");
+    pix = pixRead(DEMOPATH("weasel8.240c.png"));
 
         /* Build the set from all the pixels. */
     s = BuildSet(pix, 1, FALSE);
@@ -74,7 +75,7 @@ PIX     *pix;
     l_asetDestroy(&s);
     pixDestroy(&pix);
 
-    pix = pixRead("marge.jpg");
+    pix = pixRead(DEMOPATH("marge.jpg"));
     startTimer();
     s = BuildSet(pix, 1, FALSE);
     lept_stderr("Time (250K pixels): %7.3f sec\n", stopTimer());

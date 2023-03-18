@@ -40,6 +40,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -91,7 +92,7 @@ SEL       *selsplit;
     pixa = pixaCreate(0);
 
         /* Binarize input */
-    pixs = pixRead("arabic.png");
+    pixs = pixRead(DEMOPATH("arabic.png"));
     pixGetDimensions(pixs, &w, &h, &d);
     pix = pixConvertTo1(pixs, 128);
     pixDestroy(&pixs);

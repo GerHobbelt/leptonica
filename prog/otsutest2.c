@@ -49,6 +49,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -72,7 +73,7 @@ PIXA      *pixa1, *pixad;
     setLeptDebugOK(1);
     lept_mkdir("lept/otsu");
 
-    pixs = pixRead("1555.007.jpg");
+    pixs = pixRead(DEMOPATH("1555.007.jpg"));
     pixg = pixConvertTo8(pixs, 0);
     bmf = bmfCreate(NULL, 8);
     pixad = pixaCreate(0);

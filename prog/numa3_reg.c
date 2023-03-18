@@ -40,6 +40,7 @@
 
 #include <math.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -75,7 +76,7 @@ L_REGPARAMS  *rp;
      *                             Rank extraction                        *
      * -------------------------------------------------------------------*/
         /* Rank extraction with interpolation */
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     nasy= pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     numaMakeRankFromHistogram(0.0, 1.0, nasy, 350, &nax, &nay);
     pix1 = gplotGeneralPix2(nax, nay, GPLOT_LINES, "/tmp/lept/numa1/rank1",
@@ -86,7 +87,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* Rank extraction, point by point */
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     nap = numaCreate(200);
     pixGetRankValueMasked(pixs, NULL, 0, 0, 2, 0.0, &val, &na);
     for (i = 0; i < 101; i++) {
@@ -114,7 +115,7 @@ L_REGPARAMS  *rp;
     /* -------------------------------------------------------------------*
      *                           Numa-morphology                          *
      * -------------------------------------------------------------------*/
-    na = numaRead("lyra.5.na");
+    na = numaRead(DEMOPATH("lyra.5.na"));
     pix1 = gplotGeneralPix1(na, GPLOT_LINES, "/tmp/lept/numa1/lyra1",
                             "Original", NULL, NULL);
     na1 = numaErode(na, 21);
@@ -156,7 +157,7 @@ L_REGPARAMS  *rp;
     /* -------------------------------------------------------------------*
      *                   Find threshold from numa                         *
      * -------------------------------------------------------------------*/
-    na1 = numaRead("two-peak-histo.na");
+    na1 = numaRead(DEMOPATH("two-peak-histo.na"));
     na4 = numaCreate(0);
     pixa = pixaCreate(0);
     for (hw = 2; hw < 21; hw += 2) {
@@ -185,7 +186,7 @@ L_REGPARAMS  *rp;
     numaDestroy(&na4);
     pixaDestroy(&pixa);
 
-    pixs = pixRead("lyra.005.jpg");
+    pixs = pixRead(DEMOPATH("lyra.005.jpg"));
     box1 = boxCreate(0, 173, 350, 580);
     pix1 = pixClipRectangle(pixs, box1, 0);
     pix2 = pixRotateOrth(pix1, 1);

@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -93,7 +94,7 @@ SARRAY       *sa;
 
     bmf = bmfCreate("./fonts", 6);
     bmftop = bmfCreate("./fonts", 10);
-    pixs = pixRead("lucasta.047.jpg");
+    pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
     pix1 = pixScale(pixs, 0.4, 0.4);          /* 8 bpp grayscale */
     pix2 = pixConvertTo32(pix1);              /* 32 bpp rgb */
     pix3 = pixThresholdOn8bpp(pix1, 12, 1);   /* 8 bpp cmapped */
@@ -137,7 +138,7 @@ SARRAY       *sa;
 
         /* Write multiple lines in different colors, filling up
          * the colormap and requesting even more colors. */
-    pixs = pixRead("weasel4.11c.png");
+    pixs = pixRead(DEMOPATH("weasel4.11c.png"));
     pix1 = pixConvertTo8(pixs, 0);
     pix2 = pixScale(pixs, 8.0, 8.0);
     pix3 = pixQuantFromCmap(pix2, pixGetColormap(pixs), 4, 5,

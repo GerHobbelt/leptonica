@@ -38,6 +38,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -67,7 +68,7 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Read page 7, normalize for varying background and binarize */
-    pixs = pixRead("1555.007.jpg");
+    pixs = pixRead(DEMOPATH("1555.007.jpg"));
     pixn = pixBackgroundNormSimple(pixs, NULL, NULL);
     pixg = pixConvertRGBToGray(pixn, 0.5, 0.3, 0.2);
     pixb = pixThresholdToBinary(pixg, 130);
@@ -120,7 +121,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixd);
 
         /* Read page 3, normalize background and binarize */
-    pixs2 = pixRead("1555.003.jpg");
+    pixs2 = pixRead(DEMOPATH("1555.003.jpg"));
     pixn2 = pixBackgroundNormSimple(pixs2, NULL, NULL);
     pixg2 = pixConvertRGBToGray(pixn2, 0.5, 0.3, 0.2);
     pixb2 = pixThresholdToBinary(pixg2, 130);

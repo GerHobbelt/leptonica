@@ -36,6 +36,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -61,7 +62,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("stampede2.jpg");
+    pixs = pixRead(DEMOPATH("stampede2.jpg"));
     pixa = pixaCreate(0);
 
     AddTestSet(pixa, pixs, L_SOBEL_EDGE, 18, 40, 40, 0.7, -25, 280, 128);

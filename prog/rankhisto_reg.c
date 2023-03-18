@@ -38,6 +38,7 @@
 
 #include <math.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -67,7 +68,7 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Find the rank bin colors */
-    pixs = pixRead("map1.jpg");
+    pixs = pixRead(DEMOPATH("map1.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
     factor = L_MAX(1, (l_int32)sqrt((l_float64)(w * h / 20000.0)));
     nbins = 10;

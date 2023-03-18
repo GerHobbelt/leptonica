@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -57,10 +58,10 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Use for input two different images */
-    pixs = pixRead("projectionstats.jpg");
+    pixs = pixRead(DEMOPATH("projectionstats.jpg"));
     pix1 = pixConvertTo8(pixs, 0);
     pixDestroy(&pixs);
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     pix2 = pixScaleToGray4(pixs);
     pixDestroy(&pixs);
 

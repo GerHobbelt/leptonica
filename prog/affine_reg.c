@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -93,7 +94,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pix = pixRead("feyn.tif");
+    pix = pixRead(DEMOPATH("feyn.tif"));
     pixs = pixScale(pix, 0.22, 0.22);
     pixDestroy(&pix);
 
@@ -163,7 +164,7 @@ L_REGPARAMS  *rp;
 #if ALL
         /* Test invertability of interpolation on grayscale */
     lept_stderr("Test invertability of grayscale interpolation\n");
-    pix = pixRead("feyn.tif");
+    pix = pixRead(DEMOPATH("feyn.tif"));
     pixg = pixScaleToGray3(pix);
     pixDestroy(&pix);
     pixa = pixaCreate(0);
@@ -200,7 +201,7 @@ L_REGPARAMS  *rp;
         /* Test invertability of interpolation on color */
     lept_stderr("Test invertability of color interpolation\n");
     pixa = pixaCreate(0);
-    pixc = pixRead("test24.jpg");
+    pixc = pixRead(DEMOPATH("test24.jpg"));
     pixcs = pixScale(pixc, 0.3, 0.3);
     for (i = 0; i < 3; i++) {
         pixb = pixAddBorder(pixcs, ADDED_BORDER_PIXELS / 4, 0xffffff00);
@@ -235,7 +236,7 @@ L_REGPARAMS  *rp;
 #if ALL
        /* Comparison between sequential and sampling */
     lept_stderr("Compare sequential with sampling\n");
-    pix = pixRead("feyn.tif");
+    pix = pixRead(DEMOPATH("feyn.tif"));
     pixs = pixScale(pix, 0.22, 0.22);
     pixDestroy(&pix);
 
@@ -276,7 +277,7 @@ L_REGPARAMS  *rp;
     lept_stderr("Test with large distortion\n");
     MakePtas(4, &ptas, &ptad);
     pixa = pixaCreate(0);
-    pix = pixRead("feyn.tif");
+    pix = pixRead(DEMOPATH("feyn.tif"));
     pixg = pixScaleToGray6(pix);
     pixDestroy(&pix);
 
@@ -317,7 +318,7 @@ L_REGPARAMS  *rp;
         /* Set up pix and boxa */
     lept_stderr("Test affine transforms and inverses on pix and boxa\n");
     pixa = pixaCreate(0);
-    pix = pixRead("lucasta.1.300.tif");
+    pix = pixRead(DEMOPATH("lucasta.1.300.tif"));
     pixTranslate(pix, pix, 70, 0, L_BRING_IN_WHITE);
     pix1 = pixCloseBrick(NULL, pix, 14, 5);
     pixOpenBrick(pix1, pix1, 1, 2);

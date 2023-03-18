@@ -40,6 +40,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -67,7 +68,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pix = pixRead("feyn.tif");
+    pix = pixRead(DEMOPATH("feyn.tif"));
     box = boxCreate(383, 338, 1480, 1050);
     pixs = pixClipRectangle(pix, box, NULL);
     regTestWritePixAndCheck(rp, pixs, IFF_PNG);  /* 0 */

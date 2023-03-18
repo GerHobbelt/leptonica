@@ -43,6 +43,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -86,7 +87,7 @@ L_REGPARAMS  *rp;
 
 #if 1
         /* Test the generic page segmentation */
-    pixs = pixRead("pageseg1.tif");
+    pixs = pixRead(DEMOPATH("pageseg1.tif"));
     pixadb = pixaCreate(0);
     pixGetRegionsBinary(pixs, &pixhm, &pixtm, &pixtb, pixadb);
     pixDestroy(&pixhm);
@@ -156,7 +157,7 @@ L_REGPARAMS  *rp;
     boxaDestroy(&boxa);
 
         /* Test the table finder */
-    pix1 = pixRead("table.15.tif");
+    pix1 = pixRead(DEMOPATH("table.15.tif"));
     pixadb = pixaCreate(0);
     pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
@@ -168,7 +169,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
 
-    pix1 = pixRead("table.27.tif");
+    pix1 = pixRead(DEMOPATH("table.27.tif"));
     pixadb = pixaCreate(0);
     pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
@@ -180,7 +181,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
 
-    pix1 = pixRead("table.150.png");
+    pix1 = pixRead(DEMOPATH("table.150.png"));
     pixadb = pixaCreate(0);
     pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
@@ -192,7 +193,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
 
-    pix1 = pixRead("toc.99.tif");  /* not a table */
+    pix1 = pixRead(DEMOPATH("toc.99.tif"));  /* not a table */
     pixadb = pixaCreate(0);
     pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
@@ -206,7 +207,7 @@ L_REGPARAMS  *rp;
 #endif
 
         /* Tests of auto-inversion of text */
-    pix1 = pixRead("zanotti-78.jpg");
+    pix1 = pixRead(DEMOPATH("zanotti-78.jpg"));
     pix2 = pixConvertRGBToLuminance(pix1);
     pixadb = pixaCreate(0);
     pixaAddPix(pixadb, pix2, L_COPY);
@@ -228,7 +229,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix4);
     pixDestroy(&pix5);
 
-    pix1 = pixRead("invertedtext.tif");
+    pix1 = pixRead(DEMOPATH("invertedtext.tif"));
     pixadb = pixaCreate(0);
     pixaAddPix(pixadb, pix1, L_COPY);
     pix2 = pixAutoPhotoinvert(pix1, 128, &pix3, pixadb);

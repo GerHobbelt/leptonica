@@ -41,6 +41,7 @@
 
 #include "string.h"
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -179,7 +180,7 @@ SARRAY   *sa;
     /* ----------------------------------------------------------- */
 
     recog1 = recogMakeBootDigitRecog(0, 40, 0, 1, 0);
-    pix1 = pixRead("test-87220.59.png");
+    pix1 = pixRead(DEMOPATH("test-87220.59.png"));
     recogIdentifyMultiple(recog1, pix1, 0, 1, &boxa1, NULL, NULL, 0);
     sa = recogExtractNumbers(recog1, boxa1, 0.75, -1, &baa, &naa);
     pixa1 = showExtractNumbers(pix1, sa, baa, naa, &pix3);

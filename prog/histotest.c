@@ -47,6 +47,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -113,11 +114,11 @@ PIXA    *pixa1;
 
         /* Test behavior of pixThresholdByHisto() */
 #if 0  /* for valgrind, use pnm instead of jpg */
-    pix1 = pixRead("lyra.005.jpg");
+    pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
     pixWrite("/tmp/lyra.005.pnm", pix1, IFF_PNM);
 #endif
 /*    pix1 = pixRead("/tmp/lyra.005.pnm"); */
-    pixs = pixRead("lyra.005.jpg");
+    pixs = pixRead(DEMOPATH("lyra.005.jpg"));
     box1 = boxCreate(0, 173, 350, 580);
     pix1 = pixClipRectangle(pixs, box1, 0);
     pix2 = pixRotateOrth(pix1, 1);

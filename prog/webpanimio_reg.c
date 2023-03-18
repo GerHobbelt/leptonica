@@ -45,6 +45,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -88,7 +89,7 @@ L_REGPARAMS  *rp;
 
     niters = 5;
     duration = 250;   /* ms */
-    pix1 = pixRead("marge.jpg");
+    pix1 = pixRead(DEMOPATH("marge.jpg"));
     pix2 = pixRotate180(NULL, pix1);
     pixa = pixaCreate(6);
     pixaAddPix(pixa, pix1, L_COPY);

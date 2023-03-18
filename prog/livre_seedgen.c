@@ -33,6 +33,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -50,7 +51,7 @@ PIX     *pixs, *pix1, *pix2, *pix3;
 PIXA    *pixa;
 
     setLeptDebugOK(1);
-    pixs = pixRead("pageseg2.tif");
+    pixs = pixRead(DEMOPATH("pageseg2.tif"));
 
     startTimer();
     for (i = 0; i < 100; i++) {

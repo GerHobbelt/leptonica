@@ -38,6 +38,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -69,7 +70,7 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Generate arrays of word widths and heights */
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     pix1 = pixReduceRankBinaryCascade(pixs, 1, 0, 0, 0);
     pixGetWordBoxesInTextlines(pix1, 6, 6, 500, 50, &boxa1, &naindex);
     n = boxaGetCount(boxa1);
@@ -121,7 +122,7 @@ L_REGPARAMS  *rp;
     numaDestroy(&na2);
 
         /* Test pixRankBinByStrip */
-    pix1 = pixRead("pancrazi.15.jpg");
+    pix1 = pixRead(DEMOPATH("pancrazi.15.jpg"));
     pixa = pixaCreate(3);
     pix2 = pixRankBinByStrip(pix1, L_SCAN_HORIZONTAL, 16, 10, L_SELECT_HUE);
     pix3 = pixExpandReplicate(pix2, 20);
@@ -144,7 +145,7 @@ L_REGPARAMS  *rp;
     pixaDestroy(&pixa);
 
         /* Test numaGetRankBinValues() and numaDiscretize functions */
-    boxa1 = boxaRead("boxa4.ba");
+    boxa1 = boxaRead(DEMOPATH("boxa4.ba"));
     boxaSplitEvenOdd(boxa1, 0, &boxa2, &boxa3);
     boxaGetSizes(boxa2, &na1, NULL);  /* 26 elements */
     numaWriteMem(&data, &nbytes, na1);
@@ -181,7 +182,7 @@ L_REGPARAMS  *rp;
     numaDestroy(&na4);
 
     pixa = pixaCreate(4);
-    pix1 = pixRead("karen8.jpg");
+    pix1 = pixRead(DEMOPATH("karen8.jpg"));
     na1 = pixGetGrayHistogram(pix1, 1);
     numaDiscretizeHistoInBins(na1, 1000, &na2, &na3);
     pix2 = gplotSimplePix1(na3, "rank vs gray");
@@ -195,7 +196,7 @@ L_REGPARAMS  *rp;
     numaDestroy(&na2);
     numaDestroy(&na3);
 
-    pix1 = pixRead("wyom.jpg");
+    pix1 = pixRead(DEMOPATH("wyom.jpg"));
     pixGetRankColorArray(pix1, 20, L_SELECT_RED, 5,
                          &carray, NULL, 0);
     pix2 = pixDisplayColorArray(carray, 20, 200, 5, 6);

@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -139,7 +140,7 @@ L_REGPARAMS  *rp;
     pixaDestroy(&pixa1);
 
         /* Calculate projection profiles from text lines */
-    pixs = pixRead("1555.007.jpg");
+    pixs = pixRead(DEMOPATH("1555.007.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
     na1 = pixReversalProfile(pixs, 0.98, L_HORIZONTAL_LINE,
                                   0, h - 1, 40, 3, 3);
@@ -164,7 +165,7 @@ L_REGPARAMS  *rp;
     pixaDestroy(&pixa1);
 
         /* Test rectangle clipping with border */
-    pix1 = pixRead("lyra.005.jpg");
+    pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
     pix2 = pixScale(pix1, 0.5, 0.5);
     box1 = boxCreate(125, 50, 180, 230);  /* fully contained */
     pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);

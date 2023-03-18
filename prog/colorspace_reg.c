@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -88,7 +89,7 @@ L_REGPARAMS  *rp;
     pixaDestroy(&pixat);
 
         /* Colorspace conversion in rgb */
-    pixs = pixRead("wyom.jpg");
+    pixs = pixRead(DEMOPATH("wyom.jpg"));
     pixaAddPix(pixa, pixs, L_INSERT);
     pix3 = pixConvertRGBToHSV(NULL, pixs);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 1 */

@@ -50,6 +50,7 @@
 
 #include "string.h"
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -82,7 +83,7 @@ PIXA       *pixa1, *pixa2;
 
     if (select == 0) {
             /* Extract the basic grid from the sudoku image */
-        pixs = pixRead("warped_sudoku.jpg");
+        pixs = pixRead(DEMOPATH("warped_sudoku.jpg"));
         pixGetDimensions(pixs, &w, &h, NULL);
         pix1 = pixConvertTo1(pixs, 220);
         boxa1 = pixConnComp(pix1, &pixa1, 8);
@@ -93,7 +94,7 @@ PIXA       *pixa1, *pixa2;
         pixDisplay(pix2, 100, 100);
     } else {  /* select == 1 */
             /* Extract the grid from the graph paper image */
-        pixs = pixRead("warped_paper.jpg");
+        pixs = pixRead(DEMOPATH("warped_paper.jpg"));
         pixDisplay(pixs, 1500, 1000);
         pix3 = pixConvertTo8(pixs, 0);
         pix4 = pixBackgroundNormSimple(pix3, NULL, NULL);

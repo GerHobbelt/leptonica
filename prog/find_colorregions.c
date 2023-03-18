@@ -47,6 +47,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -72,8 +73,8 @@ PIXA      *pixadb;
 
     setLeptDebugOK(1);
     lept_mkdir("lept/color");
-    pix1 = pixRead("colorpage.030.jpg");
-/*    pix1 = pixRead("map.057.jpg"); */
+    pix1 = pixRead(DEMOPATH("colorpage.030.jpg"));
+/*    pix1 = pixRead(DEMOPATH("map.057.jpg")); */
 
         /* More general method */
     pixadb = pixaCreate(0);

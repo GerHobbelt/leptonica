@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -69,7 +70,7 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Set up images */
-    pix1 = pixRead("weasel2.4c.png");
+    pix1 = pixRead(DEMOPATH("weasel2.4c.png"));
     pix2 = pixScaleBySampling(pix1, 3.0, 3.0);
     box = boxCreate(0, 0, 209, 214);
     pixs = pixClipRectangle(pix2, box, NULL);

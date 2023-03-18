@@ -41,6 +41,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -63,7 +64,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("test24.jpg");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
     DoTestsOnImage(pixs, rp);  /* 0 - 7 */
     pixDestroy(&pixs);
 

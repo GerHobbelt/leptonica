@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -71,7 +72,7 @@ L_REGPARAMS  *rp;
 
         /*  Normalize for rapidly varying background */
     pixa1 = pixaCreate(0);
-    pixs = pixRead("w91frag.jpg");
+    pixs = pixRead(DEMOPATH("w91frag.jpg"));
     pixaAddPix(pixa1, pixs, L_INSERT);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 0 */
     pix1 = pixBackgroundNormFlex(pixs, 7, 7, 1, 1, 10);

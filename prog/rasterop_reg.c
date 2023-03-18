@@ -39,6 +39,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -61,7 +62,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pix0 = pixRead("feyn-fract.tif");
+    pix0 = pixRead(DEMOPATH("feyn-fract.tif"));
     box = boxCreate(293, 37, pixGetWidth(pix0) - 691, pixGetHeight(pix0) -145);
     pixs = pixClipRectangle(pix0, box, NULL);
     boxDestroy(&box);

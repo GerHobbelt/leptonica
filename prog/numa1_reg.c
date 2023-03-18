@@ -39,6 +39,7 @@
 
 #include <math.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -162,7 +163,7 @@ L_REGPARAMS  *rp;
      *                            Interpolation                           *
      * -------------------------------------------------------------------*/
         /* Test numaInterpolateEqxInterval() */
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     na = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     nasy = numaGetPartialSums(na);
     pix1 = gplotGeneralPix1(nasy, GPLOT_LINES, "/tmp/lept/numa1/int1",
@@ -180,7 +181,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* Test numaInterpolateArbxInterval() */
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     na = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     nasy = numaGetPartialSums(na);
     numaInsertNumber(nasy, 0, 0.0);
@@ -197,7 +198,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* Test numaInterpolateArbxVal() */
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     na = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     nasy = numaGetPartialSums(na);
     numaInsertNumber(nasy, 0, 0.0);
@@ -220,8 +221,8 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* Test interpolation */
-    nasx = numaRead("testangle.na");
-    nasy = numaRead("testscore.na");
+    nasx = numaRead(DEMOPATH("testangle.na"));
+    nasy = numaRead(DEMOPATH("testscore.na"));
     gplot = gplotCreate("/tmp/lept/numa1/int6", GPLOT_PNG, "arbx interpolation",
                         "angle", "score");
     numaInterpolateArbxInterval(nasx, nasy, L_LINEAR_INTERP,
@@ -275,8 +276,8 @@ L_REGPARAMS  *rp;
      *                   Integration and differentiation                  *
      * -------------------------------------------------------------------*/
         /* Test integration and differentiation */
-    nasx = numaRead("testangle.na");
-    nasy = numaRead("testscore.na");
+    nasx = numaRead(DEMOPATH("testangle.na"));
+    nasy = numaRead(DEMOPATH("testscore.na"));
         /* ---------- Plot the derivative ---------- */
     numaDifferentiateInterval(nasx, nasy, -2.0, 0.0, 50, &nadx, &nady);
     pix1 = gplotGeneralPix2(nadx, nady, GPLOT_LINES, "/tmp/lept/numa1/diff1",

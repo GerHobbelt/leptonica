@@ -40,6 +40,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -66,7 +67,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("keystone.png");
+    pixs = pixRead(DEMOPATH("keystone.png"));
 
         /* Test function for deskewing using projective transform
 	 * on linear approximation for local skew angle */
@@ -113,7 +114,7 @@ L_REGPARAMS  *rp;
 
         /* Another test for baselines, with dark image */
     pixadb = pixaCreate(6);
-    pixs = pixRead("pedante.079.jpg");  /* 75 ppi */
+    pixs = pixRead(DEMOPATH("pedante.079.jpg"));  /* 75 ppi */
     pix1 = pixRemoveBorder(pixs, 30);
     pixaAddPix(pixadb, pix1, L_COPY);
     pix2 = pixConvertRGBToGray(pix1, 0.33, 0.34, 0.33);

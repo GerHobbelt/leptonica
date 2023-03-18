@@ -36,6 +36,7 @@
 
 #include <math.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -96,7 +97,7 @@ L_REGPARAMS  *rp;
     numaDestroy(&na2);
 
     /* ----------------- Test boxa operations -------------------- */
-    pix1 = pixRead("feyn.tif");
+    pix1 = pixRead(DEMOPATH("feyn.tif"));
     box = boxCreate(1138, 1666, 1070, 380);
     pix2 = pixClipRectangle(pix1, box, NULL);
     boxDestroy(&box);
@@ -118,7 +119,7 @@ L_REGPARAMS  *rp;
     boxaDestroy(&boxa2);
 
     /* ----------------- Test pixa operations -------------------- */
-    pix1 = pixRead("feyn.tif");
+    pix1 = pixRead(DEMOPATH("feyn.tif"));
     box = boxCreate(1138, 1666, 1070, 380);
     pix2 = pixClipRectangle(pix1, box, NULL);
     boxDestroy(&box);

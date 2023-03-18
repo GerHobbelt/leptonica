@@ -36,6 +36,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -186,7 +187,7 @@ L_REGPARAMS  *rp;
          * We do it for area fraction, but any combination of         *
          * size, area/perimeter ratio and area fraction can be used.  *
          * Reg indices 28-85                                          */
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     pix1 = pixCopy(NULL, pixs);  /* subtract bands from this */
     pix2 = pixCreateTemplate(pixs);  /* add bands to this */
     pixGetDimensions(pixs, &w, &h, NULL);
@@ -264,7 +265,7 @@ L_REGPARAMS  *rp;
         /* One last extraction.  Get all components that have either
          * a height of at least 50 or a width of between 30 and 35,
          * and also have a relatively large perimeter/area ratio. */
-    pixs = pixRead("feyn.tif");
+    pixs = pixRead(DEMOPATH("feyn.tif"));
     boxa1 = pixConnComp(pixs, &pixa1, 8);
     n = boxaGetCount(boxa1);
     pixaFindDimensions(pixa1, &naw, &nah);

@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -58,7 +59,7 @@ PIX     *pixs, *pixt, *pixb1, *pixb2;
     setLeptDebugOK(1);
     lept_mkdir("lept/comp");
 
-    pixs = pixRead("lucasta.047.jpg");
+    pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
     pixb1 = pixConvertTo1(pixs, 128);
     pixGetWordBoxesInTextlines(pixb1, 10, 10, 500, 50, &boxa1, &nai1);
     pixt = pixDrawBoxaRandom(pixs, boxa1, 2);

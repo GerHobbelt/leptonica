@@ -52,6 +52,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #ifdef _WIN32
 #include <windows.h>   /* for CreateDirectory() */

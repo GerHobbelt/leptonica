@@ -39,6 +39,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 #include "autogen.137.h"    /* this must be included */
 
 #include "monolithic_examples.h"

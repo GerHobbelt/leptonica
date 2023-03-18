@@ -90,6 +90,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "mupdf/fitz.h"
 #include "tessocr.h"

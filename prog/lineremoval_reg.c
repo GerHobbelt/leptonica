@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -57,7 +58,7 @@ L_REGPARAMS  *rp;
         return 1;
 
     deg2rad = 3.14159 / 180.;
-    pixs = pixRead("dave-orig.png");
+    pixs = pixRead(DEMOPATH("dave-orig.png"));
     pixa = pixaCreate(0);
 
         /* Threshold to binary, extracting much of the lines */

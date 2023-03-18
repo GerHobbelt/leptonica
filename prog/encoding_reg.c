@@ -38,6 +38,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -101,7 +102,7 @@ L_REGPARAMS  *rp;
 
         /* Test storing and retrieving compressed text from pix */
     bina = l_binaryRead("weasel32.png", &nbytes1);
-    pix1 = pixRead("rabi.png");
+    pix1 = pixRead(DEMOPATH("rabi.png"));
     pixSetTextCompNew(pix1, bina, nbytes1);
     bina2 = pixGetTextCompNew(pix1, &nbytes2);
     if (rp->display)

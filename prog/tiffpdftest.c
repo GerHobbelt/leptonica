@@ -40,6 +40,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -68,8 +69,8 @@ PIXA      *pixa1, *pixa2, *pixa3;
     lept_mkdir("lept/tiffpdf");
 
         /* Wrap min-is-white and min-is-black */
-    pix1 = pixRead("miniswhite.tif");
-    pix2 = pixRead("minisblack.tif");
+    pix1 = pixRead(DEMOPATH("miniswhite.tif"));
+    pix2 = pixRead(DEMOPATH("minisblack.tif"));
     pixCompareBinary(pix1, pix2, L_COMPARE_XOR, &fract, NULL);
     lept_stderr("Compare input: %5.3f percent different\n", fract);
     pixa1 = pixaCreate(2);

@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -111,7 +112,7 @@ L_REGPARAMS  *rp;
     l_colorfillDestroy(&cf);
 
         /* Test on an image with lots of color (with 1 tile and 9 tiles) */
-    pix1 = pixRead("lyra.005.jpg");
+    pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
     pix2 = pixScale(pix1, 0.5, 0.5);
     pixDestroy(&pix1);
     cf = l_colorfillCreate(pix2, 1, 1);  /* 1 tile */

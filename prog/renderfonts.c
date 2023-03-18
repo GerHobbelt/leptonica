@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -62,7 +63,7 @@ PIX     *pixs, *pix;
 
         /* Render a character of text */
     bmf = bmfCreate(DIRECTORY, 20);
-    pixs = pixRead("dreyfus8.png");
+    pixs = pixRead(DEMOPATH("dreyfus8.png"));
     lept_stderr("n = %d\n", pixaGetCount(bmf->pixa));
     pix = pixaGetPix(bmf->pixa, 6, L_CLONE);
     pixSetMaskedGeneral(pixs, pix, 0x45, 140, 165);
@@ -74,7 +75,7 @@ PIX     *pixs, *pix;
 
         /* Render a line of text */
     bmf = bmfCreate(DIRECTORY, 8);
-    pixs = pixRead("marge.jpg");
+    pixs = pixRead(DEMOPATH("marge.jpg"));
     bmfGetStringWidth(bmf, "This is a funny cat!", &width);
     lept_stderr("String width: %d pixels\n", width);
 
@@ -90,7 +91,7 @@ PIX     *pixs, *pix;
 
         /* Render a block of text */
     bmf = bmfCreate(DIRECTORY, 10);
-    pixs = pixRead("marge.jpg");
+    pixs = pixRead(DEMOPATH("marge.jpg"));
     textstr = stringNew("This is a cat! This is a funny cat! "
                         "This is a funny funny cat! This is a "
                         "funny funny funny cat!");

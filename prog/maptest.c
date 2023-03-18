@@ -46,6 +46,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -81,7 +82,7 @@ RB_TYPE   *pval;
     setLeptDebugOK(1);
     lept_mkdir("lept/map");
 
-    pix = pixRead("weasel8.240c.png");
+    pix = pixRead(DEMOPATH("weasel8.240c.png"));
     pixGetDimensions(pix, &w, &h, NULL);
     lept_stderr("Image area in pixels: %d\n", w * h);
     cmap = pixGetColormap(pix);
@@ -146,7 +147,7 @@ RB_TYPE   *pval;
     pixDestroy(&pix);
 
         /* Build and display a real RGB histogram */
-    pix = pixRead("wyom.jpg");
+    pix = pixRead(DEMOPATH("wyom.jpg"));
     m = pixGetColorAmapHistogram(pix, 1);
     DisplayMapRGBHistogram(m, "/tmp/lept/map/map4");
     pixNumColors(pix, 1, &ncolors);

@@ -34,6 +34,7 @@
 
 #include "string.h"
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -72,7 +73,7 @@ SARRAY   *sa1;
     pixaDestroy(&pixat);
 
         /* Read the data from all samples */
-    pix1 = pixRead("recog/sets/samples06.png");
+    pix1 = pixRead(DEMOPATH("recog/sets/samples06.png"));
     boxatxt = pixGetText(pix1);
     lept_stderr("%s\n", boxatxt);
     boxa1 = boxaReadMem((l_uint8 *)boxatxt, strlen(boxatxt));

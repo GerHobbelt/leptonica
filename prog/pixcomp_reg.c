@@ -39,6 +39,7 @@
 
 #include <math.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 #include "pix_internal.h"
 
 #include "monolithic_examples.h"
@@ -79,7 +80,7 @@ SARRAY       *sa;
     pixa = pixaCreate(0);
 
         /* --- Read in the images --- */
-    pix1 = pixRead("marge.jpg");
+    pix1 = pixRead(DEMOPATH("marge.jpg"));
     pixc1 = pixcompCreateFromPix(pix1, IFF_JFIF_JPEG);
     pix2 = pixCreateFromPixcomp(pixc1);
     pixc2 = pixcompCreateFromPix(pix2, IFF_JFIF_JPEG);
@@ -92,7 +93,7 @@ SARRAY       *sa;
     pixcompDestroy(&pixc1);
     pixcompDestroy(&pixc2);
 
-    pix = pixRead("feyn.tif");
+    pix = pixRead(DEMOPATH("feyn.tif"));
     pix1 = pixScaleToGray6(pix);
     pixc1 = pixcompCreateFromPix(pix1, IFF_JFIF_JPEG);
     pix2 = pixCreateFromPixcomp(pixc1);
@@ -122,7 +123,7 @@ SARRAY       *sa;
     pixcompDestroy(&pixc1);
     pixcompDestroy(&pixc2);
 
-    pix1 = pixRead("weasel4.11c.png");
+    pix1 = pixRead(DEMOPATH("weasel4.11c.png"));
     pixc1 = pixcompCreateFromPix(pix1, IFF_PNG);
     pix2 = pixCreateFromPixcomp(pixc1);
     pixc2 = pixcompCreateFromPix(pix2, IFF_PNG);
@@ -201,8 +202,8 @@ SARRAY       *sa;
 
         /* Test pdf generation (both with and without transcoding */
     pixacompDestroy(&pixac);
-    pix1 = pixRead("test24.jpg");
-    pix2 = pixRead("marge.jpg");
+    pix1 = pixRead(DEMOPATH("test24.jpg"));
+    pix2 = pixRead(DEMOPATH("marge.jpg"));
     pixac = pixacompCreate(2);
     pixacompAddPix(pixac, pix1, IFF_JFIF_JPEG);
     pixacompAddPix(pixac, pix2, IFF_JFIF_JPEG);

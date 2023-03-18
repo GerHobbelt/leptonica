@@ -44,6 +44,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -67,7 +68,7 @@ PIX        *pixs, *pixn, *pixg, *pixb, *pixd;
         return ERROR_INT("Syntax: dewarptest2 method [image pageno]",
                          __func__, 1);
     if (argc == 2) {
-        pixs = pixRead("cat.035.jpg");
+        pixs = pixRead(DEMOPATH("cat.035.jpg"));
         pageno = 35;
     }
     else {

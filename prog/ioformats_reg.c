@@ -64,6 +64,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -294,7 +295,7 @@ L_REGPARAMS  *rp;
 
         /* Test writing and reading 1 bpp tiff with colormap */
     lept_stderr("Tiff read/write 1 bpp with cmap\n");
-    pix1 = pixRead("feyn-fract2.tif");
+    pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
     cmap = pixcmapCreate(1);
     pixcmapAddColor(cmap, 0, 0, 0);  /* inverted b/w */
     pixcmapAddColor(cmap, 255, 255, 255);
@@ -371,7 +372,7 @@ L_REGPARAMS  *rp;
 
         /* Test reading 32 bit rgb with approx half-sized tiff buffer */
     lept_stderr("Tiff read/write rgb with half-sized tiff buffer\n");
-    pix1 = pixRead("testbuffer.tif");
+    pix1 = pixRead(DEMOPATH("testbuffer.tif"));
     pixWrite("/tmp/lept/regout/testbuffer.tif", pix1, IFF_TIFF_ZIP);
     readHeaderTiff("/tmp/lept/regout/testbuffer.tif", 0, &w, &h, &bps, &spp,
                    &res, &iscmap, NULL);
@@ -503,7 +504,7 @@ L_REGPARAMS  *rp;
     /* ------------ Part 5: Test multipage tiff r/w to memory ------------ */
 
         /* Make a multipage tiff file, and read it back into memory */
-    pix = pixRead("feyn.tif");
+    pix = pixRead(DEMOPATH("feyn.tif"));
     pixa = pixaSplitPix(pix, 3, 3, 0, 0);
     for (i = 0; i < 9; i++) {
         if ((pixt = pixaGetPix(pixa, i, L_CLONE)) == NULL)
@@ -562,7 +563,7 @@ part6:
 
         /* Generate a 24 bpp (not 32 bpp !!) rgb pix and write it out */
     success = TRUE;
-    if ((pix = pixRead("marge.jpg")) == NULL)
+    if ((pix = pixRead(DEMOPATH("marge.jpg"))) == NULL)
         success = FALSE;
     pixt = make_24_bpp_pix(pix);
     pixWrite("/tmp/lept/regout/junk24.png", pixt, IFF_PNG);
@@ -599,14 +600,14 @@ part6:
 
     /* ------------- Part 7: Miscellaneous additional tests ------------ */
         /* Test writing and reading alpha */
-    pix1 = pixRead("test32-alpha.png");
+    pix1 = pixRead(DEMOPATH("test32-alpha.png"));
     lept_stderr("Test write/read of BMP with alpha\n");
     if (test_writemem(pix1, IFF_BMP, NULL)) success = FALSE;
     lept_stderr("Test write/read of PNG with alpha\n");
     if (test_writemem(pix1, IFF_PNG, NULL)) success = FALSE;
     pixDestroy(&pix1);
 
-    pix1 = pixRead("test-rgba.bmp");
+    pix1 = pixRead(DEMOPATH("test-rgba.bmp"));
     pixWrite("/tmp/lept/regout/alpha1.bmp", pix1, IFF_BMP);
     pixWrite("/tmp/lept/regout/alpha1.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/alpha1.bmp");

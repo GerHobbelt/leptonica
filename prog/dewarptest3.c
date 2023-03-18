@@ -41,6 +41,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -64,8 +65,8 @@ PTAA       *ptaa1, *ptaa2;
     setLeptDebugOK(1);
     lept_mkdir("lept");
 
-    pixs = pixRead("cat.035.jpg");
-/*    pixs = pixRead("zanotti-78.jpg"); */
+    pixs = pixRead(DEMOPATH("cat.035.jpg"));
+/*    pixs = pixRead(DEMOPATH("zanotti-78.jpg")); */
 
         /* Normalize for varying background and binarize */
     pixn = pixBackgroundNormSimple(pixs, NULL, NULL);

@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -69,7 +70,7 @@ L_REGPARAMS  *rp;
     lept_mkdir("lept/boxa");
 
         /* Input is a fairly clean boxa */
-    boxa1 = boxaRead("boxa1.ba");
+    boxa1 = boxaRead(DEMOPATH("boxa1.ba"));
     boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, 0);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
@@ -84,7 +85,7 @@ L_REGPARAMS  *rp;
     boxaDestroy(&boxa3);
 
         /* Input is an unsmoothed and noisy boxa */
-    boxa1 = boxaRead("boxa2.ba");
+    boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
     boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, 0);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
@@ -99,7 +100,7 @@ L_REGPARAMS  *rp;
     boxaDestroy(&boxa3);
 
         /* Input is an unsmoothed and noisy boxa */
-    boxa1 = boxaRead("boxa2.ba");
+    boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
     boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_LOC_DIFF, 80, 20, 1);
     boxa3 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_SIZE_DIFF, 80, 20, 1);
     boxaPlotSides(boxa1, "initial", NULL, NULL, NULL, NULL, &pix1);
@@ -119,7 +120,7 @@ L_REGPARAMS  *rp;
     boxaDestroy(&boxa3);
 
         /* Reconcile all sides by median */
-    boxa1 = boxaRead("boxa5.ba");
+    boxa1 = boxaRead(DEMOPATH("boxa5.ba"));
     pixa1 = pixaCreate(0);
     boxa2 = boxaReconcileAllByMedian(boxa1, L_ADJUST_LEFT_AND_RIGHT,
                                      L_ADJUST_TOP_AND_BOT, 50, 0, pixa1);
@@ -149,7 +150,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix1);
 
         /* Split even/odd and reconcile all sides by median */
-    boxa1 = boxaRead("boxa5.ba");
+    boxa1 = boxaRead(DEMOPATH("boxa5.ba"));
     pixa1 = pixaCreate(0);
     boxaSplitEvenOdd(boxa1, 0, &boxa1e, &boxa1o);
     boxa2e = boxaReconcileSidesByMedian(boxa1e, L_ADJUST_TOP_AND_BOT, 50,
@@ -180,7 +181,7 @@ L_REGPARAMS  *rp;
     boxaDestroy(&boxa3o);
 
         /* Input is a boxa smoothed with a median window filter */
-    boxa1 = boxaRead("boxa3.ba");
+    boxa1 = boxaRead(DEMOPATH("boxa3.ba"));
     boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MIN, 20, 0, 1);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);

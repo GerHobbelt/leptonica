@@ -35,6 +35,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -74,7 +75,7 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Test pixBlockconvGray() on 8 bpp */
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     pixacc = pixBlockconvAccum(pixs);
     pixd = pixBlockconvGray(pixs, pixacc, 3, 5);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 0 */
@@ -90,7 +91,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* Test pixBlockrank() on 1 bpp */
-    pixs = pixRead("test1.png");
+    pixs = pixRead(DEMOPATH("test1.png"));
     pixacc = pixBlockconvAccum(pixs);
     for (i = 0; i < 3; i++) {
         pixd = pixBlockrank(pixs, pixacc, 4, 4, 0.25 + 0.25 * i);
@@ -108,7 +109,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* Test pixCensusTransform() */
-    pixs = pixRead("test24.jpg");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
     pixg = pixScaleRGBToGrayFast(pixs, 2, COLOR_GREEN);
     pixd = pixCensusTransform(pixg, 10, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 6 */
@@ -147,7 +148,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixd);
 
         /* Test bias convolution non-separable with kel2 */
-    pixs = pixRead("marge.jpg");
+    pixs = pixRead(DEMOPATH("marge.jpg"));
     pixg = pixScaleRGBToGrayFast(pixs, 2, COLOR_GREEN);
     kel2 = kernelCreateFromString(5, 5, 2, 2, kel2str);
     pixd = pixConvolveWithBias(pixg, kel2, NULL, TRUE, &bias);
@@ -171,7 +172,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixg);
 
         /* Test pixWindowedMean() and pixWindowedMeanSquare() on 8 bpp */
-    pixs = pixRead("feyn-fract2.tif");
+    pixs = pixRead(DEMOPATH("feyn-fract2.tif"));
     pixg = pixConvertTo8(pixs, 0);
     sizex = 5;
     sizey = 20;

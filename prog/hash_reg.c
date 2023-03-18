@@ -42,6 +42,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 #include "array_internal.h"
 
 #include "monolithic_examples.h"
@@ -300,7 +301,7 @@ L_REGPARAMS  *rp;
     l_dnaDestroy(&da5);
 
         /* Test pixel counting operations with hashmap and ordered map */
-    pix1 = pixRead("wet-day.jpg");
+    pix1 = pixRead(DEMOPATH("wet-day.jpg"));
     pixCountRGBColorsByHash(pix1, &c1);
     pixCountRGBColors(pix1, 1, &c2);
     regTestCompareValues(rp, 42427, c1, 0);  /* 26 */

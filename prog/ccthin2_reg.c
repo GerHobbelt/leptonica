@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -67,7 +68,7 @@ SELA         *sela;
 
         /* Clip to foreground to see if there are any boundary
          * artifacts from thinning and thickening.  (There are not.) */
-    pix1 = pixRead("feyn.tif");
+    pix1 = pixRead(DEMOPATH("feyn.tif"));
     box = boxCreate(683, 799, 970, 479);
     pix2 = pixClipRectangle(pix1, box, NULL);
     pixClipToForeground(pix2, &pixs, NULL);

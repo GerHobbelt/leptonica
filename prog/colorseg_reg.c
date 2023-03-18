@@ -48,6 +48,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -73,7 +74,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead("tetons.jpg");
+    pixs = pixRead(DEMOPATH("tetons.jpg"));
     for (k = 0; k < 3; k++) {
         maxcolors = MaxColors[k];
         finalcolors = FinalColors[k];
@@ -96,7 +97,7 @@ L_REGPARAMS  *rp;
     }
     pixDestroy(&pixs);
 
-    pixs = pixRead("wyom.jpg");
+    pixs = pixRead(DEMOPATH("wyom.jpg"));
     pix1 = pixColorSegment(pixs, 50, 6, 6, 6, 0);
     cmap = pixGetColormap(pix1);
     nc = pixcmapGetCount(cmap);

@@ -37,6 +37,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -65,7 +66,7 @@ L_REGPARAMS  *rp;
         return 1;
 
     lept_mkdir("lept/ital");
-    pixs = pixRead("italic.png");
+    pixs = pixRead(DEMOPATH("italic.png"));
 
         /* Basic functionality with debug flag */
     pixItalicWords(pixs, NULL, NULL, &boxa1, 1);

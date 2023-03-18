@@ -34,6 +34,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -145,7 +146,7 @@ L_REGPARAMS  *rp;
 
         /* Test convolution with kel1 */
     pixa = pixaCreate(0);
-    pixs = pixRead("test24.jpg");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
     pixg = pixScaleRGBToGrayFast(pixs, 3, COLOR_GREEN);
     pixaAddPix(pixa, pixg, L_INSERT);
     kel1 = kernelCreateFromString(5, 5, 2, 2, kdatastr);
@@ -160,7 +161,7 @@ L_REGPARAMS  *rp;
         /* Test convolution with flat rectangular kel; also test
          * block convolution with tiling. */
     pixa = pixaCreate(0);
-    pixs = pixRead("test24.jpg");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
     pixg = pixScaleRGBToGrayFast(pixs, 3, COLOR_GREEN);
     kel2 = makeFlatKernel(11, 11, 5, 5);
     pixd = pixConvolve(pixg, kel2, 8, 1);
@@ -209,7 +210,7 @@ L_REGPARAMS  *rp;
          * the pixConvolve() and pixBlockconv().  For what it's worth,
          * pixConvolve() gives the more accurate result; namely, 255 for
          * pixels at the edge. */
-    pix = pixRead("pageseg1.tif");
+    pix = pixRead(DEMOPATH("pageseg1.tif"));
     box = boxCreate(100, 100, 2260, 3160);
     pixb = pixClipRectangle(pix, box, NULL);
     pixs = pixScaleToGray4(pixb);
@@ -252,7 +253,7 @@ L_REGPARAMS  *rp;
 
         /* Do yet another set of flat rectangular tests, this time
          * on an RGB image */
-    pixs = pixRead("test24.jpg");
+    pixs = pixRead(DEMOPATH("test24.jpg"));
     kel4 = makeFlatKernel(7, 7, 3, 3);
     startTimer();
     pixt1 = pixConvolveRGB(pixs, kel4);
@@ -286,7 +287,7 @@ L_REGPARAMS  *rp;
 
         /* Test generation and convolution with gaussian kernel */
     pixa = pixaCreate(0);
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     pixaAddPix(pixa, pixs, L_COPY);
     kel1 = makeGaussianKernel(5, 5, 3.0, 5.0);
     kernelGetSum(kel1, &sum);
@@ -307,7 +308,7 @@ L_REGPARAMS  *rp;
 
         /* Test generation and convolution with separable gaussian kernel */
     pixa = pixaCreate(0);
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     pixaAddPix(pixa, pixs, L_INSERT);
     makeGaussianKernelSep(5, 5, 3.0, 5.0, &kelx, &kely);
     kernelGetSum(kelx, &sum);
@@ -333,11 +334,11 @@ L_REGPARAMS  *rp;
     kernelDestroy(&kely);
 
         /* Test generation and convolution with diff of gaussians kernel */
-/*    pixt = pixRead("marge.jpg");
+/*    pixt = pixRead(DEMOPATH("marge.jpg"));
     pixs = pixConvertRGBToLuminance(pixt);
     pixDestroy(&pixt); */
     pixa = pixaCreate(0);
-    pixs = pixRead("test8.jpg");
+    pixs = pixRead(DEMOPATH("test8.jpg"));
     pixaAddPix(pixa, pixs, L_INSERT);
     kel1 = makeDoGKernel(7, 7, 1.5, 2.7);
     kernelGetSum(kel1, &sum);

@@ -40,6 +40,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
 
 #include "monolithic_examples.h"
 
@@ -70,7 +71,7 @@ L_REGPARAMS  *rp;
         return 1;
 
     lept_mkdir("lept/boxa");
-    boxa1 = boxaRead("boxa4.ba");
+    boxa1 = boxaRead(DEMOPATH("boxa4.ba"));
 
         /* Fill invalid boxes */
     n = boxaGetCount(boxa1);

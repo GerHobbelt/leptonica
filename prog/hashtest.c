@@ -49,6 +49,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "demo_settings.h"
 #include "array_internal.h"
 #include "pix_internal.h"
 
