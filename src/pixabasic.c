@@ -187,7 +187,7 @@ PIXA  *pixa;
 	}
 	else
 	{
-		return (PIXA*)ERROR_PTR("pix not made", __func__, NULL);
+		return (PIXA*)ERROR_PTR("pixa not made", __func__, NULL);
 	}
 }
 
