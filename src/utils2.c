@@ -1916,7 +1916,6 @@ FILE  *fp;
 		return (FILE*)ERROR_PTR("allocation failure / out of memory / path tail extraction failure", __func__, NULL);
 	fp = fopen(tail, "rb");
     LEPT_FREE(tail);
-	LEPT_FREE(fname);
 
     if (!fp)
         return (FILE *)ERROR_PTR("file not found", __func__, NULL);
