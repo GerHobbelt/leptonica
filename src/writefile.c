@@ -1027,7 +1027,7 @@ size_t         fullpathsize;
 #else  /* _WIN32 */
 
 	pathname = genPathname(tempname, NULL);
-	fullpathsize = strlen(pathname) + L_MAX(256, _MAX_PATH);
+	fullpathsize = strlen(pathname) + L_MAX(Bufsize, _MAX_PATH);
 	fullpath = LEPT_MALLOC(fullpathsize);
 	
 	_fullpath(fullpath, pathname, fullpathsize);
