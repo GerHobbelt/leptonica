@@ -866,5 +866,9 @@ char    *root;
 #endif  /* ! _WIN32 */
 
     root[len] = '\0';  /* terminate */
-    return root;
+
+	if (strncmp(root, "lept_", 5) == 0)
+		memmove(root, root + 5, strlen(root + 5) + 1);
+
+	return root;
 }
