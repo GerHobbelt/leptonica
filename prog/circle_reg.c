@@ -75,7 +75,7 @@ L_REGPARAMS  *rp;
         return 1;
 
         /* Read the images */
-    pixas = pixaRead("circles.pa");
+    pixas = pixaRead(DEMOPATH("circles.pa"));
     n = pixaGetCount(pixas);
 
     pixa2 = pixaCreate(0);

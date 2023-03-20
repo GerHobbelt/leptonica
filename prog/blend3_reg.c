@@ -100,13 +100,17 @@ L_REGPARAMS  *rp;
 
 
 static PIX *
-BlendTest(const char  *file1,
-          const char  *file2,
+BlendTest(const char  *filename1,
+          const char  *filename2,
           l_float32    fract)
 {
 l_int32  d1, d2;
 PIX     *pixs1, *pixs2, *pix1, *pix2, *pix3, *pix4, *pix5, *pixd;
 PIXA    *pixa;
+char file1[256];
+char file2[256];
+snprintf(file1, sizeof(file1), "%s%s", DEMOPATH(""), filename1);
+snprintf(file2, sizeof(file2), "%s%s", DEMOPATH(""), filename2);
 
     pixs1 = pixRead(file1);
     pixs2 = pixRead(file2);

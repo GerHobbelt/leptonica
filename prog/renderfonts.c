@@ -40,7 +40,7 @@
 #include "monolithic_examples.h"
 
 
-#define   DIRECTORY    "./fonts"
+#define   DIRECTORY    DEMOPATH("fonts")
 
 
 #if defined(BUILD_MONOLITHIC)

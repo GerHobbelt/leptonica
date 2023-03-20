@@ -218,7 +218,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
         /* Some tiff compression and headers */
-    readHeaderTiff("feyn-fract.tif", 0, &w, &h, &bps, &spp,
+    readHeaderTiff(DEMOPATH("feyn-fract.tif"), 0, &w, &h, &bps, &spp,
                    &res, &iscmap, &format);
     if (rp->display) {
         lept_stderr("w = %d, h = %d, bps = %d, spp = %d, res = %d, cmap = %d\n",

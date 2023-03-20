@@ -146,7 +146,7 @@ L_REGPARAMS  *rp;
     lept_mkdir("lept/encfonts");
     for (i = 0; i < 9; i++) {
         fontsize = 2 * i + 4;
-        pathname = pathJoin("fonts", inputfonts[i]);
+        pathname = pathJoin(DEMOPATH("fonts"), inputfonts[i]);
         data1 = l_binaryRead(pathname, &nbytes);
         datastr = encodeBase64(data1, nbytes, &sbytes);
         if (rp->display)

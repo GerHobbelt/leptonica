@@ -94,7 +94,7 @@
 
     /* Display program (xv, xli, xzgv, open) to be invoked by pixDisplay()  */
 #ifdef _WIN32
-static l_int32  var_DISPLAY_PROG = L_DISPLAY_WITH_IV;  /* default */
+static l_int32  var_DISPLAY_PROG = L_DISPLAY_WITH_STORE; //  L_DISPLAY_WITH_OPEN;  /* default */
 #elif  defined(__APPLE__)
 static l_int32  var_DISPLAY_PROG = L_DISPLAY_WITH_OPEN;  /* default */
 #else
@@ -110,7 +110,7 @@ static const l_int32  MaxSizeForPng = 200;
 static const l_float32  DefaultScaling = 1.0;
 
     /* Global array of image file format extension names.                */
-    /* This is in 1-1 corrspondence with format enum in imageio.h.       */
+    /* This is in 1-1 correspondence with format enum in imageio.h.       */
     /* The empty string at the end represents the serialized format,     */
     /* which has no recognizable extension name, but the array must      */
     /* be padded to agree with the format enum.                          */
@@ -342,12 +342,12 @@ FILE    *fp;
         return ERROR_INT("fname not defined", __func__, 1);
 
     if ((fp = fopenWriteStream(fname, "wb+")) == NULL)
-        return ERROR_INT("stream not opened", __func__, 1);
+        return ERROR_INT_1("stream not opened", fname, __func__, 1);
 
     ret = pixWriteStream(fp, pix, format);
     fclose(fp);
     if (ret)
-        return ERROR_INT("pix not written to stream", __func__, 1);
+        return ERROR_INT_1("pix not written to stream", fname, __func__, 1);
     return 0;
 }
 
@@ -895,7 +895,8 @@ PIXCMAP        *cmap;
 l_int32         wt, ht;
 #else
 char           *pathname;
-char            fullpath[_MAX_PATH];
+char           *fullpath;
+size_t         fullpathsize;
 #endif  /* _WIN32 */
 
     if (!LeptDebugOK) {
@@ -915,7 +916,9 @@ char            fullpath[_MAX_PATH];
         var_DISPLAY_PROG != L_DISPLAY_WITH_XLI &&
         var_DISPLAY_PROG != L_DISPLAY_WITH_XV &&
         var_DISPLAY_PROG != L_DISPLAY_WITH_IV &&
-        var_DISPLAY_PROG != L_DISPLAY_WITH_OPEN) {
+        var_DISPLAY_PROG != L_DISPLAY_WITH_OPEN &&
+		var_DISPLAY_PROG != L_DISPLAY_WITH_NONE &&
+		var_DISPLAY_PROG != L_DISPLAY_WITH_STORE) {
         return ERROR_INT("no program chosen for display", __func__, 1);
     }
 
@@ -1012,24 +1015,50 @@ char            fullpath[_MAX_PATH];
         }
     } else if (var_DISPLAY_PROG == L_DISPLAY_WITH_OPEN) {
         snprintf(buffer, Bufsize, "open %s &", tempname);
-    }
-    callSystemDebug(buffer);
+    } else if (var_DISPLAY_PROG == L_DISPLAY_WITH_NONE) {
+		*buffer = 0;
+	} else if (var_DISPLAY_PROG == L_DISPLAY_WITH_STORE) {
+		*buffer = 0;
+	}
+
+	if (*buffer)
+        callSystemDebug(buffer);
 
 #else  /* _WIN32 */
 
-        /* Windows: L_DISPLAY_WITH_IV */
-    pathname = genPathname(tempname, NULL);
-    _fullpath(fullpath, pathname, sizeof(fullpath));
-    if (title) {
-        snprintf(buffer, Bufsize,
-                 "i_view32.exe \"%s\" /pos=(%d,%d) /title=\"%s\"",
-                 fullpath, x, y, title);
-    } else {
-        snprintf(buffer, Bufsize, "i_view32.exe \"%s\" /pos=(%d,%d)",
-                 fullpath, x, y);
-    }
-    callSystemDebug(buffer);
-    LEPT_FREE(pathname);
+	pathname = genPathname(tempname, NULL);
+	fullpathsize = strlen(pathname) + L_MAX(256, _MAX_PATH);
+	fullpath = LEPT_MALLOC(fullpathsize);
+	
+	_fullpath(fullpath, pathname, fullpathsize);
+
+	if (var_DISPLAY_PROG == L_DISPLAY_WITH_NONE) {
+	 *buffer = 0;
+	}
+    else if (var_DISPLAY_PROG == L_DISPLAY_WITH_STORE) {
+	 *buffer = 0;
+	}
+	else if (var_DISPLAY_PROG == L_DISPLAY_WITH_OPEN) {
+		snprintf(buffer, Bufsize, "explorer.exe /open,\"%s\"", fullpath);
+	}
+	else {
+		/* Windows: L_DISPLAY_WITH_IV */
+		if (title) {
+			snprintf(buffer, Bufsize,
+				"i_view32.exe \"%s\" /pos=(%d,%d) /title=\"%s\"",
+				fullpath, x, y, title);
+		}
+		else {
+			snprintf(buffer, Bufsize, "i_view32.exe \"%s\" /pos=(%d,%d)",
+				fullpath, x, y);
+		}
+	}
+
+	if (*buffer)
+		callSystemDebug(buffer);
+
+    LEPT_FREE(fullpath);
+	LEPT_FREE(pathname);
 
 #endif  /* _WIN32 */
 
@@ -1103,7 +1132,9 @@ l_chooseDisplayProg(l_int32  selection)
         selection == L_DISPLAY_WITH_XZGV ||
         selection == L_DISPLAY_WITH_XV ||
         selection == L_DISPLAY_WITH_IV ||
-        selection == L_DISPLAY_WITH_OPEN) {
+        selection == L_DISPLAY_WITH_OPEN ||
+		selection == L_DISPLAY_WITH_NONE ||
+		selection == L_DISPLAY_WITH_STORE) {
         var_DISPLAY_PROG = selection;
     } else {
         L_ERROR("invalid display program\n", "l_chooseDisplayProg");

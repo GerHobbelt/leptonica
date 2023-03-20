@@ -89,12 +89,12 @@ L_REGPARAMS  *rp;
 #if 1
     /* ---------------  Single image tests  ------------------- */
     lept_stderr("\n*** Writing single images as pdf files\n");
-    convertToPdf("weasel2.4c.png", L_FLATE_ENCODE, 0,
+    convertToPdf(DEMOPATH("weasel2.4c.png"), L_FLATE_ENCODE, 0,
                  "/tmp/lept/pdf1/file00.pdf",
                  0, 0, 72, "weasel2.4c.png", NULL, 0);
-    convertToPdf("test24.jpg", L_JPEG_ENCODE, 0, "/tmp/lept/pdf1/file01.pdf",
+    convertToPdf(DEMOPATH("test24.jpg"), L_JPEG_ENCODE, 0, "/tmp/lept/pdf1/file01.pdf",
                  0, 0, 72, "test24.jpg", NULL, 0);
-    convertToPdf("feyn.tif", L_G4_ENCODE, 0, "/tmp/lept/pdf1/file02.pdf",
+    convertToPdf(DEMOPATH("feyn.tif"), L_G4_ENCODE, 0, "/tmp/lept/pdf1/file02.pdf",
                  0, 0, 300, "feyn.tif", NULL, 0);
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
@@ -115,7 +115,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
     pixDestroy(&pixt);
 
-    convertToPdf("weasel4.16g.png", L_FLATE_ENCODE, 0,
+    convertToPdf(DEMOPATH("weasel4.16g.png"), L_FLATE_ENCODE, 0,
                  "/tmp/lept/pdf1/file06.pdf", 0, 0, 30,
                  "weasel4.16g.png", NULL, 0);
 
@@ -186,11 +186,11 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix3);
 
         /* 1 bpp input */
-    convertToPdfSegmented("rabi.png", 300, L_G4_ENCODE, 128, NULL, 0, 0,
+    convertToPdfSegmented(DEMOPATH("rabi.png"), 300, L_G4_ENCODE, 128, NULL, 0, 0,
                           NULL, "/tmp/lept/pdf1/file11.pdf");
-    convertToPdfSegmented("rabi.png", 300, L_JPEG_ENCODE, 128, NULL, 0, 0,
+    convertToPdfSegmented(DEMOPATH("rabi.png"), 300, L_JPEG_ENCODE, 128, NULL, 0, 0,
                           NULL, "/tmp/lept/pdf1/file12.pdf");
-    convertToPdfSegmented("rabi.png", 300, L_FLATE_ENCODE, 128, NULL, 0, 0,
+    convertToPdfSegmented(DEMOPATH("rabi.png"), 300, L_FLATE_ENCODE, 128, NULL, 0, 0,
                           NULL, "/tmp/lept/pdf1/file13.pdf");
 
         /* 8 bpp input, no cmap */

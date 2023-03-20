@@ -61,7 +61,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
         /* Set 1 */
     startTimer();
     pix1 = pixRead(DEMOPATH("rabi.png"));
-    pix2 = pixRunlengthTransform(pix1, 0, L_HORIZONTAL_RUNS, 8);
+	pixWrite("/tmp/lept/run/pix-orig.png", pix1, IFF_PNG);
+	pix2 = pixRunlengthTransform(pix1, 0, L_HORIZONTAL_RUNS, 8);
     pix3 = pixRunlengthTransform(pix1, 0, L_VERTICAL_RUNS, 8);
     pix4 = pixMinOrMax(NULL, pix2, pix3, L_CHOOSE_MIN);
     pix5 = pixMaxDynamicRange(pix4, L_LOG_SCALE);
@@ -91,7 +92,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
         /* Set 2 */
     startTimer();
     pix1 = pixRead(DEMOPATH("test24.jpg"));
-    pixWriteJpeg("/tmp/lept/run/junk24.jpg", pix1, 5, 0);
+	pixWrite("/tmp/lept/run/junk-orig.png", pix1, IFF_PNG);
+	pixWriteJpeg("/tmp/lept/run/junk24.jpg", pix1, 5, 0);
     pix2 = pixRead("/tmp/lept/run/junk24.jpg");
     pixCompareGrayOrRGB(pix1, pix2, L_COMPARE_ABS_DIFF, GPLOT_PNG,
                         NULL, &avediff, &rmsdiff, &pix3);

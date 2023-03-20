@@ -90,11 +90,11 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    DoJp2kTest1(rp, "karen8.jpg");
-    DoJp2kTest1(rp, "test24.jpg");
-/*    DoJp2kTest2(rp, "karen8.jpg");  */  /* encode fails on smallest image */
-    DoJp2kTest2(rp, "test24.jpg");
-    DoJp2kTest3(rp, "wyom.jpg");
+    DoJp2kTest1(rp, DEMOPATH("karen8.jpg"));
+    DoJp2kTest1(rp, DEMOPATH("test24.jpg"));
+/*    DoJp2kTest2(rp, DEMOPATH("karen8.jpg"));  */  /* encode fails on smallest image */
+    DoJp2kTest2(rp, DEMOPATH("test24.jpg"));
+    DoJp2kTest3(rp, DEMOPATH("wyom.jpg"));
     return regTestCleanup(rp);
 }
 

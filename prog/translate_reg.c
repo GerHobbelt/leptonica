@@ -40,11 +40,11 @@
 #include "monolithic_examples.h"
 
 
-#define   BINARY_IMAGE        "test1.png"
-#define   GRAYSCALE_IMAGE     "test8.jpg"
-#define   FOUR_BPP_IMAGE      "weasel4.8g.png"
-#define   COLORMAP_IMAGE      "dreyfus8.png"
-#define   RGB_IMAGE           "marge.jpg"
+#define   BINARY_IMAGE        DEMOPATH("test1.png")
+#define   GRAYSCALE_IMAGE     DEMOPATH("test8.jpg")
+#define   FOUR_BPP_IMAGE      DEMOPATH("weasel4.8g.png")
+#define   COLORMAP_IMAGE      DEMOPATH("dreyfus8.png")
+#define   RGB_IMAGE           DEMOPATH("marge.jpg")
 
 void TranslateAndSave1(PIXA *pixa, l_int32 depth, PIX *pix,
                        l_int32 xshift, l_int32 yshift);

@@ -86,16 +86,16 @@ L_REGPARAMS  *rp;
     lept_rmdir("lept/webp");
     lept_mkdir("lept/webp");
 
-    DoWebpTest1(rp, "weasel2.4c.png");
-    DoWebpTest1(rp, "weasel8.240c.png");
-    DoWebpTest1(rp, "karen8.jpg");
-    DoWebpTest1(rp, "test24.jpg");
+    DoWebpTest1(rp, DEMOPATH("weasel2.4c.png"));
+    DoWebpTest1(rp, DEMOPATH("weasel8.240c.png"));
+    DoWebpTest1(rp, DEMOPATH("karen8.jpg"));
+    DoWebpTest1(rp, DEMOPATH("test24.jpg"));
 
-    DoWebpTest2(rp, "test24.jpg", 50, 0, 43.50, 1.0);
-    DoWebpTest2(rp, "test24.jpg", 75, 0, 46.07, 1.0);
-    DoWebpTest2(rp, "test24.jpg", 90, 0, 51.09, 2.0);
-    DoWebpTest2(rp, "test24.jpg", 100, 0, 54.979, 5.0);
-    DoWebpTest2(rp, "test24.jpg", 0, 1, 1000.0, 0.1);
+    DoWebpTest2(rp, DEMOPATH("test24.jpg"), 50, 0, 43.50, 1.0);
+    DoWebpTest2(rp, DEMOPATH("test24.jpg"), 75, 0, 46.07, 1.0);
+    DoWebpTest2(rp, DEMOPATH("test24.jpg"), 90, 0, 51.09, 2.0);
+    DoWebpTest2(rp, DEMOPATH("test24.jpg"), 100, 0, 54.979, 5.0);
+    DoWebpTest2(rp, DEMOPATH("test24.jpg"), 0, 1, 1000.0, 0.1);
 
     return regTestCleanup(rp);
 }

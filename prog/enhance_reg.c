@@ -164,7 +164,7 @@ L_REGPARAMS  *rp;
 
         /* Hue constant mapping to lighter background */
     pixa2 = pixaCreate(2);
-    bmf10 = bmfCreate("fonts", 10);
+    bmf10 = bmfCreate(DEMOPATH("fonts"), 10);
     pix0 = pixRead(DEMOPATH("candelabrum.011.jpg"));
     composeRGBPixel(230, 185, 144, &srcval);  /* select typical bg pixel */
     for (k = 1; k > -2; k -= 2) {

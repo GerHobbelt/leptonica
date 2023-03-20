@@ -58,8 +58,8 @@ L_REGPARAMS  *rp;
         return 1;
     lept_mkdir("lept/ccbord");
 
-    RunCCBordTest("feyn-fract.tif", rp);
-    RunCCBordTest("dreyfus1.png", rp);
+    RunCCBordTest(DEMOPATH("feyn-fract.tif"), rp);
+    RunCCBordTest(DEMOPATH("dreyfus1.png"), rp);
     return regTestCleanup(rp);
 }
 

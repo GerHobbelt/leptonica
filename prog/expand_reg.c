@@ -75,7 +75,9 @@ L_REGPARAMS  *rp;
 
     pixa = pixaCreate(0);
     for (i = 0; i < 8; i++) {
-        pixs = pixRead(filename[i]);
+		char fname[256];
+		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), filename[i]);
+		pixs = pixRead(fname);
         pix1 = pixExpandReplicate(pixs, 2);
         format = (i == 7) ? IFF_JFIF_JPEG : IFF_PNG;
         regTestWritePixAndCheck(rp, pix1, format);  /* 0 - 7 */
@@ -83,7 +85,9 @@ L_REGPARAMS  *rp;
         pixDestroy(&pixs);
     }
     for (i = 0; i < 8; i++) {
-        pixs = pixRead(filename[i]);
+		char fname[256];
+		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), filename[i]);
+		pixs = pixRead(fname);
         pix1 = pixExpandReplicate(pixs, 3);
         format = (i == 7) ? IFF_JFIF_JPEG : IFF_PNG;
         regTestWritePixAndCheck(rp, pix1, format);  /* 8 - 15 */

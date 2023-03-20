@@ -77,8 +77,8 @@ L_REGPARAMS  *rp;
 
     /* ----------------- Test on 8 bpp grayscale ---------------------*/
     pixa = pixaCreate(5);
-    bmf = bmfCreate("./fonts", 6);
-    bmftop = bmfCreate("./fonts", 10);
+    bmf = bmfCreate(DEMOPATH("fonts"), 6);
+    bmftop = bmfCreate(DEMOPATH("fonts"), 10);
     pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
     pixg = pixScale(pixs, 0.4, 0.4);  /* 8 bpp grayscale */
     pix1 = pixConvertTo32(pixg);  /* 32 bpp rgb */

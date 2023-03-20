@@ -77,13 +77,13 @@ L_REGPARAMS  *rp;
     lept_mkdir("lept/part");
 
     pixad = pixaCreate(4);  /* only for display */
-    TestPartition(rp, "test8.jpg", L_SORT_BY_HEIGHT, 20, 0.0, "test0.pdf",
+    TestPartition(rp, DEMOPATH("test8.jpg"), L_SORT_BY_HEIGHT, 20, 0.0, "test0.pdf",
                   pixad);
-    TestPartition(rp, "test8.jpg", L_SORT_BY_AREA, 20, 0.0, "test1.pdf",
+    TestPartition(rp, DEMOPATH("test8.jpg"), L_SORT_BY_AREA, 20, 0.0, "test1.pdf",
                   pixad);
-    TestPartition(rp, "test8.jpg", L_SORT_BY_AREA, 20, 0.4, "test2.pdf",
+    TestPartition(rp, DEMOPATH("test8.jpg"), L_SORT_BY_AREA, 20, 0.4, "test2.pdf",
                   pixad);
-    TestPartition(rp, "feyn-fract.tif", L_SORT_BY_AREA, 20, 0.0, "test3.pdf",
+    TestPartition(rp, DEMOPATH("feyn-fract.tif"), L_SORT_BY_AREA, 20, 0.0, "test3.pdf",
                   pixad);
 
         /* If display requested, make a tiled image of all the results */

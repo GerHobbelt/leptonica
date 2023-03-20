@@ -69,24 +69,24 @@
 #include "monolithic_examples.h"
 
 
-#define   BMP_FILE             "test1.bmp"
-#define   FILE_1BPP            "feyn.tif"
-#define   FILE_2BPP            "speckle2.png"
-#define   FILE_2BPP_C          "weasel2.4g.png"
-#define   FILE_4BPP            "speckle4.png"
-#define   FILE_4BPP_C          "weasel4.16c.png"
-#define   FILE_8BPP_1          "dreyfus8.png"
-#define   FILE_8BPP_2          "weasel8.240c.png"
-#define   FILE_8BPP_3          "test8.jpg"
-#define   FILE_16BPP           "test16.tif"
-#define   FILE_32BPP           "marge.jpg"
-#define   FILE_32BPP_ALPHA     "test32-alpha.png"
-#define   FILE_1BIT_ALPHA      "test-1bit-alpha.png"
-#define   FILE_CMAP_ALPHA      "test-cmap-alpha.png"
-#define   FILE_TRANS_ALPHA     "test-fulltrans-alpha.png"
-#define   FILE_GRAY_ALPHA      "test-gray-alpha.png"
-#define   FILE_GRAY_ALPHA_TIF  "gray-alpha.tif"
-#define   FILE_RGB16_TIF       "rgb16.tif"
+#define   BMP_FILE             DEMOPATH("test1.bmp")
+#define   FILE_1BPP            DEMOPATH("feyn.tif")
+#define   FILE_2BPP            DEMOPATH("speckle2.png")
+#define   FILE_2BPP_C          DEMOPATH("weasel2.4g.png")
+#define   FILE_4BPP            DEMOPATH("speckle4.png")
+#define   FILE_4BPP_C          DEMOPATH("weasel4.16c.png")
+#define   FILE_8BPP_1          DEMOPATH("dreyfus8.png")
+#define   FILE_8BPP_2          DEMOPATH("weasel8.240c.png")
+#define   FILE_8BPP_3          DEMOPATH("test8.jpg")
+#define   FILE_16BPP           DEMOPATH("test16.tif")
+#define   FILE_32BPP           DEMOPATH("marge.jpg")
+#define   FILE_32BPP_ALPHA     DEMOPATH("test32-alpha.png")
+#define   FILE_1BIT_ALPHA      DEMOPATH("test-1bit-alpha.png")
+#define   FILE_CMAP_ALPHA      DEMOPATH("test-cmap-alpha.png")
+#define   FILE_TRANS_ALPHA     DEMOPATH("test-fulltrans-alpha.png")
+#define   FILE_GRAY_ALPHA      DEMOPATH("test-gray-alpha.png")
+#define   FILE_GRAY_ALPHA_TIF  DEMOPATH("gray-alpha.tif")
+#define   FILE_RGB16_TIF       DEMOPATH("rgb16.tif")
 
 static l_int32 testcomp(const char *filename, PIX *pix, l_int32 comptype);
 static l_int32 testcomp_mem(PIX *pixs, PIX **ppixt, l_int32 index,

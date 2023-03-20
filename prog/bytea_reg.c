@@ -71,8 +71,8 @@ L_REGPARAMS  *rp;
     lept_mkdir("lept/bytea");
 
         /* Test basic init and join */
-    lba1 = l_byteaInitFromFile("feyn.tif");
-    lba2 = l_byteaInitFromFile("test24.jpg");
+    lba1 = l_byteaInitFromFile(DEMOPATH("feyn.tif"));
+    lba2 = l_byteaInitFromFile(DEMOPATH("test24.jpg"));
     lba3 = l_byteaCopy(lba2, L_COPY);
     size1 = l_byteaGetSize(lba1);
     size2 = l_byteaGetSize(lba2);
@@ -114,7 +114,7 @@ L_REGPARAMS  *rp;
          *   lba1 = l_byteaInitFromMem((l_uint8 *)str1, strlen(str1));
          */
 
-    data1 = l_binaryRead("kernel_reg.c", &size1);
+    data1 = l_binaryRead(DEMOPATH("kernel_reg.c"), &size1);
 #if 0
     str1 = (char *)arrayReplaceEachSequence(data1, size1, (l_uint8 *)"\r", 1,
                                             NULL, 0, &size2, NULL);
@@ -145,25 +145,25 @@ L_REGPARAMS  *rp;
 
         /* Test appending with binary data */
     slice = 1000;
-    total = nbytesInFile("breviar.38.150.jpg");
+    total = nbytesInFile(DEMOPATH("breviar.38.150.jpg"));
     lba1 = l_byteaCreate(100);
     n = 2 + total / slice;  /* using 1 is correct; using 2 gives two errors */
     lept_stderr("******************************************************\n");
     lept_stderr("* Testing error checking: ignore two reported errors *\n");
     for (i = 0, start = 0; i < n; i++, start += slice) {
-         data2 = l_binaryReadSelect("breviar.38.150.jpg", start, slice, &size2);
+         data2 = l_binaryReadSelect(DEMOPATH("breviar.38.150.jpg"), start, slice, &size2);
          l_byteaAppendData(lba1, data2, size2);
          lept_free(data2);
     }
     lept_stderr("******************************************************\n");
     data1 = l_byteaGetData(lba1, &size1);
-    data2 = l_binaryRead("breviar.38.150.jpg", &size2);
+    data2 = l_binaryRead(DEMOPATH("breviar.38.150.jpg"), &size2);
     regTestCompareStrings(rp, data1, size1, data2, size2);  /* 5 */
     l_byteaDestroy(&lba1);
     lept_free(data2);
 
         /* Test search */
-    convertToPdf("test24.jpg", L_JPEG_ENCODE, 0, "/tmp/lept/bytea/test24.pdf",
+    convertToPdf(DEMOPATH("test24.jpg"), L_JPEG_ENCODE, 0, "/tmp/lept/bytea/test24.pdf",
                  0, 0, 100, NULL, NULL, 0);
     lba1 = l_byteaInitFromFile("/tmp/lept/bytea/test24.pdf");
     l_byteaFindEachSequence(lba1, (l_uint8 *)" 0 obj\n", 7, &da);
@@ -173,7 +173,7 @@ L_REGPARAMS  *rp;
     l_dnaDestroy(&da);
 
         /* Test write to file */
-    lba1 = l_byteaInitFromFile("feyn.tif");
+    lba1 = l_byteaInitFromFile(DEMOPATH("feyn.tif"));
     size1 = l_byteaGetSize(lba1);
     fp = lept_fopen("/tmp/lept/bytea/feyn.dat", "wb");
     for (start = 0; start < size1; start += 1000) {

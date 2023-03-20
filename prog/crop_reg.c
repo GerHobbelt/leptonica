@@ -49,7 +49,7 @@ static l_int32 GetLeftCut(NUMA *narl, NUMA *nart, NUMA *nait,
 static l_int32 GetRightCut(NUMA *narl, NUMA *nart, NUMA *nait,
                      l_int32 h, l_int32 *pright);
 
-static const char *fnames[] = {"lyra.005.jpg", "lyra.036.jpg"};
+static const char *fnames[] = {DEMOPATH("lyra.005.jpg"), DEMOPATH("lyra.036.jpg")};
 
 
 #if defined(BUILD_MONOLITHIC)

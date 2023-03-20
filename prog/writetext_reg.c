@@ -92,8 +92,8 @@ SARRAY       *sa;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    bmf = bmfCreate("./fonts", 6);
-    bmftop = bmfCreate("./fonts", 10);
+    bmf = bmfCreate(DEMOPATH("fonts"), 6);
+    bmftop = bmfCreate(DEMOPATH("fonts"), 10);
     pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
     pix1 = pixScale(pixs, 0.4, 0.4);          /* 8 bpp grayscale */
     pix2 = pixConvertTo32(pix1);              /* 32 bpp rgb */
@@ -145,7 +145,7 @@ SARRAY       *sa;
                             L_EUCLIDEAN_DISTANCE);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 5 */
     pixDisplayWithTitle(pix3, 0, 500, NULL, rp->display);
-    bmf = bmfCreate("fonts", 10);
+    bmf = bmfCreate(DEMOPATH("fonts"), 10);
     sa = sarrayCreate(6);
     for (i = 0; i < 6; i++) {
         snprintf(buf, sizeof(buf), "This is textline %d\n", i);

@@ -41,14 +41,14 @@
 #include "monolithic_examples.h"
 
 
-#define   BINARY_IMAGE              "test1.png"
-#define   TWO_BPP_IMAGE             "weasel2.4c.png"
-#define   FOUR_BPP_IMAGE1           "weasel4.11c.png"
-#define   FOUR_BPP_IMAGE2           "weasel4.16g.png"
-#define   EIGHT_BPP_IMAGE           "test8.jpg"
-#define   EIGHT_BPP_CMAP_IMAGE1     "dreyfus8.png"
-#define   EIGHT_BPP_CMAP_IMAGE2     "test24.jpg"
-#define   RGB_IMAGE                 "marge.jpg"
+#define   BINARY_IMAGE              DEMOPATH("test1.png")
+#define   TWO_BPP_IMAGE             DEMOPATH("weasel2.4c.png")
+#define   FOUR_BPP_IMAGE1           DEMOPATH("weasel4.11c.png")
+#define   FOUR_BPP_IMAGE2           DEMOPATH("weasel4.16g.png")
+#define   EIGHT_BPP_IMAGE           DEMOPATH("test8.jpg")
+#define   EIGHT_BPP_CMAP_IMAGE1     DEMOPATH("dreyfus8.png")
+#define   EIGHT_BPP_CMAP_IMAGE2     DEMOPATH("test24.jpg")
+#define   RGB_IMAGE                 DEMOPATH("marge.jpg")
 
 static const l_float32  ANGLE1 = 3.14159265 / 30.;
 static const l_float32  ANGLE2 = 3.14159265 / 7.;

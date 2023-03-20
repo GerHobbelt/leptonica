@@ -64,7 +64,9 @@ L_REGPARAMS  *rp;
     pix1 = pixRead(DEMOPATH("fish24.jpg"));
     pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 3; i++) {
-        pix2 = pixRead(blenders[i]);
+		char fname[256];
+		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), blenders[i]);
+		pix2 = pixRead(fname);
         if (i == 2) {
             pix3 = pixScale(pix2, 0.5, 0.5);
             pixDestroy(&pix2);
@@ -87,7 +89,9 @@ L_REGPARAMS  *rp;
     pix1 = pixScale(pix0, 2.0, 2.0);
     pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 2; i++) {
-        pix2 = pixRead(blenders[i]);
+		char fname[256];
+		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), blenders[i]);
+		pix2 = pixRead(fname);
         pix3 = pixAddAlphaToBlend(pix2, 0.3, 1);
         pix4 = pixMirroredTiling(pix3, w, h);
         pix5 = pixBlendWithGrayMask(pix1, pix4, NULL, 0, 0);

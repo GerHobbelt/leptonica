@@ -177,7 +177,8 @@ char     buf[256];
 l_int32  same;
 PIX     *pixs, *pix1, *pix2;
 
-    pixs = pixRead(fname);
+	snprintf(buf, sizeof(buf), "%s%s", DEMOPATH(""), fname);
+    pixs = pixRead(buf);
     snprintf(buf, sizeof(buf), "/tmp/lept/gif/gifio-a.%d.gif", rp->index + 1);
     pixWrite(buf, pixs, IFF_GIF);
     pix1 = pixRead(buf);
@@ -213,9 +214,11 @@ l_int32   same;
 size_t    size = 0;
 PIX      *pixs;
 PIX      *pixd = NULL;
+char      buf[256];
 
-    if ((pixs = pixRead(fname)) == NULL) {
-        lept_stderr("Failure to read gif file: %s\n", fname);
+	snprintf(buf, sizeof(buf), "%s%s", DEMOPATH(""), fname);
+    if ((pixs = pixRead(buf)) == NULL) {
+        lept_stderr("Failure to read gif file: %s\n", buf);
         return 1;
     }
     if (pixWriteMem(&data, &size, pixs, IFF_GIF)) {

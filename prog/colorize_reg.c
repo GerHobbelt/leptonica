@@ -247,19 +247,19 @@ L_REGPARAMS  *rp;
         /* Test the color detector */
     pixa = pixaCreate(7);
     bmf = bmfCreate(NULL, 4);
-    pix1 = TestForRedColor(rp, "brev.06.75.jpg", 1, bmf);  /* 14 */
+    pix1 = TestForRedColor(rp, DEMOPATH("brev.06.75.jpg"), 1, bmf);  /* 14 */
     pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = TestForRedColor(rp, "brev.10.75.jpg", 0, bmf);  /* 15 */
+    pix1 = TestForRedColor(rp, DEMOPATH("brev.10.75.jpg"), 0, bmf);  /* 15 */
     pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = TestForRedColor(rp, "brev.14.75.jpg", 1, bmf);  /* 16 */
+    pix1 = TestForRedColor(rp, DEMOPATH("brev.14.75.jpg"), 1, bmf);  /* 16 */
     pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = TestForRedColor(rp, "brev.20.75.jpg", 1, bmf);  /* 17 */
+    pix1 = TestForRedColor(rp, DEMOPATH("brev.20.75.jpg"), 1, bmf);  /* 17 */
     pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = TestForRedColor(rp, "brev.36.75.jpg", 0, bmf);  /* 18 */
+    pix1 = TestForRedColor(rp, DEMOPATH("brev.36.75.jpg"), 0, bmf);  /* 18 */
     pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = TestForRedColor(rp, "brev.53.75.jpg", 1, bmf);  /* 19 */
+    pix1 = TestForRedColor(rp, DEMOPATH("brev.53.75.jpg"), 1, bmf);  /* 19 */
     pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = TestForRedColor(rp, "brev.56.75.jpg", 1, bmf);  /* 20 */
+    pix1 = TestForRedColor(rp, DEMOPATH("brev.56.75.jpg"), 1, bmf);  /* 20 */
     pixaAddPix(pixa, pix1, L_INSERT);
 
         /* Generate a pdf of the color detector results */

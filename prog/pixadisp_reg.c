@@ -40,9 +40,9 @@
 #include "monolithic_examples.h"
 
 
-const char *files[7] = {"brev.06.75.jpg", "brev.10.75.jpg", "brev.14.75.jpg",
-                        "brev.20.75.jpg", "brev.36.75.jpg", "brev.53.75.jpg",
-                        "brev.56.75.jpg"};
+const char *files[7] = { DEMOPATH("brev.06.75.jpg"), DEMOPATH("brev.10.75.jpg"), DEMOPATH("brev.14.75.jpg"),
+						DEMOPATH("brev.20.75.jpg"), DEMOPATH("brev.36.75.jpg"), DEMOPATH("brev.53.75.jpg"),
+						DEMOPATH("brev.56.75.jpg")};
 
 
 #if defined(BUILD_MONOLITHIC)

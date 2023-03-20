@@ -58,8 +58,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    LocateCheckerboardCorners(rp, "checkerboard1.tif", 2);
-    LocateCheckerboardCorners(rp, "checkerboard2.tif", 4);
+    LocateCheckerboardCorners(rp, DEMOPATH("checkerboard1.tif"), 2);
+    LocateCheckerboardCorners(rp, DEMOPATH("checkerboard2.tif"), 4);
     return regTestCleanup(rp);
 }
 

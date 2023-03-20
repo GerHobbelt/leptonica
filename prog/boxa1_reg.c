@@ -111,7 +111,7 @@ L_REGPARAMS  *rp;
     lept_free(data2);
 
         /* Test serialized boxa I/O to and from memory */
-    data1 = l_binaryRead("boxa2.ba", &size1);
+    data1 = l_binaryRead(DEMOPATH("boxa2.ba"), &size1);
     boxa1 = boxaReadMem(data1, size1);
     boxaWriteMem(&data2, &size2, boxa1);
     boxa2 = boxaReadMem(data2, size2);

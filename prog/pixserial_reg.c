@@ -44,16 +44,16 @@
     /* Use this set */
 static l_int32  nfiles = 10;
 static const char  *filename[] = {
-                         "feyn.tif",         /* 1 bpp */
-                         "dreyfus2.png",     /* 2 bpp cmapped */
-                         "dreyfus4.png",     /* 4 bpp cmapped */
-                         "weasel4.16c.png",  /* 4 bpp cmapped */
-                         "dreyfus8.png",     /* 8 bpp cmapped */
-                         "weasel8.240c.png", /* 8 bpp cmapped */
-                         "karen8.jpg",       /* 8 bpp, not cmapped */
-                         "test16.tif",       /* 8 bpp, not cmapped */
-                         "marge.jpg",        /* rgb */
-                         "test24.jpg"        /* rgb */
+						 DEMOPATH("feyn.tif"),         /* 1 bpp */
+						 DEMOPATH("dreyfus2.png"),     /* 2 bpp cmapped */
+						 DEMOPATH("dreyfus4.png"),     /* 4 bpp cmapped */
+						 DEMOPATH("weasel4.16c.png"),  /* 4 bpp cmapped */
+						 DEMOPATH("dreyfus8.png"),     /* 8 bpp cmapped */
+						 DEMOPATH("weasel8.240c.png"), /* 8 bpp cmapped */
+						 DEMOPATH("karen8.jpg"),       /* 8 bpp, not cmapped */
+						 DEMOPATH("test16.tif"),       /* 8 bpp, not cmapped */
+						 DEMOPATH("marge.jpg"),        /* rgb */
+						 DEMOPATH("test24.jpg")        /* rgb */
                             };
 
 
@@ -80,7 +80,7 @@ L_REGPARAMS  *rp;
             /* Test basic serialization/deserialization */
     data32 = NULL;
     for (i = 0; i < nfiles; i++) {
-        pixs = pixRead(filename[i]);
+		pixs = pixRead(filename[i]);
             /* Serialize to memory */
         pixSerializeToMemory(pixs, &data32, &size);
             /* Just for fun, write and read back from file */

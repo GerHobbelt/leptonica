@@ -41,16 +41,16 @@
 #include "monolithic_examples.h"
 
 
-static const char *image[10] = {"feyn-fract.tif",   /* 1 bpp */
-                                "weasel2.png",      /* 2 bpp; no cmap */
-                                "weasel2.4c.png",   /* 2 bpp; cmap */
-                                "weasel4.png",      /* 4 bpp; no cmap */
-                                "weasel4.16c.png",  /* 4 bpp; cmap */
-                                "weasel8.png",      /* 8 bpp; no cmap */
-                                "weasel8.240c.png", /* 8 bpp; cmap */
-                                "test16.png",       /* 16 bpp rgb */
-                                "marge.jpg",        /* 32 bpp rgb */
-                                "test24.jpg"};      /* 32 bpp rgb */
+static const char *image[10] = {DEMOPATH("feyn-fract.tif"),   /* 1 bpp */
+								DEMOPATH("weasel2.png"),      /* 2 bpp; no cmap */
+								DEMOPATH("weasel2.4c.png"),   /* 2 bpp; cmap */
+								DEMOPATH("weasel4.png"),      /* 4 bpp; no cmap */
+								DEMOPATH("weasel4.16c.png"),  /* 4 bpp; cmap */
+								DEMOPATH("weasel8.png"),      /* 8 bpp; no cmap */
+								DEMOPATH("weasel8.240c.png"), /* 8 bpp; cmap */
+								DEMOPATH("test16.png"),       /* 16 bpp rgb */
+								DEMOPATH("marge.jpg"),        /* 32 bpp rgb */
+								DEMOPATH("test24.jpg")};      /* 32 bpp rgb */
 
 
 static const l_int32    SPACE = 30;

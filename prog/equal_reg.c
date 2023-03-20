@@ -45,12 +45,12 @@
 
 
     /* use this set */
-#define   FEYN1            "feyn.tif"      /* 1 bpp */
-#define   DREYFUS2         "dreyfus2.png"  /* 2 bpp cmapped */
-#define   DREYFUS4         "dreyfus4.png"  /* 4 bpp cmapped */
-#define   DREYFUS8         "dreyfus8.png"  /* 8 bpp cmapped */
-#define   KAREN8           "karen8.jpg"    /* 8 bpp, not cmapped */
-#define   MARGE32          "marge.jpg"     /* rgb */
+#define   FEYN1            DEMOPATH("feyn.tif")      /* 1 bpp */
+#define   DREYFUS2         DEMOPATH("dreyfus2.png")  /* 2 bpp cmapped */
+#define   DREYFUS4         DEMOPATH("dreyfus4.png")  /* 4 bpp cmapped */
+#define   DREYFUS8         DEMOPATH("dreyfus8.png")  /* 8 bpp cmapped */
+#define   KAREN8           DEMOPATH("karen8.jpg")    /* 8 bpp, not cmapped */
+#define   MARGE32          DEMOPATH("marge.jpg")     /* rgb */
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -68,14 +68,14 @@ L_REGPARAMS  *rp;
 
     lept_mkdir("lept/equal");
 
-    pixs = pixRead(FEYN1);
+    pixs = pixRead(DEMOPATH(FEYN1));
     pixWrite("/tmp/lept/equal/junkfeyn.png", pixs, IFF_PNG);
     pix1 = pixRead("/tmp/lept/equal/junkfeyn.png");
     regTestComparePix(rp, pixs, pix1);  /* 0 */
     pixDestroy(&pixs);
     pixDestroy(&pix1);
 
-    pixs = pixRead(DREYFUS2);
+    pixs = pixRead(DEMOPATH(DREYFUS2));
     pix1 = pixRemoveColormap(pixs, REMOVE_CMAP_BASED_ON_SRC);
     pix2 = pixRemoveColormap(pixs, REMOVE_CMAP_TO_FULL_COLOR);
     pix3 = pixOctreeQuantNumColors(pix2, 64, 1);
@@ -90,7 +90,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix3);
     pixDestroy(&pix4);
 
-    pixs = pixRead(DREYFUS4);
+    pixs = pixRead(DEMOPATH(DREYFUS4));
     pix1 = pixRemoveColormap(pixs, REMOVE_CMAP_BASED_ON_SRC);
     pix2 = pixRemoveColormap(pixs, REMOVE_CMAP_TO_FULL_COLOR);
     pix3 = pixOctreeQuantNumColors(pix2, 256, 1);
@@ -105,7 +105,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix3);
     pixDestroy(&pix4);
 
-    pixs = pixRead(DREYFUS8);
+    pixs = pixRead(DEMOPATH(DREYFUS8));
     pix1 = pixRemoveColormap(pixs, REMOVE_CMAP_BASED_ON_SRC);
     pix2 = pixRemoveColormap(pixs, REMOVE_CMAP_TO_FULL_COLOR);
     pix3 = pixConvertRGBToColormap(pix2, 1);
@@ -116,7 +116,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix2);
     pixDestroy(&pix3);
 
-    pixs = pixRead(KAREN8);
+    pixs = pixRead(DEMOPATH(KAREN8));
     pix1 = pixThresholdTo4bpp(pixs, 16, 1);
     pix2 = pixRemoveColormap(pix1, REMOVE_CMAP_BASED_ON_SRC);
     pix3 = pixRemoveColormap(pix1, REMOVE_CMAP_TO_FULL_COLOR);
@@ -130,7 +130,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pix3);
     pixDestroy(&pix4);
 
-    pixs = pixRead(MARGE32);
+    pixs = pixRead(DEMOPATH(MARGE32));
     pix1 = pixOctreeQuantNumColors(pixs, 32, 0);
     pix2 = pixRemoveColormap(pix1, REMOVE_CMAP_TO_FULL_COLOR);
     pix3 = pixConvertRGBToColormap(pix2, 1);

@@ -60,8 +60,8 @@ static const l_uint32  MissColor = 0xaa44bb00;
 
     /* Patterns at full resolution */
 static const char *patname[2] = {
-    "tribune-word.png",   /* patno = 0 */
-    "tribune-t.png"};     /* patno = 1 */
+    DEMOPATH("tribune-word.png"),   /* patno = 0 */
+	DEMOPATH("tribune-t.png")};     /* patno = 1 */
 
 l_int32 GeneratePattern(l_int32 patno, l_int32 red, L_REGPARAMS  *rp);
 

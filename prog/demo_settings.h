@@ -29,7 +29,7 @@
 
 #ifndef DEMOPATH
 #if defined(BUILD_MONOLITHIC)
-#define DEMOPATH(p)				"bin/demo-data/" p
+#define DEMOPATH(p)				"lept/demo-data/" p
 #else
 #define DEMOPATH(p)				p
 #endif

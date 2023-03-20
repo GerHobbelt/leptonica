@@ -63,7 +63,7 @@ L_REGPARAMS  *rp;
     lept_mkdir("lept/encode");
 
         /* Test ascii85 encoding */
-    bina = l_binaryRead("karen8.jpg", &fbytes);
+    bina = l_binaryRead(DEMOPATH("karen8.jpg"), &fbytes);
     a85a = encodeAscii85(bina, fbytes, &nbytes1);
     bina2 = decodeAscii85(a85a, nbytes1, &nbytes2);
     regTestCompareValues(rp, fbytes, nbytes2, 0.0);  /* 0 */
@@ -101,7 +101,7 @@ L_REGPARAMS  *rp;
     lept_free(bin85c2);
 
         /* Test storing and retrieving compressed text from pix */
-    bina = l_binaryRead("weasel32.png", &nbytes1);
+    bina = l_binaryRead(DEMOPATH("weasel32.png"), &nbytes1);
     pix1 = pixRead(DEMOPATH("rabi.png"));
     pixSetTextCompNew(pix1, bina, nbytes1);
     bina2 = pixGetTextCompNew(pix1, &nbytes2);

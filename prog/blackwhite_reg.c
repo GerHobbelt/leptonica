@@ -68,7 +68,9 @@ L_REGPARAMS  *rp;
         /* Scale each image and add a white boundary */
     pixa = pixaCreate(setsize);
     for (i = 0; i < setsize; i++) {
-        pixs = pixRead(fnames[i]);
+		char fname[256];
+		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), fnames[i]);
+        pixs = pixRead(fname);
         spp = pixGetSpp(pixs);
         pixGetBlackOrWhiteVal(pixs, L_GET_WHITE_VAL, &wval);
         pixGetBlackOrWhiteVal(pixs, L_GET_BLACK_VAL, &bval);
@@ -95,7 +97,9 @@ L_REGPARAMS  *rp;
         /* Scale each image and add a black boundary */
     pixa = pixaCreate(setsize);
     for (i = 0; i < setsize; i++) {
-        pixs = pixRead(fnames[i]);
+		char fname[256];
+		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), fnames[i]);
+		pixs = pixRead(fname);
         spp = pixGetSpp(pixs);
         pixGetBlackOrWhiteVal(pixs, L_GET_WHITE_VAL, &wval);
         pixGetBlackOrWhiteVal(pixs, L_GET_BLACK_VAL, &bval);
