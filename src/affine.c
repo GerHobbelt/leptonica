@@ -242,6 +242,7 @@
 extern l_float32  AlphaMaskBorderVals[2];
 
 #ifndef  NO_CONSOLE_IO
+#undef DEBUG
 #define  DEBUG     0
 #endif  /* ~NO_CONSOLE_IO */
 

@@ -126,6 +126,7 @@ static void popFillseg(L_STACK *stack, l_int32 *pxleft, l_int32 *pxright,
 
 
 #ifndef  NO_CONSOLE_IO
+#undef DEBUG
 #define   DEBUG    0
 #endif  /* ~NO_CONSOLE_IO */
 

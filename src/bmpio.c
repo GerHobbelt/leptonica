@@ -65,6 +65,7 @@ static const l_int64  L_MAX_ALLOWED_PIXELS = 400000000LL;
 static const l_int32  L_MAX_ALLOWED_RES = 10000000;  /* pixels/meter */
 
 #ifndef  NO_CONSOLE_IO
+#undef DEBUG
 #define  DEBUG     0
 #endif  /* ~NO_CONSOLE_IO */
 

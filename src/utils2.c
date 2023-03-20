@@ -185,12 +185,16 @@
 #ifdef _MSC_VER
 #include <process.h>
 #include <direct.h>
+#ifndef getcwd
 #define getcwd _getcwd  /* fix MSVC warning */
+#endif
 #else
 #include <unistd.h>
 #endif   /* _MSC_VER */
 
 #ifdef _WIN32
+// MSWin fix: make sure we include winsock2.h *before* windows.h implicitly includes the antique winsock.h and causes all kinds of weird errors at compile time:
+#include <winsock2.h>
 #include <windows.h>
 #include <fcntl.h>     /* _O_CREAT, ... */
 #include <io.h>        /* _open */
@@ -2214,11 +2218,13 @@ l_uint32  attributes;
 l_int32
 lept_rmdir(const char  *subdir)
 {
-char    *dir, *realdir, *fname, *fullname;
+char    *dir, *fname, *fullname;
 l_int32  exists, ret, i, nfiles;
 SARRAY  *sa;
 #ifdef _WIN32
 char    *newpath;
+#else
+char    *realdir;
 #endif  /* _WIN32 */
 
     if (!subdir)

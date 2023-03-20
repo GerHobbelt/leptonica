@@ -126,6 +126,7 @@
 #include <unistd.h>
 #else  /* _MSC_VER */
 #include <io.h>
+#include <basetsd.h>   // prevent 'benign redefinition of INT32 type'
 #endif  /* _MSC_VER */
 #include <fcntl.h>
 #include "allheaders.h"
