@@ -150,7 +150,5 @@ l_int32 same;
 	for (int i = 0; i < sizeof(pix) / sizeof(pix[0]); i++)
 		pixDestroy(&pix[i]);
 
-	fgetc(stdin);
-
 	return regTestCleanup(rp) || ret;
 }
