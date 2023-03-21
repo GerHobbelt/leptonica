@@ -35,17 +35,11 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include <string.h>
+#include <assert.h>
 #include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
-
-
-static void AddTestSet(PIXA *pixa, PIX *pixs,
-                       l_int32 filtertype, l_int32 edgethresh,
-                       l_int32 smoothx, l_int32 smoothy,
-                       l_float32 gamma, l_int32 minval,
-                       l_int32 maxval, l_int32 targetthresh);
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -55,60 +49,52 @@ static void AddTestSet(PIXA *pixa, PIX *pixs,
 int main(int    argc,
          const char **argv)
 {
-PIX          *pixs, *pixd;
-PIXA         *pixa;
 L_REGPARAMS  *rp;
 
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    pixs = pixRead(DEMOPATH("stampede2.jpg"));
-    pixa = pixaCreate(0);
+	lept_rmdir("lept/bmp-test");
+	lept_mkdir("lept/bmp-test");
 
-    AddTestSet(pixa, pixs, L_SOBEL_EDGE, 18, 40, 40, 0.7, -25, 280, 128);
-    AddTestSet(pixa, pixs, L_TWO_SIDED_EDGE, 18, 40, 40, 0.7, -25, 280, 128);
-    AddTestSet(pixa, pixs, L_SOBEL_EDGE, 10, 40, 40, 0.7, -15, 305, 128);
-    AddTestSet(pixa, pixs, L_TWO_SIDED_EDGE, 10, 40, 40, 0.7, -15, 305, 128);
-    AddTestSet(pixa, pixs, L_SOBEL_EDGE, 15, 40, 40, 0.6, -45, 285, 158);
-    AddTestSet(pixa, pixs, L_TWO_SIDED_EDGE, 15, 40, 40, 0.6, -45, 285, 158);
+	PIX* pix1 = pixRead(DEMOPATH("bmp_format2.png"));
+	l_ok ret = pixWrite("/tmp/lept/bmp-test/target-png.bmp", pix1, IFF_BMP);
+	pixDestroy(&pix1);
 
-    pixDestroy(&pixs);
-    pixd = pixaDisplayTiledInColumns(pixa, 6, 1.0, 20, 0);
-    regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 0 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+	pix1 = pixRead(DEMOPATH("bmp_format2.bmp"));
+	ret |= pixWrite("/tmp/lept/bmp-test/target-bmp.bmp", pix1, IFF_BMP);
+	pixDestroy(&pix1);
 
-    pixDestroy(&pixd);
-    pixaDestroy(&pixa);
-    return regTestCleanup(rp);
-}
+	PIX *pix = pixReadWithHint(DEMOPATH("test-rgba.bmp"), IFF_BMP);
+	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba1.bmp", pix, IFF_BMP);
+	pixDestroy(&pix);
 
+	pix = pixRead(DEMOPATH("test-rgba.bmp"));
+	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba2.bmp", pix, IFF_BMP);
+	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba2.png", pix, IFF_PNG);
 
-void
-AddTestSet(PIXA      *pixa,
-           PIX       *pixs,
-           l_int32    filtertype,
-           l_int32    edgethresh,
-           l_int32    smoothx,
-           l_int32    smoothy,
-           l_float32  gamma,
-           l_int32    minval,
-           l_int32    maxval,
-           l_int32    targetthresh)
-{
-PIX  *pix1, *pix2, *pix3;
+	PIX *pix3 = pixRead(DEMOPATH("target.bmp"));
+	int d = pixGetDepth(pix3);
+	assert(d == 32);
+	int spp = pixGetSpp(pix3);
+	assert(spp == 3);
+	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba3.bmp", pix3, IFF_BMP);
+	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba3.png", pix3, IFF_PNG);
 
-    pixThresholdSpreadNorm(pixs, filtertype, edgethresh,
-                           smoothx, smoothy, gamma, minval,
-                           maxval, targetthresh, &pix1, NULL, &pix2);
-    pixaAddPix(pixa, pix1, L_INSERT);
-    pixaAddPix(pixa, pix2, L_INSERT);
-    pix3 = pixThresholdToBinary(pix2, targetthresh - 20);
-    pixaAddPix(pixa, pix3, L_INSERT);
-    pix3 = pixThresholdToBinary(pix2, targetthresh);
-    pixaAddPix(pixa, pix3, L_INSERT);
-    pix3 = pixThresholdToBinary(pix2, targetthresh + 20);
-    pixaAddPix(pixa, pix3, L_INSERT);
-    pix3 = pixThresholdToBinary(pix2, targetthresh + 40);
-    pixaAddPix(pixa, pix3, L_INSERT);
-    return;
+	d = pixGetDepth(pix);
+	assert(d == 32);
+	spp = pixGetSpp(pix);
+	assert(spp == 4);
+	PIX* pix2 = pixConvert32To24(pix);
+	d = pixGetDepth(pix2);
+	assert(d == 24);
+	spp = pixGetSpp(pix2);
+	assert(spp == 3);
+	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba24.bmp", pix2, IFF_BMP);
+	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba24.png", pix2, IFF_PNG);
+
+	pixDestroy(&pix);
+	pixDestroy(&pix2);
+	pixDestroy(&pix3);
+	return regTestCleanup(rp) || ret;
 }

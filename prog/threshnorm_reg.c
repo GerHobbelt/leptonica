@@ -83,7 +83,7 @@ L_REGPARAMS  *rp;
 }
 
 
-void
+static void
 AddTestSet(PIXA      *pixa,
            PIX       *pixs,
            l_int32    filtertype,
