@@ -43,7 +43,7 @@
 
 
 #if defined(BUILD_MONOLITHIC)
-#define main   lept_issu675_test_main
+#define main   lept_issue675_check_main
 #endif
 
 int main(int    argc,
@@ -142,9 +142,9 @@ l_int32 same;
 	pix[17] = pixRead("/tmp/lept/bmp-test/target-rgba24BE.bmp");
 	pix[18] = pixRead("/tmp/lept/bmp-test/target-rgba24BE.png");
 	pixEqual(pix[17], pix[5], &same);
-	lept_stderr("target: BMP BE1: ..... same: %d\n", same);
+	lept_stderr("target: BMP BE1: ..... same: %d (known bad)\n", same);
 	pixEqual(pix[18], pix[5], &same);
-	lept_stderr("target: BMP BE2: ..... same: %d\n", same);
+	lept_stderr("target: BMP BE2: ..... same: %d (known bad)\n", same);
 
 	// blunt release of all pix's: this short code is why we NULL them at declaration.
 	for (int i = 0; i < sizeof(pix) / sizeof(pix[0]); i++)
