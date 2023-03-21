@@ -43,6 +43,38 @@
 
 
 
+#define HISTOGRAM_SIZE   256 // The size of a histogram of pixel values.
+
+
+static PIX*
+pixNLBin(PIX* pixs, l_ok adaptive);
+static PIX*
+OtsuThresholdRectToPix(PIX* pix);
+static int
+CalcOtsuThreshold(PIX* pix, int thresholds[4], int hi_values[4]);
+static void
+HistogramRect(PIX* pix, int channel, int histogram[HISTOGRAM_SIZE]);
+static int
+OtsuStats(const int histogram[HISTOGRAM_SIZE], int* H_out, int* omega0_out);
+static PIX*
+ThresholdRectToPix(PIX* pix, int num_channels, int thresholds[4], const int hi_values[4]);
+static l_ok
+OtsuThreshold(PIX* pixs, float tile_size, float smooth_size, float score_fraction, PIX** pixd, PIX** pixthres, PIX** pixgrey);
+
+
+
+// Clip a numeric value to the interval [lower_bound, upper_bound].
+static inline int ClipToRange(const int x, const int lower_bound, const int upper_bound) {
+	if (x < lower_bound) {
+		return lower_bound;
+	}
+	if (x > upper_bound) {
+		return upper_bound;
+	}
+	return x;
+}
+
+
 
 static l_ok
 IsPixBinary(PIX* pix)
@@ -147,7 +179,7 @@ pixNLNorm2(PIX* pixs, int* pthresh) {
 	// Todo: fgval or fgval + slightly offset
 	fgval = fgval; // + (l_int32) ((thresh - fgval)*.25);
 	bgval = bgval +
-		(l_int32)std::min((l_int32)((bgval - thresh) * .5), (255 - bgval));
+		L_MIN((l_int32)((bgval - thresh) * .5), (255 - bgval));
 	factor = 255. / (bgval - fgval);
 	if (pthresh) {
 		*pthresh = (l_int32)threshpos * factor - threshpos * .1;
@@ -397,7 +429,7 @@ OtsuOnNormalizedBackground(PIX* pixs, PIX** pixd, PIX** pixgrey)
 	if (!pixgrey)
 		pixDestroy(&pixg);
 
-	return r;
+	return !*pixd;
 }
 
 
@@ -430,7 +462,7 @@ MaskingAndOtsuOnNormalizedBackground(PIX* pixs, PIX** pixd, PIX** pixgrey)
 	if (!pixgrey)
 		pixDestroy(&pixg);
 
-	return r;
+	return !*pixd;
 }
 
 
@@ -461,7 +493,7 @@ NlBinThresholding(PIX* pixs, int adaptive, PIX** pixd, PIX** pixgrey)
 	if (!pixgrey)
 		pixDestroy(&pixg);
 
-	return r;
+	return !*pixd;
 }
 
 
@@ -609,7 +641,8 @@ PIX *GetPixRect(PIX *pix, int x, int y, int w, int h)
 
 
 
-#define HISTOGRAM_SIZE   256 // The size of a histogram of pixel values.
+
+
 
 
 // Computes the Otsu threshold(s) for the given image rectangle, making one
@@ -737,7 +770,8 @@ CalcOtsuThreshold(PIX *pix, int thresholds[4], int hi_values[4])
 // Histogram is always a HISTOGRAM_SIZE(256) element array to count
 // occurrences of each pixel value.
 static void
-HistogramRect(PIX *pix, int channel, int histogram[HISTOGRAM_SIZE]) {
+HistogramRect(PIX *pix, int channel, int histogram[HISTOGRAM_SIZE])
+{
 	int num_channels = pixGetDepth(pix) / 8;
 	channel = ClipToRange(channel, 0, num_channels - 1);
 	int w, h;
@@ -762,7 +796,8 @@ HistogramRect(PIX *pix, int channel, int histogram[HISTOGRAM_SIZE]) {
 // Also returns H = total count in histogram, and
 // omega0 = count of histogram below threshold.
 static int
-OtsuStats(const int histogram[HISTOGRAM_SIZE], int* H_out, int* omega0_out) {
+OtsuStats(const int histogram[HISTOGRAM_SIZE], int* H_out, int* omega0_out)
+{
 	int H = 0;
 	double mu_T = 0.0;
 	for (int i = 0; i < HISTOGRAM_SIZE; ++i) {
@@ -828,7 +863,7 @@ OtsuStats(const int histogram[HISTOGRAM_SIZE], int* H_out, int* omega0_out) {
 
 
 // Otsu thresholds the rectangle.
-static l_ok
+static PIX*
 OtsuThresholdRectToPix(PIX *pix)
 {
 	int thresholds[4];
@@ -850,6 +885,7 @@ OtsuThresholdRectToPix(PIX *pix)
 #ifdef USE_OPENCL
 	}
 #endif
+	return pixd;
 }
 
 
@@ -939,419 +975,31 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 	}
 	else
 	{
-		ret |= pixWrite("/tmp/lept/binarization/orig.png", pix[0], IFF_PNG);
+		ret |= pixWrite("/tmp/lept/binarization/00-orig.png", pix[0], IFF_PNG);
 
 		// Otsu first; tesseract 'vanilla' behaviour mimic
 
 		if (!IsPixBinary(pix[0])) {
 			pix[1] = GetPixRectGrey(pix[0]);
+			ret |= pixWrite("/tmp/lept/binarization/01A-grey256.png", pix[1], IFF_PNG);
 
-			pix[2]
-			auto [ok, pix_grey, pix_binary, pix_thresholds] = thresholder_->Threshold(thresholding_method);
+			int w, h;
+			pixGetDimensions(pix[1], &w, &h, NULL);
 
-			if (!ok) {
-				return false;
-			}
+			float tile_size = 0.33 * h;
+			float smooth_size = 0.0f;
+			float score_fraction = 0.1f;
+			ret |= OtsuThreshold(pix[1], tile_size, smooth_size, score_fraction, &pix[4], &pix[3], &pix[2]);
 
-			if (go)
-				*pix = pix_binary;
-
-			tesseract_->set_pix_thresholds(pix_thresholds);
-			tesseract_->set_pix_grey(pix_grey);
-
-
-
-
-
-			if (tesseract_->tessedit_dump_pageseg_images) {
-				tesseract_->AddPixDebugPage(tesseract_->pix_grey(), (caption + " : Grey = pre-image").c_str());
-				tesseract_->AddPixDebugPage(tesseract_->pix_thresholds(), (caption + " : Thresholds").c_str());
-				tesseract_->AddPixDebugPage(pix_binary, (caption + " : Binary = post-image").c_str());
-			}
-
-			if (!go)
-				pix_binary.destroy();
+			ret |= pixWrite("/tmp/lept/binarization/01B-grey256.png", pix[2], IFF_PNG);
+			ret |= pixWrite("/tmp/lept/binarization/02-thresholds.png", pix[3], IFF_PNG);
+			ret |= pixWrite("/tmp/lept/binarization/03-binarized-result.png", pix[4], IFF_PNG);
 		}
-	}
-
 	}
 
 	for (int i = 0; i < sizeof(pix) / sizeof(pix[0]); i++)
 		pixDestroy(&pix[i]);
 
 	return regTestCleanup(rp) || ret;
-}
-
-
-
-
-/*----------------------------------------------------------------------*
- *                  Non-linear contrast normalization                   *
- *                            and thresholding                          *
- *----------------------------------------------------------------------*/
- /*!
-  * \brief   pixNLBin()
-  *
-  * \param[in]    pixs          8 or 32 bpp
-  * \oaram[in]    adaptive      bool if set to true it uses adaptive thresholding
-  *                             recommended for images, which contain dark and light text
-  *                             at the same time (it doubles the processing time)
-  * \return  pixd    1 bpp thresholded image, or NULL on error
-  *
-  * <pre>
-  * Notes:
-  *      (1) This composite operation is good for adaptively removing
-  *          dark background. Adaption of Thomas Breuel's nlbin version from ocropus.
-  *      (2) The threshold for the binarization uses an
-  *          Sauvola adaptive thresholding.
-  * </pre>
-  */
-PIX*
-ImageThresholder::pixNLBin(PIX* pixs, bool adaptive)
-{
-	int thresh;
-	int fgval, bgval;
-	PIX* pixb;
-
-	PROCNAME("pixNLBin");
-
-	pixb = pixNLNorm1(pixs, &thresh, &fgval, &bgval);
-	if (!pixb)
-		return (PIX*)ERROR_PTR("invalid normalization result", procName, NULL);
-
-	/* Binarize */
-
-	if (adaptive) {
-		l_int32    w, h, nx, ny;
-		pixGetDimensions(pixb, &w, &h, NULL);
-		nx = L_MAX(1, (w + 64) / 128);
-		ny = L_MAX(1, (h + 64) / 128);
-		/* whsize needs to be this small to use it also for lineimages for tesseract */
-		pixSauvolaBinarizeTiled(pixb, 16, 0.5, nx, ny, NULL, &pixb);
-	}
-	else {
-		pixb = pixDitherToBinarySpec(pixb, bgval - ((bgval - thresh) * 0.75), fgval + ((thresh - fgval) * 0.25));
-		//pixb = pixThresholdToBinary(pixb, fgval+((thresh-fgval)*.1));  /* for bg and light fg */
-	}
-
-	return pixb;
-}
-
-
-
-
-
-std::tuple<bool, Image, Image, Image> ImageThresholder::Threshold(
-	ThresholdMethod method) {
-	Image pix_binary = nullptr;
-	Image pix_thresholds = nullptr;
-
-	if (pix_channels_ == 0) {
-		// We have a binary image, but it still has to be copied, as this API
-		// allows the caller to modify the output.
-		Image original = GetPixRect();
-		pix_binary = original.copy();
-		original.destroy();
-		return std::make_tuple(true, nullptr, pix_binary, nullptr);
-	}
-
-	auto pix_grey = GetPixRectGrey();
-
-	int r = 0;
-	l_int32 threshold_val = 0;
-
-	l_int32 pix_w, pix_h;
-	pixGetDimensions(pix_ /* pix_grey */, &pix_w, &pix_h, nullptr);
-
-	if (tesseract_->thresholding_debug) {
-		tprintf("\nimage width: {}  height: {}  ppi: {}\n", pix_w, pix_h, yres_);
-	}
-
-	if (method == ThresholdMethod::Sauvola) {
-		int window_size;
-		window_size = tesseract_->thresholding_window_size * yres_;
-		window_size = std::max(7, window_size);
-		window_size = std::min(pix_w < pix_h ? pix_w - 3 : pix_h - 3, window_size);
-		int half_window_size = window_size / 2;
-
-		// factor for image division into tiles; >= 1
-		l_int32 nx, ny;
-		// tiles size will be approx. 250 x 250 pixels
-		nx = std::max(1, (pix_w + 125) / 250);
-		ny = std::max(1, (pix_h + 125) / 250);
-		auto xrat = pix_w / nx;
-		auto yrat = pix_h / ny;
-		if (xrat < half_window_size + 2) {
-			nx = pix_w / (half_window_size + 2);
-		}
-		if (yrat < half_window_size + 2) {
-			ny = pix_h / (half_window_size + 2);
-		}
-
-		double kfactor = tesseract_->thresholding_kfactor;
-		kfactor = std::max(0.0, kfactor);
-
-		if (tesseract_->thresholding_debug) {
-			tprintf("window size: {}  kfactor: {}  nx: {}  ny: {}\n", window_size, kfactor, nx, ny);
-		}
-
-		r = pixSauvolaBinarizeTiled(pix_grey, half_window_size, kfactor, nx, ny,
-			(PIX**)pix_thresholds,
-			(PIX**)pix_binary);
-	}
-	else if (method == ThresholdMethod::OtsuOnNormalizedBackground) {
-		pix_binary = pixOtsuThreshOnBackgroundNorm(pix_grey, nullptr, 10, 15, 100,
-			50, 255, 2, 2, 0.1f,
-			&threshold_val);
-	}
-	else if (method == ThresholdMethod::MaskingAndOtsuOnNormalizedBackground) {
-		pix_binary = pixMaskedThreshOnBackgroundNorm(pix_grey, nullptr, 10, 15,
-			100, 50, 2, 2, 0.1f,
-			&threshold_val);
-	}
-	else if (method == ThresholdMethod::LeptonicaOtsu) {
-		int tile_size;
-		double tile_size_factor = tesseract_->thresholding_tile_size;
-		tile_size = tile_size_factor * yres_;
-		tile_size = std::max(16, tile_size);
-
-		int smooth_size;
-		double smooth_size_factor = tesseract_->thresholding_smooth_kernel_size;
-		smooth_size_factor = std::max(0.0, smooth_size_factor);
-		smooth_size = smooth_size_factor * yres_;
-		int half_smooth_size = smooth_size / 2;
-
-		double score_fraction = tesseract_->thresholding_score_fraction;
-
-		if (tesseract_->thresholding_debug) {
-			tprintf("LeptonicaOtsu thresholding: tile size: {}, smooth_size: {}, score_fraction: {}\n", tile_size, smooth_size, score_fraction);
-		}
-
-		r = pixOtsuAdaptiveThreshold(pix_grey, tile_size, tile_size,
-			half_smooth_size, half_smooth_size,
-			score_fraction,
-			(PIX**)pix_thresholds,
-			(PIX**)pix_binary);
-	}
-	else if (method == ThresholdMethod::Nlbin) {
-		auto pix = GetPixRect();
-		pix_binary = pixNLBin(pix, false);
-		r = 0;
-	}
-	else {
-		// Unsupported threshold method.
-		r = 1;
-	}
-
-	bool ok = (r == 0) && pix_binary;
-	return std::make_tuple(ok, pix_grey, pix_binary, pix_thresholds);
-}
-
-
-
-
-
-
-// Threshold the source image as efficiently as possible to the output Pix.
-// Creates a Pix and sets pix to point to the resulting pointer.
-// Caller must use pixDestroy to free the created Pix.
-//
-/// Returns false on error.
-bool ImageThresholder::ThresholdToPix(Image* pix) {
-	// tolerate overlarge images when they're about to be cropped by GetPixRect():
-	if (IsFullImage()) {
-		if (tesseract_->CheckAndReportIfImageTooLarge(pix_)) {
-			return false;
-		}
-	}
-	else {
-		// validate against the future cropped image size:
-		if (tesseract_->CheckAndReportIfImageTooLarge(rect_width_, rect_height_)) {
-			return false;
-		}
-	}
-
-	Image original = GetPixRect();
-
-	if (pix_channels_ == 0) {
-		// We have a binary image, but it still has to be copied, as this API
-		// allows the caller to modify the output.
-		*pix = original.copy();
-	}
-	else {
-		if (pixGetColormap(original)) {
-			Image tmp;
-			Image without_cmap = pixRemoveColormap(original, REMOVE_CMAP_BASED_ON_SRC);
-			int depth = pixGetDepth(without_cmap);
-			if (depth > 1 && depth < 8) {
-				tmp = pixConvertTo8(without_cmap, false);
-			}
-			else {
-				tmp = without_cmap.copy();
-			}
-			without_cmap.destroy();
-			OtsuThresholdRectToPix(tmp, pix);
-			tmp.destroy();
-		}
-		else {
-			OtsuThresholdRectToPix(pix_, pix);
-		}
-	}
-	original.destroy();
-	return true;
-}
-
-
-
-
-// Gets a pix that contains an 8 bit threshold value at each pixel. The
-// returned pix may be an integer reduction of the binary image such that
-// the scale factor may be inferred from the ratio of the sizes, even down
-// to the extreme of a 1x1 pixel thresholds image.
-// Ideally the 8 bit threshold should be the exact threshold used to generate
-// the binary image in ThresholdToPix, but this is not a hard constraint.
-// Returns nullptr if the input is binary. PixDestroy after use.
-Image ImageThresholder::GetPixRectThresholds() {
-	if (IsBinary()) {
-		return nullptr;
-	}
-	Image pix_grey = GetPixRectGrey();
-	int width = pixGetWidth(pix_grey);
-	int height = pixGetHeight(pix_grey);
-	std::vector<int> thresholds;
-	std::vector<int> hi_values;
-	OtsuThreshold(pix_grey, 0, 0, width, height, thresholds, hi_values);
-	pix_grey.destroy();
-	Image pix_thresholds = pixCreate(width, height, 8);
-	int threshold = thresholds[0] > 0 ? thresholds[0] : 128;
-	pixSetAllArbitrary(pix_thresholds, threshold);
-	return pix_thresholds;
-}
-
-
-
-
-
-// Get a clone/copy of the source image rectangle.
-// The returned Pix must be pixDestroyed.
-// This function will be used in the future by the page layout analysis, and
-// the layout analysis that uses it will only be available with Leptonica,
-// so there is no raw equivalent.
-Image ImageThresholder::GetPixRect() {
-	if (IsFullImage()) {
-		// Just clone the whole thing.
-		return pix_.clone();
-	}
-	else {
-		// Crop to the given rectangle.
-		Box* box = boxCreate(rect_left_, rect_top_, rect_width_, rect_height_);
-		Image cropped = pixClipRectangle(pix_, box, nullptr);
-		boxDestroy(&box);
-		return cropped;
-	}
-}
-
-
-
-
-
-
-// Get a clone/copy of the source image rectangle, reduced to greyscale,
-// and at the same resolution as the output binary.
-// The returned Pix must be pixDestroyed.
-// Provided to the classifier to extract features from the greyscale image.
-Image ImageThresholder::GetPixRectGrey() {
-	auto pix = GetPixRect(); // May have to be reduced to grey.
-	int depth = pixGetDepth(pix);
-	if (depth != 8 || pixGetColormap(pix)) {
-		if (depth == 24) {
-			auto tmp = pixConvert24To32(pix);
-			pix.destroy();
-			pix = tmp;
-		}
-		auto result = pixConvertTo8(pix, false);
-		pix.destroy();
-		return result;
-	}
-	return pix;
-}
-
-
-
-
-
-// Get a clone/copy of the source image rectangle, reduced to normalized greyscale,
-// and at the same resolution as the output binary.
-// The returned Pix must be pixDestroyed.
-// Provided to the classifier to extract features from the greyscale image.
-Image ImageThresholder::GetPixNormRectGrey() {
-	auto pix = GetPixRect();
-	auto result = ImageThresholder::pixNLNorm2(pix, nullptr);
-	pix.destroy();
-	return result;
-}
-
-
-
-
-// Otsu thresholds the rectangle, taking the rectangle from *this.
-void ImageThresholder::OtsuThresholdRectToPix(Image src_pix, Image* out_pix) const {
-	std::vector<int> thresholds;
-	std::vector<int> hi_values;
-
-	int num_channels = OtsuThreshold(src_pix, rect_left_, rect_top_, rect_width_, rect_height_,
-		thresholds, hi_values);
-	// only use opencl if compiled w/ OpenCL and selected device is opencl
-#ifdef USE_OPENCL
-	OpenclDevice od;
-	if (num_channels == 4 && od.selectedDeviceIsOpenCL() && rect_top_ == 0 && rect_left_ == 0) {
-		od.ThresholdRectToPixOCL((unsigned char*)pixGetData(src_pix), num_channels,
-			pixGetWpl(src_pix) * 4, &thresholds[0], &hi_values[0], out_pix /*pix_OCL*/,
-			rect_height_, rect_width_, rect_top_, rect_left_);
-	}
-	else {
-#endif
-		ThresholdRectToPix(src_pix, num_channels, thresholds, hi_values, out_pix);
-#ifdef USE_OPENCL
-	}
-#endif
-}
-
-
-
-
-/// Threshold the rectangle, taking everything except the src_pix
-/// from the class, using thresholds/hi_values to the output pix.
-/// NOTE that num_channels is the size of the thresholds and hi_values
-// arrays and also the bytes per pixel in src_pix.
-void ImageThresholder::ThresholdRectToPix(Image src_pix, int num_channels, const std::vector<int>& thresholds,
-	const std::vector<int>& hi_values, Image* pix) const {
-	*pix = pixCreate(rect_width_, rect_height_, 1);
-	uint32_t* pixdata = pixGetData(*pix);
-	int wpl = pixGetWpl(*pix);
-	int src_wpl = pixGetWpl(src_pix);
-	uint32_t* srcdata = pixGetData(src_pix);
-	pixSetXRes(*pix, pixGetXRes(src_pix));
-	pixSetYRes(*pix, pixGetYRes(src_pix));
-	for (int y = 0; y < rect_height_; ++y) {
-		const uint32_t* linedata = srcdata + (y + rect_top_) * src_wpl;
-		uint32_t* pixline = pixdata + y * wpl;
-		for (int x = 0; x < rect_width_; ++x) {
-			bool white_result = true;
-			for (int ch = 0; ch < num_channels; ++ch) {
-				int pixel = GET_DATA_BYTE(linedata, (x + rect_left_) * num_channels + ch);
-				if (hi_values[ch] >= 0 && (pixel > thresholds[ch]) == (hi_values[ch] == 0)) {
-					white_result = false;
-					break;
-				}
-			}
-			if (white_result) {
-				CLEAR_DATA_BIT(pixline, x);
-			}
-			else {
-				SET_DATA_BIT(pixline, x);
-			}
-		}
-	}
 }
 
