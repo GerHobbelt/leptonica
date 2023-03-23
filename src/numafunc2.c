@@ -1979,7 +1979,9 @@ numaSplitDistribution(NUMA       *na,
                       l_float32  *pnum2,
                       NUMA      **pnascore)
 {
-l_int32    i, n, bestsplit, minrange, maxrange, maxindex;
+	l_ok* pblack_is_fg = NULL;  // dummy so we don't nuke the API i/f yet while we're still debugging this beast!
+
+l_int32    i, n, bestsplit, minrange, maxrange, maxindex, left, right;
 l_float32  ave1, ave2, ave1prev, ave2prev;
 l_float32  num1, num2, num1prev, num2prev;
 l_float32  val, minval, sum, fract1;
@@ -1988,7 +1990,8 @@ NUMA      *nascore, *naave1, *naave2, *nanum1, *nanum2;
 l_ok      rv = 0;
 
     if (psplitindex) *psplitindex = 0;
-    if (pave1) *pave1 = 0.0;
+	if (pblack_is_fg) *pblack_is_fg = 1;
+	if (pave1) *pave1 = 0.0;
     if (pave2) *pave2 = 0.0;
     if (pnum1) *pnum1 = 0.0;
     if (pnum2) *pnum2 = 0.0;
@@ -2007,7 +2010,21 @@ l_ok      rv = 0;
     numaGetHistogramStats(na, 0.0, 1.0, &ave2prev, NULL, NULL, NULL);
     num1prev = 0.0;
     num2prev = sum;
-    maxindex = n / 2;  /* initialize with something */
+
+	for (i = 0; i < n; i++) {
+		numaGetFValue(na, i, &val);
+		if (val != 0.0f)
+			break;
+	}
+	left = i;
+	for (i = n - 1; i >= 0; i--) {
+		numaGetFValue(na, i, &val);
+		if (val != 0.0f)
+			break;
+	}
+	right = i;
+
+	maxindex = (right + left) / 2;  /* initialize with something */
 
         /* Split the histogram with [0 ... i] in the lower part
          * and [i+1 ... n-1] in upper part.  First, compute an otsu
@@ -2016,16 +2033,28 @@ l_ok      rv = 0;
         return ERROR_INT("nascore not made", __func__, 1);
     naave1 = (pave1) ? numaCreate(n) : NULL;
     naave2 = (pave2) ? numaCreate(n) : NULL;
-    nanum1 = (pnum1) ? numaCreate(n) : NULL;
+    nanum1 = numaCreate(n);
     nanum2 = (pnum2) ? numaCreate(n) : NULL;
-    maxscore = 0.0;
+
+	maxscore = 0.0;
     for (i = 0; i < n; i++) {
         numaGetFValue(na, i, &val);
+		// num1 is partial sum for first i slots
         num1 = num1prev + val;
         if (num1 == 0)
             ave1 = ave1prev;
         else
-            ave1 = (num1prev * ave1prev + i * val) / num1;
+			// average = num1 / i;
+			//
+			// ave1 = (prev-partial-sum * prev-average + i         * val ) / partial-sum
+			// ave1 = (sum0             * (sum0 / n0)  + n1        * v_n1) / sum1 
+			// ave1 = (sum0             * (sum0 / n0)  + n1        * v_n1) / (sum0 + v_n1)
+			// ave1 = (sum0             *  sum0 / n0   + (n0 + 1)  * v_n1) / (sum0 + v_n1)
+			// ave1 = (sum0             *  sum0 / n0   + n0 * v_n1 + v_n1) / (sum0 + v_n1)
+			// ave1 = n0 * (sum0             *  sum0 / n0   + n0 * v_n1   + v_n1)      / ((sum0 + v_n1) * n0)
+			// ave1 =       sum0             *  sum0        + n0^2 * v_n1 + n0 * v_n1) / ((sum0 + v_n1) * n0)
+			//
+			ave1 = (num1prev * ave1prev + i * val) / num1;
         num2 = num2prev - val;
         if (num2 == 0)
             ave2 = ave2prev;
@@ -2037,7 +2066,7 @@ l_ok      rv = 0;
         numaAddNumber(nascore, score);
         if (pave1) numaAddNumber(naave1, ave1);
         if (pave2) numaAddNumber(naave2, ave2);
-        if (pnum1) numaAddNumber(nanum1, num1);
+        numaAddNumber(nanum1, num1);
         if (pnum2) numaAddNumber(nanum2, num2);
         if (score > maxscore) {
             maxscore = score;
@@ -2053,13 +2082,13 @@ l_ok      rv = 0;
          * of the max, choose the split point as the value with the
          * minimum in the histogram. */
     minscore = (1.f - scorefract) * maxscore;
-    for (i = maxindex - 1; i >= 0; i--) {
+	for (i = maxindex - 1; i >= left; i--) {
         numaGetFValue(nascore, i, &val);
         if (val < minscore)
             break;
     }
     minrange = i + 1;
-    for (i = maxindex + 1; i < n; i++) {
+    for (i = maxindex + 1; i <= right; i++) {
         numaGetFValue(nascore, i, &val);
         if (val < minscore)
             break;
@@ -2075,10 +2104,21 @@ l_ok      rv = 0;
         }
     }
 
+	l_float32 half_sum = sum / 2;
+	l_float32 splitnum;
+	numaGetFValue(na, bestsplit, &splitnum);
+	l_ok black_is_fg = (splitnum < half_sum);
+
         /* Add one to the bestsplit value to get the threshold value,
          * because when we take a threshold, as in pixThresholdToBinary(),
          * we always choose the set with values below the threshold. */
-    bestsplit = L_MIN(255, bestsplit + 1);
+	if (!black_is_fg) {
+		// the color at slot [bestsplit] is part of the splitnum partial sum,
+		// which, it turns out, is the *minority* sum, hence we should
+		// bump up the bestsplit edge index by one, so bestsplit is still
+		// "the last index of the background colors".
+		bestsplit = L_MIN(255, bestsplit + 1);
+	}
 
 	// when this histogram doesn't come with two humps, the max score will be 0.0.
 	// This is indicative of the histogram having a single hump only and is thus deemed to be all-background,
@@ -2092,25 +2132,96 @@ l_ok      rv = 0;
 		}
 		// +2 correction instead of +1 at the end
 	    // to ensure otsu believes everything in the chunk is 'background'.
-		bestsplit = L_MIN(255, i + 2);
+		//bestsplit = L_MIN(255, i + 2);
 #else
-		// almost numaClone(), but we need to tweak two edge values to get our way:
+		// almost numaClone(), but we need to tweak one edge value to get our way:
 		NUMA* na2 = numaCopy(na);
 		if (na2 == NULL) {
 			rv = ERROR_INT("histogram duplicate not made", __func__, 1);
 			goto ende;
 		}
 
-		// fake 2 humps at the histogram edges to force intended behaviour:
-		numaGetFValue(na, 0, &val);
-		val += 1 + sum / n;
-		numaSetValue(na2, 0, val);
+		// fake 2 humps in the histogram by creating an additional 'fake' hump
+		// at the 'background' side of the histogram to force intended behaviour.
+		//
+		// num1prev and num2prev are the partial sums from left (0..i) and from right (i..n)
+		// respectively. For regular images the 'background' is WHITE, so that is the
+		// high/right side of the histogram then. For *inverted* images, however, the
+		// "background" side black/low/left.
+		//
+		// Which one is i then, this time around?
+		// 
+		// Let's just say the "background" is the *majority of the pixels*, so we would
+		// be looking at the median then for a hint. Which is where (num1prev, ave1prev)
+		// come to our aid: ave1prev is the index position of the mean, while num1prev
+		// is the partial sum *including the value at the ave1prev index position*:
+		// when that happens to be the majority, then we know the median would be located
+		// *at* or *to the left* of the ave1prev index position: we have a *black*
+		// background.
+		// Otherwise, when num1prev is less than half the sum, then the majority of
+		// the pixels is at the right size of ave1prev, so we'd have a *white* background.
+		//
+		// All the while we DEFINE `bestsplit` to be:
+		//
+		// bestsplit = "the last index at which background pixels exist."
+		//
+		// This precise definition is *crucial* for the code to always be able to deliver,
+		// as it always did I got my grubby paws on it, an index value *in the legal range*.
+		//
+		// That last *system requirement* prevents us from using a slightly more obvious
+		// (human trivial) definition of the `bestsplit`:
+		//
+		// bestsplit != the index above the foreground pixels. (as the code further
+		// above would have you believe. If it would, really, you'ld desperately need
+		// to accept out-of-range index bestsplit=256 which happens when the entire image
+		// area is all-white: histo then would have a single peak at 255 and the old definition
+		// of bestsplit requires this function to produce bestsplit=256, yet it doesn't
+		// thanks to the L_MIN(255,index+1) clip action further above.
+		//
+		// We can stay in legal range like that when we tweak the bestsplit *definition of meaning*
+		// the way we did: we *assume* the histogram covers an image area which MAY be all-background
+		// but NEVER IS all-foreground.
+		//
+		// This does not, by itself, suffice to guide callers into being able to do the right thing
+		// with our produce, we either need to back-pedal on this train of thought and simply
+		// state that, from now on, we DO accept a returned bestsplit=256 as well, while knowingly
+		// out of legal index range, OR we return an additional indicator to he caller telling
+		// her which side the background is at, according to our analysis, while using the new
+		// bestsplit=last-index-of-background-pixels definition.
+		//
+		// Hairy? You betcha!
+		//
+		// This has been a week of paying attention and not understanding the lot. Until today.
+		// When the dam broke, finally, and some grok was bestowed. Meanwhile, do tread very
+		// carefully, as I myself am still wondering if I missed some important detail here.
+		// Calculating the average (ave1prev) like it is done had me thwarted for days: while
+		// it's *named* `ave` (~ average) IT IS NOT. It is THE INDEX at which the 'average' is
+		// statistically meant to be.
+		//
+		// And I didn't even mention the consequences of getting back at fractional index value
+		// yet! ;-))  (i.e. ave1prev being a non-integer value)
+		//
+		if (ave1prev != ave2prev)     // double-check our expectations; while we're at it, throw caution about IEEE754 accuracies in the wind and do an `!=` check.
+		{
+			fprintf(stderr, "This is very much unexpected!\n");
+		}
 
-		numaGetFValue(na, n - 1, &val);
-		val += 1 + sum / n;
-		numaSetValue(na2, n - 1, val);
+		l_float32 half_sum = sum / 2;
+		l_ok black_is_fg = (num1prev < half_sum);
 
-		rv = numaSplitDistribution(na2, scorefract, &bestsplit, pave1, pave2, pnum1, pnum2, pnascore);
+		if (black_is_fg) {
+			numaGetFValue(na, 0, &val);
+			val += 1 + sum / n;
+			numaSetValue(na2, 0, val);
+		}
+		else {
+			numaGetFValue(na, n - 1, &val);
+			val += 1 + sum / n;
+			numaSetValue(na2, n - 1, val);
+		}
+
+		// re-try all the above, now with a 'feked/tweaked' 2 hump histo:
+		rv = numaSplitDistribution(na2, scorefract, &bestsplit, NULL, NULL, NULL, NULL, pnascore);
 		if (pnascore) {  /* debug mode */
 			numaDestroy(pnascore);
 		}
@@ -2121,7 +2232,8 @@ l_ok      rv = 0;
 	}
 
     if (psplitindex) *psplitindex = bestsplit;
-    if (pave1) numaGetFValue(naave1, bestsplit, pave1);
+	if (pblack_is_fg) *pblack_is_fg = 1;
+	if (pave1) numaGetFValue(naave1, bestsplit, pave1);
     if (pave2) numaGetFValue(naave2, bestsplit, pave2);
     if (pnum1) numaGetFValue(nanum1, bestsplit, pnum1);
     if (pnum2) numaGetFValue(nanum2, bestsplit, pnum2);
@@ -2131,7 +2243,9 @@ l_ok      rv = 0;
 		lept_stderr("minscore = %f, maxscore = %f\n", minscore, maxscore);
 		lept_stderr("bestsplit = %d\n", bestsplit);
 		lept_stderr("minval = %10.0f\n", minval);
-        gplotSimple1(nascore, GPLOT_PNG, "/tmp/lept/nascore",
+		lept_stderr("num1prev = %f, num2prev = %f\n", num1prev, num2prev);
+		lept_stderr("ave1prev = %f, ave2prev = %f\n", ave1prev, ave2prev);
+		gplotSimple1(nascore, GPLOT_PNG, "/tmp/lept/nascore",
                      "Score for split distribution");
         *pnascore = nascore;
     } else {
@@ -2141,7 +2255,7 @@ l_ok      rv = 0;
 ende:
     if (pave1) numaDestroy(&naave1);
     if (pave2) numaDestroy(&naave2);
-    if (pnum1) numaDestroy(&nanum1);
+    numaDestroy(&nanum1);
     if (pnum2) numaDestroy(&nanum2);
     return rv;
 }
