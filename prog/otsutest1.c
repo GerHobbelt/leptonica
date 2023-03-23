@@ -94,6 +94,7 @@ GenerateSplitPlot(l_int32  i)
 char       title[256];
 l_int32    split;
 l_float32  ave1, ave2, num1, num2, maxnum, maxscore;
+l_ok       black_is_fg;
 GPLOT     *gplot;
 NUMA      *na1, *na2, *nascore, *nax, *nay;
 
@@ -103,7 +104,7 @@ NUMA      *na1, *na2, *nascore, *nax, *nay;
     numaArithOp(na1, na1, na2, L_ARITH_ADD);
 
         /* Otsu splitting */
-    numaSplitDistribution(na1, 0.08, &split, &ave1, &ave2, &num1, &num2,
+    numaSplitDistribution(na1, 0.08, &split, &black_is_fg, &ave1, &ave2, &num1, &num2,
                           &nascore);
     lept_stderr("split = %d, ave1 = %6.1f, ave2 = %6.1f\n", split, ave1, ave2);
     lept_stderr("num1 = %8.0f, num2 = %8.0f\n", num1, num2);

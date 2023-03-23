@@ -3432,6 +3432,7 @@ pixSplitDistributionFgBg(PIX       *pixs,
 char       buf[256];
 l_int32    thresh;
 l_float32  avefg, avebg, maxnum;
+l_ok       black_is_fg;
 GPLOT     *gplot;
 NUMA      *na, *nascore, *nax, *nay;
 PIX       *pixg;
@@ -3451,13 +3452,18 @@ PIX       *pixg;
         /* Make the fg/bg estimates */
     na = pixGetGrayHistogram(pixg, 1);
     if (ppixdb) {
-        numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
+        numaSplitDistribution(na, scorefract, &thresh, &black_is_fg, &avefg, &avebg,
                               NULL, NULL, &nascore);
         numaDestroy(&nascore);
     } else {
-        numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
+        numaSplitDistribution(na, scorefract, &thresh, &black_is_fg, &avefg, &avebg,
                               NULL, NULL, NULL);
     }
+	if (!black_is_fg) {
+		l_float32 tmp = avefg;
+		avefg = avebg;
+		avebg = tmp;
+	}
 
     if (pthresh) *pthresh = thresh;
     if (pfgval) *pfgval = (l_int32)(avefg + 0.5);

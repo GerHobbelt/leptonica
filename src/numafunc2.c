@@ -1926,7 +1926,8 @@ NUMA    *naeach;
  * \param[in]    na           histogram
  * \param[in]    scorefract   fraction of the max score, used to determine
  *                            range over which the histogram min is searched
- * \param[out]   psplitindex  [optional] index for splitting
+ * \param[out]   psplitindex  [optional] index for splitting: the last index which is considered 'background'
+ * \param[out]   pblack_is_fg [optional] 1 when 'black' (low values) are foreground, 0 when 'white' (high values) are foreground
  * \param[out]   pave1        [optional] average of lower distribution
  * \param[out]   pave2        [optional] average of upper distribution
  * \param[out]   pnum1        [optional] population of lower distribution
@@ -1973,14 +1974,13 @@ l_ok
 numaSplitDistribution(NUMA       *na,
                       l_float32   scorefract,
                       l_int32    *psplitindex,
+                      l_ok       *pblack_is_fg,
                       l_float32  *pave1,
                       l_float32  *pave2,
                       l_float32  *pnum1,
                       l_float32  *pnum2,
                       NUMA      **pnascore)
 {
-	l_ok* pblack_is_fg = NULL;  // dummy so we don't nuke the API i/f yet while we're still debugging this beast!
-
 l_int32    i, n, bestsplit, minrange, maxrange, maxindex, left, right;
 l_float32  ave1, ave2, ave1prev, ave2prev;
 l_float32  num1, num2, num1prev, num2prev;
@@ -2221,7 +2221,7 @@ l_ok      rv = 0;
 		}
 
 		// re-try all the above, now with a 'feked/tweaked' 2 hump histo:
-		rv = numaSplitDistribution(na2, scorefract, &bestsplit, NULL, NULL, NULL, NULL, pnascore);
+		rv = numaSplitDistribution(na2, scorefract, &bestsplit, &black_is_fg, NULL, NULL, NULL, NULL, pnascore);
 		if (pnascore) {  /* debug mode */
 			numaDestroy(pnascore);
 		}
@@ -2232,7 +2232,7 @@ l_ok      rv = 0;
 	}
 
     if (psplitindex) *psplitindex = bestsplit;
-	if (pblack_is_fg) *pblack_is_fg = 1;
+	if (pblack_is_fg) *pblack_is_fg = black_is_fg;
 	if (pave1) numaGetFValue(naave1, bestsplit, pave1);
     if (pave2) numaGetFValue(naave2, bestsplit, pave2);
     if (pnum1) numaGetFValue(nanum1, bestsplit, pnum1);

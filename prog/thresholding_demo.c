@@ -115,6 +115,7 @@ GetPixRectGrey(PIX* pix)
 static PIX*
 pixNLNorm2(PIX* pixs, int* pthresh) {
 	l_int32 d, thresh, w1, h1, w2, h2, fgval, bgval;
+	l_ok black_is_fg;
 	//l_uint32 black_val, white_val;
 	l_float32 factor, threshpos, avefg, avebg;
 	PIX* pixg, * pixd, * pixd2;
@@ -167,9 +168,15 @@ pixNLNorm2(PIX* pixs, int* pthresh) {
 	//  background and foreground value
 	pixbox = boxCreate(w1 * 0.1, h1 * 0.1, w1 * 0.9, h1 * 0.9);
 	na = pixGetGrayHistogramInRect(pixg, pixbox, 1);
-	numaSplitDistribution(na, 0.1, &thresh, &avefg, &avebg, NULL, NULL, NULL);
+	numaSplitDistribution(na, 0.1, &thresh, &black_is_fg, &avefg, &avebg, NULL, NULL, NULL);
 	boxDestroy(&pixbox);
 	numaDestroy(&na);
+
+	if (!black_is_fg) {
+		l_float32 tmp = avefg;
+		avefg = avebg;
+		avebg = tmp;
+	}
 
 	/// Subtract by a foreground value and multiply by factor to
 	//  set a background value to 255
