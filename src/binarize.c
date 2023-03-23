@@ -165,8 +165,11 @@ pixOtsuAdaptiveThreshold(PIX       *pixs,
 {
 l_int32     w, h, nx, ny, i, j, thresh;
 l_uint32    val;
-PIX        *pixt, *pixb, *pixthresh, *pixth, *pixd;
+int         black_is_fg_weight, all_bg_count, total_weight;
+l_int32     fgval, bgval;
+PIX        *pixt, *pixb, *pixthresh, *pixth, * pixblackfg, *pixd;
 PIXTILING  *pt;
+PTA* allbg_pta;
 
     if (!ppixth && !ppixd)
         return ERROR_INT("neither &pixth nor &pixd defined", __func__, 1);
@@ -177,7 +180,10 @@ PIXTILING  *pt;
     if (sx < 16 || sy < 16)
         return ERROR_INT("sx and sy must be >= 16", __func__, 1);
 
-        /* Compute the threshold array for the tiles */
+	black_is_fg_weight = 0;
+	all_bg_count = 0;
+
+	/* Compute the threshold array for the tiles */
     pixGetDimensions(pixs, &w, &h, NULL);
     nx = L_MAX(1, w / sx);
     ny = L_MAX(1, h / sy);
@@ -185,15 +191,113 @@ PIXTILING  *pt;
     smoothy = L_MIN(smoothy, (ny - 1) / 2);
     pt = pixTilingCreate(pixs, nx, ny, 0, 0, 0, 0);
     pixthresh = pixCreate(nx, ny, 8);
-    for (i = 0; i < ny; i++) {
-        for (j = 0; j < nx; j++) {
-            pixt = pixTilingGetTile(pt, i, j);
-            pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
-                                     NULL, NULL, NULL);
-            pixSetPixel(pixthresh, j, i, thresh);  /* see note (4) */
+	pixblackfg = pixCreate(nx, ny, 1);
+	allbg_pta = ptaCreate(nx * ny);					// queues the 'all background' tiles as those can only be processed correctly at the end
+	for (i = 0; i < ny; i++) {
+		for (j = 0; j < nx; j++) {
+			pixt = pixTilingGetTile(pt, i, j);
+			if (j == 0 && i == 5) {
+				fprintf(stderr, "magic!\n");
+			}
+			pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
+				&fgval, &bgval, NULL);
+			if (!(abs(fgval - bgval) >= 1)) {
+				fprintf(stderr, "bonk!\n");
+			}
+			// detect & register the 'all background pix' signal first:
+			if (fgval == bgval) {
+				all_bg_count++;
+				// we'll have tweak the threshold afterwards, when we have a verdict
+				// whether this is a black-fg or white-fg majority pix we're processing.
+				// (default assumption is classic black-fg pix)
+				ptaAddPt(allbg_pta, j, i);
+			}
+			else {
+				l_ok black_is_fg = (fgval < bgval);
+
+				pixSetPixel(pixthresh, j, i, thresh);  /* see note (4) */
+				pixSetPixel(pixblackfg, j, i, black_is_fg);
+
+				if (black_is_fg)
+					black_is_fg_weight++;
+				else
+					black_is_fg_weight--;
+			}
+
             pixDestroy(&pixt);
         }
     }
+
+	total_weight = nx * ny - all_bg_count;
+	if (abs(black_is_fg_weight) < total_weight) {
+		L_WARNING("pix is ambivalent about whether black is foreground: weight < 1: %d / %d, all-background don't-care count: %d\n", __func__, black_is_fg_weight, total_weight, all_bg_count);
+	}
+
+	// we now have a verdict whether our image is black-fg or white-fg:
+	// now we can properly patch the threshold mask for the 'all background'
+	// zones.
+	//
+	// Edge case: assume all-background black-fg when the entire image turns
+	// out to be 'all background':
+	if (total_weight == 0) {
+		// edge case: we assume classic back-fg, but pix being 'all background',
+		// i.e. global threshold ("last index for background color") is zero (pure black)
+		pixClearAll(pixthresh);
+		black_is_fg_weight = 1;
+	}
+	else {
+		l_ok black_is_fg = (black_is_fg_weight > 0);
+		thresh = (black_is_fg ? 0 : 255);
+		for (i = 0; i < all_bg_count; i++) {
+			l_int32 x, y;
+			ptaGetIPt(allbg_pta, i, &x, &y);
+			pixSetPixel(pixthresh, x, y, thresh);
+			pixSetPixel(pixblackfg, x, y, black_is_fg);
+		}
+
+		// now gang-press the minority tiles into acting like the majority:
+		// we need to adjust their thresholds to match.
+		// The minority believes the inverse of `black_is_fg`,
+		// i.e. white-fg when the majority is now known to believe black-fg,
+		// and vice versa.
+		for (i = 0; i < ny; i++) {
+			for (j = 0; j < nx; j++) {
+				l_uint32 val;
+				pixGetPixel(pixblackfg, j, i, &val);
+				if (val != black_is_fg) {
+					if (black_is_fg) {
+						// this white-fg believer must get its threshold bumped UP +1:
+						l_uint32 thval;
+						pixGetPixel(pixthresh, j, i, &thval);
+						if (thval == 255) {
+							fprintf(stderr, "urgh! black-fg + th=255 means: pure white is the only bg there is. But we CAN push the source tile further into the black instead!\n");
+							// but wait! when this case happens, th=255 came with the (minority) notion of white=fg: together those mean ALL PIXELS (colors 0..255) were considered to be
+							// BG, which makes this tile a (black) 'all background' one, and we do not process those in this branch. So we're good: THIS SHOULD NEVER HAPPEN.
+						}
+						else {
+							thval++;
+							pixSetPixel(pixthresh, j, i, thval);
+						}
+					}
+					else {
+						// this black-fg believer must get its threshold bumped DOWN -1:
+						l_uint32 thval;
+						pixGetPixel(pixthresh, j, i, &thval);
+						if (thval == 0) {
+							fprintf(stderr, "urgh! white-fg + th=0 means: pure black is the only bg there is. But we CAN push the source tile further into the white instead!\n");
+							// but wait! when this case happens, th=0 came with the (minority) notion of black=fg: together those mean ALL PIXELS (colors 255..0) were considered to be
+							// BG, which makes this tile a (white) 'all background' one, and we do not process those in this branch. So we're good: THIS SHOULD NEVER HAPPEN.
+						}
+						else {
+							thval--;
+							pixSetPixel(pixthresh, j, i, thval);
+						}
+					}
+				}
+			}
+		}
+	}
+	ptaDestroy(&allbg_pta);
 
         /* Optionally smooth the threshold array */
     if (smoothx > 0 || smoothy > 0)
@@ -204,6 +308,37 @@ PIXTILING  *pt;
 
         /* Optionally apply the threshold array to binarize pixs */
     if (ppixd) {
+		// TODO: cope with non-default white-fg majority belief correctly.
+		// Right now the mask is correct, following the (new) definition
+		// of the threshold: "the last color index that's background color",
+		// but a 8bpp PIX cannot store the threshold value 256, so we're
+		// in trouble there as white-fg belief really means the foreground
+		// is on the other side of the fence!
+		//
+		// Naively, we could invert a couple of times and deal with matters
+		// that way, but we could also reason like this:
+		// 1. if white is fg, then we COULD argue our threshold values are
+		//    all "on the black side of matters", i.e. thresholds are now
+		//    "the last color index that's black"
+		// 2. but the leptonica thresholding code (called further below for pixd)
+		//    ALWAYS assumes black is fg, so we have to make those thresholds
+		//    represent "the first color that's white" to keep up appearances.
+		// 3. that way of thinking still risks having to produce threshold
+		//    values of 256, which are out of legal range.
+		// 4. Meanwhile, we COULD also DROP the source image colors by 1
+		//    to achieve the same effect: nobody will know because we only
+		//    send them the resulting binarized image, so nobody's the wiser
+		//    when we push the source a bit into the black.
+		// 5. theoretically, it's the same end result, but no naive inverting
+		//    of multiple PIX before & after (we would have to invert both the
+		//    source and binary result, plus invert & correct the threshold PIX:
+		//    a lot of work that can be done faster this way: drop source -1 grey value.
+		//
+		// Note: for a white=fg PIX, can we expect any threshold to be 0?
+		// YES, because that would mean pure black was "the last bg color".
+		// And we CANNOT drop below ZERO. So we then have to locally adjust
+		// the threshold image. Which we cannot do as it's much lower rez.
+		// !@#*(@$^@#^@#$%@#$@#$@#$............
         pixd = pixCreate(w, h, 1);
         pixCopyResolution(pixd, pixs);
         for (i = 0; i < ny; i++) {

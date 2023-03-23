@@ -3432,7 +3432,7 @@ pixSplitDistributionFgBg(PIX       *pixs,
 char       buf[256];
 l_int32    thresh;
 l_float32  avefg, avebg, maxnum;
-l_ok       black_is_fg;
+l_float32  numfg, numbg;
 GPLOT     *gplot;
 NUMA      *na, *nascore, *nax, *nay;
 PIX       *pixg;
@@ -3452,20 +3452,42 @@ PIX       *pixg;
         /* Make the fg/bg estimates */
     na = pixGetGrayHistogram(pixg, 1);
     if (ppixdb) {
-        numaSplitDistribution(na, scorefract, &thresh, &black_is_fg, &avefg, &avebg,
-                              NULL, NULL, &nascore);
+        numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
+                              &numfg, &numbg, &nascore);
         numaDestroy(&nascore);
     } else {
-        numaSplitDistribution(na, scorefract, &thresh, &black_is_fg, &avefg, &avebg,
-                              NULL, NULL, NULL);
+        numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
+                              &numfg, &numbg, NULL);
     }
-	if (!black_is_fg) {
+
+    if (pthresh) *pthresh = thresh;
+	if (!(fabsf(avefg - avebg) >= 1)) {
+		fprintf(stderr, "klunt!\n");
+	}
+	// left/black is foreground is the default assumption, but when the median is
+	// on the left side == there's more left-side than right-side pixels in the
+	// histogram, then we assume it's white/right is foreground: the foreground
+	// pixels are supposed to be relatively rare.
+	if (numfg > numbg) {
+		// swap the left/right peak indexes to signal the caller it's white fg & black bg today.
 		l_float32 tmp = avefg;
 		avefg = avebg;
 		avebg = tmp;
-	}
 
-    if (pthresh) *pthresh = thresh;
+		tmp = numfg;
+		numfg = numbg;
+		numbg = tmp;
+	}
+	// when the histogram is a single-hump type, there is no foreground at all.
+	// This is observable by inspecting the `num` partial sums: if either is ZERO,
+	// then it's an all-background pix and we signal this to the caller by doing
+	// something *nasty*: we set the `avefg` equal to `avebg`, which is a *unique*
+	// situation: both `ave` indexes are then pointing to the same side of `threshold`
+	// which is otherwise illogical: the caller can detect this easily and decode
+	// our 'this is an all-background pix/histogram' signal:
+	if (numfg == 0.0) {
+		avefg = avebg;
+	}
     if (pfgval) *pfgval = (l_int32)(avefg + 0.5);
     if (pbgval) *pbgval = (l_int32)(avebg + 0.5);
 

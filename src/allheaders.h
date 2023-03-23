@@ -1354,7 +1354,7 @@ LEPT_DLL extern l_ok numaDiscretizeSortedInBins ( NUMA *na, l_int32 nbins, NUMA 
 LEPT_DLL extern l_ok numaDiscretizeHistoInBins ( NUMA *na, l_int32 nbins, NUMA **pnabinval, NUMA **pnarank );
 LEPT_DLL extern l_ok numaGetRankBinValues ( NUMA *na, l_int32 nbins, NUMA **pnam );
 LEPT_DLL extern NUMA * numaGetUniformBinSizes ( l_int32 ntotal, l_int32 nbins );
-LEPT_DLL extern l_ok numaSplitDistribution ( NUMA *na, l_float32 scorefract, l_int32 *psplitindex, l_ok *pblack_is_fg, l_float32 *pave1, l_float32 *pave2, l_float32 *pnum1, l_float32 *pnum2, NUMA **pnascore );
+LEPT_DLL extern l_ok numaSplitDistribution ( NUMA *na, l_float32 scorefract, l_int32 *psplitindex, l_float32 *pave1, l_float32 *pave2, l_float32 *pnum1, l_float32 *pnum2, NUMA **pnascore );
 LEPT_DLL extern l_ok grayHistogramsToEMD ( NUMAA *naa1, NUMAA *naa2, NUMA **pnad );
 LEPT_DLL extern l_ok numaEarthMoverDistance ( NUMA *na1, NUMA *na2, l_float32 *pdist );
 LEPT_DLL extern l_ok grayInterHistogramStats ( NUMAA *naa, l_int32 wc, NUMA **pnam, NUMA **pnams, NUMA **pnav, NUMA **pnarv );
