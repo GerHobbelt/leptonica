@@ -986,8 +986,8 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 			int w, h;
 			pixGetDimensions(pix[1], &w, &h, NULL);
 
-			float tile_size = 32; //  0.33 * h;
-			float smooth_size = 0; //  1.0f; //  0.0f;
+			float tile_size = 0.1 * h; // 0.33 * h; // 32;
+			float smooth_size = 2.0f; //  2.0f; //  0.0f;
 			float score_fraction = 0.1f;
 			ret |= OtsuThreshold(pix[1], tile_size, smooth_size, score_fraction, &pix[4], &pix[3], &pix[2]);
 
