@@ -2208,7 +2208,7 @@ l_ok      rv = 0;
 		// it's *named* `ave` (~ average) IT IS NOT. It is THE INDEX at which the 'average' is
 		// statistically meant to be.
 		//
-		// And I didn't even mention the consequences of getting back at fractional index value
+		// And I didn't even mention the consequences of getting back a fractional index value
 		// yet! ;-))  (i.e. ave1prev being a non-integer value)
 		//
 		if (ave1prev != ave2prev)     // double-check our expectations; while we're at it, throw caution about IEEE754 accuracies in the wind and do an `!=` check.
@@ -2240,7 +2240,7 @@ l_ok      rv = 0;
 		// up to the caller.
 		// Hence we need to fix the stats we just produced: the easiest way to do that is to grab
 		// the relevant data from our original `num` arrays:
-		// (Note: we need to keep those, ah, 'fakefluenced' `ave` values though, as they are required
+		// (Note: we need to keep those, ah, 'fake-fluenced' `ave` values though, as they are required
 		// for a proper analysis at the caller site.)
 		if (pnum1) numaGetFValue(nanum1, th, pnum1);
 		if (pnum2) numaGetFValue(nanum2, th, pnum2);
