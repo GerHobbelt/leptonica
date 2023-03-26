@@ -58,9 +58,17 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
+#include "demo_settings.h"
+
+#include "monolithic_examples.h"
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_scaleimages_main
+#endif
 
 int main(int    argc,
-         char **argv)
+         const char **argv)
 {
 char       outname[512];
 char      *dirin, *pattern, *dirout, *rootname, *comptype, *fname, *extension;

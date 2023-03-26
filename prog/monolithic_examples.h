@@ -265,6 +265,7 @@ int lept_scale_reg_main(int argc, const char **argv);
 int lept_scaleandtile_main(int argc, const char **argv);
 int lept_scaletest1_main(int argc, const char **argv);
 int lept_scaletest2_main(int argc, const char **argv);
+int lept_scaleimages_main(int argc, const char **argv);
 int lept_seedfilltest_main(int argc, const char **argv);
 int lept_seedspread_reg_main(int argc, const char **argv);
 int lept_selio_reg_main(int argc, const char **argv);
