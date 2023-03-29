@@ -312,9 +312,19 @@ OtsuThreshold(PIX* pixs, float tile_size, float smooth_size, float score_fractio
 		if (w2 != w || h2 != h)
 		{
 			// we DO NOT want to be confused by the smoothness introduced by regular scaling, so we apply brutal sampled scale then:
-			pixt = pixScaleBySamplingWithShift(pixt, w * 1.0f / w2, h * 1.0f / h2, 0.0f, 0.0f);
+			pixt = pixScaleBySamplingWithShift(pixt, tilesize, tilesize, 0.0f, 0.0f);
 			pixDestroy(pixthres);
 			*pixthres = pixt;
+
+			// now see if we need to extend the right and/or bottom edges: that's how tiling is done in leptonica:
+			// the right-most and bottom tiles carry the surplus.
+			pixGetDimensions(pixt, &w2, &h2, NULL);
+			if (w2 != w || h2 != h)
+			{
+				pixt = pixAddContinuedBorder(pixt, 0, w - w2, 0, h - h2);
+				pixDestroy(pixthres);
+				*pixthres = pixt;
+			}
 		}
 	}
 
