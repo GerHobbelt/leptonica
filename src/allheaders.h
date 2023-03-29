@@ -1229,6 +1229,7 @@ LEPT_DLL extern l_ok numaSetCount ( NUMA *na, l_int32 newcount );
 LEPT_DLL extern l_ok numaGetFValue ( NUMA *na, l_int32 index, l_float32 *pval );
 LEPT_DLL extern l_ok numaGetIValue ( NUMA *na, l_int32 index, l_int32 *pival );
 LEPT_DLL extern l_ok numaSetValue ( NUMA *na, l_int32 index, l_float32 val );
+LEPT_DLL extern l_ok numaZeroValues (NUMA *na, l_int32 first, l_int32 last);
 LEPT_DLL extern l_ok numaShiftValue ( NUMA *na, l_int32 index, l_float32 diff );
 LEPT_DLL extern l_int32 * numaGetIArray ( NUMA *na );
 LEPT_DLL extern l_float32 * numaGetFArray ( NUMA *na, l_int32 copyflag );

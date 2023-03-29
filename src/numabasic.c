@@ -762,6 +762,35 @@ numaSetValue(NUMA      *na,
 
 
 /*!
+ * \brief   numaZeroValues()
+ *
+ * \param[in]    na
+ * \param[in]    first   beginning index
+ * \param[in]    last    final index; use -1 to go to the end
+ * \return  0 if OK; 1 on error
+ */
+l_ok
+numaZeroValues(NUMA* na, l_int32 first, l_int32 last)
+{
+	l_int32 n;
+
+	if (!na)
+		return ERROR_INT("na not defined", __func__, 1);
+	n = na->n;
+	if (first < 0) first = 0;
+	if (first >= n || last < -1)  /* not an error */
+		return 0;
+	if (last == -1)
+		last = n - 1;
+	last = L_MIN(last, n - 1);
+
+	for ( ; first <= last; first++)
+		na->array[first] = 0.0f;
+	return 0;
+}
+
+
+/*!
  * \brief   numaShiftValue()
  *
  * \param[in]    na

@@ -163,13 +163,18 @@ pixOtsuAdaptiveThreshold(PIX       *pixs,
                          PIX      **ppixth,
                          PIX      **ppixd)
 {
-l_int32     w, h, nx, ny, i, j, thresh;
+l_int32     w, h, nx, ny, i, j, thresh, nx_offset;
 l_uint32    val;
 int         black_is_fg_weight, all_bg_count, total_weight;
 l_int32     fgval, bgval;
-PIX        *pixt, *pixb, *pixthresh, *pixth, * pixblackfg, *pixd;
+PIX        *pixt, *pixb, *pixthresh, *pixth, *pixd;
 PIXTILING  *pt;
-PTA* allbg_pta;
+struct BG_THRES_PT_INFO {
+	l_int16 thresh;
+	l_int16 fgval;
+	l_int16 bgval;
+	l_int16 flags;
+} *allbg_pta;
 
     if (!ppixth && !ppixd)
         return ERROR_INT("neither &pixth nor &pixd defined", __func__, 1);
@@ -191,12 +196,15 @@ PTA* allbg_pta;
     smoothy = L_MIN(smoothy, (ny - 1) / 2);
     pt = pixTilingCreate(pixs, nx, ny, 0, 0, 0, 0);
     pixthresh = pixCreate(nx, ny, 8);
-	pixblackfg = pixCreate(nx, ny, 1);
-	allbg_pta = ptaCreate(nx * ny);					// queues the 'all background' tiles as those can only be processed correctly at the end
+	allbg_pta = (struct BG_THRES_PT_INFO *)LEPT_CALLOC(nx * ny, sizeof(allbg_pta[0]));					// queues the 'all background' tiles as those can only be processed correctly at the end
+
 	for (i = 0; i < ny; i++) {
+		nx_offset = i * nx;
 		for (j = 0; j < nx; j++) {
+			struct BG_THRES_PT_INFO* ptpx = &allbg_pta[nx_offset + j];
+
 			pixt = pixTilingGetTile(pt, i, j);
-			if (j == 0 && i == 5) {
+			if (j == 19 && i == 0) {
 				fprintf(stderr, "magic!\n");
 			}
 			pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
@@ -204,19 +212,27 @@ PTA* allbg_pta;
 			if (!(abs(fgval - bgval) >= 1)) {
 				fprintf(stderr, "bonk!\n");
 			}
+			if (thresh < 60) {
+				fprintf(stderr, "magic!\n");
+			}
+
+			ptpx->thresh = thresh;
+			ptpx->bgval = bgval;
+			ptpx->fgval = fgval;
+			
 			// detect & register the 'all background pix' signal first:
 			if (fgval == bgval) {
 				all_bg_count++;
 				// we'll have to tweak the threshold afterwards, when we have a verdict
 				// whether this is a black-fg or white-fg majority pix we're processing.
 				// (default assumption is classic black-fg pix)
-				ptaAddPt(allbg_pta, j, i);
+				ptpx->flags = 2;
 			}
 			else {
 				l_ok black_is_fg = (fgval < bgval);
+				ptpx->flags = black_is_fg;  // 0/1
 
 				pixSetPixel(pixthresh, j, i, thresh);  /* see note (4) */
-				pixSetPixel(pixblackfg, j, i, black_is_fg);
 
 				if (black_is_fg)
 					black_is_fg_weight++;
@@ -246,14 +262,9 @@ PTA* allbg_pta;
 		black_is_fg_weight = 1;
 	}
 	else {
-		l_ok black_is_fg = (black_is_fg_weight > 0);
+		l_ok black_is_fg = (black_is_fg_weight >= 0);
 		thresh = (black_is_fg ? 0 : 255);
-		for (i = 0; i < all_bg_count; i++) {
-			l_int32 x, y;
-			ptaGetIPt(allbg_pta, i, &x, &y);
-			pixSetPixel(pixthresh, x, y, thresh);
-			pixSetPixel(pixblackfg, x, y, black_is_fg);
-		}
+		//thresh = 50;
 
 		// now gang-press the minority tiles into acting like the majority:
 		// we need to adjust their thresholds to match.
@@ -261,43 +272,136 @@ PTA* allbg_pta;
 		// i.e. white-fg when the majority is now known to believe black-fg,
 		// and vice versa.
 		for (i = 0; i < ny; i++) {
+			nx_offset = i * nx;
+			//if (i % 2)
+			//	thresh = 50;
+			//else
+			//	thresh = 155;
 			for (j = 0; j < nx; j++) {
-				l_uint32 val;
-				pixGetPixel(pixblackfg, j, i, &val);
-				if (val != black_is_fg) {
-					if (black_is_fg) {
-						// this white-fg believer must get its threshold bumped UP +1:
-						l_uint32 thval;
-						pixGetPixel(pixthresh, j, i, &thval);
-						if (thval == 255) {
-							fprintf(stderr, "urgh! black-fg + th=255 means: pure white is the only bg there is. But we CAN push the source tile further into the black instead!\n");
-							// but wait! when this case happens, th=255 came with the (minority) notion of white=fg: together those mean ALL PIXELS (colors 0..255) were considered to be
-							// BG, which makes this tile a (black) 'all background' one, and we do not process those in this branch. So we're good: THIS SHOULD NEVER HAPPEN.
+				//pixSetPixel(pixthresh, j, i, thresh);
+				//if (thresh == 50)
+				//	thresh = 155;
+				//else
+				//	thresh = 50;
+				//continue;
+
+				struct BG_THRES_PT_INFO* ptpx = &allbg_pta[nx_offset + j];
+				l_ok val = (ptpx->flags & 0x01);
+
+				if (j == 17 && i == 0) {
+					fprintf(stderr, "magic!\n");
+				}
+
+				if (ptpx->flags & 0x02) {
+					// all-background tile
+					pixSetPixel(pixthresh, j, i, thresh);
+				}
+				// does the tile's `black_is_fg` value match the majority vote `black_is_fg` or not?
+				else if (val != black_is_fg) {
+					// nope, it does not.
+					//
+					// in this case we need to re-inspect the tile as the previously calculated threshold
+					// for this tile is on the wrong side of the majority of its content pixels, so we cannot
+					// simply 'adjust' the old threshold: that would only work for *extremely clean* images.
+					//
+					// Hence we extract the tile again and knowing the `black_is_fg` global preference now,
+					// we can 'tweak' the local threshold approach by making sure it will never find a
+					// threshold at the wrong side of the median: we do so by editing the histogram to
+					// produce a single, strong, hump at the 'background side' of the median.
+					struct BG_THRES_PT_INFO* ptpx = &allbg_pta[nx_offset + j];
+
+					pixt = pixTilingGetTile(pt, i, j);
+					//pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh, &fgval, &bgval, NULL);
+
+					l_float32  avefg, avebg;
+					l_float32  numfg, numbg;
+					NUMA* na = pixGetGrayHistogram(pixt, 1);
+
+					l_float32 mean, median, mode, variance;
+					numaGetHistogramStats(na, 0.0, 1.0, &mean, &median, &mode, &variance);
+
+					// now that we know the median, we're going to tweak the histogram to ensure
+					// it's got a single hump at the 'background' side of the median:
+					// we dump all the weight in the median slot, resulting in a single, high, peak
+					// for the background:
+					if (!black_is_fg) {
+						// when black is BACKGROUND: create the hump at `floor(median)`:
+						l_float32 sum;
+						l_int32 median_pos = median;
+						numaGetSumOnInterval(na, 0, median_pos, &sum);
+						numaZeroValues(na, 0, median_pos);
+						numaSetValue(na, median_pos, sum);
+
+						l_int32 tile_thresh;
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avebg, &avefg, &numbg, &numfg, NULL);
+
+						if (!(fabsf(avefg - avebg) >= 1)) {
+							fprintf(stderr, "klunt!\n");
+						}
+						if (tile_thresh <= median) {
+							fprintf(stderr, "klunt!\n");
+						}
+
+						// when the histogram is a single-hump type, there is no foreground at all.
+						// This is observable by inspecting its `num` partial sum: if it is ZERO,
+						// then it's an all-background pix.
+						if (numfg == 0.0) {
+							avefg = avebg;
+
+							// all-background tile
+							pixSetPixel(pixthresh, j, i, thresh);
 						}
 						else {
-							thval++;
-							pixSetPixel(pixthresh, j, i, thval);
+							fgval = (l_int32)(avefg + 0.5);
+							bgval = (l_int32)(avebg + 0.5);
+
+							l_ok black_is_fg2 = (fgval < bgval);
+
+							pixSetPixel(pixthresh, j, i, tile_thresh);
+							black_is_fg_weight--;
 						}
 					}
 					else {
-						// this black-fg believer must get its threshold bumped DOWN -1:
-						l_uint32 thval;
-						pixGetPixel(pixthresh, j, i, &thval);
-						if (thval == 0) {
-							fprintf(stderr, "urgh! white-fg + th=0 means: pure black is the only bg there is. But we CAN push the source tile further into the white instead!\n");
-							// but wait! when this case happens, th=0 came with the (minority) notion of black=fg: together those mean ALL PIXELS (colors 255..0) were considered to be
-							// BG, which makes this tile a (white) 'all background' one, and we do not process those in this branch. So we're good: THIS SHOULD NEVER HAPPEN.
+						// when black is FOREGROUND: create the hump at `ceil(median)`:
+						l_float32 sum;
+						l_int32 median_pos = ceil(median);
+						numaGetSumOnInterval(na, median_pos, -1, &sum);
+						numaZeroValues(na, median_pos, -1);
+						numaSetValue(na, median_pos, sum);
+
+						l_int32 tile_thresh;
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avefg, &avebg, &numfg, &numbg, NULL);
+
+						if (!(fabsf(avefg - avebg) >= 1)) {
+							fprintf(stderr, "klunt!\n");
+						}
+
+						// when the histogram is a single-hump type, there is no foreground at all.
+						// This is observable by inspecting its `num` partial sum: if it is ZERO,
+						// then it's an all-background pix.
+						if (numfg == 0.0) {
+							avefg = avebg;
+
+							// all-background tile
+							pixSetPixel(pixthresh, j, i, thresh);
 						}
 						else {
-							thval--;
-							pixSetPixel(pixthresh, j, i, thval);
+							fgval = (l_int32)(avefg + 0.5);
+							bgval = (l_int32)(avebg + 0.5);
+
+							l_ok black_is_fg2 = (fgval < bgval);
+
+							pixSetPixel(pixthresh, j, i, tile_thresh);
+							black_is_fg_weight++;
 						}
 					}
+
+					pixDestroy(&pixt);
 				}
 			}
 		}
 	}
-	ptaDestroy(&allbg_pta);
+	LEPT_FREE(allbg_pta);
 
         /* Optionally smooth the threshold array */
     if (smoothx > 0 || smoothy > 0)
@@ -339,12 +443,18 @@ PTA* allbg_pta;
 		// And we CANNOT drop below ZERO. So we then have to locally adjust
 		// the threshold image. Which we cannot do as it's much lower rez.
 		// !@#*(@$^@#^@#$%@#$@#$@#$............
-        pixd = pixCreate(w, h, 1);
+		l_ok black_is_fg = (black_is_fg_weight >= 0);
+		pixd = pixCreate(w, h, 1);
         pixCopyResolution(pixd, pixs);
         for (i = 0; i < ny; i++) {
             for (j = 0; j < nx; j++) {
                 pixt = pixTilingGetTile(pt, i, j);
                 pixGetPixel(pixth, j, i, &val);
+				if (!black_is_fg) {
+					// black is BACKGROUND: invert both pix and threshold:
+					val = 255 - val;
+					pixInvert(pixt, pixt);
+				}
                 pixb = pixThresholdToBinary(pixt, val);
                 pixTilingPaintTile(pixd, i, j, pixb, pt);
                 pixDestroy(&pixt);
