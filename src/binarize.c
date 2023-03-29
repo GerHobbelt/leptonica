@@ -207,7 +207,7 @@ PTA* allbg_pta;
 			// detect & register the 'all background pix' signal first:
 			if (fgval == bgval) {
 				all_bg_count++;
-				// we'll have tweak the threshold afterwards, when we have a verdict
+				// we'll have to tweak the threshold afterwards, when we have a verdict
 				// whether this is a black-fg or white-fg majority pix we're processing.
 				// (default assumption is classic black-fg pix)
 				ptaAddPt(allbg_pta, j, i);
