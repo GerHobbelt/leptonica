@@ -1030,8 +1030,63 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 
 			pix[5] = pixAddMirroredBorder(pix[0], w / 2, w / 2, h / 2, h / 2);
 			ret |= pixWrite(mk_dst_filename("border-50pct.png"), pix[5], IFF_PNG);
+
+			// add padding border: size must be Otsu smoothing kernel size + 1 as the smoothing --> convolution 'accumulator'
+			// pix that will be constructed by the Otsu code internally will have the same size as
+			// the provided source pix and we wish to prevent nasty border artifacts due to rounding
+			// errors in blockconvLow()'s re-normalization of border rows/columns, which takes
+			// (rounded) integer greyscale values from intermediate calculations, thus producing
+			// rounding / math accuracy artifacts at the border. Hence it is 'smart' to make sure
+			// we have a more-or-less plain, *thick*, border around the actual image before we apply
+			// binarization of any kind.
+			l_int32 border = 2 * L_MAX(32, 0.33 * h + 0.5);
+			pix[6] = pixAddContinuedBorder(pix[0], border, border, border, border);
+			ret |= pixWrite(mk_dst_filename("padding-2px.png"), pix[6], IFF_PNG);
+		}
+
+		if (!IsPixBinary(pix[6])) {
+			pix[7] = GetPixRectGrey(pix[6]);
+		}
+		else {
+			pix[7] = pixClone(pix[6]);
+		}
+		ret |= pixWrite(mk_dst_filename("grey256.png"), pix[7], IFF_PNG);
+
+		{
+			int w, h;
+			pixGetDimensions(pix[7], &w, &h, NULL);
+
+			const struct {
+				float tile_size;
+				float smooth_size;
+				float score_fraction;
+			} scenarios[] = {
+				{ 0.1 * h, 2.0f, 0.1f },
+				{ 0.33 * h, 2.0f, 0.1f },
+				{ 32, 2.0f, 0.1f },
+
+				{ 0.1 * h, 0.0f, 0.1f },
+				{ 0.33 * h, 0.0f, 0.1f },
+				{ 32, 0.0f, 0.1f },
+			};
+			for (int i = 0; i < sizeof(scenarios) / sizeof(scenarios[0]); i++)
+			{
+				float tile_size = scenarios[i].tile_size;
+				float smooth_size = scenarios[i].smooth_size;
+				float score_fraction = scenarios[i].score_fraction;
+
+				for (int i = 8; i < sizeof(pix) / sizeof(pix[0]); i++)
+					pixDestroy(&pix[i]);
+
+				ret |= OtsuThreshold(pix[7], tile_size, smooth_size, score_fraction, &pix[10], &pix[9], &pix[8]);
+
+				ret |= pixWrite(mk_dst_filename("grey256.png"), pix[8], IFF_PNG);
+				ret |= pixWrite(mk_dst_filename("thresholds.png"), pix[9], IFF_PNG);
+				ret |= pixWrite(mk_dst_filename("binarized-result.png"), pix[10], IFF_PNG);
+			}
 		}
 	}
+	
 
 	for (int i = 0; i < sizeof(pix) / sizeof(pix[0]); i++)
 		pixDestroy(&pix[i]);
