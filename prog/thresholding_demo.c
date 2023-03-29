@@ -936,7 +936,15 @@ ThresholdRectToPix(PIX *pix, int num_channels, int thresholds[4], const int hi_v
 
 
 
+static const char* mk_dst_filename(const char* name)
+{
+	static char dstpath[1024];
+	static int index = 0;
 
+	snprintf(dstpath, sizeof(dstpath), "/tmp/lept/binarization/%03d-%s", index, name);
+	index++;
+	return dstpath;
+}
 
 
 
@@ -975,28 +983,53 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 	}
 	else
 	{
-		ret |= pixWrite("/tmp/lept/binarization/00-orig.png", pix[0], IFF_PNG);
+		ret |= pixWrite(mk_dst_filename("orig.png"), pix[0], IFF_PNG);
 
 		// Otsu first; tesseract 'vanilla' behaviour mimic
 
 		if (!IsPixBinary(pix[0])) {
 			pix[1] = GetPixRectGrey(pix[0]);
-			ret |= pixWrite("/tmp/lept/binarization/01A-grey256.png", pix[1], IFF_PNG);
+		}
+		else {
+			pix[1] = pixClone(pix[0]);
+		}
+		ret |= pixWrite(mk_dst_filename("grey256.png"), pix[1], IFF_PNG);
 
+		{
 			int w, h;
 			pixGetDimensions(pix[1], &w, &h, NULL);
 
-			float tile_size = 0.1 * h; // 0.33 * h; // 32;
-			float smooth_size = 2.0f; //  2.0f; //  0.0f;
-			float score_fraction = 0.1f;
-			ret |= OtsuThreshold(pix[1], tile_size, smooth_size, score_fraction, &pix[4], &pix[3], &pix[2]);
+			const struct {
+				float tile_size;
+				float smooth_size;
+				float score_fraction;
+			} scenarios[] = {
+				{ 0.1 * h, 2.0f, 0.1f },
+				{ 0.33 * h, 2.0f, 0.1f },
+				{ 32, 2.0f, 0.1f },
 
-			ret |= pixWrite("/tmp/lept/binarization/01B-grey256.png", pix[2], IFF_PNG);
-			ret |= pixWrite("/tmp/lept/binarization/02-thresholds.png", pix[3], IFF_PNG);
-			ret |= pixWrite("/tmp/lept/binarization/03-binarized-result.png", pix[4], IFF_PNG);
+				{ 0.1 * h, 0.0f, 0.1f },
+				{ 0.33 * h, 0.0f, 0.1f },
+				{ 32, 0.0f, 0.1f },
+			};
+			for (int i = 0; i < sizeof(scenarios) / sizeof(scenarios[0]); i++)
+			{
+				float tile_size = scenarios[i].tile_size;
+				float smooth_size = scenarios[i].smooth_size;
+				float score_fraction = scenarios[i].score_fraction;
+
+				for (int i = 2; i < sizeof(pix) / sizeof(pix[0]); i++)
+					pixDestroy(&pix[i]);
+
+				ret |= OtsuThreshold(pix[1], tile_size, smooth_size, score_fraction, &pix[4], &pix[3], &pix[2]);
+
+				ret |= pixWrite(mk_dst_filename("grey256.png"), pix[2], IFF_PNG);
+				ret |= pixWrite(mk_dst_filename("thresholds.png"), pix[3], IFF_PNG);
+				ret |= pixWrite(mk_dst_filename("binarized-result.png"), pix[4], IFF_PNG);
+			}
 
 			pix[5] = pixAddMirroredBorder(pix[0], w / 2, w / 2, h / 2, h / 2);
-			ret |= pixWrite("/tmp/lept/binarization/04-border-50pct.png", pix[5], IFF_PNG);
+			ret |= pixWrite(mk_dst_filename("border-50pct.png"), pix[5], IFF_PNG);
 		}
 	}
 
