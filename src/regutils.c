@@ -128,9 +128,9 @@ char         *testname, *vers;
 char          errormsg[64];
 L_REGPARAMS  *rp;
 
-    if (argc != 1 && argc != 2) {
+    if (argc != 1 && argc != 2 && argc != 3) {
         snprintf(errormsg, sizeof(errormsg),
-            "Syntax: %s [ [compare] | generate | display ]", argv[0]);
+            "Syntax: %s [ [compare] | generate | display ] ...", argv[0]);
         return ERROR_INT(errormsg, __func__, 1);
     }
 

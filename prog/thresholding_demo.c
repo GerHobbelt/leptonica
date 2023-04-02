@@ -60,6 +60,8 @@ static PIX*
 ThresholdRectToPix(PIX* pix, int num_channels, int thresholds[4], const int hi_values[4]);
 static l_ok
 OtsuThreshold(PIX* pixs, float tile_size, float smooth_size, float score_fraction, PIX** pixd, PIX** pixthres, PIX** pixgrey);
+static const char*
+mk_dst_filename(const char* name);
 
 
 
@@ -81,6 +83,14 @@ IsPixBinary(PIX* pix)
 {
 	int d = pixGetDepth(pix);
 	return d == 1;
+}
+
+static l_ok
+IsPixGreyscale(PIX* pix)
+{
+	int d = pixGetDepth(pix);
+	PIXCMAP *cmap = pixGetColormap(pix);
+	return d == 8 && cmap == NULL;
 }
 
 
@@ -143,6 +153,7 @@ pixNLNorm2(PIX* pixs, int* pthresh) {
 	//  pixGetBlackOrWhiteVal(pixg, L_GET_WHITE_VAL, &white_val);
 	//  if (white_val<255) pixMultConstantGray(pixg, (255. / white_val));
 	pixd = pixMaxDynamicRange(pixg, L_LINEAR_SCALE);
+	if (01) pixWrite(mk_dst_filename("NLNorm2-max-dyn-range.png"), pixd, IFF_PNG);
 	pixDestroy(&pixg);
 	pixg = pixCopy(NULL, pixd);
 	pixDestroy(&pixd);
@@ -151,15 +162,20 @@ pixNLNorm2(PIX* pixs, int* pthresh) {
 	pixGetDimensions(pixg, &w1, &h1, NULL);
 	pixd = pixScaleGeneral(pixg, 0.5, 0.5, 0.0, 0);
 	pixd2 = pixRankFilter(pixd, 20, 2, 0.8);
+	if (01) pixWrite(mk_dst_filename("NLNorm2-rank-filterA.png"), pixd2, IFF_PNG);
 	pixDestroy(&pixd);
 	pixd = pixRankFilter(pixd2, 2, 20, 0.8);
+	if (01) pixWrite(mk_dst_filename("NLNorm2-rank-filterB.png"), pixd, IFF_PNG);
 	pixDestroy(&pixd2);
 	pixGetDimensions(pixd, &w2, &h2, NULL);
 	pixd2 = pixScaleGrayLI(pixd, (l_float32)w1 / (l_float32)w2,
 		(l_float32)h1 / (l_float32)h2);
+	if (01) pixWrite(mk_dst_filename("NLNorm2-scale-grey-LI.png"), pixd2, IFF_PNG);
 	pixDestroy(&pixd);
 	pixInvert(pixd2, pixd2);
+	if (01) pixWrite(mk_dst_filename("NLNorm2-invert.png"), pixd2, IFF_PNG);
 	pixAddGray(pixg, pixg, pixd2);
+	if (01) pixWrite(mk_dst_filename("NLNorm2-add-grey.png"), pixg, IFF_PNG);
 	pixDestroy(&pixd2);
 
 	/// Local contrast enhancement
@@ -185,7 +201,9 @@ pixNLNorm2(PIX* pixs, int* pthresh) {
 		*pthresh = (l_int32)threshpos * factor - threshpos * .1;
 	}
 	pixAddConstantGray(pixg, -1 * fgval);
+	if (01) pixWrite(mk_dst_filename("NLNorm2-add-grey-const.png"), pixg, IFF_PNG);
 	pixMultConstantGray(pixg, factor);
+	if (01) pixWrite(mk_dst_filename("NLNorm2-mult-grey-const.png"), pixg, IFF_PNG);
 
 	return pixg;
 }
@@ -321,7 +339,7 @@ OtsuThreshold(PIX* pixs, float tile_size, float smooth_size, float score_fractio
 			pixGetDimensions(pixt, &w2, &h2, NULL);
 			if (w2 != w || h2 != h)
 			{
-				pixt = pixAddContinuedBorder(pixt, 0, w - w2, 0, h - h2);
+				pixt = pixExtendByReplication(pixt, w - w2, h - h2);
 				pixDestroy(pixthres);
 				*pixthres = pixt;
 			}
@@ -535,6 +553,7 @@ pixNLBin(PIX* pixs, l_ok adaptive)
 {
 	int thresh;
 	int fgval, bgval;
+	int fgclip, bgclip;
 	PIX* pixb;
 
 	pixb = pixNLNorm1(pixs, &thresh, &fgval, &bgval);
@@ -552,10 +571,17 @@ pixNLBin(PIX* pixs, l_ok adaptive)
 		pixSauvolaBinarizeTiled(pixb, 16, 0.5, nx, ny, NULL, &pixb);
 	}
 	else {
-#if 1
-		pixb = pixDitherToBinarySpec(pixb, bgval - ((bgval - thresh) * 0.75), fgval + ((thresh - fgval) * 0.25));
+#if 0  // never *dither* an image to make it binary/monochrome: it comes out ugly and unusable for OCR, at least.
+		bgclip = bgval - ((bgval - thresh) * 0.75);
+		fgclip = fgval + ((thresh - fgval) * 0.25);
+		pixb = pixDitherToBinarySpec(pixb, bgclip, fgclip);
 #else
-		pixb = pixThresholdToBinary(pixb, fgval+((thresh-fgval)*.1));  /* for bg and light fg */
+		fgclip = fgval + ((thresh - fgval) * .1);
+		bgclip = bgval - ((bgval - thresh) * 0.1);
+		if (fgclip > thresh) {
+			fprintf(stderr, "b0rk!\n");
+		}
+		pixb = pixThresholdToBinary(pixb, fgclip);  /* for bg and light fg */
 #endif
 	}
 
@@ -741,7 +767,7 @@ CalcOtsuThreshold(PIX *pix, int thresholds[4], int hi_values[4])
 			// To be a convincing foreground we must have a small fraction of H
 			// or to be a convincing background we must have a large fraction of H.
 			// In between we assume this channel contains no thresholding information.
-			int hi_value = best_omega_0 < H * 0.5;
+			int hi_value = (best_omega_0 < H * 0.5);
 			thresholds[ch] = best_t;
 			if (best_omega_0 > H * 0.75) {
 				any_good_hivalue = TRUE;
@@ -937,6 +963,7 @@ ThresholdRectToPix(PIX *pix, int num_channels, int thresholds[4], const int hi_v
 			}
 		}
 	}
+	return pixd;
 }
 
 
@@ -971,7 +998,7 @@ int main(int    argc,
          const char **argv)
 {
 L_REGPARAMS  *rp;
-PIX* pix[20] = { NULL };
+PIX* pix[50] = { NULL };
 l_ok ret = 0;
 const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 
@@ -1005,6 +1032,8 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 		}
 		ret |= pixWrite(mk_dst_filename("grey256.png"), pix[1], IFF_PNG);
 
+if (01)
+{
 		{
 			int w, h;
 			pixGetDimensions(pix[1], &w, &h, NULL);
@@ -1095,7 +1124,717 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 				ret |= pixWrite(mk_dst_filename("binarized-result.png"), pix[10], IFF_PNG);
 			}
 		}
+
+		//--------------------------------------------------------
+
+		// Non-linear contrast normalization
+		{
+			int thresh;
+			pix[11] = pixNLNorm2(pix[1], &thresh);
+			ret |= pixWrite(mk_dst_filename("NLNorm2.png"), pix[11], IFF_PNG);
+		}
+
+		// Non-linear contrast normalization
+		{
+			int thresh, fgval, bgval;
+			pix[12] = pixNLNorm1(pix[1], &thresh, &fgval, &bgval);
+			ret |= pixWrite(mk_dst_filename("NLNorm1.png"), pix[12], IFF_PNG);
+		}
+
+		// source image, reduced to normalized greyscale.
+		{
+			pix[13] = GetPixNormRectGrey(pix[1]);
+			ret |= pixWrite(mk_dst_filename("normalized-grey.png"), pix[13], IFF_PNG);
+		}
+
+		// tesseract
+		{
+			const struct {
+				float window_size;
+				float kfactor;
+				float score_fraction;
+			} scenarios[] = {
+				{ 0.33, 0.34, 0.1 },  // tesseract
+				{ 0.1, 0.1, 0.1 },
+				{ 0.5, 0.1, 0.1 },
+				{ 0.2, 0.1, 0.1 },
+				{ 0.2, 0.5, 0.1 },
+				{ 0.01, 0.3, 0.1 },
+				{ 0.01, 0.01, 0.1 },
+				{ 1.0, 1.0, 0.1 },
+				{ 0.3, 0.01, 0.1 },
+				{ 0.3, 0.1, 0.1 },
+				{ 0.3, 1.0, 0.1 },
+				{ 0.3, 3.0, 0.1 },
+				{ 0.1, 3.0, 0.1 },
+				{ 0.2, 3.0, 0.1 },
+				{ 0.5, 3.0, 0.1 },
+			};
+			for (int i = 0; i < sizeof(scenarios) / sizeof(scenarios[0]); i++)
+			{
+				float window_size = scenarios[i].window_size;
+				float kfactor = scenarios[i].kfactor;
+				float score_fraction = scenarios[i].score_fraction;
+
+				for (int i = 15; i < sizeof(pix) / sizeof(pix[0]); i++)
+					pixDestroy(&pix[i]);
+
+				if (!SauvolaThreshold(pix[1], window_size, kfactor, score_fraction, &pix[17], &pix[16], &pix[15])) {
+					ret |= pixWrite(mk_dst_filename("sauvola-grey.png"), pix[15], IFF_PNG);
+					ret |= pixWrite(mk_dst_filename("sauvola-threshold.png"), pix[16], IFF_PNG);
+					ret |= pixWrite(mk_dst_filename("sauvola-output.png"), pix[17], IFF_PNG);
+				}
+			}
+		}
+
+		// leptonica
+		{
+			// Contrast normalization followed by Sauvola binarization
+			l_int32 mindiff = 1;
+			pix[18] = pixSauvolaOnContrastNorm(pix[1], mindiff, &pix[19], &pix[20]);
+			ret |= pixWrite(mk_dst_filename("CNorm-sauvola-contrast-norm.png"), pix[19], IFF_PNG);
+			ret |= pixWrite(mk_dst_filename("CNorm-sauvola-threshold.png"), pix[20], IFF_PNG);
+			ret |= pixWrite(mk_dst_filename("CNorm-sauvola-output.png"), pix[18], IFF_PNG);
+		}
+
+		{
+			if (!OtsuOnNormalizedBackground(pix[1], &pix[21], &pix[22])) {
+				ret |= pixWrite(mk_dst_filename("otsu-normbg-grey.png"), pix[22], IFF_PNG);
+				ret |= pixWrite(mk_dst_filename("otsu-normbg-output.png"), pix[21], IFF_PNG);
+			}
+		}
+
+		{
+			if (!MaskingAndOtsuOnNormalizedBackground(pix[1], &pix[23], &pix[24])) {
+				ret |= pixWrite(mk_dst_filename("otsu-masked-normbg-grey.png"), pix[24], IFF_PNG);
+				ret |= pixWrite(mk_dst_filename("otsu-masked-normbg-output.png"), pix[23], IFF_PNG);
+			}
+		}
+
+		{
+			int adaptive = 1;
+			if (!NlBinThresholding(pix[1], adaptive, &pix[25], &pix[26])) {
+				ret |= pixWrite(mk_dst_filename("nlbin-th-grey.png"), pix[26], IFF_PNG);
+				ret |= pixWrite(mk_dst_filename("nlbin-th-output.png"), pix[25], IFF_PNG);
+			}
+		}
+
+		{
+			int adaptive = 1;
+			pix[27] = pixNLBin(pix[1], adaptive);
+			ret |= pixWrite(mk_dst_filename("nlbin-output.png"), pix[27], IFF_PNG);
+		}
+
+
+		{
+			for (int i = 25; i < sizeof(pix) / sizeof(pix[0]); i++)
+				pixDestroy(&pix[i]);
+
+			int adaptive = 0;
+			if (!NlBinThresholding(pix[1], adaptive, &pix[25], &pix[26])) {
+				ret |= pixWrite(mk_dst_filename("nlbin-th-grey.png"), pix[26], IFF_PNG);
+				ret |= pixWrite(mk_dst_filename("nlbin-th-output.png"), pix[25], IFF_PNG);
+			}
+		}
+
+		{
+			int adaptive = 0;
+			pix[27] = pixNLBin(pix[1], adaptive);
+			ret |= pixWrite(mk_dst_filename("nlbin-output.png"), pix[27], IFF_PNG);
+		}
+
+		{
+			pix[28] = ThresholdToPix(pix[1]);
+			ret |= pixWrite(mk_dst_filename("threshold-output.png"), pix[28], IFF_PNG);
+		}
+
+		{
+			pix[29] = GetPixRectThresholds(pix[1]);
+			ret |= pixWrite(mk_dst_filename("get-rect-thresholds-output.png"), pix[29], IFF_PNG);
+		}
+
+		{
+			int w, h;
+			pixGetDimensions(pix[1], &w, &h, NULL);
+			pix[30] = GetPixRect(pix[1], w / 4, h / 4, w / 2, h / 2);
+			ret |= pixWrite(mk_dst_filename("cropped-by-half.png"), pix[30], IFF_PNG);
+		}
+
+		{
+			pix[31] = OtsuThresholdRectToPix(pix[1]);
+			ret |= pixWrite(mk_dst_filename("otsu-threshold-rect.png"), pix[31], IFF_PNG);
+		}
+
+		// unwrapping OtsuThresholdRectToPix(), possibly tweaking the process...
+		{
+			int num_channels = 1;
+
+			// Compute the histogram of the image rectangle.
+			int histogram[HISTOGRAM_SIZE];
+			HistogramRect(pix[1], num_channels, histogram);
+			int H;
+			int best_omega_0;
+			int best_t = OtsuStats(histogram, &H, &best_omega_0);
+			if (best_omega_0 == 0 || best_omega_0 == H) {
+				// This channel is empty.
+			}
+			// To be a convincing foreground we must have a small fraction of H
+			// or to be a convincing background we must have a large fraction of H.
+			// In between we assume this channel contains no thresholding information.
+			int hi_value = (best_omega_0 < H * 0.5);
+
+			int thresholds[4] = { best_t };
+			int hi_values[4] = { hi_value };
+			pix[32] = ThresholdRectToPix(pix[1], num_channels, thresholds, hi_values);
+			ret |= pixWrite(mk_dst_filename("threshold-rect-to-pix.png"), pix[32], IFF_PNG);
+		}
+
+		// targetting pixAutoPhotoinvert() ...
+		{
+			int num_channels = 1;
+
+			// Compute the histogram of the image rectangle.
+			int histogram[HISTOGRAM_SIZE];
+			HistogramRect(pix[1], num_channels, histogram);
+			int H;
+			int best_omega_0;
+			int best_t = OtsuStats(histogram, &H, &best_omega_0);
+			if (best_omega_0 == 0 || best_omega_0 == H) {
+				// This channel is empty.
+			}
+
+			l_int32 thresh = best_t; // 128
+			PIXA* pixa = pixaCreate(10);
+			pix[33] = pixAutoPhotoinvert(pix[1], thresh, &pix[34], pixa);
+			ret |= pixWrite(mk_dst_filename("photo-invert-mask.png"), pix[34], IFF_PNG);
+			int n = pixaGetCount(pixa);
+			for (int i = 0; i < n; i++) {
+				PIX* p = pixaGetPix(pixa, i, L_CLONE);
+				ret |= pixWrite(mk_dst_filename("photo-invert-dbg.png"), p, IFF_PNG);
+				pixDestroy(&p);
+			}
+			pixaDestroy(&pixa);
+			ret |= pixWrite(mk_dst_filename("photo-invert-output.png"), pix[33], IFF_PNG);
+		}
+}
+
+if (01)
+{
+		// unwrapping pixAutoPhotoinvert() and tweaking the process...
+		{
+			int num_channels = 1;
+
+			// Compute the histogram of the image rectangle.
+			int histogram[HISTOGRAM_SIZE];
+			HistogramRect(pix[1], num_channels, histogram);
+			int H;
+			int best_omega_0;
+			int best_t = OtsuStats(histogram, &H, &best_omega_0);
+			if (best_omega_0 == 0 || best_omega_0 == H) {
+				// This channel is empty.
+			}
+
+			l_int32 thresh = best_t; // 128
+			l_int32    i, n, empty, x, y, w, h;
+			l_float32  fgfract;
+			BOX* box1;
+			BOXA* boxa1;
+			PIXA* pixa = pixaCreate(10);
+
+			pix[36] = pixConvertTo1(pix[1], thresh);
+			ret |= pixWrite(mk_dst_filename("photo-invert-to.1-th.128.png"), pix[36], IFF_PNG);
+
+			/* Identify regions for photo-inversion:
+				* (1) Start with the halftone mask.
+				* (2) Eliminate ordinary text and halftones in the mask.
+				* (3) Some regions of inverted text may have been removed in
+				*     steps (1) and (2).  Conditionally fill holes in the mask,
+				*     but do not fill out to the bounding rect. */
+			pix[37] = pixGenerateHalftoneMask(pix[36], &pix[38], NULL, pixa);
+
+			n = pixaGetCount(pixa);
+			for (i = 0; i < n; i++) {
+				PIX* p = pixaGetPix(pixa, i, L_CLONE);
+				ret |= pixWrite(mk_dst_filename("photo-invert-halftone-dbg.png"), p, IFF_PNG);
+				pixDestroy(&p);
+			}
+			pixaDestroy(&pixa);
+
+			ret |= pixWrite(mk_dst_filename("photo-invert-halftone-mask.png"), pix[37], IFF_PNG);
+			ret |= pixWrite(mk_dst_filename("photo-invert-halftone-text.png"), pix[38], IFF_PNG);
+#if 01  // noise removal not really needed for sample image; keep it minimal anyway. 
+			pix[39] = pixMorphSequence(pix[37], "o3.3 + c5.5" /* "o15.15 + c25.25" */, 1);  /* remove noise */
+#else
+			pix[39] = pixClone(pix[37]);
+#endif
+			ret |= pixWrite(mk_dst_filename("photo-invert-noise-removal.png"), pix[39], IFF_PNG);
+			pix[40] = pixFillHolesToBoundingRect(pix[39], 1, 0.5, 1.0);
+			ret |= pixWrite(mk_dst_filename("photo-invert-fill-holes.png"), pix[40], IFF_PNG);
+			pixZero(pix[40], &empty);
+			if (!empty) {
+				/* Examine each component and validate the inversion.
+					* Require at least 60% of pixels under each component to be FG. */
+				boxa1 = pixConnComp(pix[40], &pixa, 8);
+
+				n = pixaGetCount(pixa);
+				for (i = 0; i < n; i++) {
+					PIX* p = pixaGetPix(pixa, i, L_CLONE);
+					ret |= pixWrite(mk_dst_filename("photo-invert-connected-components-dbg.png"), p, IFF_PNG);
+					pixDestroy(&p);
+				}
+				pixaDestroy(&pixa);
+
+				n = boxaGetCount(boxa1);
+				for (i = 0; i < n; i++) {
+					box1 = boxaGetBox(boxa1, i, L_COPY);
+					pix[41] = pixClipRectangle(pix[36], box1, NULL);
+					ret |= pixWrite(mk_dst_filename("photo-invert-clip-rect.png"), pix[41], IFF_PNG);
+					pixForegroundFraction(pix[41], &fgfract);
+					lept_stderr("fg fraction: %5.3f\n", fgfract);
+					boxGetGeometry(box1, &x, &y, &w, &h);
+					lept_stderr("bbox #%d: x: %d, y: %d, w: %d, h: %d\n", i, x, y, w, h);
+					if (fgfract < 0.6)
+					{
+						/* erase from the mask */
+						pixRasterop(pix[40], x, y, w, h, PIX_CLR, NULL, 0, 0);
+						ret |= pixWrite(mk_dst_filename("photo-invert-rasterop-erase.png"), pix[40], IFF_PNG);
+					}
+					pixDestroy(&pix[41]);
+					boxDestroy(&box1);
+				}
+				boxaDestroy(&boxa1);
+				pixZero(pix[40], &empty);
+				if (!empty) {
+					/* Combine pixels of the photo-inverted pix with the binarized input */
+					pix[41] = pixInvert(NULL, pix[36]);
+					pix[42] = pixClone(pix[36]);
+					ret |= pixWrite(mk_dst_filename("photo-invert-inverted.png"), pix[41], IFF_PNG);
+					ret |= pixWrite(mk_dst_filename("photo-invert-inverted-src.png"), pix[42], IFF_PNG);
+					pixCombineMasked(pix[42], pix[41], pix[40]);
+					ret |= pixWrite(mk_dst_filename("photo-invert-combined-src.png"), pix[41], IFF_PNG);
+					ret |= pixWrite(mk_dst_filename("photo-invert-combined-mask.png"), pix[40], IFF_PNG);
+					ret |= pixWrite(mk_dst_filename("photo-invert-combined.png"), pix[42], IFF_PNG);
+
+					/* Combine pixels of the photo-inverted pix with the greyscale input */
+					pix[43] = pixInvert(NULL, pix[1]);
+					pix[44] = pixClone(pix[1]);
+					ret |= pixWrite(mk_dst_filename("photo-invert-invert-grey.png"), pix[43], IFF_PNG);
+					ret |= pixWrite(mk_dst_filename("photo-invert-invert-src-grey.png"), pix[44], IFF_PNG);
+					pixCombineMasked(pix[44], pix[43], pix[40]);
+					ret |= pixWrite(mk_dst_filename("photo-invert-combined-src-grey.png"), pix[43], IFF_PNG);
+					ret |= pixWrite(mk_dst_filename("photo-invert-combined-mask-grey.png"), pix[40], IFF_PNG);
+					ret |= pixWrite(mk_dst_filename("photo-invert-combined-grey.png"), pix[44], IFF_PNG);
+
+					// -------------------------------------------------------------------------------------------
+					// now use this 'photo-inverted' greyscale image as the source for the binarization methods:
+					// -------------------------------------------------------------------------------------------
+
+					for (int i = 2; i < 44; i++)
+						pixDestroy(&pix[i]);
+
+
+					{
+						{
+							int w, h;
+							pixGetDimensions(pix[44], &w, &h, NULL);
+
+							const struct {
+								float tile_size;
+								float smooth_size;
+								float score_fraction;
+							} scenarios[] = {
+								{ 0.1 * h, 2.0f, 0.1f },
+								{ 0.33 * h, 2.0f, 0.1f },
+								{ 32, 2.0f, 0.1f },
+
+								{ 0.1 * h, 0.0f, 0.1f },
+								{ 0.33 * h, 0.0f, 0.1f },
+								{ 32, 0.0f, 0.1f },
+							};
+							for (int i = 0; i < sizeof(scenarios) / sizeof(scenarios[0]); i++)
+							{
+								float tile_size = scenarios[i].tile_size;
+								float smooth_size = scenarios[i].smooth_size;
+								float score_fraction = scenarios[i].score_fraction;
+
+								for (int i = 2; i < sizeof(pix) / sizeof(pix[0]); i++)
+									pixDestroy(&pix[i]);
+
+								ret |= OtsuThreshold(pix[1], tile_size, smooth_size, score_fraction, &pix[4], &pix[3], &pix[2]);
+
+								ret |= pixWrite(mk_dst_filename("grey256.png"), pix[2], IFF_PNG);
+								ret |= pixWrite(mk_dst_filename("thresholds.png"), pix[3], IFF_PNG);
+								ret |= pixWrite(mk_dst_filename("binarized-result.png"), pix[4], IFF_PNG);
+							}
+
+							pix[5] = pixAddMirroredBorder(pix[44], w / 2, w / 2, h / 2, h / 2);
+							ret |= pixWrite(mk_dst_filename("border-50pct.png"), pix[5], IFF_PNG);
+
+							// add padding border: size must be Otsu smoothing kernel size + 1 as the smoothing --> convolution 'accumulator'
+							// pix that will be constructed by the Otsu code internally will have the same size as
+							// the provided source pix and we wish to prevent nasty border artifacts due to rounding
+							// errors in blockconvLow()'s re-normalization of border rows/columns, which takes
+							// (rounded) integer greyscale values from intermediate calculations, thus producing
+							// rounding / math accuracy artifacts at the border. Hence it is 'smart' to make sure
+							// we have a more-or-less plain, *thick*, border around the actual image before we apply
+							// binarization of any kind.
+							l_int32 border = 2 * L_MAX(32, 0.33 * h + 0.5);
+							pix[6] = pixAddContinuedBorder(pix[44], border, border, border, border);
+							ret |= pixWrite(mk_dst_filename("padding-2px.png"), pix[6], IFF_PNG);
+						}
+
+						if (!IsPixBinary(pix[6])) {
+							pix[7] = GetPixRectGrey(pix[6]);
+						}
+						else {
+							pix[7] = pixClone(pix[6]);
+						}
+						ret |= pixWrite(mk_dst_filename("grey256.png"), pix[7], IFF_PNG);
+
+						{
+							int w, h;
+							pixGetDimensions(pix[7], &w, &h, NULL);
+
+							const struct {
+								float tile_size;
+								float smooth_size;
+								float score_fraction;
+							} scenarios[] = {
+								{ 0.1 * h, 2.0f, 0.1f },
+								{ 0.33 * h, 2.0f, 0.1f },
+								{ 32, 2.0f, 0.1f },
+
+								{ 0.1 * h, 0.0f, 0.1f },
+								{ 0.33 * h, 0.0f, 0.1f },
+								{ 32, 0.0f, 0.1f },
+							};
+							for (int i = 0; i < sizeof(scenarios) / sizeof(scenarios[0]); i++)
+							{
+								float tile_size = scenarios[i].tile_size;
+								float smooth_size = scenarios[i].smooth_size;
+								float score_fraction = scenarios[i].score_fraction;
+
+								for (int i = 8; i < 44; i++)
+									pixDestroy(&pix[i]);
+
+								ret |= OtsuThreshold(pix[7], tile_size, smooth_size, score_fraction, &pix[10], &pix[9], &pix[8]);
+
+								ret |= pixWrite(mk_dst_filename("grey256.png"), pix[8], IFF_PNG);
+								ret |= pixWrite(mk_dst_filename("thresholds.png"), pix[9], IFF_PNG);
+								ret |= pixWrite(mk_dst_filename("binarized-result.png"), pix[10], IFF_PNG);
+							}
+						}
+
+						//--------------------------------------------------------
+
+						// Non-linear contrast normalization
+						{
+							int thresh;
+							pix[11] = pixNLNorm2(pix[44], &thresh);
+							ret |= pixWrite(mk_dst_filename("NLNorm2.png"), pix[11], IFF_PNG);
+						}
+
+						// Non-linear contrast normalization
+						{
+							int thresh, fgval, bgval;
+							pix[12] = pixNLNorm1(pix[44], &thresh, &fgval, &bgval);
+							ret |= pixWrite(mk_dst_filename("NLNorm1.png"), pix[12], IFF_PNG);
+						}
+
+						// source image, reduced to normalized greyscale.
+						{
+							pix[13] = GetPixNormRectGrey(pix[44]);
+							ret |= pixWrite(mk_dst_filename("normalized-grey.png"), pix[13], IFF_PNG);
+						}
+
+						// tesseract
+						{
+							const struct {
+								float window_size;
+								float kfactor;
+								float score_fraction;
+							} scenarios[] = {
+								{ 0.33, 0.34, 0.1 },  // tesseract
+								{ 0.1, 0.1, 0.1 },
+								{ 0.5, 0.1, 0.1 },
+								{ 0.2, 0.1, 0.1 },
+								{ 0.2, 0.5, 0.1 },
+								{ 0.01, 0.3, 0.1 },
+								{ 0.01, 0.01, 0.1 },
+								{ 1.0, 1.0, 0.1 },
+								{ 0.3, 0.01, 0.1 },
+								{ 0.3, 0.1, 0.1 },
+								{ 0.3, 1.0, 0.1 },
+								{ 0.3, 3.0, 0.1 },
+								{ 0.1, 3.0, 0.1 },
+								{ 0.2, 3.0, 0.1 },
+								{ 0.5, 3.0, 0.1 },
+							};
+							for (int i = 0; i < sizeof(scenarios) / sizeof(scenarios[0]); i++)
+							{
+								float window_size = scenarios[i].window_size;
+								float kfactor = scenarios[i].kfactor;
+								float score_fraction = scenarios[i].score_fraction;
+
+								for (int i = 15; i < sizeof(pix) / sizeof(pix[0]); i++)
+									pixDestroy(&pix[i]);
+
+								if (!SauvolaThreshold(pix[44], window_size, kfactor, score_fraction, &pix[17], &pix[16], &pix[15])) {
+									ret |= pixWrite(mk_dst_filename("sauvola-grey.png"), pix[15], IFF_PNG);
+									ret |= pixWrite(mk_dst_filename("sauvola-threshold.png"), pix[16], IFF_PNG);
+									ret |= pixWrite(mk_dst_filename("sauvola-output.png"), pix[17], IFF_PNG);
+								}
+							}
+						}
+
+						// leptonica
+						{
+							// Contrast normalization followed by Sauvola binarization
+							l_int32 mindiff = 1;
+							pix[18] = pixSauvolaOnContrastNorm(pix[44], mindiff, &pix[19], &pix[20]);
+							ret |= pixWrite(mk_dst_filename("CNorm-sauvola-contrast-norm.png"), pix[19], IFF_PNG);
+							ret |= pixWrite(mk_dst_filename("CNorm-sauvola-threshold.png"), pix[20], IFF_PNG);
+							ret |= pixWrite(mk_dst_filename("CNorm-sauvola-output.png"), pix[18], IFF_PNG);
+						}
+
+						{
+							if (!OtsuOnNormalizedBackground(pix[44], &pix[21], &pix[22])) {
+								ret |= pixWrite(mk_dst_filename("otsu-normbg-grey.png"), pix[22], IFF_PNG);
+								ret |= pixWrite(mk_dst_filename("otsu-normbg-output.png"), pix[21], IFF_PNG);
+							}
+						}
+
+						{
+							if (!MaskingAndOtsuOnNormalizedBackground(pix[44], &pix[23], &pix[24])) {
+								ret |= pixWrite(mk_dst_filename("otsu-masked-normbg-grey.png"), pix[24], IFF_PNG);
+								ret |= pixWrite(mk_dst_filename("otsu-masked-normbg-output.png"), pix[23], IFF_PNG);
+							}
+						}
+
+						{
+							int adaptive = 1;
+							if (!NlBinThresholding(pix[44], adaptive, &pix[25], &pix[26])) {
+								ret |= pixWrite(mk_dst_filename("nlbin-th-grey.png"), pix[26], IFF_PNG);
+								ret |= pixWrite(mk_dst_filename("nlbin-th-output.png"), pix[25], IFF_PNG);
+							}
+						}
+
+						{
+							int adaptive = 1;
+							pix[27] = pixNLBin(pix[44], adaptive);
+							ret |= pixWrite(mk_dst_filename("nlbin-output.png"), pix[27], IFF_PNG);
+						}
+
+
+						{
+							for (int i = 25; i < 44; i++)
+								pixDestroy(&pix[i]);
+
+							int adaptive = 0;
+							if (!NlBinThresholding(pix[44], adaptive, &pix[25], &pix[26])) {
+								ret |= pixWrite(mk_dst_filename("nlbin-th-grey.png"), pix[26], IFF_PNG);
+								ret |= pixWrite(mk_dst_filename("nlbin-th-output.png"), pix[25], IFF_PNG);
+							}
+						}
+
+						{
+							int adaptive = 0;
+							pix[27] = pixNLBin(pix[44], adaptive);
+							ret |= pixWrite(mk_dst_filename("nlbin-output.png"), pix[27], IFF_PNG);
+						}
+
+						{
+							pix[28] = ThresholdToPix(pix[44]);
+							ret |= pixWrite(mk_dst_filename("threshold-output.png"), pix[28], IFF_PNG);
+						}
+
+						{
+							pix[29] = GetPixRectThresholds(pix[44]);
+							ret |= pixWrite(mk_dst_filename("get-rect-thresholds-output.png"), pix[29], IFF_PNG);
+						}
+
+						{
+							int w, h;
+							pixGetDimensions(pix[44], &w, &h, NULL);
+							pix[30] = GetPixRect(pix[44], w / 4, h / 4, w / 2, h / 2);
+							ret |= pixWrite(mk_dst_filename("cropped-by-half.png"), pix[30], IFF_PNG);
+						}
+
+						{
+							pix[31] = OtsuThresholdRectToPix(pix[44]);
+							ret |= pixWrite(mk_dst_filename("otsu-threshold-rect.png"), pix[31], IFF_PNG);
+						}
+
+						{
+							int num_channels = 1;
+
+							// Compute the histogram of the image rectangle.
+							int histogram[HISTOGRAM_SIZE];
+							HistogramRect(pix[44], num_channels, histogram);
+							int H;
+							int best_omega_0;
+							int best_t = OtsuStats(histogram, &H, &best_omega_0);
+							if (best_omega_0 == 0 || best_omega_0 == H) {
+								// This channel is empty.
+							}
+							// To be a convincing foreground we must have a small fraction of H
+							// or to be a convincing background we must have a large fraction of H.
+							// In between we assume this channel contains no thresholding information.
+							int hi_value = (best_omega_0 < H * 0.5);
+
+							int thresholds[4] = { best_t };
+							int hi_values[4] = { hi_value };
+							pix[32] = ThresholdRectToPix(pix[44], num_channels, thresholds, hi_values);
+							ret |= pixWrite(mk_dst_filename("threshold-rect-to-pix.png"), pix[32], IFF_PNG);
+						}
+
+						{
+							int num_channels = 1;
+
+							// Compute the histogram of the image rectangle.
+							int histogram[HISTOGRAM_SIZE];
+							HistogramRect(pix[44], num_channels, histogram);
+							int H;
+							int best_omega_0;
+							int best_t = OtsuStats(histogram, &H, &best_omega_0);
+							if (best_omega_0 == 0 || best_omega_0 == H) {
+								// This channel is empty.
+							}
+
+							l_int32 thresh = best_t; // 128
+							PIXA* pixa = pixaCreate(10);
+							pix[33] = pixAutoPhotoinvert(pix[44], thresh, &pix[34], pixa);
+							ret |= pixWrite(mk_dst_filename("photo-invert-mask.png"), pix[34], IFF_PNG);
+							int n = pixaGetCount(pixa);
+							for (int i = 0; i < n; i++) {
+								PIX* p = pixaGetPix(pixa, i, L_CLONE);
+								ret |= pixWrite(mk_dst_filename("photo-invert-dbg.png"), p, IFF_PNG);
+								pixDestroy(&p);
+							}
+							pixaDestroy(&pixa);
+							ret |= pixWrite(mk_dst_filename("photo-invert-output.png"), pix[33], IFF_PNG);
+						}
+					}
+				}
+			}
+		}
+}
+
+
+		for (int i = 2; i < sizeof(pix) / sizeof(pix[0]); i++)
+			pixDestroy(&pix[i]);
+
+
+		// --------------------------------------------------------------------------------
+		// testing pixBlockconv() and its artifacts in the top rows and left columns.
+		// --------------------------------------------------------------------------------
+
+		// create checkerboard, then smooth it using convolution
+		sourcefile = DEMOPATH("blur-mask.png");
+
+		pix[2] = pixRead(sourcefile);
+		ret |= pixWrite(mk_dst_filename("bm-source.png"), pix[2], IFF_PNG);
+
+		if (!IsPixGreyscale(pix[2])) {
+			pix[3] = GetPixRectGrey(pix[2]);
+		}
+		else {
+			pix[3] = pixClone(pix[2]);
+		}
+		ret |= pixWrite(mk_dst_filename("grey256.png"), pix[3], IFF_PNG);
+
+		{
+			pix[4] = pixBlockconv(pix[3], 1, 1);
+
+			ret |= pixWrite(mk_dst_filename("block-convolution-3x3.png"), pix[4], IFF_PNG);
+		}
+
+		{
+			int w, h;
+
+			pix[5] = pixCreateTemplate(pix[3]);
+
+			pixGetDimensions(pix[5], &w, &h, NULL);
+
+			int i, j, k;
+
+			for (i = 0; i < h; i++)
+			{
+				k = i % 2;
+				for (j = 0; j < w; j++)
+				{
+					pixSetPixel(pix[5], j, i, k % 2 ? 0 : 255);
+					k++;
+				}
+			}
+
+			ret |= pixWrite(mk_dst_filename("checkerboard.png"), pix[5], IFF_PNG);
+
+			pix[6] = pixBlockconv(pix[5], 1, 1);
+
+			ret |= pixWrite(mk_dst_filename("block-convolution-3x3.png"), pix[6], IFF_PNG);
+
+			// extend a border of 2px wide:
+			pix[7] = pixExtendByReplication(pix[5], 4, 4);
+			ret |= pixWrite(mk_dst_filename("checkerboard-border2.png"), pix[7], IFF_PNG);
+			pixDestroy(&pix[7]);
+
+			pix[7] = pixAddContinuedBorder(pix[5], 2, 2, 2, 2);
+			ret |= pixWrite(mk_dst_filename("checkerboard-border2.png"), pix[7], IFF_PNG);
+
+			pix[8] = pixBlockconv(pix[7], 1, 1);
+
+			ret |= pixWrite(mk_dst_filename("block-convolution-3x3.png"), pix[8], IFF_PNG);
+
+
+
+			pix[9] = pixCreateNoInit(200, 30, 8);
+
+			l_uint32* data;
+			l_uint32* line;
+			l_uint32 wpl;
+
+			h = pixGetHeight(pix[9]);
+			w = pixGetWidth(pix[9]);
+			wpl = pixGetWpl(pix[9]);
+			data = pixGetData(pix[9]);
+			for (i = 0; i < h; i++)
+			{
+				line = data + i * wpl;
+				k = i % 2 ? 0 : 255;
+				for (j = 0; j < w; j++)
+				{
+					SET_DATA_BYTE(line, j, k);
+					if (k)
+						k = 0;
+					else
+						k = 255;
+				}
+			}
+
+			ret |= pixWrite(mk_dst_filename("checkerboard-200x30.png"), pix[9], IFF_PNG);
+
+			pix[10] = pixBlockconv(pix[9], 1, 1);
+
+			ret |= pixWrite(mk_dst_filename("block-convolution-3x3.png"), pix[10], IFF_PNG);
+
+			pix[11] = pixBlockconv(pix[9], 2, 2);
+
+			ret |= pixWrite(mk_dst_filename("block-convolution-5x5.png"), pix[11], IFF_PNG);
+
+			pix[12] = pixBlockconv(pix[9], 3, 3);
+
+			ret |= pixWrite(mk_dst_filename("block-convolution-7x7.png"), pix[12], IFF_PNG);
+
+		}
+
 	}
+
+
+
+
+
+
 	
 
 	for (int i = 0; i < sizeof(pix) / sizeof(pix[0]); i++)
