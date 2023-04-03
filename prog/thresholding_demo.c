@@ -1712,6 +1712,7 @@ if (01)
 								pixDestroy(&p);
 							}
 							pixaDestroy(&pixa);
+
 							ret |= pixWrite(mk_dst_filename("photo-invert-output.png"), pix[33], IFF_PNG);
 						}
 					}
