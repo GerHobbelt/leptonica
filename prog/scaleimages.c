@@ -71,7 +71,7 @@ int main(int    argc,
          const char **argv)
 {
 char       outname[512];
-char      *dirin, *pattern, *dirout, *rootname, *comptype, *fname, *extension;
+const char *dirin, *pattern, *dirout, *rootname, *comptype, *fname, *extension;
 l_int32    i, n, format;
 l_float32  scalefactor;
 PIX       *pix1, *pix2;
