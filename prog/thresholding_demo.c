@@ -35,6 +35,8 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include <string.h>
+#include <stdint.h>
+#include <ctype.h>
 #include <assert.h>
 #include "allheaders.h"
 #include "demo_settings.h"
@@ -267,7 +269,7 @@ pixNLNorm1(PIX* pixs, int* pthresh, int* pfgval, int* pbgval)
 	if (fgval < 0)
 		fgval = 0;
 	pixAddConstantGray(pixg, -1 * fgval);
-	factor = 255 / (bgval - fgval);
+	factor = 255.0f / (bgval - fgval);
 	pixMultConstantGray(pixg, factor);
 	pixd = pixGammaTRC(NULL, pixg, 1.0, 0, bgval - ((bgval - thresh) * 0.5));
 	pixDestroy(&pixg);
@@ -576,7 +578,7 @@ pixNLBin(PIX* pixs, l_ok adaptive)
 		fgclip = fgval + ((thresh - fgval) * 0.25);
 		pixb = pixDitherToBinarySpec(pixb, bgclip, fgclip);
 #else
-		fgclip = fgval + ((thresh - fgval) * .1);
+		fgclip = fgval + ((thresh - fgval) * 0.1);
 		bgclip = bgval - ((bgval - thresh) * 0.1);
 		if (fgclip > thresh) {
 			fprintf(stderr, "b0rk!\n");
@@ -971,6 +973,78 @@ ThresholdRectToPix(PIX *pix, int num_channels, int thresholds[4], const int hi_v
 
 
 
+//
+// produce destination paths in a /tmp/... directory tree, where:
+//
+// - all output files are NUMBERED in the order in which they are produced,
+//   so as to produce an intelligible sequence.
+// - the last directory in the generated output path is based on the source file,
+//   so as multiple runs with different test files each produce their own
+//   output image sequence in separate directories to keep it manageable and
+//   intelligible.
+//
+
+static char dstdirname[256];
+
+static void register_source_filename_for_dst_path(const char* name)
+{
+	// rough hash of file path:
+	uint32_t hash = 0x003355AA;
+	for (int i = 0; name[i]; i++) {
+		hash <<= 5;
+		uint8_t c = name[i];
+		hash += c;
+		uint32_t c2 = c;
+		hash += c2 << 17;
+		hash ^= hash >> 21;
+	}
+
+	const char* fn = strrchr(name, '/');
+	if (!fn)
+		fn = strrchr(name, '\\');
+	if (!fn)
+		fn = name;
+	else
+		fn++;
+	const char* ext = strrchr(fn, '.');
+	size_t len = ext - fn;
+	if (len >= sizeof(dstdirname))
+		len = sizeof(dstdirname) - 1;
+
+	memcpy(dstdirname, fn, len);
+	dstdirname[len] = 0;
+
+	// sanitize:
+	int dot_allowed = 0;
+	for (int i = 0; dstdirname[i]; i++) {
+		int c = dstdirname[i];
+		if (isalnum(c)) {
+			dot_allowed = 1;
+			continue;
+		}
+		if (strchr("-_.", c) && dot_allowed) {
+			dot_allowed = 0;
+			continue;
+		}
+		dot_allowed = 0;
+		dstdirname[i] = '_';
+	}
+	for (int i = strlen(dstdirname) - 1; i >= 0; i--) {
+		int c = dstdirname[i];
+		if (!strchr("-_.", c)) {
+			break;
+		}
+		dstdirname[i] = 0;
+	}
+
+	// append path hash:
+	hash &= 0xFFFF;
+	size_t offset = strlen(dstdirname);
+	if (offset >= sizeof(dstdirname) - 7)
+		offset = sizeof(dstdirname) - 7;
+	snprintf(dstdirname + offset, 6, "_H%04X", hash);
+	dstdirname[sizeof(dstdirname) - 1] = 0;
+}
 
 
 static const char* mk_dst_filename(const char* name)
@@ -978,7 +1052,7 @@ static const char* mk_dst_filename(const char* name)
 	static char dstpath[1024];
 	static int index = 0;
 
-	snprintf(dstpath, sizeof(dstpath), "/tmp/lept/binarization/%03d-%s", index, name);
+	snprintf(dstpath, sizeof(dstpath), "/tmp/lept/binarization/%s/%03d-%s", dstdirname, index, name);
 	index++;
 	return dstpath;
 }
@@ -1005,12 +1079,19 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-	lept_rmdir("lept/binarization");
-	lept_mkdir("lept/binarization");
-
 	if (argc == 3)
 	{
 		sourcefile = argv[2];
+	}
+
+	register_source_filename_for_dst_path(sourcefile);
+
+	{
+		char dstpath[256 + sizeof(dstdirname)];
+		snprintf(dstpath, sizeof(dstpath), "lept/binarization/%s", dstdirname);
+		
+		lept_rmdir(dstpath);
+		lept_mkdir(dstpath);
 	}
 
 	pix[0] = pixRead(sourcefile);
