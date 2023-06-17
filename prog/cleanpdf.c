@@ -94,6 +94,24 @@
  *
  *    Whenever possible, the images will be deskewed.
  *
+ *    Some pdf files have oversize media boxes.  PDF is a
+ *    resolution-independent format for storing data that can be imaged.
+ *    Usually the data is stored in fonts, which are a description of the
+ *    shape that can be rendered at different image resolutions.  We deal
+ *    here with images that are made up of a fixed number of pixels, and
+ *    thus are not resolution independent.  It is necessary for image
+ *    specification to include data for the renderer that says how big
+ *    (in inches) to display or print the image.  That is done with /MediaBox,
+ *    whose 3rd and 4th parameters are the width and height of the output
+ *    image in printer points.  (1 printer point = 1/72 inch).  To prevent
+ *    pdf files with incorrect use of /MediaBox from forcing the renderer
+ *    to make oversize images, we find the median media box width and height.
+ *    If the larger of the two is significantly bigger than 792 printer
+ *    points, corresponding to 11 inches, we compensate with a resolution
+ *    below 300 ppi that will make the largest image dimension about
+ *    3300 pixels.  If no media box is found, it is necessary to render
+ *    a test image using a small resolution and find the size of the image.
+ *
  *    Notes on using filenames with internal spaces.
  *    * The file-handling functions in leptonica do not support filenames
  *      that have spaces.  To use cleanpdf in linux with such input
@@ -146,13 +164,14 @@ l_int32 main(int    argc,
              const char **argv)
 {
 char     buf[256], sequence[32];
-const char    *basedir, *title;
+const char    *basedir, *firstfile, *title;
 char * fname, * tail, * basename, * imagedir;
 const char    *outfile;
 const char * firstpath;
-l_int32  thresh, res, rotation, darken, opensize, i, n, ret;
+l_int32  thresh, res, render_res, rotation, darken, opensize, i, n, ret;
+l_int32  medw, medh, medmax, npages, pageno, w, h;
 PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
-SARRAY  *sa;
+SARRAY  *sa, *sa1;
 
     if (argc != 9)
         return ERROR_INT(
@@ -196,14 +215,41 @@ SARRAY  *sa;
     }
     setLeptDebugOK(1);
 
-        /* Get the names of the pdf files */
+        /* Set up a directory for temp images */
+    imagedir = stringJoin(basedir, "/image");
+  #ifndef _WIN32
+    mkdir(imagedir, 0777);
+  #else
+    _mkdir(imagedir);
+  #endif  /* _WIN32 */
+
+        /* Get the names of the input pdf files */
     if ((sa = getSortedPathnamesInDirectory(basedir, "pdf", 0, 0)) == NULL)
         return ERROR_INT("files not found", __func__, 1);
     sarrayWriteStderr(sa);
     n = sarrayGetCount(sa);
 
+        /* Figure out the resolution to use with the image renderer.
+           This first checks the media box sizes, which give the output
+           image size in printer points (1/72 inch).  The largest expected
+           output image has a max dimension of about 11 inches, corresponding
+           to 792 points.  At a resolution of 300 ppi, the max image size
+           is then 3300.  For robustness, use the median of media box sizes.
+           If the max dimension of this median is significantly larger than
+           792, reduce the input resolution to the renderer. Specifically:
+            * Calculate the median of the MediaBox widths and heights.
+            * If the max exceeds 850, reduce the resolution so that the max
+              dimension of the rendered image is 3300.  The new resolution
+              input to the renderer is reduced from 300 by the factor:
+                            (792 / medmax)
+           If the media boxes are not found, render a page using a small
+           given resolution (72) and use the max dimension to find the
+           resolution that will produce a 3300 pixel size output.  */
+    firstfile = sarrayGetString(sa, 0, L_NOCOPY);
+    getPdfRendererResolution(firstfile, imagedir, &render_res);
+
         /* Rasterize: use either
-         *     pdftoppm -r 300 fname outroot  (-r 300 renders output at 300 ppi)
+         *     pdftoppm -r res fname outroot  (-r res renders output at res ppi)
          * or
          *     pdfimages -j fname outroot   (-j outputs jpeg if input is dct)
          * Use of pdftoppm:
@@ -217,19 +263,13 @@ SARRAY  *sa;
          *    This only works when all pages are pdf wrappers around images.
          *    In some cases, it scrambles the order of the output pages
          *    and inserts extra images. */
-    imagedir = stringJoin(basedir, "/image");
-  #ifndef _WIN32
-    mkdir(imagedir, 0777);
-  #else
-    _mkdir(imagedir);
-  #endif  /* _WIN32 */
     for (i = 0; i < n; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
         splitPathAtDirectory(fname, NULL, &tail);
         splitPathAtExtension(tail, &basename, NULL);
   #if USE_PDFTOPPM
-        snprintf(buf, sizeof(buf), "pdftoppm -r 300 %s %s/%s",
-                 fname, imagedir, basename);
+        snprintf(buf, sizeof(buf), "pdftoppm -r %d %s %s/%s",
+                 render_res, fname, imagedir, basename);
   #else
         snprintf(buf, sizeof(buf), "pdfimages -j %s %s/%s",
                  fname, imagedir, basename);
@@ -318,6 +358,7 @@ SARRAY  *sa;
         title = NULL;
     convertFilesToPdf(imagedir, "tif", res, 1.0, L_G4_ENCODE,
                       0, title, outfile);
+    lept_free(imagedir);
     return 0;
 }
 
