@@ -256,7 +256,7 @@ struct BG_THRES_PT_INFO {
 	// Edge case: assume all-background black-fg when the entire image turns
 	// out to be 'all background':
 	if (total_weight == 0) {
-		// edge case: we assume classic back-fg, but pix being 'all background',
+		// edge case: we assume classic black-fg, but pix being 'all background',
 		// i.e. global threshold ("last index for background color") is zero (pure black)
 		pixClearAll(pixthresh);
 		black_is_fg_weight = 1;
@@ -335,10 +335,13 @@ struct BG_THRES_PT_INFO {
 						l_int32 tile_thresh;
 						numaSplitDistribution(na, scorefract, &tile_thresh, &avebg, &avefg, &numbg, &numfg, NULL);
 
-						if (!(fabsf(avefg - avebg) >= 1)) {
+						if (!(fabsf(avefg - avebg) >= 1) && numfg > 0.0 && numbg > 0.0) {
 							fprintf(stderr, "klunt!\n");
 						}
 						if (tile_thresh <= median) {
+							fprintf(stderr, "klunt!\n");
+						}
+						if (numbg == 0.0) {
 							fprintf(stderr, "klunt!\n");
 						}
 
@@ -349,13 +352,22 @@ struct BG_THRES_PT_INFO {
 							avefg = avebg;
 
 							// all-background tile
-							pixSetPixel(pixthresh, j, i, thresh);
+							pixSetPixel(pixthresh, j, i, 255);
+						}
+						else if (numbg == 0.0) {
+							avefg = avebg;
+
+							// all-foreground tile
+							pixSetPixel(pixthresh, j, i, 0);
 						}
 						else {
 							fgval = (l_int32)(avefg + 0.5);
 							bgval = (l_int32)(avebg + 0.5);
 
 							l_ok black_is_fg2 = (fgval < bgval);
+							if (black_is_fg != black_is_fg2) {
+								fprintf(stderr, "klunt!\n");
+							}
 
 							pixSetPixel(pixthresh, j, i, tile_thresh);
 							black_is_fg_weight--;
@@ -372,7 +384,10 @@ struct BG_THRES_PT_INFO {
 						l_int32 tile_thresh;
 						numaSplitDistribution(na, scorefract, &tile_thresh, &avefg, &avebg, &numfg, &numbg, NULL);
 
-						if (!(fabsf(avefg - avebg) >= 1)) {
+						if (!(fabsf(avefg - avebg) >= 1) && numbg > 0.0 && numfg > 0.0) {
+							fprintf(stderr, "klunt!\n");
+						}
+						if (numbg == 0.0) {
 							fprintf(stderr, "klunt!\n");
 						}
 
@@ -383,13 +398,22 @@ struct BG_THRES_PT_INFO {
 							avefg = avebg;
 
 							// all-background tile
-							pixSetPixel(pixthresh, j, i, thresh);
+							pixSetPixel(pixthresh, j, i, 255);
+						}
+						else if (numbg == 0.0) {
+							avefg = avebg;
+
+							// all-foreground tile
+							pixSetPixel(pixthresh, j, i, 0);
 						}
 						else {
 							fgval = (l_int32)(avefg + 0.5);
 							bgval = (l_int32)(avebg + 0.5);
 
 							l_ok black_is_fg2 = (fgval < bgval);
+							if (black_is_fg != black_is_fg2) {
+								fprintf(stderr, "klunt!\n");
+							}
 
 							pixSetPixel(pixthresh, j, i, tile_thresh);
 							black_is_fg_weight++;
