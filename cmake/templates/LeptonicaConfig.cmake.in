@@ -22,10 +22,25 @@
 
 include(${CMAKE_CURRENT_LIST_DIR}/LeptonicaTargets.cmake)
 
+if(HUNTER_ENABLED)
+  hunter_add_package(giflib)
+endif()
 find_package(giflib CONFIG)
+if(HUNTER_ENABLED)
+  hunter_add_package(Jpeg)
+endif()
 find_package(JPEG CONFIG REQUIRED)
+if(HUNTER_ENABLED)
+  hunter_add_package(PNG)
+endif()
 find_package(PNG CONFIG REQUIRED)
+if(HUNTER_ENABLED)
+  hunter_add_package(TIFF)
+endif()
 find_package(TIFF CONFIG REQUIRED)
+if(HUNTER_ENABLED)
+  hunter_add_package(ZLIB)
+endif()
 find_package(ZLIB CONFIG REQUIRED)
 
 # ======================================================
