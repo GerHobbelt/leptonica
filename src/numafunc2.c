@@ -2077,7 +2077,6 @@ l_ok      rv = 0;
             ave2 = (num2prev * ave2prev - i * val) / num2;
         fract1 = num1 / sum;
         score = norm * (fract1 * (1 - fract1)) * (ave2 - ave1) * (ave2 - ave1);
-		//fprintf(stderr, "otsu stats analysis: %d / %d: val: %f, score: %f, norm: %f, ave1: %f, ave2 %f, fract1: %f\n", i, n, val, score, norm, ave1, ave2, fract1);
         numaAddNumber(nascore, score);
         if (pave1) numaAddNumber(naave1, ave1);
         if (pave2) numaAddNumber(naave2, ave2);
