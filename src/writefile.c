@@ -120,7 +120,6 @@ static const l_float32  DefaultScaling = 1.0;
     /* because that makes it static.  The 'const' in the definition of   */
     /* the array refers to the strings in the array; the ptr to the      */
     /* array is not const and can be used 'extern' in other files.)      */
-LEPT_DLL l_int32  NumImageFileFormatExtensions = 20;  /* array size */
 LEPT_DLL const char *ImageFileFormatExtensions[] =
          {"unknown",
           "bmp",
@@ -142,6 +141,7 @@ LEPT_DLL const char *ImageFileFormatExtensions[] =
           "tif",
           "default",
           ""};
+LEPT_DLL l_int32 NumImageFileFormatExtensions = sizeof(ImageFileFormatExtensions) / sizeof(ImageFileFormatExtensions[0]); /* array size */
 
     /* Local map of image file name extension to output format */
 struct ExtensionMap
