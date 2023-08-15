@@ -127,7 +127,7 @@
 #endif
 
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char       buf[256];
 const char      *basedir, *title, *fileout;

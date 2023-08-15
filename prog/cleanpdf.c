@@ -163,7 +163,7 @@ PIX *pixConvertTo8Special(PIX *pix);
 #endif
 
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char     buf[256];
 const char    *basedir, *fname, *tail, *basename, *imagedir, *firstfile, *title;
