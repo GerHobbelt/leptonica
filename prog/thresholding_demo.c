@@ -181,7 +181,7 @@ pixNLNorm2(PIX* pixs, int* pthresh) {
 	pixDestroy(&pixd2);
 
 	/// Local contrast enhancement
-	//  Ignore a border of 10 % and get a mean threshold,
+	//  Ignore a border of 10% and get a mean threshold,
 	//  background and foreground value
 	pixbox = boxCreate(w1 * 0.1, h1 * 0.1, w1 * 0.9, h1 * 0.9);
 	na = pixGetGrayHistogramInRect(pixg, pixbox, 1);
@@ -241,7 +241,6 @@ pixNLNorm1(PIX* pixs, int* pthresh, int* pfgval, int* pbgval)
 		pixg = pixConvertRGBToGray(pixs, 0.3, 0.4, 0.3);
 	else
 		pixg = pixConvertTo8(pixs, 0);
-
 
 	/* Normalize contrast */
 	pixd = pixMaxDynamicRange(pixg, L_LINEAR_SCALE);
