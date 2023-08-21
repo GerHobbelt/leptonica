@@ -78,7 +78,7 @@ PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 
         /* Convert it back to 8 bpp using the MSB */
     pix4 = pixRead("/tmp/pix1.png");
-    pix5 = pixConvert16To8(pix4, 1);
+    pix5 = pixConvert16To8(pix4, L_LS_BYTE);
     pixWrite("/tmp/lept/arith/pix3.png", pix5, IFF_PNG);
 
     pixDestroy(&pixs);
