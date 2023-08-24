@@ -2102,7 +2102,7 @@ convertLABToXYZ(l_float32   lval,
 {
 l_float32  fx, fy, fz;
 l_float32  xw = 242.37f;  /* x component corresponding to rgb white */
-l_float32  yw = 255.0f;  /* y component corresponding to rgb white */
+l_float32  yw = 255.0f;   /* y component corresponding to rgb white */
 l_float32  zw = 277.69f;  /* z component corresponding to rgb white */
 
     if (pxval) *pxval = 0.0;
@@ -2132,8 +2132,8 @@ static l_float32
 lab_forward(l_float32  v)
 {
 const l_float32  f_thresh = 0.008856f;  /* (6/29)^3  */
-const l_float32  f_factor = 7.787f;  /* (1/3) * (29/6)^2)  */
-const l_float32  f_offset = 0.13793f;  /* 4/29 */
+const l_float32  f_factor = 7.787f;     /* (1/3) * (29/6)^2)  */
+const l_float32  f_offset = 0.13793f;   /* 4/29 */
 
     if (v > f_thresh) {
 #if  SLOW_CUBE_ROOT

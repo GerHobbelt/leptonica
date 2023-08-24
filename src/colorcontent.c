@@ -230,8 +230,8 @@ PIX       *pix1, *pixr, *pixg, *pixb;
         return ERROR_INT("pix1 not returned", __func__, 1);
 
     pixr = pixg = pixb = NULL;
-	datar = datag = datab = NULL;
-	liner = lineg = lineb = NULL;
+    datar = datag = datab = NULL;
+    liner = lineg = lineb = NULL;
 
 	pixGetDimensions(pix1, &w, &h, NULL);
     if (ppixr) {
