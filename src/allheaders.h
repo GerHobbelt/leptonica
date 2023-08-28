@@ -1859,10 +1859,10 @@ LEPT_DLL extern l_ok pixaCompareInPdf ( PIXA *pixa1, PIXA *pixa2, l_int32 nx, l_
 LEPT_DLL extern l_ok pmsCreate ( size_t minsize, size_t smallest, NUMA *numalloc, const char *logfile );
 LEPT_DLL extern void pmsDestroy ( void );
 LEPT_DLL extern void * pmsCustomAlloc ( size_t nbytes );
-LEPT_DLL extern void pmsCustomDealloc ( void *data );
+LEPT_DLL extern void pmsCustomDealloc ( const void *data );
 LEPT_DLL extern void * pmsGetAlloc ( size_t nbytes );
 LEPT_DLL extern l_ok pmsGetLevelForAlloc ( size_t nbytes, l_int32 *plevel );
-LEPT_DLL extern l_ok pmsGetLevelForDealloc ( void *data, l_int32 *plevel );
+LEPT_DLL extern l_ok pmsGetLevelForDealloc ( const void *data, l_int32 *plevel );
 LEPT_DLL extern void pmsLogInfo ( void );
 LEPT_DLL extern l_ok pixAddConstantGray ( PIX *pixs, l_int32 val );
 LEPT_DLL extern l_ok pixMultConstantGray ( PIX *pixs, l_float32 val );

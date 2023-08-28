@@ -265,7 +265,7 @@ stringDestroy(const char **src_ref)
 		return;
 	}
 
-	LEPT_FREE(*src_ref);
+	LEPT_FREE((void *)*src_ref);
 	*src_ref = NULL;
 }
 
@@ -2148,7 +2148,7 @@ void
 lept_free(const void *ptr)
 {
     if (!ptr) return;
-    LEPT_FREE(ptr);
+    LEPT_FREE((void *)ptr);
 }
 
 
@@ -3152,7 +3152,7 @@ size_t   size;
 			return (char*)ERROR_PTR("no current dir found", __func__, NULL);
 		stringCopy(pathout, cds, size);
 		convertSepCharsInPath(pathout, UNIX_PATH_SEPCHAR);
-		LEPT_FREE(cds);
+		LEPT_FREE((void *)cds);
 
 		l_int32 plen = strlen(pathout);
 		if (plen > 1 && pathout[plen - 1] == '/') {

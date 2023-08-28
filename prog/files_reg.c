@@ -47,7 +47,10 @@
 
 #include "monolithic_examples.h"
 
+#ifndef getcwd
 #define getcwd _getcwd  /* fix MSVC warning */
+#endif
+
 #endif  /* !_MSC_VER */
 
 void TestPathJoin(L_REGPARAMS *rp, const char *first, const char *second,

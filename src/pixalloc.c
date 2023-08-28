@@ -349,7 +349,7 @@ L_PTRA           *pa;
  * \return  void
  */
 void
-pmsCustomDealloc(void  *data)
+pmsCustomDealloc(const void  *data)
 {
 l_int32           level;
 L_PIX_MEM_STORE  *pms;
@@ -366,10 +366,10 @@ L_PTRA           *pa;
     }
 
     if (level < 0) {  /* no logging; just free the data */
-        LEPT_FREE(data);
+        LEPT_FREE((void *)data);
     } else {  /* return the data to the store */
         pa = ptraaGetPtra(pms->paa, level, L_HANDLE_ONLY);
-        ptraAdd(pa, data);
+        ptraAdd(pa, (void *)data);
         if (pms->logfile)
             pms->meminuse[level]--;
     }
@@ -462,7 +462,7 @@ L_PIX_MEM_STORE  *pms;
  * \return  0 if OK, 1 on error
  */
 l_ok
-pmsGetLevelForDealloc(void     *data,
+pmsGetLevelForDealloc(const void *data,
                       l_int32  *plevel)
 {
 l_int32           i;
@@ -482,7 +482,7 @@ L_PIX_MEM_STORE  *pms;
 
     for (i = 1; i < pms->nlevels; i++) {
         first = pms->firstptr[i];
-        if (data < (void *)first)
+        if (data < (const void *)first)
             break;
     }
     *plevel = i - 1;

@@ -48,6 +48,8 @@
 
 #else
 
+#include <crtdbg.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -105,6 +107,10 @@ typedef int l_atomic;
 #ifdef __APPLE__
   #include <Availability.h>
 #endif /* __APPLE__ */
+
+#if defined(HAVE_MUPDF)
+#include "mupdf/fitz/context.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -379,6 +385,11 @@ typedef struct L_WallTimer  L_WALLTIMER;
  *      For such builds, define LEPTONICA_INTERCEPT_ALLOC, and provide    *
  *      custom leptonica_{malloc, calloc, realloc, free} functions.       *
  *------------------------------------------------------------------------*/
+#if defined(LEPTONICA_INTERCEPT_ALLOC) && defined(_MSC_VER) && defined(FZDBG_HAS_TRACING) && defined(_DEBUG)
+#undef LEPTONICA_INTERCEPT_ALLOC    // rely on MSVC's crtdbg.h instead!
+#define LEPTONICA_NO_CUSTOM_MEM_MANAGER   1
+#endif
+
 #ifdef LEPTONICA_INTERCEPT_ALLOC
   #define LEPT_MALLOC(blocksize)           leptonica_malloc(blocksize)
   #define LEPT_CALLOC(numelem, elemsize)   leptonica_calloc(numelem, elemsize)

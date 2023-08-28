@@ -218,7 +218,10 @@ static void pixFree(PIX *pix);
  *  is defined).  Use setPixMemoryManager() to specify other functions     *
  *  to use specifically for pix raster image data.                         *
  *-------------------------------------------------------------------------*/
-/*! Pix memory manager */
+
+#ifndef LEPTONICA_NO_CUSTOM_MEM_MANAGER
+
+ /*! Pix memory manager */
     /*
      * <pre>
      * Notes:
@@ -246,7 +249,7 @@ static struct PixMemoryManager  pix_mem_manager = {
 static void *
 pixdata_malloc(size_t  size)
 {
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(LEPTONICA_NO_CUSTOM_MEM_MANAGER)
     return (*pix_mem_manager.allocator)(size);
 #else  /* _MSC_VER */
     /* Under MSVC++, pix_mem_manager is initialized after a call to
@@ -258,7 +261,7 @@ pixdata_malloc(size_t  size)
 static void
 pixdata_free(void  *ptr)
 {
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(LEPTONICA_NO_CUSTOM_MEM_MANAGER)
     (*pix_mem_manager.deallocator)(ptr);
 #else  /* _MSC_VER */
     /* Under MSVC++, pix_mem_manager is initialized after a call to
@@ -266,6 +269,13 @@ pixdata_free(void  *ptr)
     LEPT_FREE(ptr);
 #endif  /* _MSC_VER */
 }
+
+#else
+
+#define pixdata_malloc(size)        malloc(size)
+#define pixdata_free(ptr)           free(ptr)
+
+#endif
 
 /*!
  * \brief   setPixMemoryManager()
@@ -296,8 +306,12 @@ void
 setPixMemoryManager(alloc_fn   allocator,
                     dealloc_fn deallocator)
 {
+#if !defined(LEPTONICA_NO_CUSTOM_MEM_MANAGER)
     if (allocator) pix_mem_manager.allocator = allocator;
     if (deallocator) pix_mem_manager.deallocator = deallocator;
+#else
+    // no-op
+#endif
 }
 
 

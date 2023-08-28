@@ -1091,6 +1091,6 @@ enum {
 typedef void *(*alloc_fn)(size_t);
 
 /*! Deallocator function type */
-typedef void (*dealloc_fn)(void *);
+typedef void (*dealloc_fn)(const void *);
 
 #endif  /* LEPTONICA_PIX_H */

@@ -64,6 +64,13 @@ static const l_int32 ntimes = 30;
 PIXA *GenerateSetOfMargePix(void);
 void CopyStoreClean(PIXA *pixas, l_int32 nlevels, l_int32 ncopies);
 
+static void *dflt_malloc(size_t size) {
+    return malloc(size);
+}
+
+static void dflt_free(const void *ptr) {
+    free((void *)ptr);
+}
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -106,7 +113,7 @@ PIXA    *pixa, *pixas;
 
 
     /* ----------------- Standard with a few large pix -----------------*/
-    setPixMemoryManager(malloc, free);
+    setPixMemoryManager(dflt_malloc, dflt_free);
 
         /* Make the pix and do successive copies and removals of the copies */
     startTimer();
@@ -148,7 +155,7 @@ PIXA    *pixa, *pixas;
 
 
     /* ----------------- Standard with many small pix -----------------*/
-    setPixMemoryManager(malloc, free);
+    setPixMemoryManager(dflt_malloc, dflt_free);
     pixs = pixRead(DEMOPATH("feyn.tif"));
 
     startTimer();

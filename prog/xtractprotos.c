@@ -90,6 +90,7 @@
 
 #include <string.h>
 #include "allheaders.h"
+#include "../src/environ.h"
 #include "demo_settings.h"
 
 #include "mupdf/fitz.h"
@@ -119,7 +120,10 @@ char include_paths[L_BUFSIZE] = ".;../../thirdparty/leptonica/src;../../scripts/
 	ocr_set_leptonica_mem(fz_get_global_context());
 	leptSetStderrHandler(NULL);
 
-	setPixMemoryManager(leptonica_malloc, leptonica_free);
+// #ifdef LEPTONICA_INTERCEPT_ALLOC
+#if !defined(LEPTONICA_NO_CUSTOM_MEM_MANAGER)
+        setPixMemoryManager(leptonica_malloc, leptonica_free);
+#endif
 
     if (argc == 1) {
         lept_stderr(
