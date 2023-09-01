@@ -2391,8 +2391,9 @@ SARRAY  *sa;
  *
  * <pre>
  * Notes:
- *      (1) By calling genPathname(), this does an automatic directory
- *          translation on operating systems which use a different path.
+ *      (1) By calling genPathname(), if the pathname begins with "/tmp"
+ *          this does an automatic directory translation on
+ *          operating systems which use a different path.
  * </pre>
  */
 l_int32
