@@ -2700,8 +2700,6 @@ l_int32  ret;
 void
 callSystemDebug(const char *cmd)
 {
-l_int32  ret;
-
     if (!cmd) {
         L_ERROR("cmd not defined\n", __func__);
         return;
@@ -2714,14 +2712,14 @@ l_int32  ret;
 #if defined(__APPLE__)  /* iOS 11 does not support system() */
 
   #if (defined(TARGET_OS_OSX) && TARGET_OS_OSX == 1)  /* Mac OS X */
-    ret = system(cmd);
+    system(cmd);
   #elif TARGET_OS_IPHONE || defined(OS_IOS)  /* iOS */
     L_ERROR("iOS 11 does not support system()\n", __func__);
   #endif  /* TARGET_OS_OSX */
 
 #else /* ! __APPLE__ */
 
-   ret = system(cmd);
+   system(cmd);
 
 #endif /* __APPLE__ */
 }
