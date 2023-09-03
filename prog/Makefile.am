@@ -129,7 +129,7 @@ endif
 
 check_PROGRAMS = $(AUTO_REG_PROGS)
 TESTS = $(AUTO_REG_PROGS)
-TESTS_ENVIRONMENT = $(srcdir)/reg_wrapper.sh
+AM_TESTS_ENVIRONMENT = $(srcdir)/reg_wrapper.sh
 EXTRA_DIST = reg_wrapper.sh
 
 dwamorph1_reg_SOURCES = dwamorph1_reg.c dwalinear.3.c dwalinearlow.3.c
