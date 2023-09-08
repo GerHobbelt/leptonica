@@ -1341,6 +1341,7 @@ PIX     *pixd;
  *      (2) Note that %rankorder is an integer.  Use %rankorder = 0 for
  *          the largest component and %rankorder = -1 for the smallest.
  *          If %rankorder >= number of components, select the smallest.
+ * </pre>
  */
 PIX *
 pixSelectComponentBySize(PIX     *pixs,
@@ -1412,6 +1413,7 @@ PIXA    *pixa1, *pixa2;
  *      (1) See notes in pixSelectComponentBySize().
  *      (2) This returns a copy of %pixs, with all components removed
  *          except for the selected one.
+ * </pre>
  */
 PIX *
 pixFilterComponentBySize(PIX     *pixs,

@@ -91,12 +91,12 @@
  *      lines containing distinct tags for the various fields.
  *      See: http://netpbm.sourceforge.net/doc/pam.html
  *
- *        WIDTH <int>         ; mandatory, exactly once
- *        HEIGHT <int>        ; mandatory, exactly once
- *        DEPTH <int>         ; mandatory, exactly once,
+ *        WIDTH \<int\>         ; mandatory, exactly once
+ *        HEIGHT \<int\>        ; mandatory, exactly once
+ *        DEPTH \<int\>         ; mandatory, exactly once,
  *                            ; its meaning is equivalent to spp
- *        MAXVAL <int>        ; mandatory, one of 1, 3, 15, 255 or 65535
- *        TUPLTYPE <string>   ; optional; BLACKANDWHITE, GRAYSCALE, RGB
+ *        MAXVAL \<int\>        ; mandatory, one of 1, 3, 15, 255 or 65535
+ *        TUPLTYPE \<string\>   ; optional; BLACKANDWHITE, GRAYSCALE, RGB
  *                            ; and optional suffix _ALPHA, e.g. RGB_ALPHA
  *        ENDHDR              ; mandatory, last header line
  *

@@ -187,6 +187,7 @@ static l_int32  var_JPEG_QUALITY = 75;   /* default */
  *           pixWriteStream(...);
  *           l_jpegSetQuality(prev);   // resets to previous value
  *      (3) On error, logs a message and does not change the variable.
+ * </pre>
  */
 l_int32
 l_jpegSetQuality(l_int32  new_quality)
@@ -220,6 +221,7 @@ LEPT_DLL l_int32 LeptDebugOK = 0;  /* default value */
  *          are compiled in.
  *      (2) The default in the library distribution is 0.  Call with
  *          %allow = 1 for development and debugging.
+ * </pre>
  */
 void
 setLeptDebugOK(l_int32  allow)

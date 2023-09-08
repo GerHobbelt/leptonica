@@ -304,19 +304,19 @@ PTA     *ptas;
  * </pre>
  */
 PTA *
-ptaSort2d(PTA  *pta)
+ptaSort2d(PTA  *ptas)
 {
 l_int32    index, i, j, n, nx, ny, start, end;
 l_float32  x, y, yp, val;
 NUMA      *na1, *na2, *nas, *nax;
 PTA       *pta1, *ptad;
 
-    if (!pta)
+    if (!ptas)
         return (PTA *)ERROR_PTR("pta not defined", __func__, NULL);
 
         /* Sort by row-major (y first, then x).  After sort by y,
          * the x values at the same y are not sorted.  */
-    pta1 = ptaSort(pta, L_SORT_BY_Y, L_SORT_INCREASING, NULL);
+    pta1 = ptaSort(ptas, L_SORT_BY_Y, L_SORT_INCREASING, NULL);
 
         /* Find start and ending indices with the same y value */
     n = ptaGetCount(pta1);
