@@ -123,7 +123,7 @@
 
 
 #if defined(BUILD_MONOLITHIC)
-#define main   lept_concatpdf_main
+#define main   lept_compresspdf_main
 #endif
 
 l_int32 main(int    argc,

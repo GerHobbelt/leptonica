@@ -94,11 +94,18 @@
 #include <sys/types.h>
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_croppdf_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
 char       buf[256];
-char      *basedir, *fname, *tail, *basename, *imagedir, *title, *fileout;
+const char      *basedir, *fname, *tail, *basename, *imagedir, *title, *fileout;
 l_int32    lrclear, tbclear, edgeclean, lradd, tbadd;
 l_int32    render_res, i, n, ret;
 l_float32  maxwiden;
