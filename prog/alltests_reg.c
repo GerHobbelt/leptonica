@@ -149,6 +149,7 @@ static const char *tests[] = {
                               "multitype",
                               "numa1",
                               "numa2",
+                              "numa3",
                               "nearline",
                               "newspaper",
                               "overlap",
