@@ -76,8 +76,7 @@ const char    *filein, *fileout;
     pixd = pixReduce2(pixs, NULL);
 #endif
 
-    pixWrite(fileout, pixd, IFF_PNG);
-
+    pixWrite(fileout, pixd, IFF_TIFF_G4);
     return 0;
 }
 

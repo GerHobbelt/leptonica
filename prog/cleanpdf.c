@@ -37,25 +37,18 @@
  *    and concatenate them into a single pdf file of images.
  *
  *    Syntax:
- *       cleanpdf basedir threshold resolution
- *                darken rotation opensize title fileout
+ *       cleanpdf basedir resolution darken rotation opensize title fileout
  *
  *    A typical command is:
- *        cleanpdf . 180 300 0 0 0 none <name-of-output-pdf-file>
+ *        cleanpdf . 300 0 0 0 none <name-of-output-pdf-file>
  *
  *    The %basedir is a directory where the input pdf files are located.
  *    The program will operate on every file in this directory with
  *    the ".pdf" extension.  Use "." if the files are in the current directory.
  *
- *    The input binarization %threshold should be somewhere in the
- *    range [130 - 190], and not exceed 190.  This has no effect on
- *    1 bpp input images.  For grayscale and rgb images, the resulting
- *    binarization is relatively insensitive to the value, because
- *    internally we use a pixel mapping that is adapted to the local
- *    background before thresholding to binarize the image.  However,
- *    using a lower threshold value will somewhat weaken the foreground,
- *    and this can be compensated by using a larger value of the
- *    %darken parameter (see below).
+ *    We use adaptive thresholding.  After background normalization, the
+ *    a global threshold of about 180 is effective, and the resulting
+ *    binarization is relatively insensitive to the value.
  *
  *    The output %resolution parameter can take on two values:
  *       300  (binarize at the same resolution as the gray or color input,
@@ -93,6 +86,10 @@
  *    required) to have a '.pdf' extension.
  *
  *    Whenever possible, the images will be deskewed.
+ *
+ *    As the first step in processing, images are saved in the ./image
+ *    directory as RGB at 300 ppi in ppm format.  Each image is about 26MB.
+ *    Delete those images after use.
  *
  *    Some pdf files have oversize media boxes.  PDF is a
  *    resolution-independent format for storing data that can be imaged.
@@ -168,27 +165,21 @@ l_int32 main(int    argc,
 char     buf[256];
 const char    *basedir, *fname, *tail, *basename, *imagedir, *firstfile, *title;
 const char    *fileout;
-l_int32  thresh, res, render_res, rotation, darken, opensize, i, n, ret;
+l_int32  i, n, res, darken, rotation, opensize, render_res, ret;
 SARRAY  *sa;
 
-    if (argc != 9)
+    if (argc != 8)
         return ERROR_INT(
-            "\n  Syntax: cleanpdf basedir threshold resolution "
+            "\n  Syntax: cleanpdf basedir resolution "
             "darken rotation opensize title fileout",
             __func__, 1);
     basedir = argv[1];
-    thresh = atoi(argv[2]);
-    res = atoi(argv[3]);
-    darken = atoi(argv[4]);
-    rotation = atoi(argv[5]);
-    opensize = atoi(argv[6]);
-    title = argv[7];
-    fileout = argv[8];
-    if (thresh > 190) {
-        L_WARNING("threshold = %d is too large; reducing to 190\n",
-                __func__, thresh);
-        thresh = 190;
-    }
+    res = atoi(argv[2]);
+    darken = atoi(argv[3]);
+    rotation = atoi(argv[4]);
+    opensize = atoi(argv[5]);
+    title = argv[6];
+    fileout = argv[7];
     if (res == 0)
         res = 300;
     if (res != 300 && res != 600) {
@@ -284,7 +275,6 @@ SARRAY  *sa;
     lept_free(imagedir);
     sarrayWriteStderr(sa);
     lept_stderr("cleaning ...\n");
-    cleanTo1bppFilesToPdf(sa, thresh, res, darken, rotation, opensize,
-                          title, fileout);
+    cleanTo1bppFilesToPdf(sa, res, darken, rotation, opensize, title, fileout);
     return 0;
 }
