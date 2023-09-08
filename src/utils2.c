@@ -135,11 +135,11 @@
  *  This is important:
  *  (1) With the exception of splitPathAtDirectory(), splitPathAtExtension()
   *     and genPathname(), all input pathnames must have unix separators.
- *  (2) On Windows, when you specify a read or write to "/tmp/...",
- *      the filename is rewritten to use the Windows temp directory:
- *         /tmp  ==>   [Temp]...    (Windows)
+ *  (2) On macOS, iOS and Windows, for read or write to "/tmp/..."
+ *      the filename is rewritten to use the OS specific temp directory:
+ *         /tmp  ==>   [Temp]/...
  *  (3) This filename rewrite, along with the conversion from unix
- *      to Windows pathnames, happens in genPathname().
+ *      to OS specific pathnames, happens in genPathname().
  *  (4) Use fopenReadStream() and fopenWriteStream() to open files,
  *      because these use genPathname() to find the platform-dependent
  *      filenames.  Likewise for l_binaryRead() and l_binaryWrite().
@@ -155,13 +155,13 @@
  *      files to default places, both for generating debugging output
  *      and for supporting regression tests.  Applications also need
  *      this ability for debugging.
- *  (8) Why do the pathname rewrite on Windows?
+ *  (8) Why do the pathname rewrite on macOS, iOS and Windows?
  *      The goal is to have the library, and programs using the library,
  *      run on multiple platforms without changes.  The location of
  *      temporary files depends on the platform as well as the user's
- *      configuration.  Temp files on Windows are in some directory
- *      not known a priori.  To make everything work seamlessly on
- *      Windows, every time you open a file for reading or writing,
+ *      configuration.  Temp files on some operating systems are in some
+ *      directory not known a priori.  To make everything work seamlessly on
+ *      any OS, every time you open a file for reading or writing,
  *      use a special function such as fopenReadStream() or
  *      fopenWriteStream(); these call genPathname() to ensure that
  *      if it is a temp file, the correct path is used.  To indicate
@@ -218,6 +218,10 @@
 #include <stddef.h>
 #include "allheaders.h"
 
+#if defined(__APPLE__) || defined(_WIN32)
+/* Rewrite paths starting with /tmp for macOS, iOS and Windows. */
+#define REWRITE_TMP
+#endif
 
 /*--------------------------------------------------------------------*
  *                       Safe string operations                       *
@@ -1812,8 +1816,8 @@ FILE  *fp;
  *          of the text in the split files will be identical to the original.
  *      (3) The output filenames are in the form:
  *               <rootpath>_N.<ext>, N = 1, ... n
- *      (4) This handles the temp directory pathname conversion on Windows:
- *              /tmp  ==>  [Windows Temp directory]
+ *      (4) This handles the temp directory pathname conversion where needed:
+ *              /tmp  ==>  [OS specific temp directory]
  *      (5) Files can also be sharded into sets of lines by the program 'split':
  *              split -n l/<n> <filename>
  *          Using 'split', the resulting files have approximately equal
@@ -1891,8 +1895,8 @@ SARRAY   *sa;
  * Notes:
  *      (1) This should be used whenever you want to run fopen() to
  *          read from a stream.  Never call fopen() directory.
- *      (2) This handles the temp directory pathname conversion on Windows:
- *              /tmp  ==>  [Windows Temp directory]
+ *      (2) This handles the temp directory pathname conversion where needed:
+ *              /tmp  ==>  [OS specific temp directory]
  * </pre>
  */
 FILE *
@@ -1935,8 +1939,8 @@ FILE  *fp;
  * Notes:
  *      (1) This should be used whenever you want to run fopen() to
  *          write or append to a stream.  Never call fopen() directory.
- *      (2) This handles the temp directory pathname conversion on Windows:
- *              /tmp  ==>  [Windows Temp directory]
+ *      (2) This handles the temp directory pathname conversion where needed:
+ *              /tmp  ==>  [OS specific temp directory]
  * </pre>
  */
 FILE *
@@ -2159,7 +2163,7 @@ lept_free(const void *ptr)
 /*!
  * \brief   lept_mkdir()
  *
- * \param[in]    subdir    of /tmp or its equivalent on Windows
+ * \param[in]    subdir    of /tmp or its OS specific equivalent
  * \return  0 on success, non-zero on failure
  *
  * <pre>
@@ -2229,7 +2233,7 @@ l_uint32  attributes;
 /*!
  * \brief   lept_rmdir()
  *
- * \param[in]    subdir    of /tmp or its equivalent on Windows
+ * \param[in]    subdir    of /tmp or its OS specific equivalent
  * \return  0 on success, non-zero on failure
  *
  * <pre>
@@ -2316,9 +2320,8 @@ char    *realdir;
  * Notes:
  *      (1) Always use unix pathname separators.
  *      (2) By calling genPathname(), if the pathname begins with "/tmp"
- *          this does an automatic directory translation on Windows
- *          to a path in the Windows [Temp] directory:
- *             "/tmp"  ==>  [Temp] (Windows)
+ *          this does an automatic directory translation on
+ *          operating systems which use a different path.
  * </pre>
  */
 void
@@ -2371,9 +2374,8 @@ char  *realdir;
  *          all files in /tmp.
  *      (3) Use unix pathname separators.
  *      (4) By calling genPathname(), if the pathname begins with "/tmp"
- *          this does an automatic directory translation on Windows
- *          to a path in the Windows [Temp] directory:
- *             "/tmp"  ==>  [Temp] (Windows)
+ *          this does an automatic directory translation on
+ *          operating systems which use a different path.
  *      (5) Error conditions:
  *            * returns -1 if the directory is not found
  *            * returns the number of files (> 0) that it was unable to remove.
@@ -2423,8 +2425,8 @@ SARRAY  *sa;
  * <pre>
  * Notes:
  *      (1) By calling genPathname(), this does an automatic directory
- *          translation on Windows to a path in the Windows [Temp] directory:
- *             "/tmp/..."  ==>  [Temp]/... (Windows)
+ *          this does an automatic directory translation on
+ *          operating systems which use a different path.
  * </pre>
  */
 l_int32
@@ -2463,6 +2465,8 @@ l_int32  ret;
  *      (4) Unlike the other lept_* functions in this section, this can remove
  *          any file -- it is not restricted to files that are in /tmp or a
  *          subdirectory of it.
+ *          this does an automatic directory translation on
+ *          operating systems which use a different path.
  * </pre>
  */
 l_int32
@@ -2508,9 +2512,8 @@ l_int32  ret;
  *          be freed by the caller.
  *      (6) Reminders:
  *          (a) specify files using unix pathnames
- *          (b) for Windows, translates
- *                 /tmp  ==>  [Temp]
- *              where [Temp] is the Windows temp directory
+ *          (b) this does an automatic directory translation on
+ *              operating systems which use a different path for /tmp.
  *      (7) Examples:
  *          * newdir = NULL,    newtail = NULL    ==> /tmp/src-tail
  *          * newdir = NULL,    newtail = abc     ==> /tmp/abc
@@ -2604,9 +2607,8 @@ l_int32  ret;
  *          be freed by the caller.
  *      (6) Reminders:
  *          (a) specify files using unix pathnames
- *          (b) for Windows, translates
- *                 /tmp  ==>  [Temp]
- *              where [Temp] is the Windows temp directory
+ *          (b) this does an automatic directory translation on
+ *              operating systems which use a different path for /tmp
  *      (7) Examples:
  *          * newdir = NULL,    newtail = NULL    ==> /tmp/src-tail
  *          * newdir = NULL,    newtail = abc     ==> /tmp/abc
@@ -3086,12 +3088,13 @@ size_t   len;
  *              %fname == NULL.
  *            * from the name of a file in the local directory placed in
  *              %fname, with %dir == NULL.
- *            * if in a "/tmp" directory and on Windows, the Windows
- *              temp directory is used.
- *      (2) On Windows, if the root of %dir is '/tmp', this does a name
- *          translation:
- *             "/tmp"  ==>  [Temp] (Windows)
- *          where [Temp] is the Windows temp directory.
+ *            * if in a "/tmp" directory and on iOS, macOS or Windows,
+ *              the OS specific temp directory is used.
+ *      (2) This does an automatic directory translation on
+ *          operating systems which use a different path.
+ *          That path is determined
+ *             * on Windows: by GetTempPath()
+ *             * on macOS, iOS: by confstr() (see man page)
  *      (3) On unix, the TMPDIR variable is ignored.  No rewriting
  *          of temp directories is permitted.
  *      (4) There are four cases for the input:
@@ -3108,7 +3111,11 @@ char *
 genPathname(const char  *dir,
             const char  *fname)
 {
-l_int32  is_win32 = FALSE;
+#if defined(REWRITE_TMP)
+l_int32  rewrite_tmp = TRUE;
+#else
+l_int32  rewrite_tmp = FALSE;
+#endif  /* _WIN32 */
 char    *cdir, *pathout;
 l_int32  dirlen, namelen;
 size_t   size;
@@ -3141,10 +3148,6 @@ size_t   size;
         return (char *)ERROR_PTR("pathout not made", __func__, NULL);
     }
 
-#ifdef _WIN32
-    is_win32 = TRUE;
-#endif  /* _WIN32 */
-
 #if defined(BUILD_MONOLITHIC)
 	if (strncmp(cdir, "/tmp", 4) == 0) {  /* in "/tmp" */
 		const char* cds = getcwd(NULL, 0);
@@ -3171,12 +3174,22 @@ size_t   size;
          * There is no path rewriting on unix, and on win32, we do not
          * rewrite unless the specified directory is /tmp or
          * a subdirectory of /tmp */
-    if (!is_win32 || dirlen < 4 ||
+    if (!rewrite_tmp || dirlen < 4 ||
         (dirlen == 4 && strncmp(cdir, "/tmp", 4) != 0) ||  /* not in "/tmp" */
         (dirlen > 4 && strncmp(cdir, "/tmp/", 5) != 0)) {  /* not in "/tmp/" */
         stringCopy(pathout, cdir, dirlen);
-    } else {  /* Rewrite for win32 with "/tmp" specified for the directory. */
-#ifdef _WIN32
+    } else {  /* Rewrite with "/tmp" specified for the directory. */
+#if defined(__APPLE__)
+        size_t n = confstr(_CS_DARWIN_USER_TEMP_DIR, pathout, size);
+        if (n == 0 || n > size) {
+            /* Fall back to using /tmp */
+            stringCopy(pathout, cdir, dirlen);
+        } else {
+            /* Add the rest of cdir */
+            if (dirlen > 4)
+                stringCat(pathout, size, cdir + 4);
+        }
+#elif defined(_WIN32)
         l_int32 tmpdirlen;
         char tmpdir[MAX_PATH];
         GetTempPathA(sizeof(tmpdir), tmpdir);  /* get the Windows temp dir */
@@ -3221,9 +3234,7 @@ size_t   size;
  *          which is:
  *            /tmp/%subdir       (unix)
  *            [Temp]/%subdir     (Windows, macOS, iOS)
- *          where [Temp] is a path determined
- *             - on Windows: by GetTempPath()
- *             - on macOS, iOS: by confstr() (see man page)
+ *          where [Temp] is the OS path
  *          and %subdir is in general a set of nested subdirectories:
  *            dir1/dir2/.../dirN
  *          which in use would not typically exceed 2 levels.
@@ -3250,18 +3261,6 @@ size_t   pathlen;
 
     memset(result, 0, nbytes);
 
-#ifdef __APPLE__
-    {
-        size_t n = confstr(_CS_DARWIN_USER_TEMP_DIR, result, nbytes);
-        if (n == 0) {
-            L_ERROR("failed to find tmp dir, %s\n", __func__, strerror(errno));
-            return 1;
-        } else if (n > nbytes) {
-            return ERROR_INT("result array too small for path\n", __func__, 1);
-        }
-        dir = pathJoin(result, subdir);
-    }
-#else
     {
         char *tmpDir = getenv("TMPDIR");
         if (tmpDir == NULL) {
@@ -3270,12 +3269,11 @@ size_t   pathlen;
         dir = pathJoin(tmpDir, subdir);
     }
     
-#endif /*  ~ __APPLE__ */
 
-#ifndef _WIN32
-    path = stringNew(dir);
-#else
+#if defined(REWRITE_TMP)
     path = genPathname(dir, NULL);
+#else
+    path = stringNew(dir);
 #endif  /*  ~ _WIN32 */
     pathlen = strlen(path);
     if (pathlen < nbytes - 1) {
