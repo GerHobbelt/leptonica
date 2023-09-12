@@ -1039,7 +1039,7 @@ blendComponents(l_int32    a,
  *      (2) Clipping of pixs2 to pixs1 is done in the inner pixel loop.
  *      (3) If pixs1 has a colormap, it is removed.
  *      (4) If pixs1 has depth < 8, it is unpacked to generate a 8 bpp pix.
- *      (5) This does a blend with inverse.  Whereas in pixGlendGray(), the
+ *      (5) This does a blend with inverse.  Whereas in pixBlendGray(), the
  *          zero blend point is where the blendee pixel is 128, here
  *          the zero blend point is found adaptively, with respect to the
  *          median of the blendee region.  If the median is < 128,
