@@ -56,7 +56,7 @@
 #define   DFLAG        0
 
 
-l_int32 DoPageSegmentation(PIX *pixs, l_int32 which);
+static l_int32 DoPageSegmentation(PIX *pixs, l_int32 which);
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -85,7 +85,7 @@ PIX     *pixs;   /* input image should be at least 300 ppi */
 }
 
 
-l_int32
+static l_int32
 DoPageSegmentation(PIX     *pixs,   /* should be at least 300 ppi */
                    l_int32  which)  /* 1, 2, 3, 4 */
 {
