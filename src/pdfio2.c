@@ -1197,7 +1197,7 @@ FILE         *fp;
  *      (1) Set ascii85:
  *           ~ 0 for binary data (PDF only)
  *           ~ 1 for ascii85 (5 for 4) encoded binary data (PostScript only)
- *      (2) Do not accept images with an asperity ratio greater than 10.
+ *      (2) Do not accept images with an asperity ratio greater than 30.
  * </pre>
  */
 l_ok
@@ -1225,8 +1225,8 @@ PIXCMAP  *cmap;
     if (w == 0 || h == 0)
         return ERROR_INT("invalid w or h", __func__, 1);
     maxAsp = L_MAX(w / h, h / w);
-    if (maxAsp > 10)
-        return ERROR_INT("max asperity > 10", __func__, 1);
+    if (maxAsp > 30)
+        return ERROR_INT("max asperity > 30", __func__, 1);
 
         /* Conditionally modify the encoding type if libz is
          * available and the requested library is missing. */
