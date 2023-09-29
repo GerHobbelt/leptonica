@@ -117,12 +117,14 @@ SARRAY   *sa;
 // include paths spec copy of the build environment for the leptonica project:
 char include_paths[L_BUFSIZE] = ".;../../thirdparty/leptonica/src;../../scripts/leptonica/include/leptonica;../../source/fitz;../../include;../../scripts/leptonica/include/leptonica;../../scripts/libjpeg-turbo;../../scripts/libpng;../../scripts/libtiff;../../thirdparty/leptonica/src;../../thirdparty/jbig2dec;../../thirdparty/owemdjee/libjpeg-turbo;../../thirdparty/openjpeg/src/lib/openjp2;../../thirdparty/libpng;../../thirdparty/libtiff/libtiff;../../thirdparty/zlib;../../scripts/zlib;../../thirdparty/owemdjee/libgif;../../thirdparty/owemdjee/libwebp/src;../../thirdparty/owemdjee/plf_nanotimer";
 
-	ocr_set_leptonica_mem(fz_get_global_context());
+	fz_set_leptonica_mem(fz_get_global_context());
+#if 0
 	leptSetStderrHandler(NULL);
 
 // #ifdef LEPTONICA_INTERCEPT_ALLOC
 #if !defined(LEPTONICA_NO_CUSTOM_MEM_MANAGER)
-        setPixMemoryManager(leptonica_malloc, leptonica_free);
+    setPixMemoryManager(leptonica_malloc, leptonica_free);
+#endif
 #endif
 
     if (argc == 1) {
