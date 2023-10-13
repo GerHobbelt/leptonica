@@ -124,7 +124,8 @@ regTestSetup(l_int32        argc,
 	         const char   **argv,
              L_REGPARAMS  **prp)
 {
-char         *testname, *vers;
+char         *testname;
+const char   *vers;
 char          errormsg[64];
 L_REGPARAMS  *rp;
 
@@ -182,10 +183,10 @@ L_REGPARAMS  *rp;
                 rp->testname);
     vers = getLeptonicaVersion();
     lept_stderr("%s : ", vers);
-    LEPT_FREE(vers);
+    stringDestroy(&vers);
     vers = getImagelibVersions();
     lept_stderr("%s\n", vers);
-    LEPT_FREE(vers);
+    stringDestroy(&vers);
 
     rp->tstart = startTimerNested();
     return 0;

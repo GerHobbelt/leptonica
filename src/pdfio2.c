@@ -1724,7 +1724,8 @@ static void
 generateFixedStringsPdf(L_PDF_DATA  *lpd)
 {
 char     buf[L_SMALLBUF];
-char    *version, *datestr;
+const char *version;
+const char *datestr;
 SARRAY  *sa;
 
         /* Accumulate data for the header and objects 1-3 */
@@ -1746,11 +1747,11 @@ SARRAY  *sa;
         datestr = l_getFormattedDate();
         snprintf(buf, sizeof(buf), "/CreationDate (D:%s)\n", datestr);
         sarrayAddString(sa, buf, L_COPY);
-        LEPT_FREE(datestr);
+		stringDestroy(&datestr);
         version = getLeptonicaVersion();
         snprintf(buf, sizeof(buf),
                  "/Producer (leptonica: %s)\n", version);
-        LEPT_FREE(version);
+        stringDestroy(&version);
     } else {
         snprintf(buf, sizeof(buf), "/Producer (leptonica)\n");
     }

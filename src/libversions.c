@@ -29,7 +29,7 @@
  * <pre>
  *
  *       Image library version number
- *           char      *getImagelibVersions()
+ *           const char *getImagelibVersions()
  * </pre>
  */
 
@@ -101,7 +101,7 @@
  *      (2) The caller must free the memory.
  * </pre>
  */
-char *
+const char *
 getImagelibVersions(void)
 {
 l_int32  first = TRUE;

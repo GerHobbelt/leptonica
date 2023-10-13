@@ -634,13 +634,13 @@ opj_image_t       *image = NULL;
         const char comment2[] = "; using OpenJPEG, version ";
         size_t len1 = strlen(comment1);
         size_t len2 = strlen(comment2);
-        char *version1 = getLeptonicaVersion();
+        const char *version1 = getLeptonicaVersion();
         const char *version2 = opj_version();
         len1 += len2 + strlen(version1) + strlen(version2) + 1;
         parameters.cp_comment = (char *)LEPT_MALLOC(len1);
         snprintf(parameters.cp_comment, len1, "%s%s%s%s", comment1, version1,
                  comment2, version2);
-        LEPT_FREE(version1);
+        stringDestroy(&version1);
     }
 
         /* Get the encoder handle */

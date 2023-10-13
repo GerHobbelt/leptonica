@@ -102,7 +102,7 @@
  *           void       l_getCurrentTime()
  *           L_WALLTIMER  *startWallTimer()
  *           l_float32  stopWallTimer()
- *           void       l_getFormattedDate()
+ *           const char * l_getFormattedDate()
  *
  *  For all issues with cross-platform development, see utils2.c.
  * </pre>
@@ -1073,7 +1073,7 @@ l_uint32  shift;
  *  Notes:
  *      (1) The caller has responsibility to free the memory.
  */
-char *
+const char *
 getLeptonicaVersion(void)
 {
 size_t  bufsize = 100;
@@ -1408,7 +1408,7 @@ L_WALLTIMER  *timer;
  *      (2) Contributed by Dave Bryan.  Works on all platforms.
  * </pre>
  */
-char *
+const char *
 l_getFormattedDate(void)
 {
 char        buf[128] = "", sep = 'Z';
