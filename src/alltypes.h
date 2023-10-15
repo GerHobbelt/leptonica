@@ -33,8 +33,8 @@
 #include <stdarg.h>
 
     /* General and configuration defs */
-#include "endianness.h"
-#include "environ.h"
+#include "leptonica/endianness.h"
+#include "leptonica/environ.h"
 
     /* Generic and non-image-specific containers */
 #include "array.h"
