@@ -770,8 +770,8 @@ LEPT_DLL extern L_DNAHASH * l_dnaHashCreate ( l_int32 nbuckets, l_int32 initsize
 LEPT_DLL extern void l_dnaHashDestroy ( L_DNAHASH **pdahash );
 LEPT_DLL extern L_DNA * l_dnaHashGetDna ( L_DNAHASH *dahash, l_uint64 key, l_int32 copyflag );
 LEPT_DLL extern l_ok l_dnaHashAdd ( L_DNAHASH *dahash, l_uint64 key, l_float64 value );
-LEPT_DLL extern PIX * pixMorphDwa_2 ( PIX *pixd, PIX *pixs, l_int32 operation, char *selname );
-LEPT_DLL extern PIX * pixFMorphopGen_2 ( PIX *pixd, PIX *pixs, l_int32 operation, char *selname );
+LEPT_DLL extern PIX * pixMorphDwa_2 ( PIX *pixd, PIX *pixs, l_int32 operation, const char *selname );
+LEPT_DLL extern PIX * pixFMorphopGen_2 ( PIX *pixd, PIX *pixs, l_int32 operation, const char *selname );
 LEPT_DLL extern l_int32 fmorphopgen_low_2 ( l_uint32 *datad, l_int32 w, l_int32 h, l_int32 wpld, l_uint32 *datas, l_int32 wpls, l_int32 index );
 LEPT_DLL extern PIX * pixSobelEdgeFilter ( PIX *pixs, l_int32 orientflag );
 LEPT_DLL extern PIX * pixTwoSidedEdgeFilter ( PIX *pixs, l_int32 orientflag );
