@@ -204,17 +204,8 @@ struct BG_THRES_PT_INFO {
 			struct BG_THRES_PT_INFO* ptpx = &allbg_pta[nx_offset + j];
 
 			pixt = pixTilingGetTile(pt, i, j);
-			if (j == 19 && i == 0) {
-				fprintf(stderr, "magic!\n");
-			}
 			pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
 				&fgval, &bgval, NULL);
-			if (!(abs(fgval - bgval) >= 1)) {
-				fprintf(stderr, "bonk!\n");
-			}
-			if (thresh < 60) {
-				fprintf(stderr, "magic!\n");
-			}
 
 			ptpx->thresh = thresh;
 			ptpx->bgval = bgval;
@@ -264,7 +255,6 @@ struct BG_THRES_PT_INFO {
 	else {
 		l_ok black_is_fg = (black_is_fg_weight >= 0);
 		thresh = (black_is_fg ? 0 : 255);
-		//thresh = 50;
 
 		// now gang-press the minority tiles into acting like the majority:
 		// we need to adjust their thresholds to match.
@@ -273,24 +263,9 @@ struct BG_THRES_PT_INFO {
 		// and vice versa.
 		for (i = 0; i < ny; i++) {
 			nx_offset = i * nx;
-			//if (i % 2)
-			//	thresh = 50;
-			//else
-			//	thresh = 155;
 			for (j = 0; j < nx; j++) {
-				//pixSetPixel(pixthresh, j, i, thresh);
-				//if (thresh == 50)
-				//	thresh = 155;
-				//else
-				//	thresh = 50;
-				//continue;
-
 				struct BG_THRES_PT_INFO* ptpx = &allbg_pta[nx_offset + j];
 				l_ok val = (ptpx->flags & 0x01);
-
-				if (j == 17 && i == 0) {
-					fprintf(stderr, "magic!\n");
-				}
 
 				if (ptpx->flags & 0x02) {
 					// all-background tile
