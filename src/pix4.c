@@ -3408,7 +3408,7 @@ PIX       *pixg, *pixm;
  * \param[in]    scorefract  fraction of the max score, used to determine
  *                           the range over which the histogram min is searched
  * \param[in]    factor      subsampling factor; integer >= 1
- * \param[out]   pthresh     [optional] best threshold for separating
+ * \param[out]   pthresh     [optional] best threshold for separating: the last index which is considered 'background'
  * \param[out]   pfgval      [optional] average foreground value
  * \param[out]   pbgval      [optional] average background value
  * \param[out]   ppixdb      [optional] plot of distribution and split point
