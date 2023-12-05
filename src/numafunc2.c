@@ -839,7 +839,7 @@ NUMA    *nad;
  * \param[out]   pbinsize   [optional] size of histogram bins
  * \param[out]   pbinstart  [optional] start val of minimum bin;
  *                          input NULL to force start at 0
- * \return  na consisiting of histogram of integerized values,
+ * \return  na consisting of histogram of integerized values,
  *              or NULL on error.
  *
  * <pre>
@@ -951,7 +951,7 @@ NUMA      *nai, *nahist;
  *
  * \param[in]    na       numa of floats; these may be integers
  * \param[in]    maxbins  max number of histogram bins; >= 1
- * \return  na consisiting of histogram of quantized float values,
+ * \return  na consisting of histogram of quantized float values,
  *              or NULL on error.
  *
  * <pre>
@@ -2030,7 +2030,7 @@ l_ok      rv = 0;
 	// if those are only very minimal.
 	//
 	// Later on we can then detect any single-hump adverse 'all-background' histogram by
-	// simply checking whether these to hilltop indexes coincide.
+	// simply checking whether these two hilltop indexes coincide.
 	numaGetFValue(na, 0, &valprev);
 	for (i = 1; i < n; i++) {
 		numaGetFValue(na, i, &val);
@@ -2175,14 +2175,14 @@ l_ok      rv = 0;
 		//
 		// bestsplit = "the last index at which background pixels exist."
 		//
-		// This precise definition is *crucial* for the code to always be able to deliver,
-		// as it always did I got my grubby paws on it, an index value *in the legal range*.
+		// This precise definition is *crucial* for the code to always be able to deliver
+		// an index value *in the legal range*.
 		//
 		// That last *system requirement* prevents us from using a slightly more obvious
 		// (human trivial) definition of the `bestsplit`:
 		//
 		// bestsplit != the index above the foreground pixels. (as the code further
-		// above would have you believe. If it would, really, you'ld desperately need
+		// above would have you believe). If it would, really, you'ld desperately need
 		// to accept out-of-range index bestsplit=256 which happens when the entire image
 		// area is all-white: histo then would have a single peak at 255 and the old definition
 		// of bestsplit requires this function to produce bestsplit=256, yet it doesn't
@@ -2193,9 +2193,9 @@ l_ok      rv = 0;
 		// but NEVER IS all-foreground.
 		//
 		// This does not, by itself, suffice to guide callers into being able to do the right thing
-		// with our produce, we either need to back-pedal on this train of thought and simply
-		// state that, from now on, we DO accept a returned bestsplit=256 as well, while knowingly
-		// out of legal index range, OR we return an additional indicator to he caller telling
+		// with our produce, hence we either need to back-pedal on this train of thought and simply
+		// state that, from now on, we DO accept EITHER a returned bestsplit=256 as well, while knowingly
+		// out of legal index range, OR we return an additional indicator to the caller telling
 		// her which side the background is at, according to our analysis, while using the new
 		// bestsplit=last-index-of-background-pixels definition.
 		//
@@ -2222,7 +2222,7 @@ l_ok      rv = 0;
 		val += sum;
 		numaSetValue(na2, bump_index, val);
 	    if (pnascore) {  /* debug mode */
-	        lept_stderr("faking a double hump in the histogram by pumping up the count at index/color %d\n", 0);
+	        lept_stderr("faking a double hump in the histogram by pumping up the count at index/color %d\n", bump_index);
 	    }
 
 		// re-try all the above, now with a 'faked/tweaked' 2 hump histo:
@@ -2875,7 +2875,7 @@ l_float32  *fa;
  *
  * <pre>
  * Notes:
- *      (1) The input numa is can be generated from pixExtractAlongLine().
+ *      (1) The input numa can be generated from pixExtractAlongLine().
  *          If so, the x parameters can be used to find the reversal
  *          frequency along a line.
  *      (2) If the input numa was generated from a 1 bpp pix, the
