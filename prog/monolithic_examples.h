@@ -309,6 +309,8 @@ int lept_xformbox_reg_main(int argc, const char **argv);
 int lept_yuvtest_main(int argc, const char **argv);
 int lept_issue675_check_main(int argc, const char **argv);
 
+int lept_demo_pix_apis_main(int argc, const char **argv);
+
 #ifdef __cplusplus
 }
 #endif
