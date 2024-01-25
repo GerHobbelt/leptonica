@@ -1984,6 +1984,11 @@ WIN32_FIND_DATAA  ffd;
         return (SARRAY *)ERROR_PTR("hFind not opened", __func__, NULL);
     }
 
+	if (0 == (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {  /* skip dirs */
+		convertSepCharsInPath(ffd.cFileName, UNIX_PATH_SEPCHAR);
+		sarrayAddString(safiles, ffd.cFileName, L_COPY);
+	}
+
     while (FindNextFileA(hFind, &ffd) != 0) {
         if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)  /* skip dirs */
             continue;
