@@ -80,7 +80,7 @@
 #include "gif_lib.h"
 
     /* Interface that enables low-level GIF support for reading from memory */
-static PIX * gifToPix(GifFileType *gif);
+static PIX * gifToPix(GifFileType *gif, int pagenum);
     /* Interface that enables low-level GIF support for writing to memory */
 static l_int32 pixToGif(PIX *pix, GifFileType *gif);
 
@@ -103,7 +103,8 @@ static l_int32  gifWriteFunc(GifFileType *gif, const GifByteType *src,
 /*---------------------------------------------------------------------*
  *                            Reading gif                              *
  *---------------------------------------------------------------------*/
-/*!
+
+ /*!
  * \brief   pixReadStreamGif()
  *
  * \param[in]  fp   file stream opened for reading
@@ -177,7 +178,15 @@ GifReadBuffer  buffer;
         return (PIX *)ERROR_PTR("could not open gif stream from memory",
                                 __func__, NULL);
 
-    return gifToPix(gif);
+	/* Read all the data, but use only the first image found */
+	if (DGifSlurp(gif) != GIF_OK) {
+		return (PIX*)ERROR_PTR("failed to read GIF data", __func__, NULL);
+	}
+
+	PIX *pix = gifToPix(gif, -1);
+	int giferr;
+	DGifCloseFile(gif, &giferr);
+	return pix;
 }
 
 
@@ -207,6 +216,7 @@ l_int32         bytesRead;
  * \brief   gifToPix()
  *
  * \param[in]  gif   opened gif stream
+ * \param[in]  pagenum   image index number for multipage gifs (animated gifs); 0 or -1 for first image
  * \return  pix, or NULL on error
  *
  * <pre>
@@ -217,7 +227,7 @@ l_int32         bytesRead;
  * </pre>
  */
 static PIX *
-gifToPix(GifFileType  *gif)
+gifToPix(GifFileType  *gif, int pagenum)
 {
 l_int32          wpl, i, j, w, h, d, cindex, ncolors, valid, nimages;
 l_int32          rval, gval, bval;
@@ -226,34 +236,30 @@ PIX             *pixd;
 PIXCMAP         *cmap;
 ColorMapObject  *gif_cmap;
 SavedImage       si;
-int              giferr;
-
-        /* Read all the data, but use only the first image found */
-    if (DGifSlurp(gif) != GIF_OK) {
-        DGifCloseFile(gif, &giferr);
-        return (PIX *)ERROR_PTR("failed to read GIF data", __func__, NULL);
-    }
 
     if (gif->SavedImages == NULL) {
-        DGifCloseFile(gif, &giferr);
         return (PIX *)ERROR_PTR("no images found in GIF", __func__, NULL);
     }
 
     nimages = gif->ImageCount;
-    if (nimages > 1)
+    if (nimages > 1 && pagenum < 0)
         L_WARNING("There are %d images in the file; we only read the first\n",
                   __func__, nimages);
 
-    si = gif->SavedImages[0];
+	if (pagenum < 0)
+		pagenum = 0;
+	else if (pagenum >= nimages) {
+		return (PIX*)ERROR_PTR("attempt to access image index past the end", __func__, NULL);
+	}
+	
+    si = gif->SavedImages[pagenum];
     w = si.ImageDesc.Width;
     h = si.ImageDesc.Height;
     if (w <= 0 || h <= 0) {
-        DGifCloseFile(gif, &giferr);
         return (PIX *)ERROR_PTR("invalid image dimensions", __func__, NULL);
     }
 
     if (si.RasterBits == NULL) {
-        DGifCloseFile(gif, &giferr);
         return (PIX *)ERROR_PTR("no raster data in GIF", __func__, NULL);
     }
 
@@ -265,13 +271,11 @@ int              giferr;
         gif_cmap = gif->SColorMap;
     } else {
             /* don't know where to take cmap from */
-        DGifCloseFile(gif, &giferr);
         return (PIX *)ERROR_PTR("color map is missing", __func__, NULL);
     }
 
     ncolors = gif_cmap->ColorCount;
     if (ncolors <= 0 || ncolors > 256) {
-        DGifCloseFile(gif, &giferr);
         return (PIX *)ERROR_PTR("ncolors is invalid", __func__, NULL);
     }
     if (ncolors <= 2)
@@ -291,7 +295,6 @@ int              giferr;
     }
 
     if ((pixd = pixCreate(w, h, d)) == NULL) {
-        DGifCloseFile(gif, &giferr);
         pixcmapDestroy(&cmap);
         return (PIX *)ERROR_PTR("failed to allocate pixd", __func__, NULL);
     }
@@ -299,7 +302,6 @@ int              giferr;
     pixSetColormap(pixd, cmap);
     pixcmapIsValid(cmap, pixd, &valid);
     if (!valid) {
-        DGifCloseFile(gif, &giferr);
         pixDestroy(&pixd);
         pixcmapDestroy(&cmap);
         return (PIX *)ERROR_PTR("colormap is invalid", __func__, NULL);
@@ -335,7 +337,6 @@ int              giferr;
          }
      * This is no longer required. */
 
-    DGifCloseFile(gif, &giferr);
     return pixd;
 }
 
@@ -668,6 +669,91 @@ PIX       *pixd;
     return pixd;
 }
 #endif
+
+
+/*!
+ * \brief   pixaReadMultipageMemGif()
+ *
+ * \return  pixa of page images, or NULL on error
+ */
+PIXA*
+pixaReadMultipageMemGif(const l_uint8* cdata, size_t size)
+{
+	GifFileType* gif;
+	GifReadBuffer  buffer;
+
+	/* 5.1+ and not 5.1.2 */
+#if (GIFLIB_MAJOR < 5 || (GIFLIB_MAJOR == 5 && GIFLIB_MINOR == 0))
+	L_ERROR("Require giflib-5.1 or later\n", __func__);
+	return NULL;
+#endif  /* < 5.1 */
+#if GIFLIB_MAJOR == 5 && GIFLIB_MINOR == 1 && GIFLIB_RELEASE == 2  /* 5.1.2 */
+	L_ERROR("Can't use giflib-5.1.2; suggest 5.1.3 or later\n", __func__);
+	return NULL;
+#endif  /* 5.1.2 */
+
+	if (!cdata)
+		return (PIXA*)ERROR_PTR("cdata not defined", __func__, NULL);
+
+	buffer.cdata = cdata;
+	buffer.size = size;
+	buffer.pos = 0;
+	if ((gif = DGifOpen((void*)&buffer, gifReadFunc, NULL)) == NULL)
+		return (PIXA*)ERROR_PTR("could not open gif stream from memory",
+			__func__, NULL);
+
+	/* Read all the data, but use only the first image found */
+	if (DGifSlurp(gif) != GIF_OK) {
+		return (PIX*)ERROR_PTR("failed to read GIF data", __func__, NULL);
+	}
+
+	int npages = gif->ImageCount;
+	PIXA *pixa = pixaCreate(npages);
+	PIX *pix = NULL;
+	for (int i = 0; i < npages; i++) {
+		pix = gifToPix(gif, i);
+		if (pix != NULL) {
+			pixaAddPix(pixa, pix, L_INSERT);
+		}
+		else {
+			L_WARNING("pix not read for page %d\n", __func__, i);
+		}
+	}
+
+	int giferr;
+	DGifCloseFile(gif, &giferr);
+	return pixa;
+}
+
+
+/*!
+ * \brief   pixReadMultipageStreamGif()
+ *
+ * \param[in]  fp   file stream opened for reading
+ * \return  pixa, or NULL on error
+ */
+PIXA*
+pixaReadMultipageStreamGif(FILE* fp)
+{
+	l_uint8* filedata;
+	size_t    filesize;
+	PIXA* pixa;
+
+	if (!fp)
+		return (PIXA*)ERROR_PTR("fp not defined", __func__, NULL);
+
+	/* Read data into memory from file */
+	rewind(fp);
+	if ((filedata = l_binaryReadStream(fp, &filesize)) == NULL)
+		return (PIXA*)ERROR_PTR("filedata not read", __func__, NULL);
+
+	/* Uncompress from memory */
+	pixa = pixaReadMultipageMemGif(filedata, filesize);
+	LEPT_FREE(filedata);
+	if (!pixa)
+		L_ERROR("failed to read gif from file data\n", __func__);
+	return pixa;
+}
 
 
 /* -----------------------------------------------------------------*/
