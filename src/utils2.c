@@ -2889,9 +2889,10 @@ char   empty[4] = "";
  *          slashes (except in the cases where %dir == "/" and
  *          %fname == NULL, or v.v.).
  *      (4) If both %dir and %fname are null, produces an empty string.
- *      (5) Neither %dir nor %fname can begin with '..'.
+ *      (5) Neither %dir nor %fname can begin with '..' when the other starts with a '/'.
  *      (6) The result is not canonicalized or tested for correctness:
  *          garbage in (e.g., /&%), garbage out.
+ *      (7) "." and ".." directories are folded when possible, i.e. "abc/def/../xyz/./blub" --> "abc/xyz/blub"
  *      (7) Examples:
  *             //tmp// + //abc/  -->  /tmp/abc
  *             tmp/ + /abc/      -->  tmp/abc
@@ -2908,6 +2909,9 @@ char   empty[4] = "";
  *             "" + /            -->  /
  *             ".." + /etc/foo   -->  NULL
  *             /tmp + ".."       -->  NULL
+ *             ".." + abc/def    -->  ../abc/def  
+ *             abc + ".."        -->  NULL         (abc/.. will not be folded as it would translate to / (rootdir))
+ *             abc/def + ".."    -->  abc/def/..   -->   abc
  * </pre>
  */
 char *
@@ -2916,16 +2920,16 @@ pathJoin(const char  *dir,
 {
 const char *slash = "/";
 char       *str, *dest;
-l_int32     i, n1, n2, emptydir;
+l_int32     i, n1, emptydir;
 size_t      size;
 SARRAY     *sa1, *sa2;
 L_BYTEA    *ba;
 
     if (!dir && !fname)
         return stringNew("");
-    if (dir && strlen(dir) >= 2 && dir[0] == '.' && dir[1] == '.')
+    if (dir && strlen(dir) >= 2 && dir[0] == '.' && dir[1] == '.' && fname[0] == '/')
         return (char *)ERROR_PTR("dir starts with '..'", __func__, NULL);
-    if (fname && strlen(fname) >= 2 && fname[0] == '.' && fname[1] == '.')
+    if (fname && strlen(fname) >= 2 && fname[0] == '.' && fname[1] == '.' && dir[0] == '/')
         return (char *)ERROR_PTR("fname starts with '..'", __func__, NULL);
 
     sa1 = sarrayCreate(0);
@@ -2937,12 +2941,6 @@ L_BYTEA    *ba;
         if (dir[0] == '/')
             l_byteaAppendString(ba, slash);
         sarraySplitString(sa1, dir, "/");  /* removes all slashes */
-        n1 = sarrayGetCount(sa1);
-        for (i = 0; i < n1; i++) {
-            str = sarrayGetString(sa1, i, L_NOCOPY);
-            l_byteaAppendString(ba, str);
-            l_byteaAppendString(ba, slash);
-        }
     }
 
         /* Special case to add leading slash: dir NULL or empty string  */
@@ -2953,15 +2951,51 @@ L_BYTEA    *ba;
         /* Process %fname */
     if (fname && strlen(fname) > 0) {
         sarraySplitString(sa2, fname, "/");
-        n2 = sarrayGetCount(sa2);
-        for (i = 0; i < n2; i++) {
-            str = sarrayGetString(sa2, i, L_NOCOPY);
-            l_byteaAppendString(ba, str);
-            l_byteaAppendString(ba, slash);
-        }
     }
 
-        /* Remove trailing slash */
+	// append both arrays:
+	sarrayJoin(sa1, sa2);
+
+	// fold '..' and '.' directories:
+	n1 = sarrayGetCount(sa1);
+	int prev_dir_is_dotdot = 0;
+	for (i = 0; i < n1; i++) {
+		str = sarrayGetString(sa1, i, L_NOCOPY);
+		// only keep the '.' directory when it's the first AND alone:
+		if (strcmp(str, ".") == 0 && (i != 0 || n1 > 1)) {
+			LEPT_FREE(sarrayRemoveString(sa1, i));
+			n1--;
+			i--;
+			continue;
+		}
+		// only keep the '..' directory when it's not preceeded by another (non-'..') directory:
+		if (strcmp(str, "..") == 0) {
+			if (i != 0) {
+				if (i == n1 - 1) {
+					return (char*)ERROR_PTR("combined path ends with '..'", __func__, NULL);
+				}
+				if (!prev_dir_is_dotdot) {
+					// fold with previous directory
+					LEPT_FREE(sarrayRemoveString(sa1, i));
+					LEPT_FREE(sarrayRemoveString(sa1, i - 1));
+					n1 -= 2;
+					i -= 2;
+				}
+			}
+			prev_dir_is_dotdot = 1;
+			continue;
+		}
+		prev_dir_is_dotdot = 0;
+	}
+
+	n1 = sarrayGetCount(sa1);
+	for (i = 0; i < n1; i++) {
+		str = sarrayGetString(sa1, i, L_NOCOPY);
+		l_byteaAppendString(ba, str);
+		l_byteaAppendString(ba, slash);
+	}
+
+    /* Remove trailing slash */
     dest = (char *)l_byteaCopyData(ba, &size);
     if (size > 1 && dest[size - 1] == '/')
         dest[size - 1] = '\0';
