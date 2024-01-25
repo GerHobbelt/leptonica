@@ -95,7 +95,9 @@ const char      *filein, *printer, *extra, *fname;
 char       buffer[512];
 l_int32    i, w, h, ret, index;
 l_float32  scale;
+#if !USE_COMPRESSED
 FILE      *fp;
+#endif
 PIX       *pixs, *pix1;
 SARRAY    *sa;
 
