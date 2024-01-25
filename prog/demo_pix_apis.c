@@ -36,6 +36,10 @@
 #include <config_auto.h>
 #endif  /* HAVE_CONFIG_H */
 
+#include "mupdf/mutool.h"
+#include "mupdf/fitz.h"
+#include "mupdf/helpers/jmemcust.h"
+
 #include "allheaders.h"
 #include "demo_settings.h"
 
@@ -46,6 +50,31 @@
 #include <strings.h>
 #endif
 #include <stdint.h>
+#include <ctype.h>
+//#include <dirent.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <time.h>
+#include <sys/stat.h>
+#include <math.h>
+
+#include <wildmatch/wildmatch.h>
+
+/* Cope with systems (such as Windows) with no S_ISDIR */
+#ifndef S_ISDIR
+#define S_ISDIR(mode) ((mode) & S_IFDIR)
+#endif
+
+#ifndef MAX
+#define MAX(a, b)  ((a) >= (b) ? (a) : (b))
+#endif
+
+#ifndef MIN
+#define MIN(a, b)  ((a) < (b) ? (a) : (b))
+#endif
+
 
 
 #include "monolithic_examples.h"
@@ -65,11 +94,10 @@ typedef struct CLI_NAMED_ARG_INFO
 typedef struct CLI_ARGV_SET
 {
 	// in-order values:
-	const char** argv;       // allocated array
-	int size;
+	const char** argv;       // allocated array; NULL-sentinel
 
 	// named values:
-	CLI_NAMED_ARG_INFO* named_args;  // allocated array
+	CLI_NAMED_ARG_INFO* named_args;  // allocated array; NULL-sentinel on element.name
 
 	int current_in_order_index;   // points at the next in-order argv[] element
 } CLI_ARGV_SET;
@@ -108,6 +136,85 @@ static char* LEPT_STRDUP(const char* str)
 	return p;
 }
 
+static char* strdup_with_extra_space(const char* str, int extra_space)
+{
+	int length = strlen(str);
+	char* p = LEPT_CALLOC(1, length + 1 + extra_space);
+	if (!p)
+		return ERROR_PTR("out of memory", __func__, NULL);
+
+	strcpy(p, str);
+	return p;
+}
+
+// concatenate str1 (clipped at str1_end) and str2
+static char* strndupcat(const char* str1, const char *str1_end, const char *str2)
+{
+	int offset = (str1_end - str1);
+	int length = strlen(str2) + offset;
+	char* p = LEPT_MALLOC(length + 1);
+	if (!p)
+		return ERROR_PTR("out of memory", __func__, NULL);
+
+	strncpy(p, str1, offset);
+	strcpy(p + offset, str2);
+	return p;
+}
+
+// return last char in string; NUL if string is empty or NULL.
+static int strchlast(const char* str)
+{
+	if (!str || !*str)
+		return 0;
+
+	str += strlen(str) - 1;
+	return *str;
+}
+
+// return pointer to first character PAST the last occurrence
+// of any of the chars in set.
+// If none of the characters in set are found anywhere in the source string,
+// the start of the source string is returned.
+static char* strrpbrkpast(char* str, const char* set)
+{
+	char* rv = str;
+	char* p = str;
+	for (;;) {
+		p = strpbrk(p, set);
+		if (!p)
+			break;
+		p++;
+		rv = p;
+	}
+	return rv;
+}
+
+static char* strend(char* str) {
+	return str + strlen(str);
+}
+
+#if defined(_WIN32)
+
+// convert '\\' windows path separators to '/' in-place
+static void mkUnixPath(char* str)
+{
+	for (; *str; str++) {
+		if (*str == '\\')
+			*str = '/';
+	}
+}
+
+#else
+
+static void mkUnixPath(char* str)
+{
+	//nada
+}
+
+#endif
+
+
+
 static void cliCleanupArgvSet(CLI_ARGV_SET* rv)
 {
 	if (!rv)
@@ -115,12 +222,9 @@ static void cliCleanupArgvSet(CLI_ARGV_SET* rv)
 
 	if (rv->named_args)
 	{
-		for (int i = 0; i < rv->size; i++)
+		for (int i = 0; rv->named_args[i].name; i++)
 		{
-			if (rv->named_args[i].name)
-			{
-				LEPT_FREE(rv->named_args[i].name);
-			}
+			LEPT_FREE(rv->named_args[i].name);
 		}
 		LEPT_FREE(rv->named_args);
 	}
@@ -131,6 +235,40 @@ static void cliCleanupArgvSet(CLI_ARGV_SET* rv)
 	}
 
 	LEPT_FREE(rv);
+}
+
+// return NULL if not found. Otherwise return the arg value (string).
+//
+// The arg name is optional; may be NULL.
+static const char *cliGetArg(CLI_ARGV_SET* rv, const char *name)
+{
+	if (!rv)
+		return NULL;
+
+	if (rv->named_args && name)
+	{
+		for (int i = 0; rv->named_args[i].name; i++)
+		{
+			if (strcasecmp(rv->named_args[i].name, name) == 0)
+			{
+				return rv->named_args[i].value;
+			}
+		}
+	}
+
+	if (rv->argv)
+	{
+		for (int i = 0; rv->argv[i]; i++)
+		{
+			if (rv->current_in_order_index == i)
+			{
+				rv->current_in_order_index++;
+				return rv->argv[i];
+			}
+		}
+	}
+
+	return NULL;
 }
 
 
@@ -337,49 +475,232 @@ err:
 }
 
 
+typedef struct PIX_INFO {
+	PIX* image;
+	char* filepath;
+} PIX_INFO;
+
+typedef struct PIX_INFO_A {
+	int count;
+	int alloc_size;
+
+	PIX_INFO images[0];
+} PIX_INFO_A;
 
 
-static PIXA* cliGetSrcPix(const char *name, int *in_order_index_ref, int* argc_ref, const char*** argv_ref)
+
+// Take a given path and see if it's a directory (in which case we deliver all image filswithin),
+// a wildcarded path or a direct file path.
+//
+// We always produce a non-empty PIX_INFO_A array of images; NULL on error.
+static PIX_INFO_A* cliGetSrcPix(const char* path, int max_count)
 {
-	int argc = *argc_ref;
-	const char** argv = *argv_ref;
-	int in_order_index = *in_order_index_ref;
-	const char* value = NULL;
+	PIX_INFO_A* arr = NULL;
 
-	// When a variable name has been specified, see if it was specified explicitly on the command line.
-	// If it is, take that argument instead of the in-order cli argument.
-	if (name != NULL)
-	{ 
-		int name_len = strlen(name);
-		for (int i = 0; i < argc; i++)
-		{
-			const char* arg = argv[i];
-			if (strncasecmp(arg, name, name_len) == 0)
+	if (!path || !*path)
+		return ERROR_PTR("invalid empty argument", __func__, NULL);
+
+	if (max_count <= 0)
+		max_count = INT_MAX;
+
+	char* dirname = strdup_with_extra_space(path, 10);
+	mkUnixPath(dirname);
+
+	// stat() will fail for wildcarded specs, but we don't worry: this is
+	// used to discover straight vanilla directory-only path specs, for those
+	// should get so wildcards appended!
+	struct stat stbuf;
+	if (stat(path, &stbuf) >= 0) {
+		if (S_ISDIR(stbuf.st_mode)) {
+			const char* wildcards = "/*.*";
+			if ('/' == strchlast(dirname))
+				wildcards++;
+			strcat(dirname, wildcards);
+		}
+	}
+
+	char* fname_pos = strrpbrkpast(dirname, "/");
+
+	arr = LEPT_MALLOC(sizeof(arr) + 100 * sizeof(arr->images[0]));
+	if (!arr)
+		return ERROR_PTR("out of memory", __func__, NULL);
+	arr->alloc_size = 100;
+	arr->count = 0;
+
+	fname_pos[-1] = 0;
+	SARRAY* sa;
+	if ((sa = getSortedPathnamesInDirectory(dirname, NULL, 0, 0)) == NULL) {
+		fprintf(stderr, "Cannot scan %s (%s)\n", dirname, strerror(errno));
+		//sa = getFilenamesInDirectory(dirname);
+		return NULL;
+	}
+
+	int nfiles = sarrayGetCount(sa);
+	const char* fname;
+	for (int i = 0; i < nfiles && arr->count < max_count; i++) {
+		fname = sarrayGetString(sa, i, L_NOCOPY);
+
+		char* name_pos = strrpbrkpast(fname, "/");
+		int match = wildmatch(fname_pos, name_pos, WM_IGNORECASE | WM_PATHNAME | WM_PERIOD);
+		if (match != WM_MATCH)
+			continue;
+
+		L_INFO("Loading image %d/%d: %s\n", __func__, i, nfiles, fname);
+
+		FILE* fp = fopenReadStream(fname);
+		if (fp) {
+			l_int32 format = IFF_UNKNOWN;
+			findFileFormatStream(fp, &format);
+			switch (format)
 			{
-				if (arg[name_len] == 0)
-				{
-					// arg follows as the *next* element:
-					if (i + 1 < argc)
-					{
-						value = argv[i + 1];
-						break;
-					}
-					else
-					{
+			default:
+			case IFF_BMP:
+			case IFF_JFIF_JPEG:
+			case IFF_PNG:
+				break;
+
+			case IFF_TIFF:
+			case IFF_TIFF_PACKBITS:
+			case IFF_TIFF_RLE:
+			case IFF_TIFF_G3:
+			case IFF_TIFF_G4:
+			case IFF_TIFF_LZW:
+			case IFF_TIFF_ZIP:
+			case IFF_TIFF_JPEG:
+				l_int32 npages = 0;
+				tiffGetCount(fp, &npages);
+				L_INFO(" Tiff: %d pages\n", __func__, npages);
+
+				fclose(fp);
+				fp = NULL;
+
+				if (npages > 1) {
+					PIXA* pixa = pixaReadMultipageTiff(fname);
+					if (!pixa) {
+						L_WARNING("multipage image tiff file %d (%s) not read\n", __func__, i, fname);
+						continue;
 					}
 
-				if (strchr(":=", arg[name_len]) != NULL)
-				{
-					// arg value follows immediately and is part of the argv[i] element:
-					value = arg + name_len + 1;
-					break;
+					l_int32 imgcount = pixaGetCount(pixa);
+					const int p10 = (int)(1 + log10(imgcount));
+					for (int i = 0; i < imgcount; i++) {
+						PIX* pixs = pixaGetPix(pixa, i, L_CLONE);
+
+						if (arr->count == arr->alloc_size) {
+							int size = arr->alloc_size * 2;
+							arr = LEPT_REALLOC(arr, sizeof(arr) + size * sizeof(arr->images[0]));
+							if (!arr)
+								return ERROR_PTR("out of memory", __func__, NULL);
+							arr->alloc_size = size;
+						}
+
+						char* p = strdup_with_extra_space(fname, 16);
+						if (!p)
+							return ERROR_PTR("out of memory", __func__, NULL);
+
+						PIX_INFO* info = &arr->images[arr->count++];
+						info->image = pixs;
+						info->filepath = p;
+
+						// append page-within-file as a suffix:
+						snprintf(strend(info->filepath), 16, "::%0*d", p10, i);
+					}
+					pixaDestroy(&pixa);
+					continue;
+				}
+				break;
+
+			case IFF_GIF:
+				PIXA* pixa = pixaReadMultipageStreamGif(fp);
+				fclose(fp);
+				fp = NULL;
+				if (!pixa) {
+					L_WARNING("multipage image gif file %d (%s) not read\n", __func__, i, fname);
+					continue;
 				}
 
+				l_int32 imgcount = pixaGetCount(pixa);
+				const int p10 = (int)(1 + log10(imgcount));
+				for (int i = 0; i < imgcount; i++) {
+					PIX* pixs = pixaGetPix(pixa, i, L_CLONE);
+
+					if (arr->count == arr->alloc_size) {
+						int size = arr->alloc_size * 2;
+						arr = LEPT_REALLOC(arr, sizeof(arr) + size * sizeof(arr->images[0]));
+						if (!arr)
+							return ERROR_PTR("out of memory", __func__, NULL);
+						arr->alloc_size = size;
+					}
+
+					char* p = strdup_with_extra_space(fname, 16);
+					if (!p)
+						return ERROR_PTR("out of memory", __func__, NULL);
+
+					PIX_INFO* info = &arr->images[arr->count++];
+					info->image = pixs;
+					info->filepath = p;
+
+					// append page-within-file as a suffix:
+					snprintf(strend(info->filepath), 16, "::%0*d", p10, i);
+				}
+				pixaDestroy(&pixa);
+				continue;
+			}
+
+			if (fp)
+				fclose(fp);
 		}
 
-	PIXA* pixa = pixaCreate(0);
-	pixaAddPix(pixa, pix2, L_COPY);
+		PIX* pixs = pixRead(fname);
+		if (!pixs) {
+			L_WARNING("image file %d (%s) not read\n", __func__, i, fname);
+			continue;
+		}
 
+		if (arr->count == arr->alloc_size) {
+			int size = arr->alloc_size * 2;
+			arr = LEPT_REALLOC(arr, sizeof(arr) + size * sizeof(arr->images[0]));
+			if (!arr)
+				return ERROR_PTR("out of memory", __func__, NULL);
+			arr->alloc_size = size;
+		}
+
+		char* p = strdup(fname);
+		if (!p)
+			return ERROR_PTR("out of memory", __func__, NULL);
+
+		PIX_INFO* info = &arr->images[arr->count++];
+		info->image = pixs;
+		info->filepath = p;
+	}
+
+	sarrayDestroy(&sa);
+	LEPT_FREE(dirname);
+
+	return arr;
+}
+
+
+static void pixInfoArrayDestroy(PIX_INFO_A** aref)
+{
+	if (!*aref)
+		return;
+
+	PIX_INFO_A* arr = *aref;
+	*aref = NULL;
+
+	for (int i = 0; i < arr->count; i++) {
+		PIX_INFO info = arr->images[i];
+		LEPT_FREE(info.filepath);
+		pixDestroy(&info.image);
+	}
+	LEPT_FREE(arr);
+}
+
+static int usage(void)
+{
+	fprintf(stderr, "USAGE: ...........\n");
+	return 1;
 }
 
 
@@ -389,25 +710,261 @@ static PIXA* cliGetSrcPix(const char *name, int *in_order_index_ref, int* argc_r
 #define main   lept_demo_pix_apis_main
 #endif
 
-int main(int    argc,
-	const char **argv)
+int main(int argc, const char **argv)
 {
-	l_int32       i, pageno, w, h, left, right;
-	BOX          *box1, *box2;
-	NUMA         *na1, *nar, *naro, *narl, *nart, *nai, *naio, *nait;
-	PIX          *pixs, *pixr, *pixg, *pixgi, *pixd, *pix1, *pix2, *pix3, *pix4;
-	PIXA         *pixa1, *pixa2;
 	L_REGPARAMS  *rp;
 
-	if (regTestSetup(MAX(argc, 3), argv, &rp))
+	// register a mupdf-aligned default heap memory manager for jpeg/jpeg-turbo
+	fz_set_default_jpeg_sys_mem_mgr();
+	fz_set_leptonica_mem(fz_get_global_context());
+
+	if (regTestSetup(MIN(argc, 1), argv, &rp))
 		return 1;
+	rp->mode = L_REG_DISPLAY;
+	rp->display = TRUE;
+
+	l_chooseDisplayProg(L_DISPLAY_WITH_OPEN);
 
 	lept_mkdir("lept/demo_pix");
 
-	for (i = 0; i < 2; i++) {
-		pageno = extractNumberFromFilename(fnames[i], 5, 0);
-		lept_stderr("Page %d\n", pageno);
-		pixs = pixRead(fnames[i]);
+	CLI_ARGV_SET* args_info = cliPreParse(argc - 1, argv + 1);
+	if (!args_info) {
+		return usage();
+	}
+
+	const char* pix_path = cliGetArg(args_info, "pixs");
+	if (!pix_path) {
+		fprintf(stderr, "Missing pixs argument.\n");
+		return 1;
+	}
+	PIX_INFO_A* pixs_arg = cliGetSrcPix(pix_path, 10);
+	if (!pixs_arg) {
+		fprintf(stderr, "No images located at %s.\n", pix_path);
+		return 1;
+	}
+
+	lept_stderr("CLI: pixs: %s\n", pix_path);
+
+	for (int src_index = 0; src_index < pixs_arg->count; src_index++) {
+		PIX_INFO pix_info = pixs_arg->images[src_index];
+
+		lept_stderr("IMAGE: pixs: %s\n", pix_info.filepath);
+
+		PIX* pixs = pixClone(pix_info.image);
+		pixDisplayWithTitle(pixs, 50, 0, "pixs", rp->display);
+		pixDestroy(&pixs);
+	}
+
+	pixInfoArrayDestroy(&pixs_arg);
+	cliCleanupArgvSet(args_info);
+
+	return regTestCleanup(rp);
+}
+
+
+
+
+#if  RENDER_PAGES
+/* Show the results on a 2x reduced image, where each
+ * word is outlined and the color of the box depends on the
+ * computed textline. */
+pix1 = pixReduceRankBinary2(pixs, 2, NULL);
+pixGetDimensions(pix1, &w, &h, NULL);
+pixd = pixCreate(w, h, 8);
+cmap = pixcmapCreateRandom(8, 1, 1);  /* first color is black */
+pixSetColormap(pixd, cmap);
+
+pix2 = pixUnpackBinary(pix1, 8, 1);
+pixRasterop(pixd, 0, 0, w, h, PIX_SRC | PIX_DST, pix2, 0, 0);
+ncomp = boxaGetCount(boxa);
+for (j = 0; j < ncomp; j++) {
+	box = boxaGetBox(boxa, j, L_CLONE);
+	numaGetIValue(nai, j, &ival);
+	index = 1 + (ival % 254);  /* omit black and white */
+	pixcmapGetColor(cmap, index, &rval, &gval, &bval);
+	pixRenderBoxArb(pixd, box, 2, rval, gval, bval);
+	boxDestroy(&box);
+}
+
+snprintf(filename, BUF_SIZE, "%s.%05d", rootname, i);
+lept_stderr("filename: %s\n", filename);
+pixWrite(filename, pixd, IFF_PNG);
+pixDestroy(&pix1);
+pixDestroy(&pix2);
+pixDestroy(&pixs);
+pixDestroy(&pixd);
+#endif  /* RENDER_PAGES */
+
+#if 0
+PIXA* pixaReadMultipageTiff(const char* filename);
+PIXA* pixaReadFiles(const char* dirname, const char* substr);
+PIXA* pixaReadFilesSA(SARRAY * sa);
+PIX* pixRead(const char* filename);
+PIX* pixReadWithHint(const char* filename, l_int32 hint);
+PIX* pixReadIndexed(SARRAY * sa, l_int32 index);
+
+findFileFormatStream(fp, &format);
+switch (format)
+{
+case IFF_BMP:
+	if ((pix = pixReadStreamBmp(fp)) == NULL)
+		return (PIX*)ERROR_PTR("bmp: no pix returned", __func__, NULL);
+	break;
+
+case IFF_JFIF_JPEG:
+	if ((pix = pixReadStreamJpeg(fp, 0, 1, NULL, hint)) == NULL)
+		return (PIX*)ERROR_PTR("jpeg: no pix returned", __func__, NULL);
+	ret = fgetJpegComment(fp, &comment);
+	if (!ret && comment)
+		pixSetText(pix, (char*)comment);
+	LEPT_FREE(comment);
+	break;
+
+case IFF_PNG:
+	if ((pix = pixReadStreamPng(fp)) == NULL)
+		return (PIX*)ERROR_PTR("png: no pix returned", __func__, NULL);
+	break;
+
+case IFF_TIFF:
+case IFF_TIFF_PACKBITS:
+case IFF_TIFF_RLE:
+case IFF_TIFF_G3:
+case IFF_TIFF_G4:
+case IFF_TIFF_LZW:
+case IFF_TIFF_ZIP:
+case IFF_TIFF_JPEG:
+	if ((pix = pixReadStreamTiff(fp, 0)) == NULL)  /* page 0 by default */
+		return (PIX*)ERROR_PTR("tiff: no pix returned", __func__, NULL);
+	break;
+
+
+	{
+		l_int32  i, npages;
+		FILE* fp;
+		PIX* pix;
+		PIXA* pixa;
+		TIFF* tif;
+
+		if (!filename)
+			return (PIXA*)ERROR_PTR("filename not defined", __func__, NULL);
+
+		if ((fp = fopenReadStream(filename)) == NULL)
+
+			return (PIXA*)ERROR_PTR_1("stream not opened",
+				filename, __func__, NULL);
+		if (fileFormatIsTiff(fp)) {
+			tiffGetCount(fp, &npages);
+			L_INFO(" Tiff: %d pages\n", __func__, npages);
+		}
+		else {
+			return (PIXA*)ERROR_PTR_1("file is not tiff",
+				filename, __func__, NULL);
+		}
+
+		if ((tif = fopenTiff(fp, "r")) == NULL)
+			return (PIXA*)ERROR_PTR_1("tif not opened",
+				filename, __func__, NULL);
+#endif
+
+
+
+
+#if 0
+
+	pixr = pixRotate90(pixs, (pageno % 2) ? 1 : -1);
+	pixg = pixConvertTo8(pixr, 0);
+	pixGetDimensions(pixg, &w, &h, NULL);
+
+	/* Get info on vertical intensity profile */
+	pixgi = pixInvert(NULL, pixg);
+
+	/* Output visuals */
+	pixa2 = pixaCreate(3);
+	pixaAddPix(pixa2, pixr, L_INSERT);
+	pixaAddPix(pixa2, pix1, L_INSERT);
+	pixaAddPix(pixa2, pix2, L_INSERT);
+	pixd = pixaDisplayTiledInColumns(pixa2, 2, 1.0, 25, 0);
+	pixaDestroy(&pixa2);
+	pixaAddPix(pixa1, pixd, L_INSERT);
+	pixDisplayWithTitle(pixd, 800 * i, 100, NULL, rp->display);
+	pixDestroy(&pixs);
+	pixDestroy(&pixg);
+	pixDestroy(&pixgi);
+	numaDestroy(&narl);
+	numaDestroy(&nart);
+	numaDestroy(&nait);
+}
+
+lept_stderr("Writing profiles to /tmp/lept/crop/croptest.pdf\n");
+pixaConvertToPdf(pixa1, 75, 1.0, L_JPEG_ENCODE, 0, "Profiles",
+	"/tmp/lept/crop/croptest.pdf");
+pixaDestroy(&pixa1);
+
+/* Test rectangle clipping with border */
+pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
+pix2 = pixScale(pix1, 0.5, 0.5);
+box1 = boxCreate(125, 50, 180, 230);  /* fully contained */
+pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);
+pixRenderBoxArb(pix2, box1, 2, 255, 0, 0);
+pixRenderBoxArb(pix3, box2, 2, 255, 0, 0);
+pixa1 = pixaCreate(2);
+pixaAddPix(pixa1, pix2, L_INSERT);
+pixaAddPix(pixa1, pix3, L_INSERT);
+pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
+regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 6 */
+pixDisplayWithTitle(pix4, 325, 700, NULL, rp->display);
+boxDestroy(&box1);
+boxDestroy(&box2);
+pixDestroy(&pix4);
+pixaDestroy(&pixa1);
+
+pix2 = pixScale(pix1, 0.5, 0.5);
+box1 = boxCreate(125, 10, 180, 270);  /* not full border */
+pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);
+pixRenderBoxArb(pix2, box1, 2, 255, 0, 0);
+pixRenderBoxArb(pix3, box2, 2, 255, 0, 0);
+pixa1 = pixaCreate(2);
+pixaAddPix(pixa1, pix2, L_INSERT);
+pixaAddPix(pixa1, pix3, L_INSERT);
+pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
+regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 7 */
+pixDisplayWithTitle(pix4, 975, 700, NULL, rp->display);
+boxDestroy(&box1);
+boxDestroy(&box2);
+pixDestroy(&pix4);
+pixaDestroy(&pixa1);
+
+pix2 = pixScale(pix1, 0.5, 0.5);
+box1 = boxCreate(125, 200, 180, 270);  /* not entirely within pix2 */
+pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);
+pixRenderBoxArb(pix2, box1, 2, 255, 0, 0);
+pixRenderBoxArb(pix3, box2, 2, 255, 0, 0);
+pixa1 = pixaCreate(2);
+pixaAddPix(pixa1, pix2, L_INSERT);
+pixaAddPix(pixa1, pix3, L_INSERT);
+pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
+regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 8 */
+pixDisplayWithTitle(pix4, 1600, 700, NULL, rp->display);
+boxDestroy(&box1);
+boxDestroy(&box2);
+pixDestroy(&pix4);
+pixaDestroy(&pixa1);
+pixDestroy(&pix1);
+
+return regTestCleanup(rp);
+}
+
+#endif
+
+
+
+
+
+
+
+
+
+
 
 		PIX* pixCleanBackgroundToWhite(PIX* pixs, PIX* pixim, PIX* pixg, l_float32 gamma, l_int32 blackval, l_int32 whiteval);
 		PIX* pixBackgroundNormSimple(PIX* pixs, PIX* pixim, PIX* pixg);
@@ -2014,91 +2571,6 @@ int main(int    argc,
 
 
 
-
-
-
-		pixr = pixRotate90(pixs, (pageno % 2) ? 1 : -1);
-		pixg = pixConvertTo8(pixr, 0);
-		pixGetDimensions(pixg, &w, &h, NULL);
-
-		/* Get info on vertical intensity profile */
-		pixgi = pixInvert(NULL, pixg);
-
-		/* Output visuals */
-		pixa2 = pixaCreate(3);
-		pixaAddPix(pixa2, pixr, L_INSERT);
-		pixaAddPix(pixa2, pix1, L_INSERT);
-		pixaAddPix(pixa2, pix2, L_INSERT);
-		pixd = pixaDisplayTiledInColumns(pixa2, 2, 1.0, 25, 0);
-		pixaDestroy(&pixa2);
-		pixaAddPix(pixa1, pixd, L_INSERT);
-		pixDisplayWithTitle(pixd, 800 * i, 100, NULL, rp->display);
-		pixDestroy(&pixs);
-		pixDestroy(&pixg);
-		pixDestroy(&pixgi);
-		numaDestroy(&narl);
-		numaDestroy(&nart);
-		numaDestroy(&nait);
-	}
-
-	lept_stderr("Writing profiles to /tmp/lept/crop/croptest.pdf\n");
-	pixaConvertToPdf(pixa1, 75, 1.0, L_JPEG_ENCODE, 0, "Profiles",
-		"/tmp/lept/crop/croptest.pdf");
-	pixaDestroy(&pixa1);
-
-	/* Test rectangle clipping with border */
-	pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
-	pix2 = pixScale(pix1, 0.5, 0.5);
-	box1 = boxCreate(125, 50, 180, 230);  /* fully contained */
-	pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);
-	pixRenderBoxArb(pix2, box1, 2, 255, 0, 0);
-	pixRenderBoxArb(pix3, box2, 2, 255, 0, 0);
-	pixa1 = pixaCreate(2);
-	pixaAddPix(pixa1, pix2, L_INSERT);
-	pixaAddPix(pixa1, pix3, L_INSERT);
-	pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
-	regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 6 */
-	pixDisplayWithTitle(pix4, 325, 700, NULL, rp->display);
-	boxDestroy(&box1);
-	boxDestroy(&box2);
-	pixDestroy(&pix4);
-	pixaDestroy(&pixa1);
-
-	pix2 = pixScale(pix1, 0.5, 0.5);
-	box1 = boxCreate(125, 10, 180, 270);  /* not full border */
-	pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);
-	pixRenderBoxArb(pix2, box1, 2, 255, 0, 0);
-	pixRenderBoxArb(pix3, box2, 2, 255, 0, 0);
-	pixa1 = pixaCreate(2);
-	pixaAddPix(pixa1, pix2, L_INSERT);
-	pixaAddPix(pixa1, pix3, L_INSERT);
-	pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
-	regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 7 */
-	pixDisplayWithTitle(pix4, 975, 700, NULL, rp->display);
-	boxDestroy(&box1);
-	boxDestroy(&box2);
-	pixDestroy(&pix4);
-	pixaDestroy(&pixa1);
-
-	pix2 = pixScale(pix1, 0.5, 0.5);
-	box1 = boxCreate(125, 200, 180, 270);  /* not entirely within pix2 */
-	pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);
-	pixRenderBoxArb(pix2, box1, 2, 255, 0, 0);
-	pixRenderBoxArb(pix3, box2, 2, 255, 0, 0);
-	pixa1 = pixaCreate(2);
-	pixaAddPix(pixa1, pix2, L_INSERT);
-	pixaAddPix(pixa1, pix3, L_INSERT);
-	pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
-	regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 8 */
-	pixDisplayWithTitle(pix4, 1600, 700, NULL, rp->display);
-	boxDestroy(&box1);
-	boxDestroy(&box2);
-	pixDestroy(&pix4);
-	pixaDestroy(&pixa1);
-	pixDestroy(&pix1);
-
-	return regTestCleanup(rp);
-}
 
 
 /*
@@ -3704,6 +4176,11 @@ int main(int    argc,
 		PIX* pixMakeColorSquare(l_uint32 color, l_int32 size, l_int32 addlabel, l_int32 location, l_uint32 textcolor);
 
 		l_ok pixDisplayWrite(PIX* pixs, l_int32 reduction);
+
+		------------------------------------------------------------------------------------------------------------
+
+		PIXA * pixaReadMultipageMemGif(const l_uint8* cdata, size_t size);
+		PIXA * pixReadMultipageStreamGif(FILE* fp);
 
 =======================================================================================================================================
 
