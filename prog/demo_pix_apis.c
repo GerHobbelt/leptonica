@@ -540,7 +540,7 @@ static PIX_INFO_A* cliGetSrcPix(const char* path, int max_count)
 	for (int i = 0; i < nfiles && arr->count < max_count; i++) {
 		fname = sarrayGetString(sa, i, L_NOCOPY);
 
-		char* name_pos = strrpbrkpast(fname, "/");
+		const char* name_pos = strrpbrkpast(fname, "/");
 		int match = wildmatch(fname_pos, name_pos, WM_IGNORECASE | WM_PATHNAME | WM_PERIOD);
 		if (match != WM_MATCH)
 			continue;
