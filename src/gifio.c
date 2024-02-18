@@ -704,7 +704,7 @@ pixaReadMultipageMemGif(const l_uint8* cdata, size_t size)
 
 	/* Read all the data, but use only the first image found */
 	if (DGifSlurp(gif) != GIF_OK) {
-		return (PIX*)ERROR_PTR("failed to read GIF data", __func__, NULL);
+		return (PIXA*)ERROR_PTR("failed to read GIF data", __func__, NULL);
 	}
 
 	int npages = gif->ImageCount;
