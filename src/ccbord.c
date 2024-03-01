@@ -2233,7 +2233,7 @@ l_ok
 ccbaWriteStream(FILE     *fp,
                 CCBORDA  *ccba)
 {
-#if  HAVE_LIBZ  /* defined in environ.h */
+#if  HAVE_LIBZ || HAVE_LIBZ_NG   /* defined in environ.h */
 char        strbuf[256];
 l_uint8     bval;
 l_uint8    *datain, *dataout;
@@ -2248,7 +2248,7 @@ NUMAA      *naa;
 PTA        *pta;
 #endif
 
-#if  !HAVE_LIBZ  /* defined in environ.h */
+#if  !HAVE_LIBZ && !HAVE_LIBZ_NG  /* defined in environ.h */
     return ERROR_INT("no libz: can't write data", __func__, 1);
 #else
 
@@ -2380,7 +2380,7 @@ CCBORDA  *ccba;
 CCBORDA *
 ccbaReadStream(FILE  *fp)
 {
-#if  HAVE_LIBZ  /* defined in environ.h */
+#if  HAVE_LIBZ || HAVE_LIBZ_NG  /* defined in environ.h */
 char      strbuf[256];
 l_uint8   bval;
 l_uint8  *datain, *dataout;
@@ -2396,7 +2396,7 @@ NUMA     *na;
 NUMAA    *step;
 #endif
 
-#if  !HAVE_LIBZ  /* defined in environ.h */
+#if  !HAVE_LIBZ && !HAVE_LIBZ_NG  /* defined in environ.h */
     return (CCBORDA *)ERROR_PTR("no libz: can't read data", __func__, NULL);
 #else
 

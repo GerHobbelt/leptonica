@@ -126,7 +126,7 @@ L_REGPARAMS  *rp;
     lept_stderr("Omitting libtiff tests in ioformats_reg\n");
 #endif  /* !HAVE_LIBTIFF */
 
-#if  !HAVE_LIBPNG || !HAVE_LIBZ
+#if  !HAVE_LIBPNG
     lept_stderr("Omitting libpng tests in ioformats_reg\n");
 #endif  /* !HAVE_LIBPNG || !HAVE_LIBZ */
 

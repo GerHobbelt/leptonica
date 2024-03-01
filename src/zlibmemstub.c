@@ -39,7 +39,7 @@
 #include "allheaders.h"
 
 /* --------------------------------------------*/
-#if  !HAVE_LIBZ   /* defined in environ.h */
+#if  !HAVE_LIBZ && !HAVE_LIBZ_NG  /* defined in environ.h */
 /* --------------------------------------------*/
 
 l_uint8 * zlibCompress(const l_uint8 *datain, size_t nin, size_t *pnout)

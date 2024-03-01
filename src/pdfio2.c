@@ -1230,7 +1230,7 @@ PIXCMAP  *cmap;
 
         /* Conditionally modify the encoding type if libz is
          * available and the requested library is missing. */
-#if defined(HAVE_LIBZ)
+#if defined(HAVE_LIBZ) || defined(HAVE_LIBZ_NG)
 # if !defined(HAVE_LIBJPEG)
     if (type == L_JPEG_ENCODE) {
         L_WARNING("no libjpeg; using flate encoding\n", __func__);
