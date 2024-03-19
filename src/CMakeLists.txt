@@ -75,7 +75,7 @@ else()
     target_link_libraries       (leptonica PRIVATE
         org.sw.demo.gif
         org.sw.demo.jpeg
-        org.sw.demo.glennr=p.png
+        org.sw.demo.glennrp.png
         org.sw.demo.tiff
         org.sw.demo.webmproject.webp
         org.sw.demo.uclouvain.openjpeg.openjp2
