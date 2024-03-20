@@ -41,7 +41,7 @@
 l_int32 main(int    argc,
              char **argv)
 {
-//char         *fname[64];
+/*char         *fname[64];*/
 char          fname[] = "/tmp/lept/colorcontent/maskgen.pdf";
 l_uint32     *colors;
 l_int32       ncolors, w, h;

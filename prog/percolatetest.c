@@ -272,7 +272,7 @@ PTAA    *ptaa;
          * the plot (percolate-4cc.png, percolate-8cc.png). */
 #if 0
     pixs = pixRead("feyn.tif");
-//    pixs = pixCreate(2500, 3200, 1);
+/*    pixs = pixCreate(2500, 3200, 1); */
     na1 = numaCreate(10000000);
     pixConnCompIncrInit(pixs, 4, &pix1, &ptaa, &ncc);
     pix2 = PixDisplayWithColormap(pix1, 1);

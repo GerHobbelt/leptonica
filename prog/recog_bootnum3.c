@@ -83,7 +83,7 @@ L_STRCODE  *strc;
         /* Generate the stringcode in two files for this pixa.
          * Both files are then assempled into the source file
          * bootnumgen4.c, which is compiled into the library.  */
-    strc = strcodeCreate(212);   // arbitrary integer
+    strc = strcodeCreate(212);   /* arbitrary integer */
     strcodeGenerate(strc, "/tmp/lept/digit/bootnum4.pa", "PIXA");
     strcodeFinalize(&strc, ".");
     return 0;

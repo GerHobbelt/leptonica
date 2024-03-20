@@ -264,8 +264,8 @@ L_REGPARAMS  *rp;
 
         /* Use an arbitrary colormap */
     cmap = pixcmapCreate(1);
-    pixcmapAddColor(cmap, 254, 240, 185);  // yellow
-    pixcmapAddColor(cmap, 50, 50, 130);   // blue
+    pixcmapAddColor(cmap, 254, 240, 185);  /* yellow */
+    pixcmapAddColor(cmap, 50, 50, 130);   /* blue */
     pixSetColormap(pix2, cmap);
     pixWrite("/tmp/lept/pdf1/cat-and-mouse-cmap2.png", pix2, IFF_PNG);
 

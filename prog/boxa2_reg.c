@@ -141,7 +141,7 @@ L_REGPARAMS  *rp;
     numaDestroy(&naih);
 
         /* Find the rank bins for width and height */
-    nbins = L_MAX(5, ne / 50);  // up to 50 pages/bin
+    nbins = L_MAX(5, ne / 50);  /* up to 50 pages/bin */
     numaGetRankBinValues(nawe, nbins, &narbwe);
     numaGetRankBinValues(nawo, nbins, &narbwo);
     numaGetRankBinValues(nahe, nbins, &narbhe);

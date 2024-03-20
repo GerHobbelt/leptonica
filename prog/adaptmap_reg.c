@@ -63,7 +63,7 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-    lept_mkdir("lept/adapt");  // REMOVE?
+    lept_mkdir("lept/adapt");  /* REMOVE? */
 
     pixs = pixRead("wet-day.jpg");
     pixa = pixaCreate(0);
