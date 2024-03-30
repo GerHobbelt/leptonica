@@ -598,7 +598,7 @@ pixCropImage(PIX         *pixs,
              BOX        **pcropbox)
 {
 char       cmd[64];
-l_int32    w, h, d, lrc, tbc, val;
+l_int32    w, h, d, val;
 l_int32    left, right, top, bot, leftfinal, rightfinal, topfinal, botfinal;
 static l_int32    first_time = TRUE;
 l_float32  hscale;
