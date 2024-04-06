@@ -143,7 +143,8 @@ LEPT_DLL const char *ImageFileFormatExtensions[] =
           ""};
 LEPT_DLL l_int32 NumImageFileFormatExtensions = sizeof(ImageFileFormatExtensions) / sizeof(ImageFileFormatExtensions[0]); /* array size */
 
-    /* Local map of image file name extension to output format */
+    /* Local map of image file name extension to output format.
+     * Note that the extension string always includes a '.'  */
 struct ExtensionMap
 {
     char     extension[16];
@@ -439,7 +440,7 @@ pixWriteStream(FILE    *fp,
         return pixWriteStreamGif(fp, pix);
 
     case IFF_JP2:
-        return pixWriteStreamJp2k(fp, pix, 34, 4, L_JP2_CODEC, 0, 0);
+        return pixWriteStreamJp2k(fp, pix, 34, 0, L_JP2_CODEC, 0, 0);
 
     case IFF_WEBP:
         return pixWriteStreamWebP(fp, pix, 80, 0);

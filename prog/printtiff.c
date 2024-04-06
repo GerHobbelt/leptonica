@@ -73,9 +73,8 @@
 int main(int    argc,
          const char **argv)
 {
-l_int32      ret;
 const char        *filein, *tempfile, *printer = NULL;
-char         buf[512];
+char   buf[512];
 
     if (argc != 2 && argc != 3)
         return ERROR_INT(" Syntax:  printtiff filein [printer]", __func__, 1);
@@ -97,7 +96,7 @@ char         buf[512];
 
     if (argc == 3) {
         snprintf(buf, sizeof(buf), "lpr -P%s %s &", printer, tempfile);
-        ret = system(buf);
+        callSystemDebug(buf);
     }
 
     lept_free(tempfile);

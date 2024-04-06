@@ -113,7 +113,8 @@ static const char *tests[] = {
                               "fhmtauto",
                          /*   "files",  */
                               "findcorners",
-                              "findpattern",
+                              "findpattern1",
+                              "findpattern2",
                               "flipdetect",
                               "fpix1",
                               "fpix2",
@@ -282,7 +283,7 @@ SARRAY  *sa;
 #endif
 		snprintf(command, sizeof(command) - 2, "%.*smutool_ex%s lept_%s %s", plen, xp, ext, tests[i], argv[1]);
 #endif
-        ret = system(command);
+        ret = callSystemDebug(command);
         if (ret) {
             snprintf(buf, sizeof(buf), "Failed to complete %s_reg\n", tests[i]);
             if (dotest) {

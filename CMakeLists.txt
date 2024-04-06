@@ -8,7 +8,7 @@
 #
 # ##############################################################################
 
-cmake_minimum_required(VERSION 3.1.3)
+cmake_minimum_required(VERSION 3.5)
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0074 NEW) # find_package() uses <PackageName>_ROOT variables
 
@@ -43,8 +43,8 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake Targets")
 project(
   leptonica
   LANGUAGES C
-  VERSION 1.84.0)
-set(CMAKE_C_STANDARD 17)
+  VERSION 1.84.1)
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Testing support
@@ -65,7 +65,7 @@ if(UNIX OR MINGW)
   option(SYM_LINK "Create symlink leptonica -> lept on UNIX" OFF)
 endif()
 option(STRICT_CONF
-       "Strict configuration - fail when optional library is not found" OFF)
+       "Strict configuration - fail when the optional library is not found" OFF)
 option(ENABLE_ZLIB "Enable ZLIB support" ON)
 option(ENABLE_PNG "Enable PNG support" ON)
 option(ENABLE_GIF "Enable GIF support" ON)
@@ -189,24 +189,31 @@ if(NOT SW_BUILD)
   if(ENABLE_OPENJPEG)
     find_package(OpenJPEG CONFIG)
     if(OpenJPEG_FOUND)
-      set(pkgs_private "${pkgs_private} libopenjp2")
-      set(HAVE_LIBJP2K 1)
-      include_directories(${OPENJPEG_INCLUDE_DIRS})
-      if(WIN32)
-        if(BUILD_SHARED_LIBS)
-          add_definitions(-DOPJ_EXPORTS)
-        else()
-          add_definitions(-DOPJ_STATIC)
-        endif()
-      endif(WIN32)
-      message(STATUS "Found OpenJPEG: ${OPENJPEG_LIBRARIES} (${OPENJPEG_MAJOR_VERSION}.${OPENJPEG_MINOR_VERSION}.${OPENJPEG_BUILD_VERSION})")
+      set(OPENJPEG_VERSION ${OPENJPEG_MAJOR_VERSION}.${OPENJPEG_MINOR_VERSION})
+        if(${OPENJPEG_VERSION} LESS "2.1")
+          message (STATUS "Your libopenjp version is too old ${OPENJPEG_VERSION}")
+          set(HAVE_LIBJP2K 0)
+        else(${OPENJPEG_VERSION} LESS "2.1")
+          set(pkgs_private "${pkgs_private} libopenjp2")
+          set(HAVE_LIBJP2K 1)
+          include_directories(${OPENJPEG_INCLUDE_DIRS})
+          if(WIN32)
+            if(BUILD_SHARED_LIBS)
+              add_definitions(-DOPJ_EXPORTS)
+            else()
+              add_definitions(-DOPJ_STATIC)
+            endif()
+          endif(WIN32)
+          message(STATUS
+          "Found OpenJPEG: ${OPENJPEG_LIBRARIES} (${OPENJPEG_VERSION}.${OPENJPEG_BUILD_VERSION})")
+        endif(${OPENJPEG_VERSION} LESS "2.1")
     else()
-    if(STRICT_CONF)
-      message(
-        FATAL_ERROR
+      if(STRICT_CONF)
+        message(
+          FATAL_ERROR
           "Could not find OpenJPEG libs.\n Use -DENABLE_OPENJPEG=OFF to disable OpenJPEG support."
-      )
-    endif(STRICT_CONF)
+        )
+      endif(STRICT_CONF)
     endif(OpenJPEG_FOUND)
   endif(ENABLE_OPENJPEG)
 else() # SW_BUILD=ON
@@ -227,7 +234,16 @@ else() # SW_BUILD=ON
     -DHAVE_LIBJP2K=1)
 endif()
 
-set(libs_private "${libs_private} -lm")
+include(CheckLibraryExists)
+
+check_library_exists(m sin "" HAVE_LIBM)
+if(HAVE_LIBM)
+  set(libs_private "${libs_private} -lm")
+endif(HAVE_LIBM)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "kFreeBSD.*|DragonFly.*|FreeBSD")
+  set(FREEBSD ON)
+endif(${CMAKE_SYSTEM_NAME} MATCHES "kFreeBSD.*|DragonFly.*|FreeBSD")
 
 # ##############################################################################
 #

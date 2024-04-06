@@ -1,22 +1,39 @@
 name: sw
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-on: [push, pull_request, workflow_dispatch]
+on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-22.04, macos-12]
-
+  windows:
+    runs-on: windows-latest   
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
     - uses: egorpugin/sw-action@master
-
+    - run: ./sw build -static -shared -config d,r
+    
+  linux:
+    runs-on: ubuntu-22.04
+    container: fedora:latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: prepare
+      run: |
+        sudo dnf -y update
+        sudo dnf -y install cmake which g++ clang clang-tools-extra lld
+    - uses: egorpugin/sw-action@master
+    - run: ./sw build -static -shared -config d,r
+   
+  macos:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+    - uses: egorpugin/sw-action@master
+    - name: install
+      run: brew install flex bison gcc      
+    #- run: sudo xcode-select --switch /Library/Developer/CommandLineTools
     - name: build
-      run: ./sw -static -shared -config d,r build
+      run: |
+        export PATH="/usr/local/opt/flex/bin:$PATH"
+        export PATH="/usr/local/opt/bison/bin:$PATH"
+        export PATH="/usr/local/opt/gcc/bin:$PATH"
+        ./sw build -static -shared -config d,r -compiler gcc-13
+        

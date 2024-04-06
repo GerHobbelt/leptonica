@@ -959,7 +959,8 @@ FILE         *fp;
         data85 = encodeAscii85(data, nbytes, &nbytes85);
         LEPT_FREE(data);
         if (!data85)
-            return (L_COMP_DATA *)ERROR_PTR("data85 not made", __func__, NULL);
+            return (L_COMP_DATA *)ERROR_PTR_1("data85 not made",
+                                              fname, __func__, NULL);
         else
             data85[nbytes85 - 1] = '\0';  /* remove the newline */
     }
@@ -1156,7 +1157,8 @@ FILE         *fp;
         data85 = encodeAscii85(datacomp, nbytescomp, &nbytes85);
         LEPT_FREE(datacomp);
         if (!data85)
-            return (L_COMP_DATA *)ERROR_PTR("data85 not made", __func__, NULL);
+            return (L_COMP_DATA *)ERROR_PTR_1("data85 not made",
+                                              fname, __func__, NULL);
         else
             data85[nbytes85 - 1] = '\0';  /* remove the newline */
     }
@@ -2957,7 +2959,7 @@ SARRAY   *sa;
 
     if (!LeptDebugOK) {
         L_INFO("Running pdftoppm is disabled; "
-               "use setLeptDebugOK(1) to enable\n",
+               "use setLeptDebugOK(1) to enable\n"
                "returns default resolution 300 ppi\n", __func__);
         return 1;
     }

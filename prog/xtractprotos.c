@@ -269,7 +269,7 @@ char include_paths[L_BUFSIZE] = ".;../../thirdparty/leptonica/src;../../scripts/
                  incstring, filein, tempfile);
 		//fprintf(stderr, "EXEC:\n%s\n", buf);
 
-        ret = system(buf);  /* cpp */
+        ret = callSystemDebug(buf);  /* cpp */
         if (ret) {
             lept_stderr("cpp failure for %s; continuing\n", filein);
             continue;

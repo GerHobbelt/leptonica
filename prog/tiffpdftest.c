@@ -54,7 +54,6 @@ int main(int    argc,
          const char **argv)
 {
 char       buf[256];
-l_int32    ret;
 l_float32  fract;
 PIX       *pix1, *pix2, *pix3, *pix4;
 PIXA      *pixa1, *pixa2, *pixa3;
@@ -85,7 +84,7 @@ PIXA      *pixa1, *pixa2, *pixa3;
     lept_mkdir("lept/tmp");
     snprintf(buf, sizeof(buf),
              "pdftoppm -r 300 /tmp/lept/tiffpdf/set1.pdf /tmp/lept/tmp/sevens");
-    ret = system(buf);
+    callSystemDebug(buf);
 
         /* Re-wrap them */
     pix1 = pixRead("/tmp/lept/tmp/sevens-1.ppm");
@@ -109,7 +108,7 @@ PIXA      *pixa1, *pixa2, *pixa3;
     lept_mkdir("lept/tmp");
     snprintf(buf, sizeof(buf),
              "pdftoppm -r 300 /tmp/lept/tiffpdf/set2.pdf /tmp/lept/tmp/sevens");
-    ret = system(buf);
+    callSystemDebug(buf);
 
         /* And wrap them up again */
     pix1 = pixRead("/tmp/lept/tmp/sevens-1.ppm");

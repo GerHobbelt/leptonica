@@ -77,7 +77,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 
 <h2 align=center>Version Notes for Leptonica</h2>
-<h3 align=center>22 Sept 2021</h3>
+<h3 align=center>3 Jan 2024</h3>
 
 <hr>
 <h2 align=center>  <IMG SRC="moller52.jpg" border=1 ALIGN_MIDDLE> </h2>
@@ -89,7 +89,42 @@ They are <i>not</i> a complete listing of the modifications.
 
 <pre>
 
-1.84.0  Jan 7, 2023
+1.84.2  not released
+        * Use wrapper callSystemDebug() instead of system() in programs.
+        * Fixed Issue #730: artifacts and bad compression with pixWriteJp2k.
+          Results are now identical with ImageMagick convert (to jp2).
+        * With PR732, Anton Tykhyy made pix(Read,Write)MemJp2k work with
+          direct memory access using openjpeg opj_stream functions. This
+          removes need for temp file on Windows when writing to/from memory.
+        * Achieve consistency with fclose() in library and lept_fclose()
+          in progs.  Ditto for lept_free, lept_calloc, lept_fopen(), etc.
+        * Fix generation of bad colormap indices in jbcorrelation and jbrankhaus
+        * Fixed coverity scan issues.
+        * Added findpattern2_reg.c to show generation of sels and their use.
+        * Source files changed: adaptmap.c colormap.c, compare.c,
+          gplot.c, grayquant.c, jbclass.c, jp2kheader.c,
+          jp2kheaderstub.c, jp2kio.c, libversions.c,
+          partify.c, pdfio2.c, pixconv.c,
+          psio2.c, readfile.c, sel1.c, utils2.c, writefile.c,
+          allheaders.h, environ.h
+        * Prog files changed: alltests_reg.c, binmorph3_reg.c,
+          blend2_reg.c, cleanpdf.c, compressedpdf.c, croppdf.c,
+          findpattern_reg.c, findpattern1_reg.c findpattern2_reg.c,
+          htmlviewer.c, jp2kio_reg.c, libre_makefigs.c,
+          pdfio2_reg.c, printimage.c, printsplitimage.c,
+          printtiff.c, psioseg_reg.c, splitpdf.c,
+          string_reg.c, tiffpdftest.c, xtractprotos.c
+
+1.84.1  Jan 3, 2024
+        * Remove support for openjpeg versions < 2.1.
+        * Improve error handling for stringLength() and stringCat(), and
+          add tests in prog/string_reg.
+        * Source files changed: blend.c, dnafunc1.c, jp2kio.c, pageseg.c,
+          partify.c, pix1.c, ptafunc2.c, sarray2.c, utils2.c
+        * Prog files changed: boxa3_reg.c, string_reg.c, writetext_reg.c,
+          deskew_it.c
+
+1.84.0  Dec 23, 2023
         * Add getPdfPageCount() to find the number of pages in a pdf file.
         * Add getPdfPageSizes() and getPdfMediaBoxSizes() to find the
           information necessary to render images properly.  Modify cleanpdf.c
@@ -98,6 +133,8 @@ They are <i>not</i> a complete listing of the modifications.
         * Add ability to read and write rgba in bmp format, and
           test in ioformats_reg.
         * Add regression test prog/partition_reg.c
+        * Change the autotools library name from liblept to libleptonica,
+          to be consistent with the cmake library name.  (Apologies to Jeff!)
         * Add tests for 24 bit pix reading and writing in bmp and png in
           ioformats_reg.  Test new pixDisplayDiff() for visualizing diffs.
         * Allow prog/concatpdf to output pdf with tiffg4 encoding and with

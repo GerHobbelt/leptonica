@@ -82,7 +82,7 @@ int main(int    argc,
 {
 const char        *filein, *fname, *printer;
 char         buf[512];
-l_int32      nx, ny, i, w, h, ws, hs, n, ignore, index;
+l_int32      nx, ny, i, w, h, ws, hs, n, index;
 l_float32    scale;
 #if !USE_COMPRESSED
 FILE        *fp;
@@ -148,7 +148,7 @@ SARRAY      *sa;
         for (i = 0; i < n; i++) {
             fname = sarrayGetString(sa, i, L_NOCOPY);
             snprintf(buf, sizeof(buf), "lpr -P%s %s &", printer, fname);
-            ignore = system(buf);
+            callSystemDebug(buf);
         }
     }
 

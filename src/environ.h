@@ -166,8 +166,8 @@ typedef uintptr_t l_uintptr_t;
 
 
   /*-----------------------------------------------------------------------*
-   * Leptonica supports OpenJPEG 2.0+.  If you have a version of openjpeg  *
-   * (HAVE_LIBJP2K == 1) that is >= 2.0, set the path to the openjpeg.h    *
+   * Leptonica supports OpenJPEG 2.1+.  If you have a version of openjpeg  *
+   * (HAVE_LIBJP2K == 1) that is >= 2.1, set the path to the openjpeg.h    *
    * header in angle brackets here.                                        *
    *-----------------------------------------------------------------------*/
   #undef  LIBJP2K_HEADER

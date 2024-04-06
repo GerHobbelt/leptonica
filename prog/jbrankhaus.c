@@ -133,6 +133,7 @@ PIXA       *pixa, *pixadb;
         /* Save and write out the result */
     data = jbDataSave(classer);
     jbDataWrite(rootname, data);
+    lept_stderr("Number of classes: %d\n", classer->nclass);
 
         /* Render the pages from the classifier data.
          * Use debugflag == FALSE to omit outlines of each component. */

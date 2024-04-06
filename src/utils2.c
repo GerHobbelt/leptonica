@@ -96,7 +96,7 @@
  *           FILE      *fopenWriteWinTempfile()
  *
  *       Multi-platform functions that avoid C-runtime boundary crossing
- *       with Windows DLLs
+ *       with Windows DLLs  (use in programs only)
  *           FILE      *lept_fopen()
  *           l_int32    lept_fclose()
  *           void      *lept_calloc()
@@ -113,7 +113,7 @@
  *           l_int32    lept_cp()
  *
  *       Special debug/test function for calling 'system'
- *           void       callSystemDebug()
+ *           l_int32    callSystemDebug()
  *
  *       General file name operations
  *           l_int32    splitPathAtDirectory()
@@ -146,10 +146,10 @@
  *  (5) For moving, copying and removing files and directories that are in
  *      subdirectories of /tmp, use the lept_*() file system shell wrappers:
  *         lept_mkdir(), lept_rmdir(), lept_mv(), lept_rm() and lept_cp().
- *  (6) Use the lept_*() C library wrappers.  These work properly on
- *      Windows, where the same DLL must perform complementary operations
- *      on file streams (open/close) and heap memory (malloc/free):
- *         lept_fopen(), lept_fclose(), lept_calloc() and lept_free().
+ *  (6) For programs use the lept_fopen(), lept_fclose(), lept_calloc()
+ *      and lept_free() C library wrappers.  These work properly on Windows,
+ *      where the same DLL must perform complementary operations on
+ *      file streams (open/close) and heap memory (malloc/free).
  *  (7) Why read and write files to temp directories?
  *      The library needs the ability to read and write ephemeral
  *      files to default places, both for generating debugging output
@@ -392,16 +392,17 @@ stringReplace(char       **pdest,
  * \brief   stringLength()
  *
  * \param[in]    src    string can be null or NULL-terminated string
- * \param[in]    size   size of src buffer
- * \return  length of src in bytes.
+ * \param[in]    size   number of bytes to check; e.g., size of src buffer
+ * \return  length of src in bytes; 0 if no bytes are found;
+ *                                  %size on error when NUL byte is not found.
  *
  * <pre>
  * Notes:
- *      (1) Safe implementation of strlen that only checks size bytes
+ *      (1) Safe implementation of strlen that only checks %size bytes
  *          for trailing NUL.
  *      (2) Valid returned string lengths are between 0 and size - 1.
- *          If size bytes are checked without finding a NUL byte, then
- *          an error is indicated by returning size.
+ *          If %size bytes are checked without finding a NUL byte, then
+ *          an error is indicated by returning %size.
  * </pre>
  */
 l_int32
@@ -411,15 +412,18 @@ stringLength(const char  *src,
 l_int32  i;
 
     if (!src)
-        return ERROR_INT("src not defined", __func__, 0);
-    if (size < 1)
         return 0;
+    if (size < 1)
+        return ERROR_INT("size < 1; too small", __func__, 0);
 
     for (i = 0; i < size; i++) {
         if (src[i] == '\0')
             return i;
     }
-    return size;  /* didn't find a NUL byte */
+
+        /* Didn't find a NUL byte */
+    L_ERROR("NUL byte not found in %zu bytes\n", __func__, size);
+    return size;
 }
 
 
@@ -427,7 +431,7 @@ l_int32  i;
  * \brief   stringCat()
  *
  * \param[in]    dest    null-terminated byte buffer
- * \param[in]    size    size of dest
+ * \param[in]    size    size of dest buffer
  * \param[in]    src     string can be null or NULL-terminated string
  * \return  number of bytes added to dest; -1 on error
  *
@@ -464,9 +468,9 @@ l_int32  lendest, lensrc;
         return ERROR_INT("no terminating nul byte", __func__, -1);
     lensrc = stringLength(src, size);
     if (lensrc == 0)
-        return 0;
-    n = (lendest + lensrc > size - 1 ? 0 : lensrc);
-    if (n < 1)
+        return 0;  /* nothing added to dest */
+    n = (lendest + lensrc > size - 1) ? 0 : lensrc;
+    if (n == 0)
         return ERROR_INT("dest too small for append", __func__, -1);
 
     for (i = 0; i < n; i++)
@@ -1922,7 +1926,8 @@ FILE  *fp;
         return (FILE*)ERROR_PTR_1("tail not found", filename, __func__, NULL);
     fp = fopen(tail, "rb");
     if (!fp)
-        fp = (FILE *)ERROR_PTR_1("file not found", tail, __func__, NULL);
+        L_ERROR("failed to open locally with tail %s for filename %s\n",
+                __func__, tail, filename);
     LEPT_FREE(tail);
     return fp;
 }
@@ -2686,7 +2691,7 @@ l_int32  ret;
  * \brief   callSystemDebug()
  *
  * \param[in]    cmd      command to be exec'd
- * \return  void
+ * \return  0 on success
  *
  * <pre>
  * Notes:
@@ -2697,16 +2702,16 @@ l_int32  ret;
  *          generate an error message.
  * </pre>
  */
-void
+l_int32
 callSystemDebug(const char *cmd)
 {
     if (!cmd) {
         L_ERROR("cmd not defined\n", __func__);
-        return;
+        return 1;
     }
     if (LeptDebugOK == FALSE) {
         L_INFO("'system' calls are disabled\n", __func__);
-        return;
+        return 1;
     }
 
 #if defined(__APPLE__)  /* iOS 11 does not support system() */
@@ -2722,6 +2727,8 @@ callSystemDebug(const char *cmd)
    system(cmd);
 
 #endif /* __APPLE__ */
+
+   return ret;
 }
 
 
@@ -3149,7 +3156,7 @@ genPathname(const char  *dir,
 l_int32  rewrite_tmp = TRUE;
 #else
 l_int32  rewrite_tmp = FALSE;
-#endif  /* _WIN32 */
+#endif  /* REWRITE_TMP */
 char    *cdir, *pathout;
 l_int32  dirlen, namelen;
 size_t   size;
