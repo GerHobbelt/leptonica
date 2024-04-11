@@ -68,7 +68,7 @@ l_int32 GeneratePattern(l_int32 patno, l_int32 red, L_REGPARAMS  *rp);
 
 
 #if defined(BUILD_MONOLITHIC)
-#define main   lept_findpattern_reg_main
+#define main   lept_findpattern1_reg_main
 #endif
 
 int main(int    argc,
