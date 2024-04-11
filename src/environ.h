@@ -109,7 +109,9 @@ typedef int l_atomic;
 #endif /* __APPLE__ */
 
 #if defined(HAVE_MUPDF)
+#include "mupdf/assertions.h"
 #include "mupdf/fitz/context.h"
+#include "mupdf/helpers/dir.h"
 #endif
 
 #ifdef __cplusplus
