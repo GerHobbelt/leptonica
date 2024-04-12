@@ -2083,7 +2083,7 @@ l_int32   i, w, h, cellw, cellh, x, y, iclass, ipage;
 l_int32   npages, nclass, ncomp, wp, hp;
 BOX      *box;
 BOXA     *boxa;
-BOXAA    *baa;
+BOXAA    *baa = NULL;
 NUMA     *naclass, *napage;
 PIX      *pixt, *pix1, *pix2, *pixd;
 PIXA     *pixat;   /* pixa of templates */
