@@ -102,7 +102,12 @@ void TestStderrRedirect();
     /* dev null callback for stderr redirect */
 static void send_to_devnull(const char *msg) {}
 
-int main ()
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_message_test_main
+#endif
+
+int main (void)
 {
         /* Part 1: all output to stderr */
     lept_stderr("\nSeverity tests\n");

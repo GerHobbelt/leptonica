@@ -313,6 +313,8 @@ MONOLITHIC_CMD_TABLE_START()
 { "xformbox", { .fa = lept_xformbox_reg_main } },
 { "yuvtest", { .fa = lept_yuvtest_main } },
 { "issue675_check", { .fa = lept_issue675_check_main } },
+{ "misctest2", {.fa = lept_misctest2_main } },
+{ "message_test", {.f = lept_message_test_main } },
 { "demo_pix_apis", { .fa = lept_demo_pix_apis_main } },
 
 MONOLITHIC_CMD_TABLE_END();
