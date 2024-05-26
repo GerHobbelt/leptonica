@@ -175,10 +175,10 @@ static int strchlast(const char* str)
 // of any of the chars in set.
 // If none of the characters in set are found anywhere in the source string,
 // the start of the source string is returned.
-static char* strrpbrkpast(char* str, const char* set)
+static char* strrpbrkpast(const char* str, const char* set)
 {
-	char* rv = str;
-	char* p = str;
+	const char* rv = str;
+	const char* p = str;
 	for (;;) {
 		p = strpbrk(p, set);
 		if (!p)
@@ -186,7 +186,7 @@ static char* strrpbrkpast(char* str, const char* set)
 		p++;
 		rv = p;
 	}
-	return rv;
+	return (char *)rv;
 }
 
 static char* strend(char* str) {
