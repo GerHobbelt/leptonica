@@ -161,7 +161,7 @@ l_int32 main(int    argc,
 char     buf[256];
 const char    *basedir, *fname, *tail, *basename, *imagedir, *firstfile, *title;
 const char    *fileout;
-l_int32  i, n, res, contrast, rotation, opensize, render_res, ret;
+l_int32  i, n, res, contrast, rotation, opensize, render_res;
 SARRAY  *sa;
 
     if (argc != 8)

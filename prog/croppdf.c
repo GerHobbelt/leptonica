@@ -109,7 +109,7 @@ l_int32 main(int    argc,
 char       buf[256];
 const char      *basedir, *fname, *tail, *basename, *imagedir, *title, *fileout;
 l_int32    lrclear, tbclear, edgeclean, lradd, tbadd;
-l_int32    render_res, i, n, ret;
+l_int32    render_res, i, n;
 l_float32  maxwiden;
 SARRAY    *sa;
 

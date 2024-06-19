@@ -140,7 +140,7 @@ l_int32 main(int    argc,
 char       buf[256];
 const char      *basedir, *title, *fileout;
 char      *fname, *tail, *basename, *imagedir;
-l_int32    imres, render_res, onebit, savecolor, quality, i, n, ret;
+l_int32    imres, render_res, onebit, savecolor, quality, i, n;
 l_float32  scalefactor;
 SARRAY    *sa;
 
