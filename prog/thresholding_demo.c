@@ -43,6 +43,10 @@
 
 #include "monolithic_examples.h"
 
+#ifndef PATH_MAX
+#define PATH_MAX 2048
+#endif
+
 
 
 #define HISTOGRAM_SIZE   256 // The size of a histogram of pixel values.
@@ -983,7 +987,7 @@ ThresholdRectToPix(PIX *pix, int num_channels, int thresholds[4], const int hi_v
 //   intelligible.
 //
 
-static char dstdirname[256];
+static char dstdirname[PATH_MAX];
 
 static void register_source_filename_for_dst_path(const char* name)
 {
@@ -1046,10 +1050,11 @@ static void register_source_filename_for_dst_path(const char* name)
 }
 
 
+static int index = 0;
+
 static const char* mk_dst_filename(const char* name)
 {
-	static char dstpath[1024];
-	static int index = 0;
+	static char dstpath[PATH_MAX];
 
 	snprintf(dstpath, sizeof(dstpath), "/tmp/lept/binarization/%s/%03d-%s", dstdirname, index, name);
 	index++;
@@ -1078,7 +1083,7 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
-	if (argc == 3)
+	if (argc >= 3)
 	{
 		sourcefile = argv[2];
 	}
@@ -1086,11 +1091,14 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 	register_source_filename_for_dst_path(sourcefile);
 
 	{
-		char dstpath[256 + sizeof(dstdirname)];
-		snprintf(dstpath, sizeof(dstpath), "lept/binarization/%s", dstdirname);
+		char dstpath[PATH_MAX + sizeof(dstdirname)];
+		strncpy(dstpath, mk_dst_filename(""), sizeof(dstpath));
+		dstpath[sizeof(dstpath) - 1] = 0;
+		strrchr(dstpath, '/')[0] = 0;
 		
 		lept_rmdir(dstpath);
 		lept_mkdir(dstpath);
+		index = 0;
 	}
 
 	pix[0] = pixRead(sourcefile);
