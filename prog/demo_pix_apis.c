@@ -224,7 +224,7 @@ static void cliCleanupArgvSet(CLI_ARGV_SET* rv)
 	{
 		for (int i = 0; rv->named_args[i].name; i++)
 		{
-			LEPT_FREE(rv->named_args[i].name);
+			LEPT_FREE((void *)rv->named_args[i].name);
 		}
 		LEPT_FREE(rv->named_args);
 	}
