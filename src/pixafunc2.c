@@ -987,10 +987,13 @@ PIXA     *pixa1, *pixa2;
     pixd = pixaDisplay(pixa2, w + spacing, h + spacing);
     pixSetResolution(pixd, res, res);
 
-        /* Save the boxa in the text field of the output pix */
+		// This bit is not necessary and attempts to create temporary files under the hood on MSWindows:
+#if 0
+		/* Save the boxa in the text field of the output pix */
     if (boxaWriteMem(&data, &size, boxa) == 0)
         pixSetText(pixd, (char *)data);  /* data is ascii */
     LEPT_FREE(data);
+#endif
 
     pixaDestroy(&pixa2);
     return pixd;
