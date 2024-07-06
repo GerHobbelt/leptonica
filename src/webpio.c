@@ -349,7 +349,7 @@ PIX       *pix1, *pix2;
     *pencsize = 0;
     if (!pixs)
         return ERROR_INT("&pixs not defined", __func__, 1);
-    if (lossless == 0 && (quality < 0 || quality > 100))
+    if (quality < 0 || quality > 100)
         return ERROR_INT("quality not in [0 ... 100]", __func__, 1);
 
     if ((pix1 = pixRemoveColormap(pixs, REMOVE_CMAP_TO_FULL_COLOR)) == NULL)
@@ -381,8 +381,8 @@ PIX       *pix1, *pix2;
     data = pixGetData(pix2);
     stride = wpl * 4;
     if (lossless) {
-        *pencsize = WebPEncodeLosslessRGBA((uint8_t *)data, w, h,
-                                           stride, pencdata);
+			  *pencsize = WebPEncodeLosslessQualityRGBA((uint8_t *)data, w, h,
+					stride, quality, pencdata);
     } else {
         *pencsize = WebPEncodeRGBA((uint8_t *)data, w, h, stride,
                                    quality, pencdata);
