@@ -160,7 +160,7 @@ typedef uintptr_t l_uintptr_t;
   #define  HAVE_LIBWEBP       1
   #endif
   #if !defined(HAVE_LIBWEBP_ANIM)
-  #define  HAVE_LIBWEBP_ANIM  0
+  #define  HAVE_LIBWEBP_ANIM  1
   #endif
   #if !defined(HAVE_LIBJP2K)
   #define  HAVE_LIBJP2K       1
