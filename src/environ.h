@@ -49,6 +49,7 @@
 #else
 
 #include <crtdbg.h>
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,12 +58,15 @@ extern "C" {
 /* Note that _WIN32 is defined for both 32 and 64 bit applications,
    whereas _WIN64 is defined only for the latter */
 
+#if 0
+// V677 Custom declaration of a standard 'intptr_t' type. The system header file should be used: #include <STDDEF.H>.
 #ifdef _WIN64
 typedef __int64 intptr_t;
 typedef unsigned __int64 uintptr_t;
 #else
 typedef int intptr_t;
 typedef unsigned int uintptr_t;
+#endif
 #endif
 
 /* VC++6 doesn't seem to have powf, expf. */
@@ -117,6 +121,7 @@ typedef int l_atomic;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 typedef intptr_t l_intptr_t;
 typedef uintptr_t l_uintptr_t;
 
