@@ -2269,8 +2269,7 @@ l_ok      rv = 0;
 	        gplotSimple1(nascore, GPLOT_PNG, "/tmp/lept/nascore",
 	                     "Score for split distribution");
 	        *pnascore = nascore;
-	    } else {
-	        numaDestroy(&nascore);
+					nascore = NULL;
 	    }
 	}
 
@@ -2279,7 +2278,8 @@ ende:
     if (pave2) numaDestroy(&naave2);
     if (pnum1) numaDestroy(&nanum1);
     if (pnum2) numaDestroy(&nanum2);
-    return rv;
+	 numaDestroy(&nascore);
+	 return rv;
 }
 
 
