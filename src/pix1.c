@@ -716,7 +716,7 @@ l_int32  bytes;
 
         /* If we're making a new pix ... */
     if (!pixd) {
-        if ((pixd = pixCreateTemplate(pixs)) == NULL)
+        if ((pixd = pixCreateTemplateNoInit(pixs)) == NULL)
             return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
         memcpy(pixd->data, pixs->data, bytes);
         return pixd;
