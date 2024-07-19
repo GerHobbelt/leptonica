@@ -1681,6 +1681,7 @@ return regTestCleanup(rp);
 		l_ok pixCopyColormap(PIX* pixd, const PIX* pixs);
 		l_ok pixTransferAllData(PIX* pixd, PIX** ppixs, l_int32 copytext, l_int32 copyformat);
 		l_ok pixSwapAndDestroy(PIX** ppixd, PIX** ppixs);
+		l_int32 pixGetRefCount(const PIX* pix);
 		l_int32 pixGetWidth(const PIX* pix);
 		l_int32 pixSetWidth(PIX* pix, l_int32 width);
 		l_int32 pixGetHeight(const PIX* pix);

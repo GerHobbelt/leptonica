@@ -1474,6 +1474,7 @@ LEPT_DLL extern l_ok pixResizeImageData ( PIX *pixd, const PIX *pixs );
 LEPT_DLL extern l_ok pixCopyColormap ( PIX *pixd, const PIX *pixs );
 LEPT_DLL extern l_ok pixTransferAllData ( PIX *pixd, PIX **ppixs, l_int32 copytext, l_int32 copyformat );
 LEPT_DLL extern l_ok pixSwapAndDestroy ( PIX **ppixd, PIX **ppixs );
+LEPT_DLL extern l_int32 pixGetRefCount( const PIX* pix );
 LEPT_DLL extern l_int32 pixGetWidth ( const PIX *pix );
 LEPT_DLL extern l_int32 pixSetWidth ( PIX *pix, l_int32 width );
 LEPT_DLL extern l_int32 pixGetHeight ( const PIX *pix );

@@ -1003,6 +1003,16 @@ pixSwapAndDestroy(PIX  **ppixd,
  *                              Pix Accessors                         *
  *--------------------------------------------------------------------*/
 l_int32
+pixGetRefCount(const PIX* pix)
+{
+	if (!pix)
+		return ERROR_INT("pix not defined", __func__, 0);
+
+	return pix->refcount;
+}
+
+
+l_int32
 pixGetWidth(const PIX  *pix)
 {
     if (!pix)
