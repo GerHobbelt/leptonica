@@ -121,26 +121,27 @@ static const l_float32  DefaultScaling = 1.0;
     /* the array refers to the strings in the array; the ptr to the      */
     /* array is not const and can be used 'extern' in other files.)      */
 LEPT_DLL const char *ImageFileFormatExtensions[] =
-         {"unknown",
-          "bmp",
-          "jpg",
-          "png",
-          "tif",
-          "tif",
-          "tif",
-          "tif",
-          "tif",
-          "tif",
-          "tif",
-          "pnm",
-          "ps",
-          "gif",
-          "jp2",
-          "webp",
-          "pdf",
-          "tif",
-          "default",
-          ""};
+         {"unknown",         // IFF_UNKNOWN = 0
+          "bmp",             // IFF_BMP = 1
+          "jpg",             // IFF_JFIF_JPEG = 2
+          "png",             // IFF_PNG = 3
+          "tif",             // IFF_TIFF = 4
+          "tif",             // IFF_TIFF_PACKBITS = 5
+          "tif",             // IFF_TIFF_RLE = 6
+          "tif",             // IFF_TIFF_G3 = 7
+          "tif",             // IFF_TIFF_G4 = 8
+          "tif",             // IFF_TIFF_LZW = 9
+          "tif",             // IFF_TIFF_ZIP = 10
+          "pnm",             // IFF_PNM = 11
+          "ps",              // IFF_PS = 12
+          "gif",             // IFF_GIF = 13
+          "jp2",             // IFF_JP2 = 14
+          "webp",            // IFF_WEBP = 15
+          "pdf",             // IFF_LPDF = 16
+          "tif",             // IFF_TIFF_JPEG = 17
+          "default",         // IFF_DEFAULT = 18
+          ""};               // IFF_SPIX = 19
+
 LEPT_DLL l_int32 NumImageFileFormatExtensions = sizeof(ImageFileFormatExtensions) / sizeof(ImageFileFormatExtensions[0]); /* array size */
 
     /* Local map of image file name extension to output format.
