@@ -897,7 +897,7 @@ FILE    *fp;
     ret = ptaWriteStream(fp, pta, type);
     fputc('\0', fp);
     fclose(fp);
-    *psize = *psize - 1;
+    if (*psize > 0) *psize = *psize - 1;
 #else
     L_INFO("no fmemopen API --> work-around: write to temp file\n", __func__);
   #ifdef _WIN32
@@ -1515,7 +1515,7 @@ FILE    *fp;
     ret = ptaaWriteStream(fp, ptaa, type);
     fputc('\0', fp);
     fclose(fp);
-    *psize = *psize - 1;
+    if (*psize > 0) *psize = *psize - 1;
 #else
     L_INFO("no fmemopen API --> work-around: write to temp file\n", __func__);
   #ifdef _WIN32

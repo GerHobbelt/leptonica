@@ -39,7 +39,7 @@
  *
  *    Syntax:
  *       croppdf basedir lrclear tbclear edgeclean lradd tbadd maxwiden
- *       title fileout
+ *       printwiden title fileout
  *
  *    The %basedir is a directory where the input pdf files are located.
  *    The program will operate on every file in this directory with
@@ -61,6 +61,11 @@
  *    The %maxwiden parameter allows the foreground to better fill an
  *    8.5 x 11 inch printed page.  It gives the maximum fractional horizontal
  *    stretching allowed.  Suggested values are between 1.0 and 1.15.
+ *
+ *    If you are not concerned with printing on paper, use the default
+ *    value 0 for %printwiden to skip; 1 for 8.5 x 11 paper; 2 for A4.
+ *    Widening only takes place if the ratio h/w exceeds the specified paper
+ *    size by 3%, and the horizontal scaling factor will not exceed 1.20.
  *
  *    The %title is the title given to the pdf.  Use %title == "none"
  *    to omit the title.
@@ -108,15 +113,15 @@ l_int32 main(int    argc,
 {
 char       buf[256];
 const char      *basedir, *fname, *tail, *basename, *imagedir, *title, *fileout;
-l_int32    lrclear, tbclear, edgeclean, lradd, tbadd;
+l_int32    lrclear, tbclear, edgeclean, lradd, tbadd, printwiden;
 l_int32    render_res, i, n;
 l_float32  maxwiden;
 SARRAY    *sa;
 
-    if (argc != 10)
+    if (argc != 11)
         return ERROR_INT(
             "Syntax: croppdf basedir lrclear tbclear edgeclean "
-            "lradd tbadd maxwiden title fileout", __func__, 1);
+            "lradd tbadd maxwiden printwiden title fileout", __func__, 1);
     basedir = argv[1];
     lrclear = atoi(argv[2]);
     tbclear = atoi(argv[3]);
@@ -124,8 +129,9 @@ SARRAY    *sa;
     lradd = atoi(argv[5]);
     tbadd = atoi(argv[6]);
     maxwiden = atof(argv[7]);
-    title = argv[8];
-    fileout = argv[9];
+    printwiden = atoi(argv[8]);
+    title = argv[9];
+    fileout = argv[10];
     setLeptDebugOK(1);
 
         /* Set up a directory for temp images */
@@ -180,7 +186,7 @@ SARRAY    *sa;
     sarrayWriteStderr(sa);
     lept_stderr("cropping ...\n");
     cropFilesToPdf(sa, lrclear, tbclear, edgeclean, lradd, tbadd, maxwiden,
-                   title, fileout);
+                   printwiden, title, fileout);
     sarrayDestroy(&sa);
     return 0;
 }
