@@ -285,6 +285,7 @@ PIX       *pixd, *pixt;
 			pixDestroy(&pixd);
 			return (PIX*)ERROR_PTR("pix border removal not made", __func__, NULL);
 		}
+		pixDestroy(&pixd);
 		pixd = pixt;
 	}
     return pixd;
