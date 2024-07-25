@@ -291,7 +291,7 @@ pixWriteStreamWebP(FILE    *fp,
                    l_int32  quality,
                    l_int32  lossless)
 {
-l_uint8  *filedata;
+l_uint8  *filedata = NULL;
 size_t    filebytes, nbytes;
 
     if (!fp)
@@ -300,7 +300,11 @@ size_t    filebytes, nbytes;
         return ERROR_INT("pixs not defined", __func__, 1);
 
     pixSetPadBits(pixs, 0);
-    pixWriteMemWebP(&filedata, &filebytes, pixs, quality, lossless);
+		if (pixWriteMemWebP(&filedata, &filebytes, pixs, quality, lossless)) {
+			if (filedata != NULL)
+				free(filedata);
+			return ERROR_INT("WebP image compression/output error", __func__, 1);
+		}
     rewind(fp);
     nbytes = fwrite(filedata, 1, filebytes, fp);
     free(filedata);
