@@ -249,7 +249,8 @@ SavedImage       si;
     }
 
     nimages = gif->ImageCount;
-    if (nimages > 1 && pagenum < 0)
+    if (nimages > 1 && pagenum < 0) {
+				int giferr;
         DGifCloseFile(gif, &giferr);
         L_ERROR("There are %d images in the file; gifanim is not supported\n",
                 __func__, nimages);
@@ -691,6 +692,7 @@ pixaReadMultipageMemGif(const l_uint8* cdata, size_t size)
 {
 	GifFileType* gif;
 	GifReadBuffer  buffer;
+	int giferr;
 
 	/* 5.1+ and not 5.1.2 */
 #if (GIFLIB_MAJOR < 5 || (GIFLIB_MAJOR == 5 && GIFLIB_MINOR == 0))
@@ -730,7 +732,6 @@ pixaReadMultipageMemGif(const l_uint8* cdata, size_t size)
 		}
 	}
 
-	int giferr;
 	DGifCloseFile(gif, &giferr);
 	return pixa;
 }

@@ -114,10 +114,9 @@
 l_int32 main(int    argc,
              const char **argv)
 {
-char       buf[256];
 const char      *basedir, *title, *fileout;
 l_int32    lrclear, tbclear, edgeclean, lrborder, tbborder;
-l_int32    printwiden, render_res;
+l_int32    printwiden;
 l_float32  maxwiden;
 SARRAY    *safiles;
 

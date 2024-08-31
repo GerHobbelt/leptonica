@@ -124,10 +124,8 @@
 l_int32 main(int    argc,
              const char **argv)
 {
-char       buf[256];
 const char      *basedir, *title, *fileout;
-char      *fname, *tail, *basename, *imagedir;
-l_int32    imres, render_res, onebit, savecolor, quality;
+l_int32    imres, onebit, savecolor, quality;
 l_float32  scalefactor;
 SARRAY    *safiles;
 

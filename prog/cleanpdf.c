@@ -145,7 +145,7 @@ l_int32 main(int    argc,
              const char **argv)
 {
 const char    *basedir, *title, *fileout;
-l_int32  res, contrast, rotation, opensize, render_res;
+l_int32  res, contrast, rotation, opensize;
 SARRAY  *safiles;
 
     if (argc != 8)
