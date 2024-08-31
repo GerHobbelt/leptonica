@@ -63,6 +63,12 @@
  *        successfully read gif files that it writes with this version;
  *        DGifSlurp() gets an internal error from an uninitialized array
  *        and returns failure.  The problem was fixed in 5.1.3.
+ *
+ *    Limitations:
+ *
+ *    (1) We do not support animated gif.  If the gif has more then one image,
+ *        an error message is returned.
+ *
  * </pre>
  */
 
@@ -224,6 +230,7 @@ l_int32         bytesRead;
  *      (1) This decodes the pix from the compressed gif stream and
  *          closes the stream.
  *      (2) It is static so that the stream is not exposed to clients.
+ *      (3) Leptonica does not support gifanim (more than 1 image in the file).
  * </pre>
  */
 static PIX *
@@ -243,8 +250,11 @@ SavedImage       si;
 
     nimages = gif->ImageCount;
     if (nimages > 1 && pagenum < 0)
-        L_WARNING("There are %d images in the file; we only read the first\n",
-                  __func__, nimages);
+        DGifCloseFile(gif, &giferr);
+        L_ERROR("There are %d images in the file; gifanim is not supported\n",
+                __func__, nimages);
+        return NULL;
+    }
 
 	if (pagenum < 0)
 		pagenum = 0;
