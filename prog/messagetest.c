@@ -97,7 +97,7 @@
 
 
 void TestMessageControl(l_int32  severity);
-void TestStderrRedirect();
+void TestStderrRedirect(void);
 
     /* dev null callback for stderr redirect */
 static void send_to_devnull(const char *msg) {}
@@ -165,7 +165,7 @@ l_int32  orig_severity;
     L_ERROR   ("Second message\n", "messagetest");
 }
 
-void TestStderrRedirect() {
+void TestStderrRedirect(void) {
 PIX  *pix1;
 
         /* Output to stderr works */

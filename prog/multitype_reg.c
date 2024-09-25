@@ -57,7 +57,7 @@ enum {
   BILINEAR = 2
 };
 
-static l_float32 *Generate3PtTransformVector();
+static l_float32 *Generate3PtTransformVector(void);
 static l_float32 *Generate4PtTransformVector(l_int32 type);
 
 #define  DO_ALL   1
@@ -451,7 +451,7 @@ L_REGPARAMS  *rp;
 
 
 static l_float32 *
-Generate3PtTransformVector()
+Generate3PtTransformVector(void)
 {
 l_int32     i;
 l_float32  *vc;

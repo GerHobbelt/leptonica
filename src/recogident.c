@@ -121,7 +121,7 @@ static l_int32 pixCorrelationBestShift(PIX *pix1, PIX *pix2, NUMA *nasum1,
 static L_RCH *rchCreate(l_int32 index, l_float32 score, char *text,
                         l_int32 sample, l_int32 xloc, l_int32 yloc,
                         l_int32 width);
-static L_RCHA *rchaCreate();
+static L_RCHA *rchaCreate(void);
 static l_int32 transferRchToRcha(L_RCH *rch, L_RCHA *rcha);
 static PIX *recogPreSplittingFilter(L_RECOG *recog, PIX *pixs, l_int32 minh,
                                     l_float32 minaf, l_int32 debug);
@@ -1134,7 +1134,7 @@ recogSkipIdentify(L_RECOG  *recog)
  *      (1) Be sure to destroy any existing rcha before assigning this.
  */
 static L_RCHA *
-rchaCreate()
+rchaCreate(void)
 {
 L_RCHA  *rcha;
 
