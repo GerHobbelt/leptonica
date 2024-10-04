@@ -11,6 +11,13 @@
 file(GLOB hdr "*.h")
 file(GLOB src "*.c")
 
+if (NOT WIN32 OR NOT ENABLE_LEPTWIN)
+   # leptwin.c can be a problem to compile on some environments
+   # the main use of this module (tesseract) no longer seems to need it
+   list(FILTER src EXCLUDE REGEX .*leptwin.c)
+   list(FILTER hdr EXCLUDE REGEX .*leptwin.h)
+endif()
+
 string(REPLACE "-O3" "-O2" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 
 add_library                     (leptonica ${src} ${hdr})

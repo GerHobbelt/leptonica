@@ -71,7 +71,9 @@ option(ENABLE_JPEG "Enable JPEG support" ON)
 option(ENABLE_TIFF "Enable TIFF support" ON)
 option(ENABLE_WEBP "Enable WebP support" OFF)
 option(ENABLE_OPENJPEG "Enable OpenJPEG support" OFF)
-
+if(WIN32)
+  option(ENABLE_LEPTWIN "Build leptwin.c on Windows" OFF)
+endif()
 set(leptonica_INSTALL_CMAKE_DIR
     "lib/cmake/leptonica"
     CACHE STRING "Install destination for CMake package files")
