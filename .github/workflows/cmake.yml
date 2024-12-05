@@ -63,6 +63,7 @@ jobs:
       # and the version of the header used at compile time (provided by the system):
       # libpng warning: Application built with libpng-1.4.12 but running with 1.6.40
       run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G Ninja -DCMAKE_FIND_FRAMEWORK=LAST -DSW_BUILD=OFF -DBUILD_PROG=ON -DBUILD_SHARED_LIBS=ON -DBUILD_TEST=ON
+      #run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G Ninja -DSW_BUILD=OFF -DBUILD_PROG=ON -DBUILD_SHARED_LIBS=ON
 
     - name: Build
       run: cmake --build build --config ${{env.BUILD_TYPE}}
