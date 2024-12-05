@@ -182,8 +182,8 @@ PIXCMAP   *cmap;
          * Note that the first 4 bytes give the infoheader size.
          * The infoheader pointer on sparc64 is not 32-bit aligned. */
     bmpih_b = (l_uint8 *)bmpih;
-    ihbytes = bmpih_b[0] + (bmpih_b[1] << 8) +
-              (bmpih_b[2] << 16) + (bmpih_b[3] << 24);
+    ihbytes = bmpih_b[0] | ((l_int32)bmpih_b[1] << 8) |
+              ((l_int32)bmpih_b[2] << 16) | ((l_uint32)bmpih_b[3] << 24);
     width = convertOnBigEnd32(bmpih->biWidth);
     height = convertOnBigEnd32(bmpih->biHeight);
     depth = convertOnBigEnd16(bmpih->biBitCount);
@@ -432,8 +432,11 @@ size_t    size, nbytes;
     rewind(fp);
     nbytes = fwrite(data, 1, size, fp);
     free(data);
-    if (nbytes != size)
+    if (nbytes != size) {
+        L_ERROR("Truncation: nbytes = %zu, size = %zu\n",
+                __func__,  nbytes, size);
         return ERROR_INT("Write error", __func__, 1);
+    }
     return 0;
 }
 
