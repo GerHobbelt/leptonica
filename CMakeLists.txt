@@ -379,7 +379,7 @@ configure_file(lept.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/lept.pc.in @ONLY)
 # to resolve generator expression in OUTPUT_NAME
 file(
   GENERATE
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lept_$<CONFIG>.pc
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lept.pc
   INPUT ${CMAKE_CURRENT_BINARY_DIR}/lept.pc.in)
 
 configure_file(
@@ -389,7 +389,7 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/LeptonicaConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/LeptonicaConfig.cmake @ONLY)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lept_$<CONFIG>.pc
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lept.pc
         DESTINATION lib/pkgconfig)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LeptonicaConfig.cmake
               ${CMAKE_CURRENT_BINARY_DIR}/LeptonicaConfig-version.cmake
