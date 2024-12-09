@@ -181,6 +181,7 @@ PIXAC     *pixac1 = NULL;
             lept_stderr("%d . ", i);
         fname = sarrayGetString(sa, i, L_NOCOPY);
         processcolor = FALSE;
+        pix2 = NULL;
         pixs = pixRead(fname);
         pix1 = pixRemoveColormap(pixs, REMOVE_CMAP_BASED_ON_SRC);
         if (!onebit) {  /* scale and save the input image */
