@@ -916,8 +916,10 @@ pixaDisplayTiledInColumns(PIXA      *pixas,
                           l_int32    border)
 {
 l_int32   i, j, index, n, x, y, nrows, wb, hb, w, h, maxd, maxh, bordval, res;
+#if 0
 size_t    size;
 l_uint8  *data;
+#endif
 BOX      *box;
 BOXA     *boxa;
 PIX      *pix1, *pix2, *pix3, *pixd;
