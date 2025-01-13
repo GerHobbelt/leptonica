@@ -1080,7 +1080,7 @@ size_t         fullpathsize;
         /* Windows: L_DISPLAY_WITH_IV || L_DISPLAY_WITH_OPEN */
 	pathname = genPathname(tempname, NULL);
 	fullpathsize = strlen(pathname) + L_MAX(Bufsize, _MAX_PATH);
-	fullpath = LEPT_MALLOC(fullpathsize);
+	fullpath = (char *)LEPT_MALLOC(fullpathsize);
 	
 	_fullpath(fullpath, pathname, fullpathsize);
 
