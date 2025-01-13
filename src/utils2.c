@@ -3305,7 +3305,7 @@ size_t   pathlen;
     memset(result, 0, nbytes);
 
     {
-        char *tmpDir = getenv("TMPDIR");
+        const char *tmpDir = getenv("TMPDIR");
         if (tmpDir == NULL) {
             tmpDir = "/tmp";
         }
