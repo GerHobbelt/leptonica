@@ -95,7 +95,7 @@
  *           FILE      *fopenWriteWinTempfile()
  *
  *       Multi-platform functions that avoid C-runtime boundary crossing
- *       with Windows DLLs
+ *       with Windows DLLs  (use in programs only)
  *           FILE      *lept_fopen()
  *           l_int32    lept_fclose()
  *           void      *lept_calloc()
@@ -112,7 +112,7 @@
  *           l_int32    lept_cp()
  *
  *       Special debug/test function for calling 'system'
- *           void       callSystemDebug()
+ *           l_int32    callSystemDebug()
  *
  *       General file name operations
  *           l_int32    splitPathAtDirectory()
@@ -145,10 +145,10 @@
  *  (5) For moving, copying and removing files and directories that are in
  *      subdirectories of /tmp, use the lept_*() file system shell wrappers:
  *         lept_mkdir(), lept_rmdir(), lept_mv(), lept_rm() and lept_cp().
- *  (6) Use the lept_*() C library wrappers.  These work properly on
- *      Windows, where the same DLL must perform complementary operations
- *      on file streams (open/close) and heap memory (malloc/free):
- *         lept_fopen(), lept_fclose(), lept_calloc() and lept_free().
+ *  (6) For programs use the lept_fopen(), lept_fclose(), lept_calloc()
+ *      and lept_free() C library wrappers.  These work properly on Windows,
+ *      where the same DLL must perform complementary operations on
+ *      file streams (open/close) and heap memory (malloc/free).
  *  (7) Why read and write files to temp directories?
  *      The library needs the ability to read and write ephemeral
  *      files to default places, both for generating debugging output
@@ -391,7 +391,7 @@ l_int32  i;
     }
 
         /* Didn't find a NUL byte */
-    L_ERROR("NUL byte not found in %d bytes\n", __func__, size);
+    L_ERROR("NUL byte not found in %zu bytes\n", __func__, size);
     return size;
 }
 
@@ -1893,7 +1893,8 @@ FILE  *fp;
         return (FILE*)ERROR_PTR_1("tail not found", filename, __func__, NULL);
     fp = fopen(tail, "rb");
     if (!fp)
-        fp = (FILE *)ERROR_PTR_1("file not found", tail, __func__, NULL);
+        L_ERROR("failed to open locally with tail %s for filename %s\n",
+                __func__, tail, filename);
     LEPT_FREE(tail);
     return fp;
 }
@@ -2656,7 +2657,7 @@ l_int32  ret;
  * \brief   callSystemDebug()
  *
  * \param[in]    cmd      command to be exec'd
- * \return  void
+ * \return  0 on success
  *
  * <pre>
  * Notes:
@@ -2667,18 +2668,18 @@ l_int32  ret;
  *          generate an error message.
  * </pre>
  */
-void
+l_int32
 callSystemDebug(const char *cmd)
 {
 l_int32  ret;
 
     if (!cmd) {
         L_ERROR("cmd not defined\n", __func__);
-        return;
+        return 1;
     }
     if (LeptDebugOK == FALSE) {
         L_INFO("'system' calls are disabled\n", __func__);
-        return;
+        return 1;
     }
 
 #if defined(__APPLE__)  /* iOS 11 does not support system() */
@@ -2694,6 +2695,8 @@ l_int32  ret;
    ret = system(cmd);
 
 #endif /* __APPLE__ */
+
+   return ret;
 }
 
 
@@ -3087,7 +3090,7 @@ genPathname(const char  *dir,
 l_int32  rewrite_tmp = TRUE;
 #else
 l_int32  rewrite_tmp = FALSE;
-#endif  /* _WIN32 */
+#endif  /* REWRITE_TMP */
 char    *cdir, *pathout;
 l_int32  dirlen, namelen;
 size_t   size;

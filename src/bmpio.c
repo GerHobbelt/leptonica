@@ -133,20 +133,16 @@ pixReadMemBmp(const l_uint8  *cdata,
               size_t          size)
 {
 l_uint8    pel[4];
-l_uint8   *cmapBuf, *fdata, *data;
+l_uint8   *cmapBuf, *fdata, *data, *bmpih_b;
 l_int16    bftype, depth, d;
-l_int32    offset, ihbytes, width, height, height_neg, xres, yres, spp;
+l_int32    offset, width, height, height_neg, xres, yres, spp;
 l_int32    compression, imagebytes, fdatabytes, cmapbytes, ncolors, maxcolors;
 l_int32    fdatabpl, extrabytes, filebpp, pixWpl, pixBpl, i, j, k;
+l_uint32   ihbytes;
 l_uint32  *line, *pixdata, *pword;
 l_int64    npixels;
 BMP_FH    *bmpfh;
-#if defined(__GNUC__)
-BMP_HEADER *bmph;
-#define bmpih (&bmph->bmpih)
-#else
-BMP_IH    *bmpih;
-#endif
+BMP_IH    bmpih;
 PIX       *pix, *pix1;
 PIXCMAP   *cmap;
 
@@ -160,12 +156,8 @@ PIXCMAP   *cmap;
     bftype = bmpfh->bfType[0] + ((l_int32)bmpfh->bfType[1] << 8);
     if (bftype != BMP_ID)
         return (PIX *)ERROR_PTR("not bmf format", __func__, NULL);
-#if defined(__GNUC__)
-    bmph = (BMP_HEADER *)bmpfh;
-#else
-    bmpih = (BMP_IH *)(cdata + BMP_FHBYTES);
-#endif
-    compression = convertOnBigEnd32(bmpih->biCompression);
+    memcpy(&bmpih, cdata + BMP_FHBYTES, BMP_IHBYTES);
+    compression = convertOnBigEnd32(bmpih.biCompression);
     if (compression != 0)
         return (PIX *)ERROR_PTR("cannot read compressed BMP files",
                                 __func__, NULL);
@@ -177,14 +169,17 @@ PIXCMAP   *cmap;
     offset += (l_uint32)bmpfh->bfOffBits[3] << 24;
 
         /* Read the remaining useful data in the infoheader.
-         * Note that the first 4 bytes give the infoheader size. */
-    ihbytes = convertOnBigEnd32(*(l_uint32 *)(bmpih));
-    width = convertOnBigEnd32(bmpih->biWidth);
-    height = convertOnBigEnd32(bmpih->biHeight);
-    depth = convertOnBigEnd16(bmpih->biBitCount);
-    imagebytes = convertOnBigEnd32(bmpih->biSizeImage);
-    xres = convertOnBigEnd32(bmpih->biXPelsPerMeter);
-    yres = convertOnBigEnd32(bmpih->biYPelsPerMeter);
+         * Note that the first 4 bytes give the infoheader size.
+         * The infoheader pointer on sparc64 is not 32-bit aligned. */
+    bmpih_b = (l_uint8 *)&bmpih;
+    ihbytes = bmpih_b[0] | ((l_int32)bmpih_b[1] << 8) |
+              ((l_int32)bmpih_b[2] << 16) | ((l_uint32)bmpih_b[3] << 24);
+    width = convertOnBigEnd32(bmpih.biWidth);
+    height = convertOnBigEnd32(bmpih.biHeight);
+    depth = convertOnBigEnd16(bmpih.biBitCount);
+    imagebytes = convertOnBigEnd32(bmpih.biSizeImage);
+    xres = convertOnBigEnd32(bmpih.biXPelsPerMeter);
+    yres = convertOnBigEnd32(bmpih.biYPelsPerMeter);
 
         /* Some sanity checking.  We impose limits on the image
          * dimensions, resolution and number of pixels.  We make sure the
@@ -427,8 +422,11 @@ size_t    size, nbytes;
     rewind(fp);
     nbytes = fwrite(data, 1, size, fp);
     free(data);
-    if (nbytes != size)
+    if (nbytes != size) {
+        L_ERROR("Truncation: nbytes = %zu, size = %zu\n",
+                __func__,  nbytes, size);
         return ERROR_INT("Write error", __func__, 1);
+    }
     return 0;
 }
 
@@ -469,12 +467,7 @@ l_uint32    offbytes, fimagebytes;
 l_uint32   *line, *pword;
 size_t      fsize;
 BMP_FH     *bmpfh;
-#if defined(__GNUC__)
-BMP_HEADER *bmph;
-#define bmpih (&bmph->bmpih)
-#else
-BMP_IH     *bmpih;
-#endif
+BMP_IH     bmpih;
 PIX        *pix;
 PIXCMAP    *cmap;
 RGBA_QUAD  *pquad;
@@ -550,7 +543,7 @@ RGBA_QUAD  *pquad;
             ncolors = 2;
             cta = (l_uint8 *)bwmap;
         } else {   /* d = 2,4,8; use a grayscale output colormap */
-            ncolors = 1 << fdepth;
+            ncolors = 1 << d;
             cmaplen = ncolors * sizeof(RGBA_QUAD);
             heapcm = 1;
             cta = (l_uint8 *)LEPT_CALLOC(cmaplen, 1);
@@ -565,7 +558,8 @@ RGBA_QUAD  *pquad;
     }
 
 #if DEBUG
-    {l_uint8  *pcmptr;
+    if (pixGetColormap(pix) != NULL) {
+        l_uint8  *pcmptr;
         pcmptr = (l_uint8 *)pixGetColormap(pix)->array;
         lept_stderr("Pix colormap[0] = %c%c%c%d\n",
                     pcmptr[0], pcmptr[1], pcmptr[2], pcmptr[3]);
@@ -594,21 +588,18 @@ RGBA_QUAD  *pquad;
     bmpfh->bfOffBits[3] = (l_uint8)(offbytes >> 24);
 
         /* Convert to little-endian and write the info header data */
-#if defined(__GNUC__)
-    bmph = (BMP_HEADER *)bmpfh;
-#else
-    bmpih = (BMP_IH *)(fdata + BMP_FHBYTES);
-#endif
-    bmpih->biSize = convertOnBigEnd32(BMP_IHBYTES);
-    bmpih->biWidth = convertOnBigEnd32(w);
-    bmpih->biHeight = convertOnBigEnd32(h);
-    bmpih->biPlanes = convertOnBigEnd16(1);
-    bmpih->biBitCount = convertOnBigEnd16(fdepth);
-    bmpih->biSizeImage = convertOnBigEnd32(fimagebytes);
-    bmpih->biXPelsPerMeter = convertOnBigEnd32(xres);
-    bmpih->biYPelsPerMeter = convertOnBigEnd32(yres);
-    bmpih->biClrUsed = convertOnBigEnd32(ncolors);
-    bmpih->biClrImportant = convertOnBigEnd32(ncolors);
+    bmpih.biSize = convertOnBigEnd32(BMP_IHBYTES);
+    bmpih.biWidth = convertOnBigEnd32(w);
+    bmpih.biHeight = convertOnBigEnd32(h);
+    bmpih.biPlanes = convertOnBigEnd16(1);
+    bmpih.biBitCount = convertOnBigEnd16(fdepth);
+    bmpih.biCompression = 0;
+    bmpih.biSizeImage = convertOnBigEnd32(fimagebytes);
+    bmpih.biXPelsPerMeter = convertOnBigEnd32(xres);
+    bmpih.biYPelsPerMeter = convertOnBigEnd32(yres);
+    bmpih.biClrUsed = convertOnBigEnd32(ncolors);
+    bmpih.biClrImportant = convertOnBigEnd32(ncolors);
+    memcpy(fdata + BMP_FHBYTES, &bmpih, BMP_IHBYTES);
 
         /* Copy the colormap data and free the cta if necessary */
     if (ncolors > 0) {

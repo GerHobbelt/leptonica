@@ -171,7 +171,7 @@ SRC =		adaptmap_reg.c adaptnorm_reg.c affine_reg.c \
 		edge_reg.c encoding_reg.c enhance_reg.c equal_reg.c \
 		expand_reg.c extrema_reg.c falsecolor_reg.c \
 		fhmtauto_reg.c files_reg.c \
-		findcorners_reg.c findpattern_reg.c \
+		findcorners_reg.c findpattern1_reg.c findpattern2_reg.c \
 		flipdetect_reg.c fmorphauto_reg.c \
 		fpix1_reg.c fpix2_reg.c \
 		genfonts_reg.c gifio_reg.c \
@@ -238,7 +238,8 @@ SRC =		adaptmap_reg.c adaptnorm_reg.c affine_reg.c \
 		lightcolortest.c listtest.c \
 		livre_adapt.c livre_hmt.c livre_makefigs.c livre_orient.c \
 		livre_pageseg.c livre_seedgen.c livre_tophat.c \
-		maketile.c maptest.c messagetest.c misctest1.c \
+		maketile.c maptest.c messagetest.c \
+		misctest1.c misctest2.c \
 		modifyhuesat.c morphtest1.c \
 		numaranktest.c otsutest1.c otsutest2.c \
 		pagesegtest1.c pagesegtest2.c \
@@ -515,8 +516,11 @@ files_reg:	files_reg.o $(LEPTLIB)
 findcorners_reg:	findcorners_reg.o $(LEPTLIB)
 	$(CC) -o findcorners_reg findcorners_reg.o $(ALL_LIBS) $(EXTRALIBS)
 
-findpattern_reg:	findpattern_reg.o $(LEPTLIB)
-	$(CC) -o findpattern_reg findpattern_reg.o $(ALL_LIBS) $(EXTRALIBS)
+findpattern1_reg:	findpattern1_reg.o $(LEPTLIB)
+	$(CC) -o findpattern1_reg findpattern1_reg.o $(ALL_LIBS) $(EXTRALIBS)
+
+findpattern2_reg:	findpattern2_reg.o $(LEPTLIB)
+	$(CC) -o findpattern2_reg findpattern2_reg.o $(ALL_LIBS) $(EXTRALIBS)
 
 flipdetect_reg:	flipdetect_reg.o $(LEPTLIB)
 	$(CC) -o flipdetect_reg flipdetect_reg.o $(ALL_LIBS) $(EXTRALIBS)
@@ -1033,6 +1037,9 @@ messagetest:	messagetest.o $(LEPTLIB)
 
 misctest1:	misctest1.o $(LEPTLIB)
 	$(CC) -o misctest1 misctest1.o $(ALL_LIBS) $(EXTRALIBS)
+
+misctest2:	misctest2.o $(LEPTLIB)
+	$(CC) -o misctest2 misctest2.o $(ALL_LIBS) $(EXTRALIBS)
 
 modifyhuesat:	modifyhuesat.o $(LEPTLIB)
 	$(CC) -o modifyhuesat modifyhuesat.o $(ALL_LIBS) $(EXTRALIBS)

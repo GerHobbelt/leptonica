@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: ilammy/setup-nasm@v1
       - name: "Checkout ${{ github.ref }} ( ${{ github.sha }} )"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: git fetch --prune --unshallow --tags
@@ -45,9 +45,9 @@ jobs:
       - name: Build and Install libpng
         shell: cmd
         run: |
-             curl -sSL https://download.sourceforge.net/libpng/lpng1639.zip -o lpng1640.zip
-             unzip.exe -qq lpng1640.zip
-             cd lpng1640
+             curl -sSL https://download.sourceforge.net/libpng/lpng1643.zip -o lpng1643.zip
+             unzip.exe -qq lpng1643.zip
+             cd lpng1643
              cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${{env.ILOC}} -DCMAKE_INSTALL_PREFIX=${{env.ILOC}} -DPNG_TESTS=OFF -DPNG_SHARED=OFF
              cmake --build build --config Release --target install
              cd ..
@@ -113,9 +113,11 @@ jobs:
              zstd -d xz-5.4.5.tar.zst
              tar xf  xz-5.4.5.tar
              cd xz-5.4.5
-             cmake -Bbuild -DCMAKE_PREFIX_PATH=${{env.ILOC}} -DCMAKE_INSTALL_PREFIX=${{env.ILOC}} -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON
-             cmake --build build --config Release --target install
-             cd ..
+             ; git clone --depth 1 https://github.com/tukaani-project/xz.git
+             ; cd xz
+             ; cmake -Bbuild -DCMAKE_PREFIX_PATH=${{env.ILOC}} -DCMAKE_INSTALL_PREFIX=${{env.ILOC}} -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON
+             ; cmake --build build --config Release --target install
+             ; cd ..
              
       - name: Build and Install libtiff
         shell: cmd
@@ -144,7 +146,7 @@ jobs:
              rm -Rf ${{env.ILOC}}/bin/*.exe
              
       - name: Upload Build Results
-        uses: actions/upload-artifact@v3.1.1
+        uses: actions/upload-artifact@v4
         with:
           name: leptonica-${{ steps.get_version.outputs.version }}-VS2019_win64
           path: ${{env.ILOC}}

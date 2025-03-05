@@ -1,3 +1,6 @@
+
+set(math_progs "dna_reg|extrema_reg|insert_reg|locminmax_reg|numa1_reg|otsutest1|plottest|pta_reg|rotatefastalt|watershed_reg")
+
 ########################################
 # FUNCTION add_prog_target
 ########################################
@@ -12,7 +15,11 @@ function(add_prog_target target)
     if (BUILD_SHARED_LIBS)
         target_compile_definitions  (${target} PRIVATE -DLIBLEPT_IMPORTS)
     endif()
-    target_link_libraries           (${target} leptonica)
+    if(FREEBSD AND HAVE_LIBM AND ${target} MATCHES ${math_progs})
+      target_link_libraries         (${target} leptonica m)
+    else()
+      target_link_libraries         (${target} leptonica)
+    endif()
     set_target_properties           (${target} PROPERTIES FOLDER prog)
 endfunction(add_prog_target)
 ########################################
@@ -82,7 +89,8 @@ add_prog_target(falsecolor_reg falsecolor_reg.c)
 add_prog_target(fhmtauto_reg fhmtauto_reg.c)
 add_prog_target(files_reg files_reg.c)
 add_prog_target(findcorners_reg findcorners_reg.c)
-add_prog_target(findpattern_reg findpattern_reg.c)
+add_prog_target(findpattern1_reg findpattern1_reg.c)
+add_prog_target(findpattern2_reg findpattern2_reg.c)
 add_prog_target(flipdetect_reg flipdetect_reg.c)
 add_prog_target(fmorphauto_reg fmorphauto_reg.c)
 add_prog_target(fpix1_reg fpix1_reg.c)
@@ -252,6 +260,7 @@ add_prog_target(maketile maketile.c)
 add_prog_target(maptest maptest.c)
 add_prog_target(messagetest messagetest.c)
 add_prog_target(misctest1 misctest1.c)
+add_prog_target(misctest2 misctest2.c)
 add_prog_target(modifyhuesat modifyhuesat.c)
 add_prog_target(morphseq_reg morphseq_reg.c)
 add_prog_target(morphtest1 morphtest1.c)

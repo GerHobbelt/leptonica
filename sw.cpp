@@ -19,7 +19,7 @@ void build(Solution &s)
         t += "org.sw.demo.webmproject.webp"_dep;
     };
 
-    auto &leptonica = s.addTarget<LibraryTarget>("danbloomberg.leptonica", "1.84.1");
+    auto &leptonica = s.addTarget<LibraryTarget>("danbloomberg.leptonica", "1.85.0");
     leptonica += Git("https://github.com/DanBloomberg/leptonica");
 
     {
@@ -133,7 +133,8 @@ void build(Solution &s)
             {"fhmtauto_reg", {"fhmtauto_reg.c"}},
             {"files_reg", {"files_reg.c"}},
             {"findcorners_reg", {"findcorners_reg.c"}},
-            {"findpattern_reg", {"findpattern_reg.c"}},
+            {"findpattern1_reg", {"findpattern1_reg.c"}},
+            {"findpattern2_reg", {"findpattern2_reg.c"}},
             {"flipdetect_reg", {"flipdetect_reg.c"}},
             {"fmorphauto_reg", {"fmorphauto_reg.c"}},
             {"fpix1_reg", {"fpix1_reg.c"}},
@@ -303,6 +304,7 @@ void build(Solution &s)
             {"maptest", {"maptest.c"}},
             {"messagetest", {"messagetest.c"}},
             {"misctest1", {"misctest1.c"}},
+            {"misctest2", {"misctest2.c"}},
             {"modifyhuesat", {"modifyhuesat.c"}},
             {"morphseq_reg", {"morphseq_reg.c"}},
             {"morphtest1", {"morphtest1.c"}},
