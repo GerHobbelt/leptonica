@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macos-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v4
@@ -55,7 +55,6 @@ jobs:
            packages=(
              giflib
              gnuplot
-             ninja
              openjpeg
              webp
            )
