@@ -49,7 +49,6 @@ static const char *fnames[] = {"weasel32.png", "weasel2.4c.png",
                                "weasel4.16c.png", "weasel4.8g.png",
                                "weasel8.149g.png", "weasel8.16g.png"};
 
-LEPT_DLL extern const char *ImageFileFormatExtensions[];
 static void get_format_data(l_int32 i, l_uint8 *data, size_t size);
 
 
@@ -239,7 +238,7 @@ l_int32  ret, format, w, h, d, bps, spp, iscmap;
         lept_stderr("Format data for image %d:\n"
                     "  format: %s, size (w, h, d) = (%d, %d, %d)\n"
                     "  bps = %d, spp = %d, iscmap = %d\n",
-                    i, ImageFileFormatExtensions[format], w, h, d,
+                    i, getFormatExtension(format), w, h, d,
                     bps, spp, iscmap);
     return;
 }

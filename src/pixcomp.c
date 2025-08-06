@@ -163,10 +163,6 @@ static const l_int32  InitialPtrArraySize = 20;      /*!< n'importe quoi */
     /* Bound on size for a compressed data string */
 static const size_t  MaxDataSize = 1000000000;   /* 1 GB */
 
-    /* These two globals are defined in writefile.c */
-extern l_int32  NumImageFileFormatExtensions;
-extern const char  *ImageFileFormatExtensions[];
-
     /* Static functions */
 static l_int32 pixacompExtendArray(PIXAC *pixac);
 static l_int32 pixcompFastConvertToPdfData(PIXC *pixc, const char *title,
@@ -2272,9 +2268,9 @@ pixcompWriteStreamInfo(FILE        *fp,
         fprintf(fp, "    has colormap\n");
     else
         fprintf(fp, "    no colormap\n");
-    if (pixc->comptype < NumImageFileFormatExtensions) {
+    if (!isSupportedFormat(pixc->comptype)) {
         fprintf(fp, "    comptype = %s (%d)\n",
-                ImageFileFormatExtensions[pixc->comptype], pixc->comptype);
+			    getFormatExtension(pixc->comptype), pixc->comptype);
     } else {
         fprintf(fp, "    Error!! Invalid comptype index: %d\n", pixc->comptype);
     }
@@ -2359,7 +2355,6 @@ PIXC    *pixc;
     return 0;
 }
 
-extern const char *ImageFileFormatExtensions[];
 
 /*!
  * \brief   pixcompWriteFile()
@@ -2384,7 +2379,7 @@ char   buf[128];
         return ERROR_INT("pixc not defined", __func__, 1);
 
     snprintf(buf, sizeof(buf), "%s.%s", rootname,
-             ImageFileFormatExtensions[pixc->comptype]);
+		     getFormatExtension(pixc->comptype));
     l_binaryWrite(buf, "w", pixc->data, pixc->size);
     return 0;
 }

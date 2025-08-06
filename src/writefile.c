@@ -266,8 +266,7 @@ PIX     *pix;
         return ERROR_INT("rootname not defined", __func__, 1);
     if (!pixa)
         return ERROR_INT("pixa not defined", __func__, 1);
-    if (format < 0 || format == IFF_UNKNOWN ||
-        format >= NumImageFileFormatExtensions)
+    if (!isSupportedFormat(format))
         return ERROR_INT("invalid format", __func__, 1);
 
     n = pixaGetCount(pixa);
@@ -278,7 +277,7 @@ PIX     *pix;
         else
             pixformat = format;
         snprintf(bigbuf, Bufsize, "%s%03d.%s", rootname, i,
-                 ImageFileFormatExtensions[pixformat]);
+			     getFormatExtension(pixformat));
         pixWrite(bigbuf, pix, pixformat);
         pixDestroy(&pix);
     }
@@ -671,6 +670,10 @@ PIXCMAP  *cmap;
     return 0;
 }
 
+l_ok isSupportedFormat(l_int32 format) {
+	return !(format < 0 || format == IFF_UNKNOWN ||
+		format >= NumImageFileFormatExtensions);
+}
 
 /*!
  * \brief   getFormatExtension()

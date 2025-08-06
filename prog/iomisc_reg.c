@@ -57,8 +57,6 @@
 #include "monolithic_examples.h"
 
 
-LEPT_DLL extern const char *ImageFileFormatExtensions[];
-
 static const size_t  tiffsize[6] = {65674, 34872, 20482, 20998, 11178, 21500};
 
 
@@ -210,7 +208,7 @@ L_REGPARAMS  *rp;
     regTestCompareValues(rp, format, IFF_PNG, 0.0);  /* 17 */
     if (rp->display)
         lept_stderr("Input format extension: %s\n",
-                    ImageFileFormatExtensions[format]);
+			        getFormatExtension(format));
     pixSetText(pixs, "reconstituted 4-bit weasel");
     text = pixGetText(pixs);
     if (rp->display && text && strlen(text) != 0)
@@ -224,7 +222,7 @@ L_REGPARAMS  *rp;
         lept_stderr("w = %d, h = %d, bps = %d, spp = %d, res = %d, cmap = %d\n",
                     w, h, bps, spp, res, iscmap);
         lept_stderr("Input format extension: %s\n",
-                    ImageFileFormatExtensions[format]);
+			        getFormatExtension(format));
     }
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     pixWrite("/tmp/lept/io/fract1.tif", pixs, IFF_TIFF);

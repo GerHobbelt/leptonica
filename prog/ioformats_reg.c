@@ -96,7 +96,6 @@ static PIX *make_24_bpp_pix(PIX *pixs);
 static l_int32 get_header_data(const char *filename, l_int32 true_format);
 static const char *get_tiff_compression_name(l_int32 format);
 
-LEPT_DLL extern const char *ImageFileFormatExtensions[];
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -952,7 +951,7 @@ size_t      size1, size2;
             lept_stderr("Format data for image %s with format %s:\n"
                         "  nbytes = %lu, size (w, h, d) = (%d, %d, %d)\n"
                         "  bps = %d, spp = %d, iscmap = %d\n",
-                        filename, ImageFileFormatExtensions[format1],
+                        filename, getFormatExtension(format1),
                         (unsigned long)size1, w1, h1, d1, bps1, spp1, iscmap1);
         }
         if (format1 != true_format) {

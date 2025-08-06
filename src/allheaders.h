@@ -2782,6 +2782,7 @@ LEPT_DLL extern l_int32 getImpliedFileFormat ( const char *filename );
 LEPT_DLL extern l_int32 getFormatFromExtension ( const char *extension );
 LEPT_DLL extern l_ok pixGetAutoFormat ( PIX *pix, l_int32 *pformat );
 LEPT_DLL extern const char * getFormatExtension ( l_int32 format );
+LEPT_DLL extern l_ok isSupportedFormat (l_int32 format);
 LEPT_DLL extern l_ok pixWriteMem ( l_uint8 **pdata, size_t *psize, PIX *pix, l_int32 format );
 LEPT_DLL extern l_ok l_fileDisplay ( const char *fname, l_int32 x, l_int32 y, l_float32 scale );
 LEPT_DLL extern l_ok pixDisplay ( PIX *pixs, l_int32 x, l_int32 y );
@@ -2792,6 +2793,9 @@ LEPT_DLL extern void changeFormatForMissingLib ( l_int32 *pformat );
 LEPT_DLL extern l_ok pixDisplayWrite ( PIX *pixs, l_int32 reduction );
 LEPT_DLL extern l_uint8 * zlibCompress ( const l_uint8 *datain, size_t nin, size_t *pnout );
 LEPT_DLL extern l_uint8 * zlibUncompress ( const l_uint8 *datain, size_t nin, size_t *pnout );
+
+/* defined in morph.c */
+LEPT_DLL extern l_int32 MORPH_BC;
 
 #ifdef __cplusplus
 }

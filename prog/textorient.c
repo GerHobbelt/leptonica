@@ -62,7 +62,6 @@
 
 #define BUF_SIZE 512
 
-LEPT_DLL extern const char *ImageFileFormatExtensions[];
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -94,7 +93,7 @@ PIX         *pixs, *pixd;
 
     pixformat = pixChooseOutputFormat(pixd);
     snprintf(buf, BUF_SIZE, "%s.%s", fileout,
-             ImageFileFormatExtensions[pixformat]);
+		     getFormatExtension(pixformat));
     pixWrite(buf, pixd, pixformat);
     pixDestroy(&pixs);
     pixDestroy(&pixd);

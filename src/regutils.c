@@ -72,9 +72,6 @@
 #include <string.h>
 #include "allheaders.h"
 
-extern l_int32 NumImageFileFormatExtensions;
-extern const char *ImageFileFormatExtensions[];
-
 static char *getRootNameFromArgv0(const char *argv0);
 
 
@@ -697,7 +694,7 @@ char  namebuf[256];
         rp->success = FALSE;
         return ERROR_INT("pix not defined", __func__, 1);
     }
-    if (format < 0 || format >= NumImageFileFormatExtensions) {
+    if (!isSupportedFormat(format)) {
         rp->success = FALSE;
         return ERROR_INT("invalid format", __func__, 1);
     }
@@ -708,7 +705,7 @@ char  namebuf[256];
 
         /* Generate the local file name */
     snprintf(namebuf, sizeof(namebuf), "/tmp/lept/regout/%s.%02d.%s",
-             rp->testname, rp->index + 1, ImageFileFormatExtensions[format]);
+             rp->testname, rp->index + 1, getFormatExtension(format));
 
         /* Write the local file */
     if (pixGetDepth(pix) < 8)
@@ -815,7 +812,7 @@ l_int32  ind;
 
     ind = (index >= 0) ? index : rp->index;
     snprintf(buf, sizeof(buf), "/tmp/lept/regout/%s.%02d.%s",
-             rp->testname, ind, ImageFileFormatExtensions[format]);
+             rp->testname, ind, getFormatExtension(format));
     return stringNew(buf);
 }
 

@@ -1950,7 +1950,6 @@ l_int32  w, h;
 /*--------------------------------------------------------------------*
  *                    Print output for debugging                      *
  *--------------------------------------------------------------------*/
-extern const char *ImageFileFormatExtensions[];
 
 /*!
  * \brief   pixPrintStreamInfo()
@@ -1987,7 +1986,7 @@ const PIXCMAP  *cmap;
         fprintf(fp, "    no colormap\n");
     informat = pixGetInputFormat(pix);
     fprintf(fp, "    input format: %d (%s)\n", informat,
-            ImageFileFormatExtensions[informat]);
+		    getFormatExtension(informat));
     if (pix->text != NULL)
         fprintf(fp, "    text: %s\n", pix->text);
 

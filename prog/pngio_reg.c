@@ -85,7 +85,6 @@ static l_int32 test_4bpp_cmap_trans(L_REGPARAMS  *rp);
 static l_int32 test_8bpp_cmap_trans(L_REGPARAMS  *rp);
 static l_int32 test_8bpp_trans(L_REGPARAMS  *rp);
 
-LEPT_DLL extern const char *ImageFileFormatExtensions[];
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -329,7 +328,7 @@ size_t    nbytes1, nbytes2;
         lept_stderr("Format data for image %s with format %s:\n"
                     "  nbytes = %lu, size (w, h, d) = (%d, %d, %d)\n"
                     "  bps = %d, spp = %d, iscmap = %d\n",
-                    filename, ImageFileFormatExtensions[format1],
+                    filename, getFormatExtension(format1),
                     (unsigned long)nbytes1, w1, h1, d1, bps1, spp1, iscmap1);
         if (format1 != IFF_PNG) {
             lept_stderr("Error: format is %d; should be %d\n",
@@ -352,7 +351,7 @@ size_t    nbytes1, nbytes2;
             h1 != h2 || d1 != d2 || bps1 != bps2 || spp1 != spp2 ||
             iscmap1 != iscmap2) {
             lept_stderr("Incomsistency reading image %s with format %s\n",
-                        filename, ImageFileFormatExtensions[IFF_PNG]);
+                        filename, getFormatExtension(IFF_PNG));
             ret2 = 1;
         }
     }

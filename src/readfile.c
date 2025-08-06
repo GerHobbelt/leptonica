@@ -1072,7 +1072,6 @@ PIX     *pix;
 /*---------------------------------------------------------------------*
  *                    Output image file information                    *
  *---------------------------------------------------------------------*/
-extern const char *ImageFileFormatExtensions[];
 
 /*!
  * \brief   writeImageFileInfo()
@@ -1117,7 +1116,7 @@ PIXCMAP  *cmap;
     fprintf(fpout, "===============================================\n"
                     "Reading the header:\n");
     fprintf(fpout, "  input image format type: %s\n",
-            ImageFileFormatExtensions[format]);
+			getFormatExtension(format));
     fprintf(fpout, "  w = %d, h = %d, bps = %d, spp = %d, iscmap = %d\n",
             w, h, bps, spp, iscmap);
 
@@ -1172,7 +1171,7 @@ PIXCMAP  *cmap;
     wpl = pixGetWpl(pix);
     spp = pixGetSpp(pix);
     fprintf(fpout, "  input image format type: %s\n",
-            ImageFileFormatExtensions[format]);
+		    getFormatExtension(format));
     fprintf(fpout, "  w = %d, h = %d, d = %d, spp = %d, wpl = %d\n",
             w, h, d, spp, wpl);
     fprintf(fpout, "  xres = %d, yres = %d\n",
