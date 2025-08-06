@@ -289,7 +289,7 @@ PIX     *pixt;
         /* Clear near edges.  We do this for the asymmetric boundary
          * condition convention that implements erosion assuming all
          * pixels surrounding the image are OFF.  If you use a
-         * use a symmetric b.c. convention, where the erosion is
+         * symmetric b.c. convention, where the erosion is
          * implemented assuming pixels surrounding the image
          * are ON, these operations are omitted.  */
     if (MORPH_BC == ASYMMETRIC_MORPH_BC) {
