@@ -46,11 +46,6 @@
 #include "monolithic_examples.h"
 
 
-    /* defined in morph.c */
-LEPT_DLL extern l_int32 MORPH_BC;
-
-
-
 #if defined(BUILD_MONOLITHIC)
 #define main   lept_fmorphauto_reg_main
 #endif
