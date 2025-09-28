@@ -30,6 +30,10 @@
  *      scaletest1 filein scalex scaley fileout
  *    where
  *      scalex, scaley are floating point input
+ *
+ *  For d < 8 bpp, writes output in png
+ *  For d >= 8 bpp, uses output file extension to determine output format.
+ *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -51,7 +55,7 @@ int main(int    argc,
          const char **argv)
 {
 const char      *filein, *fileout;
-l_int32    d;
+l_int32    d, fmt;
 l_float32  scalex, scaley;
 PIX       *pixs, *pixd;
 
@@ -84,14 +88,12 @@ PIX       *pixs, *pixd;
 
     d = pixGetDepth(pixd);
 
-#if 1
-    if (d <= 8)
+    if (d < 8) {
         pixWrite(fileout, pixd, IFF_PNG);
-    else
-        pixWrite(fileout, pixd, IFF_JFIF_JPEG);
-#else
-    pixWrite(fileout, pixd, IFF_PNG);
-#endif
+    } else {
+        fmt = getImpliedFileFormat(fileout);
+        pixWrite(fileout, pixd, fmt);
+    }
 
     pixDestroy(&pixs);
     pixDestroy(&pixd);
