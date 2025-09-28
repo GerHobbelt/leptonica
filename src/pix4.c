@@ -3461,9 +3461,8 @@ PIX       *pixg;
     }
 
     if (pthresh) *pthresh = thresh;
-	if (!(fabsf(avefg - avebg) >= 1)) {
-		fprintf(stderr, "klunt!\n");
-	}
+	assert(fabsf(avefg - avebg) >= 1);
+
 	// left/black is foreground is the default assumption, but when the median is
 	// on the left side == there's more left-side than right-side pixels in the
 	// histogram, then we assume it's white/right is foreground: the foreground
