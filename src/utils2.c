@@ -211,9 +211,9 @@
 
 #ifdef __APPLE__
 #include <unistd.h>
-#include <errno.h>
 #endif
 
+#include <errno.h>     /* for errno */
 #include <string.h>
 #include <stddef.h>
 #include "allheaders.h"
@@ -2207,11 +2207,11 @@ l_uint32  attributes;
     sarraySplitString(sa, subdir, "/");
     n = sarrayGetCount(sa);
     dir = genPathname("/tmp", NULL);
-    ret = 0;   /* don't check ret values with unix because if a directory
-                * exists, mkdir() returns -1  */
        /* Make sure the tmp directory exists */
 #ifndef _WIN32
-    mkdir(dir, 0777);
+    if (mkdir(dir, 0777) != 0 && errno != EEXIST) {
+        ++ret;
+    }
 #else
     attributes = GetFileAttributesA(dir);
     if (attributes == INVALID_FILE_ATTRIBUTES)
@@ -2221,7 +2221,9 @@ l_uint32  attributes;
     for (i = 0; i < n; i++) {
         tmpdir = pathJoin(dir, sarrayGetString(sa, i, L_NOCOPY));
 #ifndef _WIN32
-        mkdir(tmpdir, 0777);
+        if (mkdir(tmpdir, 0777) != 0 && errno != EEXIST) {
+            ++ret;
+        }
 #else
         if (CreateDirectoryA(tmpdir, NULL) == 0)
             ret += (GetLastError() != ERROR_ALREADY_EXISTS);
