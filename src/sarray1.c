@@ -1397,7 +1397,7 @@ SARRAY *
 sarrayReadStream(FILE  *fp)
 {
 char    *stringbuf;
-l_int32  i, n, size, index, bufsize, version, ignore, success;
+l_int32  i, n, size, index, bufsize, version, success;
 SARRAY  *sa;
 
     if (!fp)
@@ -1445,7 +1445,7 @@ SARRAY  *sa;
             /* Copy it in, skipping the 2 leading spaces */
         sarrayAddString(sa, stringbuf + 2, L_COPY);
     }
-    ignore = fscanf(fp, "\n");
+    (void)fscanf(fp, "\n");
 
 cleanup:
     LEPT_FREE(stringbuf);
