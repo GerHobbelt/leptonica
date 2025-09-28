@@ -43,7 +43,7 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake Targets")
 project(
   leptonica
   LANGUAGES C
-  VERSION 1.85.1)
+  VERSION 1.86.1)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
@@ -85,10 +85,10 @@ if(NOT SW_BUILD)
   set(pkgs_private "")
   set(libs_private "")
 
-  find_and_handle_library(ZLIB ENABLE_ZLIB ZLIB)
-  find_and_handle_library(PNG ENABLE_PNG PNG)
-  find_and_handle_library(JPEG ENABLE_JPEG JPEG)
-  find_and_handle_library(TIFF ENABLE_TIFF TIFF)
+  find_and_handle_library(ZLIB ENABLE_ZLIB zlib)
+  find_and_handle_library(PNG ENABLE_PNG libpng)
+  find_and_handle_library(JPEG ENABLE_JPEG libjpeg)
+  find_and_handle_library(TIFF ENABLE_TIFF libtiff-4)
 
   if(ENABLE_GIF)
     find_package(GIF 5)
