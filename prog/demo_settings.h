@@ -29,7 +29,7 @@
 
 #ifndef DEMOPATH
 #if defined(BUILD_MONOLITHIC)
-#define DEMOPATH(p)				"lept/demo-data/" p
+#define DEMOPATH(p)				lept_locate_file_in_searchpath(p)
 #else
 #define DEMOPATH(p)				p
 #endif
@@ -39,6 +39,7 @@
 extern "C" {
 #endif  /* __cplusplus */
 
+	const char *lept_locate_file_in_seatchpath(const char *file);
 
 #ifdef __cplusplus
 }
