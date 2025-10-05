@@ -267,7 +267,6 @@ BuildShortStrings(l_int32  nchars)  /* 3, 4 or 5 */
 {
 char      buf[64];
 l_int32   i, j, k, l, m;
-l_uint64  hash;
 SARRAY   *sa;
 
     sa = sarrayCreate(1000);
@@ -292,12 +291,6 @@ SARRAY   *sa;
                                          i + 0x61, j + 0x61, k + 0x61,
                                          l + 0x61, m + 0x61);
                                 sarrayAddString(sa, buf, L_COPY);
-/*
-                                if (i == 17 && j == 12 && k == 4 && l == 21) {
-                                    l_hashStringToUint64(buf, &hash);
-                                    lept_stderr("  %llx\n", hash);
-                                }
-*/
                             }
                         }
                     }

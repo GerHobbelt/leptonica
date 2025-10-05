@@ -53,7 +53,7 @@ int main(int    argc,
          const char **argv)
 {
 const char      *filein, *fileout;
-l_int32    i, w, h, liney, linex, same;
+l_int32    i, w, h, liney = 0, linex = 0, same;
 l_float32  angle, deg2rad;
 PIX       *pixt1, *pixt2, *pixs, *pixd;
 
@@ -99,28 +99,71 @@ PIX       *pixt1, *pixt2, *pixs, *pixd;
 
     pixGetDimensions(pixs, &w, &h, NULL);
 
-#if 0
-        /* Select an operation from this list ...
-         * ------------------------------------------
-    pixd = pixHShear(NULL, pixs, liney, deg2rad * angle, L_BRING_IN_WHITE);
-    pixd = pixVShear(NULL, pixs, linex, deg2rad * angle, L_BRING_IN_WHITE);
-    pixd = pixHShearCorner(NULL, pixs, deg2rad * angle, L_BRING_IN_WHITE);
-    pixd = pixVShearCorner(NULL, pixs, deg2rad * angle, L_BRING_IN_WHITE);
-    pixd = pixHShearCenter(NULL, pixs, deg2rad * angle, L_BRING_IN_WHITE);
-    pixd = pixVShearCenter(NULL, pixs, deg2rad * angle, L_BRING_IN_WHITE);
-    pixHShearIP(pixs, liney, deg2rad * angle, L_BRING_IN_WHITE); pixd = pixs;
-    pixVShearIP(pixs, linex, deg2rad * angle, L_BRING_IN_WHITE); pixd = pixs;
-    pixRasteropHip(pixs, 0, h/3, -50, L_BRING_IN_WHITE); pixd = pixs;
-    pixRasteropVip(pixs, 0, w/3, -50, L_BRING_IN_WHITE); pixd = pixs;
-         * ------------------------------------------
-         *  ... and use it in the following:         */
-    pixd = pixHShear(NULL, pixs, liney, deg2rad * angle, L_BRING_IN_WHITE);
-    pixWrite(fileout, pixd, IFF_PNG);
-    pixDisplay(pixd, 50, 50);
-    pixDestroy(&pixd);
-#endif
 
-#if 0
+	for (int i = 0; i < 10; i++)
+	{
+		pixd = NULL;
+
+		/* Select an operation from this list ...
+		 * ------------------------------------------
+		 */
+		switch (i)
+		{
+		case 0:
+			pixd = pixHShear(NULL, pixs, liney, deg2rad * angle, L_BRING_IN_WHITE);
+			break;
+
+		case 1:
+			pixd = pixVShear(NULL, pixs, linex, deg2rad * angle, L_BRING_IN_WHITE);
+			break;
+
+		case 2:
+			pixd = pixHShearCorner(NULL, pixs, deg2rad * angle, L_BRING_IN_WHITE);
+			break;
+
+		case 3:
+			pixd = pixVShearCorner(NULL, pixs, deg2rad * angle, L_BRING_IN_WHITE);
+			break;
+
+		case 4:
+			pixd = pixHShearCenter(NULL, pixs, deg2rad * angle, L_BRING_IN_WHITE);
+			break;
+
+		case 5:
+			pixd = pixVShearCenter(NULL, pixs, deg2rad * angle, L_BRING_IN_WHITE);
+			break;
+
+		case 6:
+			pixHShearIP(pixs, liney, deg2rad * angle, L_BRING_IN_WHITE);
+			pixd = pixs;
+			break;
+
+		case 7:
+			pixVShearIP(pixs, linex, deg2rad * angle, L_BRING_IN_WHITE);
+			pixd = pixs;
+			break;
+
+		case 8:
+			pixRasteropHip(pixs, 0, h / 3, -50, L_BRING_IN_WHITE);
+			pixd = pixs;
+			break;
+
+		case 9:
+			pixRasteropVip(pixs, 0, w / 3, -50, L_BRING_IN_WHITE);
+			pixd = pixs;
+			break;
+		}
+
+		/*
+		* ------------------------------------------
+		 *  ... and use it in the following:         */
+
+		pixWrite(fileout, pixd, IFF_PNG);
+		pixDisplay(pixd, 50, 50);
+		pixDestroy(&pixd);
+	}
+
+
         /* Do a horizontal shear about a line */
     for (i = 0; i < NTIMES; i++) {
         liney = i * h / (NTIMES - 1);
@@ -130,10 +173,10 @@ PIX       *pixt1, *pixt2, *pixs, *pixd;
         pixDisplay(pixd, 50 + 10 * i, 50 + 10 * i);
         pixDestroy(&pixd);
     }
-#endif
 
-#if 0
-        /* Do a vertical shear about a line */
+
+
+	/* Do a vertical shear about a line */
     for (i = 0; i < NTIMES; i++) {
         linex = i * w / (NTIMES - 1);
         if (linex >= w)
@@ -142,9 +185,8 @@ PIX       *pixt1, *pixt2, *pixs, *pixd;
         pixDisplay(pixd, 50 + 10 * i, 50 + 10 * i);
         pixDestroy(&pixd);
     }
-#endif
 
-#if 0
+
         /* Do a horizontal in-place shear about a line */
     pixSetPadBits(pixs, 0);
     for (i = 0; i < NTIMES; i++) {
@@ -156,9 +198,8 @@ PIX       *pixt1, *pixt2, *pixs, *pixd;
         pixDisplay(pixd, 50 + 10 * i, 50 + 10 * i);
         pixDestroy(&pixd);
     }
-#endif
 
-#if 0
+
         /* Do a vertical in-place shear about a line */
     for (i = 0; i < NTIMES; i++) {
         pixd = pixCopy(NULL, pixs);
@@ -169,7 +210,7 @@ PIX       *pixt1, *pixt2, *pixs, *pixd;
         pixDisplay(pixd, 50 + 10 * i, 50 + 10 * i);
         pixDestroy(&pixd);
     }
-#endif
+
 
     pixDestroy(&pixs);
     return 0;

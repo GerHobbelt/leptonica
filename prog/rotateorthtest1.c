@@ -55,6 +55,9 @@ int main(int    argc,
          const char **argv)
 {
 l_int32    dir;
+l_int32    eq;
+l_int32    w, h;
+int        i;
 PIX       *pixs, *pixd, *pixt;
 l_float32  pops;
 const char      *filein, *fileout;
@@ -85,7 +88,6 @@ const char      *filein, *fileout;
 #endif
 
         /* Time rotate 90, allocating & destroying each time */
-#if 0
     startTimer();
     w = pixGetWidth(pixs);
     h = pixGetHeight(pixs);
@@ -96,10 +98,8 @@ const char      *filein, *fileout;
     pops = (l_float32)(w * h * NTIMES) / stopTimer();
     lept_stderr("MPops for 90 rotation: %7.3f\n", pops / 1000000.);
     pixd = pixRotate90(pixs, dir);
-#endif
 
         /* Time rotate 180, with no alloc/destroy */
-#if 0
     startTimer();
     w = pixGetWidth(pixs);
     h = pixGetHeight(pixs);
@@ -108,38 +108,30 @@ const char      *filein, *fileout;
         pixRotate180(pixd, pixs);
     pops = (l_float32)(w * h * NTIMES) / stopTimer();
     lept_stderr("MPops for 180 rotation: %7.3f\n", pops / 1000000.);
-#endif
-
 
         /* Test rotate 180 not in-place */
-#if 0
     pixt = pixRotate180(NULL, pixs);
     pixd = pixRotate180(NULL, pixt);
     pixEqual(pixs, pixd, &eq);
     if (eq) lept_stderr("2 rots gives I\n");
     else lept_stderr("2 rots fail to give I\n");
     pixDestroy(&pixt);
-#endif
 
        /* Test rotate 180 in-place */
-#if 0
     pixd = pixCopy(NULL, pixs);
     pixRotate180(pixd, pixd);
     pixRotate180(pixd, pixd);
     pixEqual(pixs, pixd, &eq);
     if (eq) lept_stderr("2 rots gives I\n");
     else lept_stderr("2 rots fail to give I\n");
-#endif
 
         /* Mix rotate 180 with LR/TB */
-#if 0
     pixd = pixRotate180(NULL, pixs);
-    pixRotateLR(pixd, pixd);
-    pixRotateTB(pixd, pixd);
+    pixFlipLR(pixd, pixd);
+    pixFlipTB(pixd, pixd);
     pixEqual(pixs, pixd, &eq);
     if (eq) lept_stderr("180 rot OK\n");
     else lept_stderr("180 rot error\n");
-#endif
 
     if (pixGetDepth(pixd) < 8)
         pixWrite(fileout, pixd, IFF_PNG);

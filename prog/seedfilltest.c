@@ -81,7 +81,7 @@ PIX       *pixs, *pixd, *pixm, *pixmi, *pixt1, *pixt2, *pixt3;
         return ERROR_INT("no seed pixel found", __func__, 1);
     pixSetPixel(pixs, XS + 5 * i, YS + 5 * i, 1);
 
-#if 0
+
         /* hole filling; use "hole-filler.png" */
     pixt1 = pixHDome(pixmi, 100, 4);
     pixt2 = pixThresholdToBinary(pixt1, 10);
@@ -98,10 +98,9 @@ PIX       *pixs, *pixd, *pixm, *pixmi, *pixt1, *pixt2, *pixt3;
     pixDisplay(pixd, 1000, 100);
     pixWrite("/tmp/junkpixm.png", pixmi, IFF_PNG);
     pixWrite("/tmp/junkpixd.png", pixd, IFF_PNG);
-#endif
 
-#if 0
-        /* hole filling; use "hole-filler.png" */
+
+	/* hole filling; use "hole-filler.png" */
     pixt1 = pixThresholdToBinary(pixm, 110);
     pixInvert(pixt1, pixt1);
     pixDisplay(pixt1, 100, 500);
@@ -114,9 +113,8 @@ PIX       *pixs, *pixd, *pixm, *pixmi, *pixt1, *pixt2, *pixt3;
     pixDisplay(pixd, 1000, 100);
     pixWrite("/tmp/junkpixm.png", pixmi, IFF_PNG);
     pixWrite("/tmp/junkpixd.png", pixd, IFF_PNG);
-#endif
 
-#if 0
+
         /* hole filling; use "hole-filler.png" */
     pixd = pixInvert(NULL, pixm);
     pixAddConstantGray(pixd, -50);
@@ -129,9 +127,8 @@ PIX       *pixs, *pixd, *pixm, *pixmi, *pixt1, *pixt2, *pixt3;
     pixDisplay(pixd, 1000, 100);
     pixWrite("/tmp/junkpixm.png", pixmi, IFF_PNG);
     pixWrite("/tmp/junkpixd.png", pixd, IFF_PNG);
-#endif
 
-#if 0
+
         /* test in-place seedfill for speed */
     pixd = pixClone(pixs);
     startTimer();
@@ -142,9 +139,8 @@ PIX       *pixs, *pixd, *pixm, *pixmi, *pixt1, *pixt2, *pixt3;
     pixWrite(fileout, pixd, IFF_PNG);
     pixOr(pixd, pixd, pixm);
     pixWrite("/tmp/junkout1.png", pixd, IFF_PNG);
-#endif
 
-#if 0
+
         /* test seedfill to dest for speed */
     pixd = pixCreateTemplate(pixm);
     startTimer();
@@ -157,16 +153,15 @@ PIX       *pixs, *pixd, *pixm, *pixmi, *pixt1, *pixt2, *pixt3;
     pixWrite(fileout, pixd, IFF_PNG);
     pixOr(pixd, pixd, pixm);
     pixWrite("/tmp/junkout1.png", pixd, IFF_PNG);
-#endif
+
 
         /* use same connectivity to compare with the result of the
          * slow parallel operation */
-#if 1
     pixDestroy(&pixd);
     pixd = pixSeedfillMorph(pixs, pixmi, 100, CONNECTIVITY);
     pixOr(pixd, pixd, pixm);
     pixWrite("/tmp/junkout2.png", pixd, IFF_PNG);
-#endif
+
 
     pixDestroy(&pixs);
     pixDestroy(&pixm);

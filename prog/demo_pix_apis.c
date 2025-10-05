@@ -489,7 +489,7 @@ typedef struct PIX_INFO_A {
 
 
 
-// Take a given path and see if it's a directory (in which case we deliver all image filswithin),
+// Take a given path and see if it's a directory (in which case we deliver all image files within),
 // a wildcarded path or a direct file path.
 //
 // We always produce a non-empty PIX_INFO_A array of images; NULL on error.
@@ -530,7 +530,7 @@ static PIX_INFO_A* cliGetSrcPix(const char* path, int max_count)
 	fname_pos[-1] = 0;
 	SARRAY* sa;
 	if ((sa = getSortedPathnamesInDirectory(dirname, NULL, 0, 0)) == NULL) {
-		fprintf(stderr, "Cannot scan %s (%s)\n", dirname, strerror(errno));
+		L_ERROR("Cannot scan %s (%s)\n", __func__, dirname, strerror(errno));
 		//sa = getFilenamesInDirectory(dirname);
 		return NULL;
 	}
@@ -1028,6 +1028,7 @@ return regTestCleanup(rp);
 		PIX* pixBilinearPtaWithAlpha(PIX* pixs, PTA* ptad, PTA* ptas, PIX* pixg, l_float32 fract, l_int32 border);
 
 		l_ok pixOtsuAdaptiveThreshold(PIX* pixs, l_int32 sx, l_int32 sy, l_int32 smoothx, l_int32 smoothy, l_float32 scorefract, PIX** ppixth, PIX** ppixd);
+		l_ok pixOtsuAdaptiveThreshold2(PIX* pixs, l_int32 sx, l_int32 sy, l_int32 smoothx, l_int32 smoothy, l_float32 scorefract, PIX** ppixth, PIX** ppixd);
 		PIX* pixOtsuThreshOnBackgroundNorm(PIX* pixs, PIX* pixim, l_int32 sx, l_int32 sy, l_int32 thresh, l_int32 mincount, l_int32 bgval, l_int32 smoothx, l_int32 smoothy, l_float32 scorefract, l_int32* pthresh);
 		PIX* pixMaskedThreshOnBackgroundNorm(PIX* pixs, PIX* pixim, l_int32 sx, l_int32 sy, l_int32 thresh, l_int32 mincount, l_int32 smoothx, l_int32 smoothy, l_float32 scorefract, l_int32* pthresh);
 		l_ok pixSauvolaBinarizeTiled(PIX* pixs, l_int32 whsize, l_float32 factor, l_int32 nx, l_int32 ny, PIX** ppixth, PIX** ppixd);
@@ -2638,6 +2639,7 @@ return regTestCleanup(rp);
 		PIX* pixBilinearPtaWithAlpha(PIX* pixs, PTA* ptad, PTA* ptas, PIX* pixg, l_float32 fract, l_int32 border);
 
 		l_ok pixOtsuAdaptiveThreshold(PIX* pixs, l_int32 sx, l_int32 sy, l_int32 smoothx, l_int32 smoothy, l_float32 scorefract, PIX** ppixth, PIX** ppixd);
+		l_ok pixOtsuAdaptiveThreshold2(PIX* pixs, l_int32 sx, l_int32 sy, l_int32 smoothx, l_int32 smoothy, l_float32 scorefract, PIX** ppixth, PIX** ppixd);
 		PIX* pixOtsuThreshOnBackgroundNorm(PIX* pixs, PIX* pixim, l_int32 sx, l_int32 sy, l_int32 thresh, l_int32 mincount, l_int32 bgval, l_int32 smoothx, l_int32 smoothy, l_float32 scorefract, l_int32* pthresh);
 		PIX* pixMaskedThreshOnBackgroundNorm(PIX* pixs, PIX* pixim, l_int32 sx, l_int32 sy, l_int32 thresh, l_int32 mincount, l_int32 smoothx, l_int32 smoothy, l_float32 scorefract, l_int32* pthresh);
 		l_ok pixSauvolaBinarizeTiled(PIX* pixs, l_int32 whsize, l_float32 factor, l_int32 nx, l_int32 ny, PIX** ppixth, PIX** ppixd);
