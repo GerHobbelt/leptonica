@@ -1909,7 +1909,7 @@ struct stat     st;
     if (realdir == NULL)
         return (SARRAY *)ERROR_PTR("realdir not made", __func__, NULL);
     if ((pdir = opendir(realdir)) == NULL) {
-        L_ERROR("directory %s not opened\n", __func__, realdir);
+        L_ERROR("directory %s not opened: opendir() failed for the given path: probably a non-existent dir/path\n", __func__, realdir);
         LEPT_FREE(realdir);
         return NULL;
     }
@@ -1970,8 +1970,9 @@ WIN32_FIND_DATAA  ffd;
     hFind = FindFirstFileA(pszDir, &ffd);
     if (INVALID_HANDLE_VALUE == hFind) {
         sarrayDestroy(&safiles);
-        LEPT_FREE(pszDir);
-        return (SARRAY *)ERROR_PTR("hFind not opened", __func__, NULL);
+		L_ERROR("FindFirstFile returned an error for the given path: probably a non-existent dir/path: \"%s\"\n", __func__, pszDir);
+		LEPT_FREE(pszDir);
+		return (SARRAY*)NULL;
     }
 
     while (FindNextFileA(hFind, &ffd) != 0) {
@@ -1986,3 +1987,4 @@ WIN32_FIND_DATAA  ffd;
     return safiles;
 }
 #endif  /* _WIN32 */
+
