@@ -25,7 +25,7 @@
  *====================================================================*/
 
 /*!
- * \file binarize.c
+ * \file binarize_alt.c
  * <pre>
  *
  *  ===================================================================
@@ -99,7 +99,7 @@ static PIX *pixApplyLocalThreshold(PIX *pixs, PIX *pixth);
  *                 Adaptive Otsu-based thresholding                 *
  *------------------------------------------------------------------*/
 /*!
- * \brief   pixOtsuAdaptiveThreshold()
+ * \brief   pixOtsuAdaptiveThreshold2()
  *
  * \param[in]    pixs              8 bpp
  * \param[in]    sx, sy            desired tile dimensions; actual size may vary
@@ -152,11 +152,9 @@ static PIX *pixApplyLocalThreshold(PIX *pixs, PIX *pixth);
  *          and significant background noise, such as bleedthrough, because
  *          of the problem noted in (3) above for tiling.  Use Sauvola.
  * </pre>
- *
- * See binarize_alt.c for an improved/tweaked implementation: pixOtsuAdaptiveThreshold2()
  */
 l_ok
-pixOtsuAdaptiveThreshold(PIX       *pixs,
+pixOtsuAdaptiveThreshold2(PIX       *pixs,
                          l_int32    sx,
                          l_int32    sy,
                          l_int32    smoothx,
@@ -165,10 +163,18 @@ pixOtsuAdaptiveThreshold(PIX       *pixs,
                          PIX      **ppixth,
                          PIX      **ppixd)
 {
-l_int32     w, h, nx, ny, i, j, thresh;
+l_int32     w, h, nx, ny, i, j, thresh, nx_offset;
 l_uint32    val;
+int         black_is_fg_weight, all_bg_count, total_weight;
+l_int32     fgval, bgval;
 PIX        *pixt, *pixb, *pixthresh, *pixth, *pixd;
 PIXTILING  *pt;
+struct BG_THRES_PT_INFO {
+	l_int16 thresh;
+	l_int16 fgval;
+	l_int16 bgval;
+	l_int16 flags;
+} *allbg_pta;
 
     if (!ppixth && !ppixd)
         return ERROR_INT("neither &pixth nor &pixd defined", __func__, 1);
@@ -179,6 +185,9 @@ PIXTILING  *pt;
     if (sx < 16 || sy < 16)
         return ERROR_INT("sx and sy must be >= 16", __func__, 1);
 
+	black_is_fg_weight = 0;
+	all_bg_count = 0;
+
 	/* Compute the threshold array for the tiles */
     pixGetDimensions(pixs, &w, &h, NULL);
     nx = L_MAX(1, w / sx);
@@ -187,15 +196,211 @@ PIXTILING  *pt;
     smoothy = L_MIN(smoothy, (ny - 1) / 2);
     pt = pixTilingCreate(pixs, nx, ny, 0, 0, 0, 0);
     pixthresh = pixCreate(nx, ny, 8);
-    for (i = 0; i < ny; i++) {
-        for (j = 0; j < nx; j++) {
-            pixt = pixTilingGetTile(pt, i, j);
-            pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
-                                     NULL, NULL, NULL);
-            pixSetPixel(pixthresh, j, i, thresh);  /* see note (4) */
+	allbg_pta = (struct BG_THRES_PT_INFO *)LEPT_CALLOC(nx * ny, sizeof(allbg_pta[0]));					// queues the 'all background' tiles as those can only be processed correctly at the end
+
+	for (i = 0; i < ny; i++) {
+		nx_offset = i * nx;
+		for (j = 0; j < nx; j++) {
+			struct BG_THRES_PT_INFO* ptpx = &allbg_pta[nx_offset + j];
+
+			pixt = pixTilingGetTile(pt, i, j);
+			pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
+				&fgval, &bgval, NULL);
+
+			ptpx->thresh = thresh;
+			ptpx->bgval = bgval;
+			ptpx->fgval = fgval;
+			
+			// detect & register the 'all background pix' signal first:
+			if (fgval == bgval) {
+				all_bg_count++;
+				// we'll have to tweak the threshold afterwards, when we have a verdict
+				// whether this is a black-fg or white-fg majority pix we're processing.
+				// (default assumption is classic black-fg pix)
+				ptpx->flags = 2;
+			}
+			else {
+				l_ok black_is_fg = (fgval < bgval);
+				ptpx->flags = black_is_fg;  // 0/1
+
+				pixSetPixel(pixthresh, j, i, thresh);  /* see note (4) */
+
+				if (black_is_fg)
+					black_is_fg_weight++;
+				else
+					black_is_fg_weight--;
+			}
+
             pixDestroy(&pixt);
         }
     }
+
+	total_weight = nx * ny - all_bg_count;
+	if (abs(black_is_fg_weight) < total_weight) {
+		L_WARNING("pix is ambivalent about whether black is foreground: weight < 1: %d / %d, all-background don't-care count: %d\n", __func__, black_is_fg_weight, total_weight, all_bg_count);
+	}
+
+	// we now have a verdict whether our image is black-fg or white-fg:
+	// now we can properly patch the threshold mask for the 'all background'
+	// zones.
+	//
+	// Edge case: assume all-background black-fg when the entire image turns
+	// out to be 'all background':
+	if (total_weight == 0) {
+		// edge case: we assume classic black-fg, but pix being 'all background',
+		// i.e. global threshold ("last index for background color") is zero (pure black)
+		pixClearAll(pixthresh);
+		black_is_fg_weight = 1;
+	}
+	else {
+		l_ok black_is_fg = (black_is_fg_weight >= 0);
+		thresh = (black_is_fg ? 0 : 255);
+
+		// now gang-press the minority tiles into acting like the majority:
+		// we need to adjust their thresholds to match.
+		// The minority believes the inverse of `black_is_fg`,
+		// i.e. white-fg when the majority is now known to believe black-fg,
+		// and vice versa.
+		for (i = 0; i < ny; i++) {
+			nx_offset = i * nx;
+			for (j = 0; j < nx; j++) {
+				struct BG_THRES_PT_INFO* ptpx = &allbg_pta[nx_offset + j];
+				l_ok val = (ptpx->flags & 0x01);
+
+				if (ptpx->flags & 0x02) {
+					// all-background tile
+					pixSetPixel(pixthresh, j, i, thresh);
+				}
+				// does the tile's `black_is_fg` value match the majority vote `black_is_fg` or not?
+				else if (val != black_is_fg) {
+					// nope, it does not.
+					//
+					// in this case we need to re-inspect the tile as the previously calculated threshold
+					// for this tile is on the wrong side of the majority of its content pixels, so we cannot
+					// simply 'adjust' the old threshold: that would only work for *extremely clean* images.
+					//
+					// Hence we extract the tile again and knowing the `black_is_fg` global preference now,
+					// we can 'tweak' the local threshold approach by making sure it will never find a
+					// threshold at the wrong side of the median: we do so by editing the histogram to
+					// produce a single, strong, hump at the 'background side' of the median.
+					struct BG_THRES_PT_INFO* ptpx = &allbg_pta[nx_offset + j];
+
+					pixt = pixTilingGetTile(pt, i, j);
+					//pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh, &fgval, &bgval, NULL);
+
+					l_float32  avefg, avebg;
+					l_float32  numfg, numbg;
+					NUMA* na = pixGetGrayHistogram(pixt, 1);
+
+					l_float32 mean, median, mode, variance;
+					numaGetHistogramStats(na, 0.0, 1.0, &mean, &median, &mode, &variance);
+
+					// now that we know the median, we're going to tweak the histogram to ensure
+					// it's got a single hump at the 'background' side of the median:
+					// we dump all the weight in the median slot, resulting in a single, high, peak
+					// for the background:
+					if (!black_is_fg) {
+						// when black is BACKGROUND: create the hump at `floor(median)`:
+						l_float32 sum;
+						l_int32 median_pos = median;
+						numaGetSumOnInterval(na, 0, median_pos, &sum);
+						numaZeroValues(na, 0, median_pos);
+						numaSetValue(na, median_pos, sum);
+
+						l_int32 tile_thresh;
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avebg, &avefg, &numbg, &numfg, NULL);
+
+						if (!(fabsf(avefg - avebg) >= 1) && numfg > 0.0 && numbg > 0.0) {
+							fprintf(stderr, "klunt!\n");
+						}
+						if (tile_thresh <= median) {
+							fprintf(stderr, "klunt!\n");
+						}
+						if (numbg == 0.0) {
+							fprintf(stderr, "klunt!\n");
+						}
+
+						// when the histogram is a single-hump type, there is no foreground at all.
+						// This is observable by inspecting its `num` partial sum: if it is ZERO,
+						// then it's an all-background pix.
+						if (numfg == 0.0) {
+							avefg = avebg;
+
+							// all-background tile
+							pixSetPixel(pixthresh, j, i, 255);
+						}
+						else if (numbg == 0.0) {
+							avefg = avebg;
+
+							// all-foreground tile
+							pixSetPixel(pixthresh, j, i, 0);
+						}
+						else {
+							fgval = (l_int32)(avefg + 0.5);
+							bgval = (l_int32)(avebg + 0.5);
+
+							l_ok black_is_fg2 = (fgval < bgval);
+							if (black_is_fg != black_is_fg2) {
+								fprintf(stderr, "klunt!\n");
+							}
+
+							pixSetPixel(pixthresh, j, i, tile_thresh);
+							black_is_fg_weight--;
+						}
+					}
+					else {
+						// when black is FOREGROUND: create the hump at `ceil(median)`:
+						l_float32 sum;
+						l_int32 median_pos = ceil(median);
+						numaGetSumOnInterval(na, median_pos, -1, &sum);
+						numaZeroValues(na, median_pos, -1);
+						numaSetValue(na, median_pos, sum);
+
+						l_int32 tile_thresh;
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avefg, &avebg, &numfg, &numbg, NULL);
+
+						if (!(fabsf(avefg - avebg) >= 1) && numbg > 0.0 && numfg > 0.0) {
+							fprintf(stderr, "klunt!\n");
+						}
+						if (numbg == 0.0) {
+							fprintf(stderr, "klunt!\n");
+						}
+
+						// when the histogram is a single-hump type, there is no foreground at all.
+						// This is observable by inspecting its `num` partial sum: if it is ZERO,
+						// then it's an all-background pix.
+						if (numfg == 0.0) {
+							avefg = avebg;
+
+							// all-background tile
+							pixSetPixel(pixthresh, j, i, 255);
+						}
+						else if (numbg == 0.0) {
+							avefg = avebg;
+
+							// all-foreground tile
+							pixSetPixel(pixthresh, j, i, 0);
+						}
+						else {
+							fgval = (l_int32)(avefg + 0.5);
+							bgval = (l_int32)(avebg + 0.5);
+
+							l_ok black_is_fg2 = (fgval < bgval);
+							if (black_is_fg != black_is_fg2) {
+								fprintf(stderr, "klunt!\n");
+							}
+
+							pixSetPixel(pixthresh, j, i, tile_thresh);
+							black_is_fg_weight++;
+						}
+					}
+
+					pixDestroy(&pixt);
+				}
+			}
+		}
+	}
+	LEPT_FREE(allbg_pta);
 
         /* Optionally smooth the threshold array */
     if (smoothx > 0 || smoothy > 0)
@@ -206,12 +411,49 @@ PIXTILING  *pt;
 
         /* Optionally apply the threshold array to binarize pixs */
     if (ppixd) {
-        pixd = pixCreate(w, h, 1);
+		// TODO: cope with non-default white-fg majority belief correctly.
+		// Right now the mask is correct, following the (new) definition
+		// of the threshold: "the last color index that's background color",
+		// but a 8bpp PIX cannot store the threshold value 256, so we're
+		// in trouble there as white-fg belief really means the foreground
+		// is on the other side of the fence!
+		//
+		// Naively, we could invert a couple of times and deal with matters
+		// that way, but we could also reason like this:
+		// 1. if white is fg, then we COULD argue our threshold values are
+		//    all "on the black side of matters", i.e. thresholds are now
+		//    "the last color index that's black"
+		// 2. but the leptonica thresholding code (called further below for pixd)
+		//    ALWAYS assumes black is fg, so we have to make those thresholds
+		//    represent "the first color that's white" to keep up appearances.
+		// 3. that way of thinking still risks having to produce threshold
+		//    values of 256, which are out of legal range.
+		// 4. Meanwhile, we COULD also DROP the source image colors by 1
+		//    to achieve the same effect: nobody will know because we only
+		//    send them the resulting binarized image, so nobody's the wiser
+		//    when we push the source a bit into the black.
+		// 5. theoretically, it's the same end result, but no naive inverting
+		//    of multiple PIX before & after (we would have to invert both the
+		//    source and binary result, plus invert & correct the threshold PIX:
+		//    a lot of work that can be done faster this way: drop source -1 grey value.
+		//
+		// Note: for a white=fg PIX, can we expect any threshold to be 0?
+		// YES, because that would mean pure black was "the last bg color".
+		// And we CANNOT drop below ZERO. So we then have to locally adjust
+		// the threshold image. Which we cannot do as it's much lower rez.
+		// !@#*(@$^@#^@#$%@#$@#$@#$............
+		l_ok black_is_fg = (black_is_fg_weight >= 0);
+		pixd = pixCreate(w, h, 1);
         pixCopyResolution(pixd, pixs);
         for (i = 0; i < ny; i++) {
             for (j = 0; j < nx; j++) {
                 pixt = pixTilingGetTile(pt, i, j);
                 pixGetPixel(pixth, j, i, &val);
+				if (!black_is_fg) {
+					// black is BACKGROUND: invert both pix and threshold:
+					val = 255 - val;
+					pixInvert(pixt, pixt);
+				}
                 pixb = pixThresholdToBinary(pixt, val);
                 pixTilingPaintTile(pixd, i, j, pixb, pt);
                 pixDestroy(&pixt);
@@ -230,6 +472,7 @@ PIXTILING  *pt;
     return 0;
 }
 
+#if 0
 
 /*------------------------------------------------------------------*
  *      Otsu thresholding on adaptive background normalization      *
@@ -671,6 +914,7 @@ PIX     *pixg, *pixsc, *pixm = NULL, *pixms = NULL, *pixth = NULL, *pixd = NULL;
     return 0;
 }
 
+#endif
 
 /*!
  * \brief   pixSauvolaGetThreshold()
@@ -827,6 +1071,7 @@ PIX       *pixd;
     return pixd;
 }
 
+#if 0
 
 /*----------------------------------------------------------------------*
  *      Contrast normalization followed by Sauvola binarization         *
@@ -1205,4 +1450,6 @@ NUMA      *na1, *na2, *na3;
         *ppixd = pixThresholdToBinary(pixs, *pthresh);
     return 0;
 }
+
+#endif
 
