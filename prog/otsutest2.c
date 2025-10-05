@@ -55,7 +55,6 @@
 
 
 
-
 #if defined(BUILD_MONOLITHIC)
 #define main   lept_otsutest2_main
 #endif
@@ -67,7 +66,7 @@ char       textstr[256];
 l_int32    i, thresh, fgval, bgval;
 l_float32  scorefract;
 L_BMF     *bmf;
-PIX       *pixs, *pixb, *pixg, *pixp, *pix1, *pix2, *pix3;
+PIX       *pixs, *pixb, *pixg, *pixp, *pix1, *pix2, *pix3, *pixth;
 PIXA      *pixa1, *pixad;
 
     setLeptDebugOK(1);
@@ -81,20 +80,36 @@ PIXA      *pixa1, *pixad;
         pixa1 = pixaCreate(2);
         scorefract = 0.1 * i;
 
-            /* Get a 1 bpp version; use a single tile */
-        pixOtsuAdaptiveThreshold(pixg, 2000, 2000, 0, 0, scorefract,
-                                 NULL, &pixb);
-        pixaAddPix(pixa1, pixg, L_COPY);
-        pixaAddPix(pixa1, pixb, L_INSERT);
+		/* Show the histogram of gray values and the split location */
+		pixSplitDistributionFgBg(pixg, scorefract, 1,
+			&thresh, &fgval, &bgval, &pixp);
+		lept_stderr("thresh = %d, fgval = %d, bgval = %d\n",
+			thresh, fgval, bgval);
+		pixaAddPix(pixa1, pixg, L_COPY);
+		pixaAddPix(pixa1, pixp, L_INSERT);
+		// add 1 empty slot to fill the pixa row:
+		pixaAddPix(pixa1, NULL, L_INSERT);
 
-            /* Show the histogram of gray values and the split location */
-        pixSplitDistributionFgBg(pixg, scorefract, 1,
-                                 &thresh, &fgval, &bgval, &pixp);
-        lept_stderr("thresh = %d, fgval = %d, bgval = %d\n",
-                    thresh, fgval, bgval);
-        pixaAddPix(pixa1, pixp, L_INSERT);
+		for (int j = 0; j <= 3; j++) {
 
-            /* Join these together and add some text */
+			/* Get a 1 bpp version; use a single tile */
+			pixOtsuAdaptiveThreshold(pixg, 2000, 2000, j, j, scorefract,
+				&pixth, &pixb);
+			pixaAddPix(pixa1, pixg, L_COPY);
+			pixaAddPix(pixa1, pixb, L_INSERT);
+			pixaAddPix(pixa1, pixth, L_INSERT);
+
+			/* improved version of the API: */
+
+			/* Get a 1 bpp version; use a single tile */
+			pixOtsuAdaptiveThreshold2(pixg, 2000, 2000, j, j, scorefract,
+				&pixth, &pixb);
+			pixaAddPix(pixa1, pixg, L_COPY);
+			pixaAddPix(pixa1, pixb, L_INSERT);
+			pixaAddPix(pixa1, pixth, L_INSERT);
+		}
+
+		/* Join these together and add some text */
         pix1 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 20, 2);
         snprintf(textstr, sizeof(textstr),
              "Scorefract = %3.1f ........... Thresh = %d", scorefract, thresh);
