@@ -2,6 +2,9 @@
 //implement your copy of `#include "monolithic_main_defs.h"`:
 #include "monolithic_examples.h"
 
+#include "leptonica/allheaders.h"
+#include "leptonica-wrap.h"
+
 // define a name for the monolith
 #define USAGE_NAME   "leptonica_tools"
 
@@ -318,6 +321,17 @@ MONOLITHIC_CMD_TABLE_START()
 { "demo_pix_apis", { .fa = lept_demo_pix_apis_main } },
 
 MONOLITHIC_CMD_TABLE_END();
+
+static void custom_prep(void)
+{
+	fz_set_leptonica_mem(fz_get_global_context());
+#if 0
+	leptSetStderrHandler(NULL);
+#endif
+}
+
+#define MONOLITHIC_SUBCLUSTER_MAIN_INIT()  custom_prep()
+
 
 // load the monolithic core dispatcher
 #include "monolithic_main_tpl.h"
