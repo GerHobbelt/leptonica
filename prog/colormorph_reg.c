@@ -40,7 +40,8 @@
 #include "monolithic_examples.h"
 
 
-static const l_int32  SIZE = 7;
+static const l_int32  size_setting = 7;
+#define SIZE	size_setting
 
 
 #if defined(BUILD_MONOLITHIC)
