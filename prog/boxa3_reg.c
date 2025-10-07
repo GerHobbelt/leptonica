@@ -43,7 +43,7 @@
 #include "monolithic_examples.h"
 
 
-static const char  *boxafiles[3] = {DEMOPATH("boxap1.ba"), DEMOPATH("boxap2.ba"), DEMOPATH("boxap3.ba")};
+static const char  *boxafiles[3] = {"boxap1.ba", "boxap2.ba", "boxap3.ba"};
 static l_float32  varp[3] = {0.0165, 0.0432, 0.0716};
 static l_float32  varm[3] = {0.0088, 0.0213, 0.0357};
 static l_int32  same[3] = {1, -1, -1};
@@ -88,7 +88,7 @@ l_float32  scalefact, ratiowh, fvarp, fvarm;
 BOXA      *boxa1, *boxa2, *boxa3;
 PIX       *pix1;
 
-    boxa1 = boxaRead(boxafiles[index]);
+    boxa1 = boxaRead(DEMOPATH(boxafiles[index]));
 
         /* Read and display initial boxa */
     boxaGetExtent(boxa1, &w, &h, NULL);
@@ -169,7 +169,7 @@ BOXA  *boxa1, *boxa2;
 PIX   *pix1, *pix2, *pix3;
 PIXA  *pixa;
 
-    boxa1 = boxaRead(boxafiles[index]);
+    boxa1 = boxaRead(DEMOPATH(boxafiles[index]));
 
         /* Read and display initial boxa */
     boxaPlotSizes(boxa1, NULL, NULL, NULL, &pix1);

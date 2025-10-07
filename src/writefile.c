@@ -104,9 +104,9 @@ static l_int32  var_DISPLAY_PROG = L_DISPLAY_WITH_XZGV;  /* default */
 #endif  /* _WIN32 */
 
 #define Bufsize 512
-static const l_int32  MaxDisplayWidth = 1000;
-static const l_int32  MaxDisplayHeight = 800;
-static const l_int32  MaxSizeForPng = 200;
+static const l_int32  MaxDisplayWidth = 4000;
+static const l_int32  MaxDisplayHeight = 2000;
+static const l_int32  MaxSizeForPng = 800;
 
     /* PostScript output for printing */
 static const l_float32  DefaultScaling = 1.0;
@@ -934,6 +934,7 @@ pixDisplayWithTitle(PIX         *pixs,
 {
 char           *tempname;
 char            buffer[Bufsize];
+char            sani_id[40];
 static l_atomic index = 0;  /* caution: not .so safe */
 l_int32         w, h, d, spp, maxheight, opaque, threeviews;
 l_float32       ratw, rath, ratmin;
@@ -1031,12 +1032,13 @@ size_t         fullpathsize;
     }
 
     index++;
+	char* sani_filename = sanitizePathToIdentifier(sani_id, sizeof(sani_id), 0, title, "@#_-");
     if (pixGetDepth(pix2) < 8 || pixGetColormap(pix2) ||
         (w < MaxSizeForPng && h < MaxSizeForPng)) {
-        snprintf(buffer, Bufsize, "/tmp/lept/disp/write.%03d.png", index);
+        snprintf(buffer, Bufsize, "/tmp/lept/disp/write.%05d.%s.png", index, sani_filename);
         pixWrite(buffer, pix2, IFF_PNG);
     } else {
-        snprintf(buffer, Bufsize, "/tmp/lept/disp/write.%03d.jpg", index);
+        snprintf(buffer, Bufsize, "/tmp/lept/disp/write.%05d.%s.jpg", index, sani_filename);
         pixWrite(buffer, pix2, IFF_JFIF_JPEG);
     }
     tempname = genPathname(buffer, NULL);

@@ -118,6 +118,22 @@ typedef int l_atomic;
 #include "mupdf/helpers/dir.h"
 #endif
 
+#ifdef _WIN32
+// MSWin fix: make sure we include winsock2.h *before* windows.h implicitly includes the antique winsock.h and causes all kinds of weird errors at compile time:
+#include <winsock2.h>
+#include <windows.h>  // --> minwindef.h --> Prevent compiler (preprocessor) error about redefinition.
+#include <minwindef.h>
+#endif
+
+#if !defined(MAX_PATH)
+#if defined(PATH_MAX)
+#define MAX_PATH		PATH_MAX
+#else
+#define MAX_PATH		260
+#endif
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

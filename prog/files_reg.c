@@ -107,12 +107,12 @@ L_REGPARAMS  *rp;
     lept_stderr(" ======= Test lept_rmdir() and lept_mkdir()) =======\n");
     lept_stderr(" ===================================================\n");
     lept_rmdir("junkfiles");
-    lept_direxists("/tmp/junkfiles", &exists);
+    lept_dir_exists("/tmp/junkfiles", &exists);
     if (rp->display) lept_stderr("directory removed?: %d\n", !exists);
     regTestCompareValues(rp, 0, exists, 0.0);  /* 17 */
 
     lept_mkdir("junkfiles");
-    lept_direxists("/tmp/junkfiles", &exists);
+    lept_dir_exists("/tmp/junkfiles", &exists);
     if (rp->display) lept_stderr("directory made?: %d\n", exists);
     regTestCompareValues(rp, 1, exists, 0.0);  /* 18 */
 

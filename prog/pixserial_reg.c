@@ -44,16 +44,16 @@
     /* Use this set */
 static l_int32  nfiles = 10;
 static const char  *filename[] = {
-						 DEMOPATH("feyn.tif"),         /* 1 bpp */
-						 DEMOPATH("dreyfus2.png"),     /* 2 bpp cmapped */
-						 DEMOPATH("dreyfus4.png"),     /* 4 bpp cmapped */
-						 DEMOPATH("weasel4.16c.png"),  /* 4 bpp cmapped */
-						 DEMOPATH("dreyfus8.png"),     /* 8 bpp cmapped */
-						 DEMOPATH("weasel8.240c.png"), /* 8 bpp cmapped */
-						 DEMOPATH("karen8.jpg"),       /* 8 bpp, not cmapped */
-						 DEMOPATH("test16.tif"),       /* 8 bpp, not cmapped */
-						 DEMOPATH("marge.jpg"),        /* rgb */
-						 DEMOPATH("test24.jpg")        /* rgb */
+						 "feyn.tif",         /* 1 bpp */
+						 "dreyfus2.png",     /* 2 bpp cmapped */
+						 "dreyfus4.png",     /* 4 bpp cmapped */
+						 "weasel4.16c.png",  /* 4 bpp cmapped */
+						 "dreyfus8.png",     /* 8 bpp cmapped */
+						 "weasel8.240c.png", /* 8 bpp cmapped */
+						 "karen8.jpg",       /* 8 bpp, not cmapped */
+						 "test16.tif",       /* 8 bpp, not cmapped */
+						 "marge.jpg",        /* rgb */
+						 "test24.jpg"        /* rgb */
                             };
 
 
@@ -80,7 +80,7 @@ L_REGPARAMS  *rp;
             /* Test basic serialization/deserialization */
     data32 = NULL;
     for (i = 0; i < nfiles; i++) {
-		pixs = pixRead(filename[i]);
+		pixs = pixRead(DEMOPATH(filename[i]));
             /* Serialize to memory */
         pixSerializeToMemory(pixs, &data32, &size);
             /* Just for fun, write and read back from file */
@@ -97,7 +97,7 @@ L_REGPARAMS  *rp;
 
             /* Test read/write fileio interface */
     for (i = 0; i < nfiles; i++) {
-        pixs = pixRead(filename[i]);
+        pixs = pixRead(DEMOPATH(filename[i]));
         pixGetDimensions(pixs, &w, &h, NULL);
         box = boxCreate(0, 0, L_MIN(150, w), L_MIN(150, h));
         pixt = pixClipRectangle(pixs, box, NULL);
@@ -117,9 +117,10 @@ L_REGPARAMS  *rp;
              * but for 32 bpp spix, we set spp = 4. */
     data = NULL;
     for (i = 0; i < nfiles; i++) {
-        pixs = pixRead(filename[i]);
+		const char* fname = DEMOPATH(filename[i]);
+		pixs = pixRead(fname);
         pixWriteMem(&data, &size, pixs, IFF_SPIX);
-        pixReadHeader(filename[i], &format, &w, &h, &bps, &spp, &iscmap);
+        pixReadHeader(fname, &format, &w, &h, &bps, &spp, &iscmap);
         pixReadHeaderMem(data, size, &format2, &w2, &h2, &bps2,
                          &spp2, &iscmap2);
         if (format2 != IFF_SPIX || w != w2 || h != h2 || bps != bps2 ||
@@ -133,19 +134,20 @@ L_REGPARAMS  *rp;
         lept_free(data);
     }
 
-#if 0
+
         /* Do timing */
     for (i = 0; i < nfiles; i++) {
-        pixs = pixRead(filename[i]);
+		const char* fname = DEMOPATH(filename[i]);
+        pixs = pixRead(fname);
         startTimer();
         pixSerializeToMemory(pixs, &data32, &size);
         pixd = pixDeserializeFromMemory(data32, size);
-        lept_stderr("Time for %s: %7.3f sec\n", filename[i], stopTimer());
+        lept_stderr("Time for %s: %7.3f sec\n", fname, stopTimer());
         lept_free(data32);
         pixDestroy(&pixs);
         pixDestroy(&pixd);
     }
-#endif
+
 
     return regTestCleanup(rp);
 }

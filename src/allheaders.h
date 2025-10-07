@@ -2382,7 +2382,7 @@ LEPT_DLL extern l_ok sarrayAddString ( SARRAY *sa, const char *string, l_int32 c
 LEPT_DLL extern char * sarrayRemoveString ( SARRAY *sa, l_int32 index );
 LEPT_DLL extern l_ok sarrayReplaceString ( SARRAY *sa, l_int32 index, char *newstr, l_int32 copyflag );
 LEPT_DLL extern l_ok sarrayClear ( SARRAY *sa );
-LEPT_DLL extern l_int32 sarrayGetCount ( SARRAY *sa );
+LEPT_DLL extern l_int32 sarrayGetCount (const SARRAY *sa );
 LEPT_DLL extern char ** sarrayGetArray ( SARRAY *sa, l_int32 *pnalloc, l_int32 *pn );
 LEPT_DLL extern char * sarrayGetString ( SARRAY *sa, l_int32 index, l_int32 copyflag );
 LEPT_DLL extern char * sarrayToString ( SARRAY *sa, l_int32 addnlflag );
@@ -2408,6 +2408,7 @@ LEPT_DLL extern SARRAY * getNumberedPathnamesInDirectory ( const char *dirname, 
 LEPT_DLL extern SARRAY * getSortedPathnamesInDirectory ( const char *dirname, const char *substr, l_int32 first, l_int32 nfiles );
 LEPT_DLL extern SARRAY * convertSortedToNumberedPathnames ( SARRAY *sa, l_int32 numpre, l_int32 numpost, l_int32 maxnum );
 LEPT_DLL extern SARRAY * getFilenamesInDirectory ( const char *dirname );
+LEPT_DLL extern SARRAY * getFilenamesInDirectoryEx ( const char *dirname, int wantSubdirs );
 LEPT_DLL extern SARRAY * sarraySort ( SARRAY *saout, SARRAY *sain, l_int32 sortorder );
 LEPT_DLL extern SARRAY * sarraySortByIndex ( SARRAY *sain, NUMA *naindex );
 LEPT_DLL extern l_int32 stringCompareLexical ( const char *str1, const char *str2 );
@@ -2727,7 +2728,8 @@ LEPT_DLL extern void * lept_calloc ( size_t nmemb, size_t size );
 LEPT_DLL extern void lept_free ( const void *ptr );
 LEPT_DLL extern l_int32 lept_mkdir ( const char *subdir );
 LEPT_DLL extern l_int32 lept_rmdir ( const char *subdir );
-LEPT_DLL extern void lept_direxists ( const char *dir, l_int32 *pexists );
+LEPT_DLL extern void lept_dir_exists ( const char *dir, l_int32 *pexists );
+LEPT_DLL extern void lept_file_exists ( const char *dir, l_int32 *pexists );
 LEPT_DLL extern l_int32 lept_rm_match ( const char *subdir, const char *substr );
 LEPT_DLL extern l_int32 lept_rm ( const char *subdir, const char *tail );
 LEPT_DLL extern l_int32 lept_rmfile ( const char *filepath );
@@ -2739,7 +2741,10 @@ LEPT_DLL extern l_ok splitPathAtExtension ( const char *pathname, char **pbasena
 LEPT_DLL extern char * pathJoin ( const char *dir, const char *fname );
 LEPT_DLL extern char * appendSubdirs ( const char *basedir, const char *subdirs );
 LEPT_DLL extern l_ok convertSepCharsInPath ( char *path, l_int32 type );
+LEPT_DLL extern l_int32 getPathRootLength ( const char* path );
+LEPT_DLL extern char * getPathBasename ( const char* path, int strip_off_extension );
 LEPT_DLL extern char * genPathname ( const char *dir, const char *fname );
+LEPT_DLL extern char * sanitizePathToIdentifier ( char *dst, size_t dstsize, size_t numeric_id, const char *str, const char *additional_acceptable_set );
 LEPT_DLL extern l_ok makeTempDirname ( char *result, size_t nbytes, const char *subdir );
 LEPT_DLL extern l_ok modifyTrailingSlash ( char *path, size_t nbytes, l_int32 flag );
 LEPT_DLL extern char * l_makeTempFilename ( void );

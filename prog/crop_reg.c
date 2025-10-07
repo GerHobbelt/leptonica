@@ -49,7 +49,7 @@ static l_int32 GetLeftCut(NUMA *narl, NUMA *nart, NUMA *nait,
 static l_int32 GetRightCut(NUMA *narl, NUMA *nart, NUMA *nait,
                      l_int32 h, l_int32 *pright);
 
-static const char *fnames[] = {DEMOPATH("lyra.005.jpg"), DEMOPATH("lyra.036.jpg")};
+static const char *fnames[] = {"lyra.005.jpg", "lyra.036.jpg"};
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -74,9 +74,10 @@ L_REGPARAMS  *rp;
         /* Calculate projection profiles through images/drawings. */
     pixa1 = pixaCreate(2);
     for (i = 0; i < 2; i++) {
-        pageno = extractNumberFromFilename(fnames[i], 5, 0);
+		const char* fname = DEMOPATH(fnames[i]);
+        pageno = extractNumberFromFilename(fname, 5, 0);
         lept_stderr("Page %d\n", pageno);
-        pixs = pixRead(fnames[i]);
+        pixs = pixRead(fname);
         pixr = pixRotate90(pixs, (pageno % 2) ? 1 : -1);
         pixg = pixConvertTo8(pixr, 0);
         pixGetDimensions(pixg, &w, &h, NULL);

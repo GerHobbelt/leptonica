@@ -57,8 +57,8 @@ static const l_uint32  MissColor = 0xaa44bb00;
     /* Patterns at full resolution */
 static const char *patname[3] = {
     "",
-	DEMOPATH("tribune-word.png"),   /* patno = 1 */
-	DEMOPATH("tribune-t.png")};     /* patno = 2 */
+	"tribune-word.png",   /* patno = 1 */
+	"tribune-t.png"};     /* patno = 2 */
 
 
 
@@ -82,7 +82,7 @@ SEL     *selhm;
 
     setLeptDebugOK(1);
     lept_mkdir("lept/livre");
-    if ((pixs = pixRead(patname[patno])) == NULL)
+    if ((pixs = pixRead(DEMOPATH(patname[patno]))) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
     if (reduction != 4 && reduction != 8 && reduction != 16)
         return ERROR_INT("reduction not 4, 8 or 16", __func__, 1);

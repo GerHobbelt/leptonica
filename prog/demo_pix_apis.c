@@ -80,7 +80,7 @@
 #include "monolithic_examples.h"
 
 
-static const char *fnames[] = {DEMOPATH("lyra.005.jpg"), DEMOPATH("lyra.036.jpg")};
+static const char *fnames[] = {"lyra.005.jpg", "lyra.036.jpg"};
 
 
 // Type used in this demo app to scan the CLI arguments and account for named ones and in-irder-indexed ones, both.

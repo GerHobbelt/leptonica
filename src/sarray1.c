@@ -624,7 +624,7 @@ l_int32  i;
  * \return  count, or 0 if no strings or on error
  */
 l_int32
-sarrayGetCount(SARRAY  *sa)
+sarrayGetCount(const SARRAY  *sa)
 {
     if (!sa)
         return ERROR_INT("sa not defined", __func__, 0);
@@ -1885,10 +1885,16 @@ SARRAY  *saout;
  * </pre>
  */
 
+SARRAY*
+getFilenamesInDirectory(const char* dirname)
+{
+	return getFilenamesInDirectoryEx(dirname, FALSE);
+}
+
 #ifndef _WIN32
 
 SARRAY *
-getFilenamesInDirectory(const char  *dirname, int wantSubdirs)
+getFilenamesInDirectoryEx(const char  *dirname, int wantSubdirs)
 {
 char           *gendir, *realdir, *stat_path;
 size_t          size;
@@ -1925,6 +1931,8 @@ struct stat     st;
     }
     safiles = sarrayCreate(0);
     while ((pdirentry = readdir(pdir))) {
+		if (strcmp(pdirentry->d_name, "..") == 0 || strcmp(pdirentry->d_name, ".") == 0)
+			continue;
 #if HAVE_DIRFD && HAVE_FSTATAT
             /* Platform issues: although Linux has these POSIX functions,
              * AIX doesn't have fstatat() and Solaris doesn't have dirfd(). */
@@ -1937,7 +1945,7 @@ struct stat     st;
         stat_ret = stat(stat_path, &st);
         LEPT_FREE(stat_path);
 #endif
-        if (stat_ret == 0 && S_ISDIR(st.st_mode))
+        if (stat_ret == 0 && (!!wantSubdirs ^ !!S_ISDIR(st.st_mode)))
             continue;
         sarrayAddString(safiles, pdirentry->d_name, L_COPY);
     }
@@ -1952,7 +1960,7 @@ struct stat     st;
 #include <windows.h>
 
 SARRAY *
-getFilenamesInDirectory(const char  *dirname, int wantSubdirs)
+getFilenamesInDirectoryEx(const char  *dirname, int wantSubdirs)
 {
 char             *pszDir;
 char             *realdir;
@@ -1985,13 +1993,20 @@ WIN32_FIND_DATAA  ffd;
 		return (SARRAY*)NULL;
     }
 
-	if (0 == (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {  /* skip dirs */
+	if (wantSubdirs && 0 != (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && strcmp(ffd.cFileName, "..") != 0 && strcmp(ffd.cFileName, ".") != 0)  /* pick up subdir */
+	{
+		convertSepCharsInPath(ffd.cFileName, UNIX_PATH_SEPCHAR);
+		sarrayAddString(safiles, ffd.cFileName, L_COPY);
+	}
+	else if (!wantSubdirs && 0 == (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {  /* skip dirs */
 		convertSepCharsInPath(ffd.cFileName, UNIX_PATH_SEPCHAR);
 		sarrayAddString(safiles, ffd.cFileName, L_COPY);
 	}
 
     while (FindNextFileA(hFind, &ffd) != 0) {
-        if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)  /* skip dirs */
+		if (wantSubdirs && (0 == (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) || strcmp(ffd.cFileName, "..") == 0 || strcmp(ffd.cFileName, ".") == 0))  /* pick up subdir */
+			continue;
+		else if (!wantSubdirs && 0 != (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))  /* skip dirs */
             continue;
         convertSepCharsInPath(ffd.cFileName, UNIX_PATH_SEPCHAR);
         sarrayAddString(safiles, ffd.cFileName, L_COPY);
@@ -2001,5 +2016,6 @@ WIN32_FIND_DATAA  ffd;
     LEPT_FREE(pszDir);
     return safiles;
 }
+
 #endif  /* _WIN32 */
 

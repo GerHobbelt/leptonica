@@ -60,8 +60,8 @@ static const l_uint32  MissColor = 0xaa44bb00;
 
     /* Patterns at full resolution */
 static const char *patname[2] = {
-    DEMOPATH("tribune-word.png"),   /* patno = 0 */
-	DEMOPATH("tribune-t.png")};     /* patno = 1 */
+    "tribune-word.png",   /* patno = 0 */
+	"tribune-t.png"};     /* patno = 1 */
 
 l_int32 GeneratePattern(l_int32 patno, l_int32 red, L_REGPARAMS  *rp);
 
@@ -102,7 +102,7 @@ PIX     *pixc1, *pixc2, *pixc3, *pixd;
 PIXA    *pixa;
 SEL     *selhm;
 
-    if ((pixs = pixRead(patname[patno])) == NULL) {
+    if ((pixs = pixRead(DEMOPATH(patname[patno]))) == NULL) {
         rp->success = FALSE;
         return ERROR_INT("pixs not made", __func__, 1);
     }

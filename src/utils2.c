@@ -105,7 +105,8 @@
  *       Multi-platform file system operations in temp directories
  *           l_int32    lept_mkdir()
  *           l_int32    lept_rmdir()
- *           l_int32    lept_direxists()
+ *           l_int32    lept_dir_exists()
+ *           l_int32    lept_file_exists()
  *           l_int32    lept_mv()
  *           l_int32    lept_rm_match()
  *           l_int32    lept_rm()
@@ -204,7 +205,10 @@
 #include <fcntl.h>     /* _O_CREAT, ... */
 #include <io.h>        /* _open */
 #include <sys/stat.h>  /* _S_IREAD, _S_IWRITE */
+#  define strcasecmp _stricmp
+#  define strncasecmp _strnicmp
 #else
+#include <strings.h>
 #include <sys/stat.h>  /* for stat, mkdir(2) */
 #include <sys/types.h>
 #endif
@@ -2203,6 +2207,14 @@ l_uint32  attributes;
     if ((strlen(subdir) == 0) || (subdir[0] == '.') || (subdir[0] == '/'))
         return ERROR_INT("subdir not an actual subdirectory", __func__, 1);
 
+	// make sure there's no /xyz/../../ path segments in subdir traveling outside the /tmp/ tree:
+	dir = pathJoin("/tmp", subdir);
+	if (!dir)
+		return ERROR_INT("directory name not made", __func__, 1);
+	if (strncmp("/tmp/", dir, 5) != 0)
+		return ERROR_INT("subdir not an actual subdirectory", __func__, 1);
+	LEPT_FREE(dir);
+
     sa = sarrayCreate(0);
     sarraySplitString(sa, subdir, "/");
     n = sarrayGetCount(sa);
@@ -2281,7 +2293,10 @@ char    *realdir;
     dir = pathJoin("/tmp", subdir);
     if (!dir)
         return ERROR_INT("directory name not made", __func__, 1);
-    lept_direxists(dir, &exists);
+	// make sure there's no /xyz/../../ path segments in subdir traveling outside the /tmp/ tree:
+	if (strncmp("/tmp/", dir, 5) != 0)
+		return ERROR_INT("subdir not an actual subdirectory", __func__, 1);
+	lept_dir_exists(dir, &exists);
     if (!exists) {  /* fail silently */
         LEPT_FREE(dir);
         return 0;
@@ -2319,7 +2334,7 @@ char    *realdir;
 
 
 /*!
- * \brief   lept_direxists()
+ * \brief   lept_dir_exists()
  *
  * \param[in]    dir
  * \param[out]   pexists    1 if it exists; 0 otherwise
@@ -2334,7 +2349,7 @@ char    *realdir;
  * </pre>
  */
 void
-lept_direxists(const char  *dir,
+lept_dir_exists(const char  *dir,
                l_int32     *pexists)
 {
 char  *realdir;
@@ -2363,6 +2378,56 @@ char  *realdir;
 #endif  /* _WIN32 */
 
     LEPT_FREE(realdir);
+}
+
+
+/*!
+ * \brief   lept_file_exists()
+ *
+ * \param[in]    path
+ * \param[out]   pexists    1 if it exists; 0 otherwise
+ * \return  void
+ *
+ * <pre>
+ * Notes:
+ *      (1) Always use unix pathname separators.
+ *      (2) By calling genPathname(), if the pathname begins with "/tmp"
+ *          this does an automatic directory translation for operating
+ *          systems that use a different path for /tmp.
+ * </pre>
+ */
+void
+lept_file_exists(const char* dir,
+	l_int32* pexists)
+{
+	char* realdir;
+
+	if (!pexists) return;
+	*pexists = 0;
+	if (!dir) return;
+	if ((realdir = genPathname(dir, NULL)) == NULL)
+		return;
+
+#ifndef _WIN32
+	{
+		struct stat s;
+		l_int32 err = stat(realdir, &s);
+		if (err != -1 && !S_ISDIR(s.st_mode))
+			*pexists = 1;
+	}
+#else  /* _WIN32 */
+	{
+		l_uint32  attributes;
+		attributes = GetFileAttributesA(realdir);
+		if (attributes != INVALID_FILE_ATTRIBUTES &&
+			0 == (attributes & FILE_ATTRIBUTE_DIRECTORY) &&
+			0 == (attributes & FILE_ATTRIBUTE_REPARSE_POINT) &&
+			0 == (attributes & FILE_ATTRIBUTE_DEVICE))
+			*pexists = 1;
+	}
+#endif  /* _WIN32 */
+
+	LEPT_FREE(realdir);
 }
 
 
@@ -2934,15 +2999,18 @@ pathJoin(const char  *dir,
 const char *slash = "/";
 char       *str, *dest;
 l_int32     i, n1, emptydir;
+l_int32     fname_root_len, dir_root_len, ba_root_len;
 size_t      size;
 SARRAY     *sa1, *sa2;
 L_BYTEA    *ba;
 
     if (!dir && !fname)
         return stringNew("");
-    if (dir && strlen(dir) >= 2 && dir[0] == '.' && dir[1] == '.' && fname[0] == '/')
+	fname_root_len = getPathRootLength(fname);
+    if (dir && strlen(dir) >= 2 && dir[0] == '.' && dir[1] == '.' && fname_root_len > 0)
         return (char *)ERROR_PTR("dir starts with '..'", __func__, NULL);
-    if (fname && strlen(fname) >= 2 && fname[0] == '.' && fname[1] == '.' && dir[0] == '/')
+	dir_root_len = getPathRootLength(dir);
+	if (fname && strlen(fname) >= 2 && fname[0] == '.' && fname[1] == '.' && dir && dir_root_len == strlen(dir))
         return (char *)ERROR_PTR("fname starts with '..'", __func__, NULL);
 
     sa1 = sarrayCreate(0);
@@ -2951,27 +3019,28 @@ L_BYTEA    *ba;
 
         /* Process %dir */
     if (dir && strlen(dir) > 0) {
-        if (dir[0] == '/')
-            l_byteaAppendString(ba, slash);
-        sarraySplitString(sa1, dir, "/");  /* removes all slashes */
+        if (dir_root_len > 0)
+			l_byteaAppendData(ba, (const l_uint8 *)dir, dir_root_len); // slash
+        sarraySplitString(sa1, dir + dir_root_len, "/");  /* removes all slashes */
     }
 
         /* Special case to add leading slash: dir NULL or empty string  */
     emptydir = dir && strlen(dir) == 0;
-    if ((!dir || emptydir) && fname && strlen(fname) > 0 && fname[0] == '/')
-        l_byteaAppendString(ba, slash);
+    if ((!dir || emptydir) && fname && strlen(fname) > 0 && fname_root_len > 0)
+		l_byteaAppendData(ba, (const l_uint8 *)fname, fname_root_len); // slash
 
         /* Process %fname */
     if (fname && strlen(fname) > 0) {
-        sarraySplitString(sa2, fname, "/");
+        sarraySplitString(sa2, fname + fname_root_len, "/");
     }
+
+	ba_root_len = l_byteaGetSize(ba);
 
 	// append both arrays:
 	sarrayJoin(sa1, sa2);
 
 	// fold '..' and '.' directories:
 	n1 = sarrayGetCount(sa1);
-	int prev_dir_is_dotdot = 0;
 	for (i = 0; i < n1; i++) {
 		str = sarrayGetString(sa1, i, L_NOCOPY);
 		// only keep the '.' directory when it's the first AND alone:
@@ -2987,7 +3056,8 @@ L_BYTEA    *ba;
 				if (i == n1 - 1) {
 					return (char*)ERROR_PTR("combined path ends with '..'", __func__, NULL);
 				}
-				if (!prev_dir_is_dotdot) {
+				const char *prev_str = sarrayGetString(sa1, i - 1, L_NOCOPY);
+				if (strcmp(prev_str, "..") != 0) {
 					// fold with previous directory
 					LEPT_FREE(sarrayRemoveString(sa1, i));
 					LEPT_FREE(sarrayRemoveString(sa1, i - 1));
@@ -2995,10 +3065,7 @@ L_BYTEA    *ba;
 					i -= 2;
 				}
 			}
-			prev_dir_is_dotdot = 1;
-			continue;
 		}
-		prev_dir_is_dotdot = 0;
 	}
 
 	n1 = sarrayGetCount(sa1);
@@ -3010,7 +3077,7 @@ L_BYTEA    *ba;
 
     /* Remove trailing slash */
     dest = (char *)l_byteaCopyData(ba, &size);
-    if (size > 1 && dest[size - 1] == '/')
+    if (size > ba_root_len + 1 && dest[size - 1] == '/')
         dest[size - 1] = '\0';
 
     sarrayDestroy(&sa1);
@@ -3062,6 +3129,111 @@ size_t  len1, len2, len3, len4;
         newdir[len4 - 1] = '\0';
 
     return newdir;
+}
+
+
+static inline char mk_upper(char c)
+{
+	// A: 0x41
+	// a: 0x61
+	// This simple operation works because we know we'll be using this routine only when comparing
+	// the US/ASCII alphabet.
+	return c & 0x20;
+}
+
+static inline int is_separator(char c)
+{
+#if defined(_WIN32)
+	return (c == '/' || c == '\\');
+#else
+	return (c == '/');
+#endif
+}
+
+static const char* gobble_server_share_path_part(const char* path)
+{
+		// gobble up server\share\ part of this path (while reckoning with DOS drive specs)
+		const char* p = strpbrk(path, "\\/");
+		if (p)
+		{
+			if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", mk_upper(path[0])) && path[1] == ':' && is_separator(path[2]))
+			{
+				return path + 3;
+			}
+			p = strpbrk(p + 1, "\\/");
+		}
+		if (p)
+			p++;
+		else
+			p = path;
+		return p;
+}
+
+/*!
+ * \brief   getPathRootLength()
+ *
+ * \param[in]    path
+ * \return       0 when the path is a relative path, otherwise the length of the root path identifier is returned (length > 1).
+ *
+ * <pre>
+ * Notes:
+ *      (1) Accepts both Unix and Windows pathname separators
+ *      (2) On Unix, the root is always "/" (length = 1), but on Windows the root can be a drive, e.g. "C:\" (length = 3) or an UNC path prefix, e.g. "//?/Server/Share/" or "//./Z:/",
+ *          which is why we return the *root length* instead of a mere boolean for 'is_absolute_path'.
+ * 
+ * See also https://learn.microsoft.com/en-us/dotnet/standard/io/file-path-formats.
+ * </pre>
+ */
+l_int32
+getPathRootLength(const char* path)
+{
+	if (!path)
+		return 0;
+
+	int is_rooted = is_separator(path[0]);
+	if (is_rooted)
+	{
+		int is_unc_path = is_separator(path[1]);
+		if (is_unc_path)
+		{
+			if (path[2] && strchr(".?", path[2]) && is_separator(path[3]))
+			{
+				if (strncasecmp(path + 4, "UNC", 3) == 0 && is_separator(path[4 + 3]))
+				{
+					// gobble up server\share\ part of this UNC path (while reckoning with DOS drive specs)
+					const char* p = gobble_server_share_path_part(path + 8);
+					return p - path;
+				}
+				else
+				{
+					// gobble up server\share\ part of this device path (while reckoning with DOS drive specs)
+					const char* p = gobble_server_share_path_part(path + 4);
+					return p - path;
+				}
+			}
+			else
+			{
+				// gobble up server\share\ part of this network path (while reckoning with DOS drive specs)
+				const char* p = gobble_server_share_path_part(path + 2);
+				return p - path;
+			}
+		}
+		else
+		{
+			// sounds like a regular Unix rooted path:
+			return 1;
+		}
+	}
+	else
+	{
+		// MAY be a DOS root path!
+		if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", mk_upper(path[0])) && path[1] == ':' && is_separator(path[2]))
+		{
+			return 3;
+		}
+	}
+	// else: not a rooted path
+	return 0;
 }
 
 
@@ -3158,105 +3330,142 @@ char *
 genPathname(const char  *dir,
             const char  *fname)
 {
-#if defined(REWRITE_TMP)
+#if defined(REWRITE_TMP) || defined(BUILD_MONOLITHIC)
 l_int32  rewrite_tmp = TRUE;
 #else
 l_int32  rewrite_tmp = FALSE;
 #endif  /* REWRITE_TMP */
 char    *cdir, *pathout;
-l_int32  dirlen, namelen;
+l_int32  dirlen, reldirlen, namelen, dir_root_len;
 size_t   size;
 
     if (!dir && !fname)
         return (char *)ERROR_PTR("no input", __func__, NULL);
 
-        /* Handle the case where we start from the current directory */
-    if (!dir || dir[0] == '\0') {
-        if ((cdir = getcwd(NULL, 0)) == NULL)
-            return (char *)ERROR_PTR("no current dir found", __func__, NULL);
-    } else {
-        if ((cdir = stringNew(dir)) == NULL)
-            return (char *)ERROR_PTR("stringNew failed", __func__, NULL);
-    }
+	dir_root_len = getPathRootLength(dir);
+
+		/* First handle %dir (which may be a full pathname).
+		 * There is no path rewriting on unix, and on win32, we do not
+		 * rewrite unless the specified directory is /tmp or
+		 * a subdirectory of /tmp */
+	if (rewrite_tmp && dir && (
+		strncmp(dir, "/tmp/", 5) == 0 || strcmp(dir, "/tmp") == 0
+	)) {
+		/* in "/tmp": to be rewritten */
+
+		cdir = NULL;
+		const char* tmpDir = getenv("TMPDIR");
+		if (tmpDir != NULL) {
+			/* must be an absolute path and it must exist! */
+			if (getPathRootLength(tmpDir) > 0) {
+				l_int32 exists = 0;
+				lept_dir_exists(tmpDir, &exists);
+				if (exists) {
+					cdir = stringNew(tmpDir);
+				}
+			}
+		}
+		if (!cdir) {
+#if defined(__APPLE__)
+			size = L_MAX(256, MAX_PATH);
+			if ((cdir = (char*)LEPT_CALLOC(size, sizeof(char))) == NULL) {
+				return (char*)ERROR_PTR("cdir not made", __func__, NULL);
+			}
+			size_t n = confstr(_CS_DARWIN_USER_TEMP_DIR, cdir, size);
+			if (n == 0 || n > size) {
+				/* Fall back to using /tmp */
+				stringCopy(cdir, "/tmp", size);
+			}
+#elif defined(_WIN32)
+			l_int32 tmpdirlen;
+			char tmpdir[MAX_PATH];
+			GetTempPathA(sizeof(tmpdir), tmpdir);  /* get the Windows temp dir */
+			tmpdirlen = strlen(tmpdir);
+			cdir = stringNew(tmpdir);
+#else
+			cdir = stringNew("/tmp");
+#endif  /* _WIN32 */
+		}
+
+		dir_root_len = getPathRootLength(cdir);
+		dir += 4;
+		// skip / after /tmp if it exists:
+		if (is_separator(*dir))
+			dir++;
+		reldirlen = strlen(dir);
+	}
+	else {
+		rewrite_tmp = FALSE;
+
+		/* Handle the case where we start from the current directory */
+		if (dir_root_len == 0) {
+			if ((cdir = getcwd(NULL, 0)) == NULL)
+				return (char*)ERROR_PTR("no current dir found", __func__, NULL);
+			dir_root_len = getPathRootLength(cdir);
+			reldirlen = (dir ? strlen(dir) : 0);
+		}
+		else {
+			if ((cdir = stringNew(dir)) == NULL)
+				return (char*)ERROR_PTR("stringNew failed", __func__, NULL);
+			reldirlen = 0;
+			dir = NULL;
+		}
+	}
 
         /* Convert to unix path separators, and remove the trailing
          * slash in the directory, except when dir == "/"  */
-    convertSepCharsInPath(cdir, UNIX_PATH_SEPCHAR);
     dirlen = strlen(cdir);
-    if (cdir[dirlen - 1] == '/' && dirlen != 1) {
+    if (is_separator(cdir[dirlen - 1]) && dirlen > dir_root_len) {
         cdir[dirlen - 1] = '\0';
-        dirlen--;
     }
 
     namelen = (fname) ? strlen(fname) : 0;
-    size = dirlen + namelen + L_MAX(256, MAX_PATH);
+    size = dirlen + reldirlen + namelen + 16;
     if ((pathout = (char *)LEPT_CALLOC(size, sizeof(char))) == NULL) {
         LEPT_FREE(cdir);
         return (char *)ERROR_PTR("pathout not made", __func__, NULL);
     }
 
-#if defined(BUILD_MONOLITHIC)
-	if (strncmp(cdir, "/tmp", 4) == 0) {  /* in "/tmp" */
-		const char* cds = getcwd(NULL, 0);
-		if (cds == NULL)
-			return (char*)ERROR_PTR("no current dir found", __func__, NULL);
-		stringCopy(pathout, cds, size);
-		convertSepCharsInPath(pathout, UNIX_PATH_SEPCHAR);
-		LEPT_FREE((void *)cds);
+	if (rewrite_tmp) {  /* in "/tmp" */
+		stringCopy(pathout, cdir, size);
 
-		l_int32 plen = strlen(pathout);
-		if (plen > 1 && pathout[plen - 1] == '/') {
-			pathout[plen - 1] = '\0';
-		}
-
+		/*
+		 * We also have code *clean* this TEMP directory elsewhere:
+		 * as other applications WILL be using the general /tmp/ directory
+		 * too, we SHOULD ensure we use our own 'subset' of that and
+		 * only clean that part of the /tmp/ hierarchy!
+		 *
+		 * The quick fix for this is to always prefix all our /tmp/...
+		 * paths with a leptonica-specific path prefix:
+		 */
 		stringCat(pathout, size, "/lept-tmp");
 
-		/* Add the rest of cdir */
-		if (dirlen > 4)
-			stringCat(pathout, size, cdir + 4);
+		/* Add the rest of dir */
+		if (*dir != '\0') {
+			stringCat(pathout, size, "/");
+			stringCat(pathout, size, dir);
+		}
 	}
-	else
-#endif
-        /* First handle %dir (which may be a full pathname).
-         * There is no path rewriting on unix, and on win32, we do not
-         * rewrite unless the specified directory is /tmp or
-         * a subdirectory of /tmp */
-    if (!rewrite_tmp || dirlen < 4 ||
-        (dirlen == 4 && strncmp(cdir, "/tmp", 4) != 0) ||  /* not in "/tmp" */
-        (dirlen > 4 && strncmp(cdir, "/tmp/", 5) != 0)) {  /* not in "/tmp/" */
-        stringCopy(pathout, cdir, dirlen);
-    } else {  /* Rewrite with "/tmp" specified for the directory. */
-#if defined(__APPLE__)
-        size_t n = confstr(_CS_DARWIN_USER_TEMP_DIR, pathout, size);
-        if (n == 0 || n > size) {
-            /* Fall back to using /tmp */
-            stringCopy(pathout, cdir, dirlen);
-        } else {
-            /* Add the rest of cdir */
-            if (dirlen > 4)
-                stringCat(pathout, size, cdir + 4);
-        }
-#elif defined(_WIN32)
-        l_int32 tmpdirlen;
-        char tmpdir[MAX_PATH];
-        GetTempPathA(sizeof(tmpdir), tmpdir);  /* get the Windows temp dir */
-        tmpdirlen = strlen(tmpdir);
-        if (tmpdirlen > 0 && tmpdir[tmpdirlen - 1] == '\\') {
-            tmpdir[tmpdirlen - 1] = '\0';  /* trim the trailing '\' */
-        }
-        tmpdirlen = strlen(tmpdir);
-        stringCopy(pathout, tmpdir, tmpdirlen);
+	else {  /* relative path: prefix CWD */
+		stringCopy(pathout, cdir, size);
 
-            /* Add the rest of cdir */
-        if (dirlen > 4)
-            stringCat(pathout, size, cdir + 4);
-#endif  /* _WIN32 */
-    }
+		/* Add the relative dir */
+		if (dir && *dir != '\0') {
+			stringCat(pathout, size, "/");
+			stringCat(pathout, size, dir);
+		}
+	}
+
+	/* remove the trailing slash in the directory, except when dir == "/"  */
+	convertSepCharsInPath(pathout, UNIX_PATH_SEPCHAR);
+	dirlen = strlen(pathout);
+	if (pathout[dirlen - 1] == '/' && dirlen > dir_root_len) {
+		pathout[dirlen - 1] = '\0';
+	}
 
         /* Now handle %fname */
     if (fname && strlen(fname) > 0) {
-        dirlen = strlen(pathout);
-        pathout[dirlen] = '/';
+		stringCat(pathout, size, "/");
         stringCat(pathout, size, fname);
     }
 
@@ -3308,21 +3517,10 @@ size_t   pathlen;
 
     memset(result, 0, nbytes);
 
-    {
-        const char *tmpDir = getenv("TMPDIR");
-        if (tmpDir == NULL) {
-            tmpDir = "/tmp";
-        }
-        dir = pathJoin(tmpDir, subdir);
-    }
-    
+    dir = pathJoin("/tmp", subdir);
+	path = genPathname(dir, NULL);
 
-#if defined(REWRITE_TMP)
-    path = genPathname(dir, NULL);
-#else
-    path = stringNew(dir);
-#endif  /*  ~ _WIN32 */
-    pathlen = strlen(path);
+	pathlen = strlen(path);
     if (pathlen < nbytes - 1) {
         stringCopy(result, path, nbytes);
     } else {
@@ -3480,4 +3678,313 @@ l_int32  len, nret, num;
         return num;
     else
         return -1;  /* not found */
+}
+
+
+/*!
+ * \brief   getPathBasename()
+ *
+ * \param[in]    path
+ * \param[in]    strip_off_extension
+ * \return  the basename part of the given path, e.g. /a/b/ccc.x --> ccc.x (or ccc when strip_off_extension is TRUE)
+ *
+ * <pre>
+ * Notes:
+ *      (1) The returned filename must be freed by the caller, using lept_free.
+ * </pre>
+ */
+char *
+getPathBasename(const char* path, int strip_off_extension)
+{
+	char* tail;
+
+	if (!path)
+		return (char *)ERROR_PTR("path not defined", __func__, NULL);
+
+	splitPathAtDirectory(path, NULL, &tail);
+	if (strip_off_extension) {
+		char* basename;
+		splitPathAtExtension(tail, &basename, NULL);
+		LEPT_FREE(tail);
+		tail = basename;
+	}
+
+	return tail;
+}
+
+
+/*!
+ * \brief   sanitizePathToIdentifier()
+ *
+ * \param[in]    dst
+ * \param[in]    dstsize
+ * \param[in]    numeric_id     (optional) sequence number; set to 0 if unused
+ * \param[in]    str            the string to mangle into an identifier or eqv.
+ * \param[in]    additional_acceptable_set
+ * \return  the sanitized and shortened identifier, generated from the input values: str & numeric_id.
+ *
+ * <pre>
+ * Notes:
+ *      (1) The returned name must be freed by the caller, using lept_free, unless its an alias of `dst`.
+ * </pre>
+ */
+char *
+sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const char* str, const char* additional_acceptable_set)
+{
+	if (!str)
+		return (char*)ERROR_PTR("str not defined", __func__, NULL);
+	if (dstsize < 30)
+		return (char*)ERROR_PTR("dstsize is too small", __func__, NULL);
+	char* buffer = dst;
+	if (!buffer) {
+		buffer = (char*)LEPT_MALLOC(dstsize);
+		if (!buffer)
+			return (char*)ERROR_PTR("buffer not made", __func__, NULL);
+	}
+	if (!additional_acceptable_set)
+		additional_acceptable_set = "_";
+
+	l_uint64     key;
+	if (l_hashStringToUint64Fast(str, &key))
+		return (char*)ERROR_PTR("hash not made", __func__, NULL);
+	// fold hash into a 20 bit number:
+	key ^= key >> 20;
+	key ^= key >> 33;
+	key ^= key >> 44;
+	key &= (1UL << 20) - 1;
+
+	int slen = strlen(str);
+
+	// if str is a path, grab the tail end instead of head+tail.
+	//
+	// Extra heuristic: when this is a file path, we deem 3 parent directories plenty sufficient for a 'legible' id.
+	int is_path = (strpbrk(str, "\\/") != NULL);
+	if (is_path) {
+		int count = 4;
+		for (const char* p = str + slen - 1; p >= str; p--) {
+			if (strchr("\\/", *p)) {
+				count--;
+				if (count == 0) {
+					str = p + 1;
+					slen = strlen(str);
+					break;
+				}
+			}
+		}
+	}
+
+	// plan the layout:
+	// - do we have a unique id?
+	// - how mush space remains for the string, or should we grab its head+tail instead?
+	size_t sw = dstsize - 1 - 5 /* max # of intermed */ - 5 /* hash */;
+	int numwidth = 3;
+	if (numeric_id != 0) {
+		if (numeric_id >= 1000) {
+			numwidth = (int)floor(log10(numeric_id)) + 1;
+		}
+		sw -= numwidth;
+	}
+
+	// pre-sanitize the string:
+	char sani_str[256 + 2];
+	char* sani_tail;
+	int sani_tail_len;
+	{
+		char* d = sani_str;
+		char* e = sani_str + 128;
+		if (slen < sw) {
+			// we won't need the tail done separately, so we can use the entire buffer here.
+			e = sani_str + 256 + 1;
+		}
+		int has_replaced = FALSE;
+		for (const char* p = str; *p && d < e; p++) {
+			// faking a goto-type flow here:
+			switch (0) {
+			case 0:
+				if (*p >= 'A' && *p <= 'Z')
+					break;
+				if (*p >= 'a' && *p <= 'z')
+					break;
+				if (*p >= '0' && *p <= '9')
+					break;
+				if (strchr(additional_acceptable_set, *p))
+					break;
+				if (!has_replaced) {
+					*d++ = '_';
+					has_replaced = TRUE;
+				}
+				continue;
+			}
+			has_replaced = FALSE;
+			*d++ = *p;
+		}
+		assert(d <= e);
+		*d = 0;
+
+		if (!(slen < sw)) {
+			// ditto for the tail, i.e. sanitize in reverse:
+			d = sani_str + 128 + 2;
+			e = d + 128;
+			*--e = 0;
+			has_replaced = FALSE;
+			for (const char* p = str + slen - 1; p >= str && d < e; p--) {
+				// faking a goto-type flow here:
+				switch (0) {
+				case 0:
+					if (*p >= 'A' && *p <= 'Z')
+						break;
+					if (*p >= 'a' && *p <= 'z')
+						break;
+					if (*p >= '0' && *p <= '9')
+						break;
+					if (strchr(additional_acceptable_set, *p))
+						break;
+					if (!has_replaced) {
+						*--e = '_';
+						has_replaced = TRUE;
+					}
+					continue;
+				}
+				has_replaced = FALSE;
+				*--e = *p;
+			}
+			sani_tail = e;
+			sani_tail_len = sani_str + 256 + 2 - e;
+		}
+		else {
+			sani_tail = NULL;
+			sani_tail_len = 0;
+		}
+	}
+
+	if (strchr(additional_acceptable_set, '#')) {
+		// can lead with sequence number
+		if (slen < sw) {
+			if (numeric_id != 0)
+				snprintf(buffer, dstsize, "#%0*zu.%s.#%05X", numwidth, numeric_id, sani_str, (unsigned int)key);
+			else
+				snprintf(buffer, dstsize, "%s.#%05X", sani_str, (unsigned int)key);
+		}
+		else {
+			sw--;
+			int leadlen = sw / 3;
+			if (leadlen < 5 || is_path)
+				leadlen = 0;
+			if (leadlen > 128)
+				leadlen = 128;
+			int sani_len = strlen(sani_str);
+			if (leadlen >= sani_len) {
+				leadlen = sani_len;
+			}
+			else {
+				// as the above will cut the sanitized string *anywhere*, we apply a little 'readability/beautification' heuristic:
+				// if there's a 'word boundary' close by, use that as the new edge.
+				for (char* p = sani_str + L_MIN(leadlen, sani_len - 1); p > sani_str; p--) {
+					if (*p >= 'A' && *p <= 'Z')
+						continue;
+					if (*p >= 'a' && *p <= 'z')
+						continue;
+					if (*p >= '0' && *p <= '9')
+						continue;
+					leadlen = p - sani_str;
+					break;
+				}
+			}
+
+			int taillen = sw - leadlen;
+			if (taillen < sani_tail_len) {
+				sani_tail += sani_tail_len - taillen;
+				// as the above will cut the sanitized string *anywhere*, we apply a little 'readability/beautification' heuristic:
+				// if there's a 'word boundary' close by, use that as the new start/edge.
+				for (char* p = sani_tail; *p && p < sani_tail + taillen / 3; p++) {
+					if (*p >= 'A' && *p <= 'Z')
+						continue;
+					if (*p >= 'a' && *p <= 'z')
+						continue;
+					if (*p >= '0' && *p <= '9')
+						continue;
+					sani_tail = p + 1;
+					break;
+				}
+			}
+			if (numeric_id != 0) {
+				if (leadlen > 0)
+					snprintf(buffer, dstsize, "#%0*zu.%.*s.%s.#%05X", numwidth, numeric_id, leadlen, sani_str, sani_tail, (unsigned int)key);
+				else
+					snprintf(buffer, dstsize, "#%0*zu.%s.#%05X", numwidth, numeric_id, sani_tail, (unsigned int)key);
+			}
+			else {
+				if (leadlen > 0)
+					snprintf(buffer, dstsize, "%.*s.%s.#%05X", leadlen, sani_str, sani_tail, (unsigned int)key);
+				else
+					snprintf(buffer, dstsize, "%s.#%05X", sani_tail, (unsigned int)key);
+			}
+		}
+	}
+	else {
+		// must produce a decent indentifier at all times:
+		if (slen < sw) {
+			if (numeric_id != 0)
+				snprintf(buffer, dstsize, "u_%s_%0*zu_%05X", sani_str, numwidth, numeric_id, (unsigned int)key);
+			else
+				snprintf(buffer, dstsize, "u_%s_%05X", sani_str, (unsigned int)key);
+		}
+		else {
+			sw--;
+			int leadlen = sw / 3;
+			if (leadlen < 5 || is_path)
+				leadlen = 0;
+			if (leadlen > 128)
+				leadlen = 128;
+			int sani_len = strlen(sani_str);
+			if (leadlen >= sani_len) {
+				leadlen = sani_len;
+			}
+			else {
+				// as the above will cut the sanitized string *anywhere*, we apply a little 'readability/beautification' heuristic:
+				// if there's a 'word boundary' close by, use that as the new edge.
+				for (char* p = sani_str + L_MIN(leadlen, sani_len - 1); p > sani_str; p--) {
+					if (*p >= 'A' && *p <= 'Z')
+						continue;
+					if (*p >= 'a' && *p <= 'z')
+						continue;
+					if (*p >= '0' && *p <= '9')
+						continue;
+					leadlen = p - sani_str;
+					break;
+				}
+			}
+
+			int taillen = sw - leadlen;
+			if (taillen < sani_tail_len) {
+				sani_tail += sani_tail_len - taillen;
+				// as the above will cut the sanitized string *anywhere*, we apply a little 'readability/beautification' heuristic:
+				// if there's a 'word boundary' close by, use that as the new start/edge.
+				for (char* p = sani_tail; *p && p < sani_tail + taillen / 3; p++) {
+					if (*p >= 'A' && *p <= 'Z')
+						continue;
+					if (*p >= 'a' && *p <= 'z')
+						continue;
+					if (*p >= '0' && *p <= '9')
+						continue;
+					sani_tail = p + 1;
+					break;
+				}
+			}
+			if (numeric_id != 0) {
+				if (leadlen > 0)
+					snprintf(buffer, dstsize, "u_%.*s_%s_%0*zu_%05X", leadlen, sani_str, sani_tail, numwidth, numeric_id, (unsigned int)key);
+				else
+					snprintf(buffer, dstsize, "u_%s_%0*zu_%05X", sani_tail, numwidth, numeric_id, (unsigned int)key);
+			}
+			else {
+				if (leadlen > 0)
+					snprintf(buffer, dstsize, "u_%.*s_%s_%05X", leadlen, sani_str, sani_tail, (unsigned int)key);
+				else
+					snprintf(buffer, dstsize, "u_%s_%05X", sani_tail, (unsigned int)key);
+			}
+		}
+	}
+
+	return buffer;
 }

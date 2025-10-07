@@ -1,4 +1,4 @@
-/*====================================================================*
+/*====================================================================*f
  -  Copyright (C) 2001 Leptonica.  All rights reserved.
  -
  -  Redistribution and use in source and binary forms, with or without
@@ -62,7 +62,7 @@
 int main(int    argc,
          const char **argv)
 {
-char       textstr[256];
+char       textstr[L_MAX(256, MAX_PATH)];
 l_int32    i, thresh, fgval, bgval;
 l_float32  scorefract;
 L_BMF     *bmf;
@@ -72,7 +72,31 @@ PIXA      *pixa1, *pixad;
     setLeptDebugOK(1);
     lept_mkdir("lept/otsu");
 
-    pixs = pixRead(DEMOPATH("1555.007.jpg"));
+	SARRAY* sargv = NULL;
+	if (argc <= 1)
+	{
+		// default:
+		sargv = sarrayCreate(0);
+		sarrayAddString(sargv, "1555.007.jpg", L_COPY);
+	}
+	else
+	{
+		sargv = lept_locate_all_files_in_searchpaths(argc - 1, argv + 1);
+	}
+
+	int argv_count = sarrayGetCount(sargv);
+  for (int argidx = 0; argidx < argv_count; argidx++)
+  {
+	  const char* filename = sarrayGetString(sargv, argidx, L_NOCOPY);
+	  const char* filepath = DEMOPATH(filename);
+	  filename = getPathBasename(filepath, FALSE);
+	  char* sani_filename = sanitizePathToIdentifier(NULL, 70, argidx + 1, filepath, "@#_-");
+
+
+	  lept_stderr("\n\n\nProcessing image #%d: %s = %s :: %s\n", argidx + 1, filename, filepath, sani_filename);
+
+
+    pixs = pixRead(filepath);
     pixg = pixConvertTo8(pixs, 0);
     bmf = bmfCreate(NULL, 8);
     pixad = pixaCreate(0);
@@ -88,7 +112,10 @@ PIXA      *pixa1, *pixad;
 		pixaAddPix(pixa1, pixg, L_COPY);
 		pixaAddPix(pixa1, pixp, L_INSERT);
 		// add 1 empty slot to fill the pixa row:
-		pixaAddPix(pixa1, NULL, L_INSERT);
+		{
+			PIX* dummy = pixCreate(1, 1, 1);
+			pixaAddPix(pixa1, dummy, L_INSERT);
+		}
 
 		for (int j = 0; j <= 3; j++) {
 
@@ -112,15 +139,15 @@ PIXA      *pixa1, *pixad;
 		/* Join these together and add some text */
         pix1 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 20, 2);
         snprintf(textstr, sizeof(textstr),
-             "Scorefract = %3.1f ........... Thresh = %d", scorefract, thresh);
+             "Scorefract = %3.1f ........... Thresh = %d (%s)", scorefract, thresh, filename);
         pix2 = pixAddSingleTextblock(pix1, bmf, textstr, 0x00ff0000,
                                      L_ADD_BELOW, NULL);
 
             /* Save and display the result */
         pixaAddPix(pixad, pix2, L_INSERT);
-        snprintf(textstr, sizeof(textstr), "/tmp/lept/otsu/%03d.png", i);
+        snprintf(textstr, sizeof(textstr), "/tmp/lept/otsu/%03d.%03d.%s.png", argidx + 1, (int)i, sani_filename);
         pixWrite(textstr, pix2, IFF_PNG);
-        pixDisplay(pix2, 100, 100);
+		pixDisplayWithTitle(pix2, 100, 100, filepath, TRUE);
         pixDestroy(&pix1);
         pixaDestroy(&pixa1);
     }
@@ -133,7 +160,7 @@ PIXA      *pixa1, *pixad;
         pix1 = pixAddBlackOrWhiteBorder(pixb, 2, 2, 2, 2, L_GET_BLACK_VAL);
         pix2 = pixScale(pix1, 0.5, 0.5);
         snprintf(textstr, sizeof(textstr),
-             "Scorefract = %3.1f", scorefract);
+             "Scorefract = %3.1f (%s)", scorefract, filename);
         pix3 = pixAddSingleTextblock(pix2, bmf, textstr, 1,
                                      L_ADD_BELOW, NULL);
         pixaAddPix(pixad, pix3, L_INSERT);
@@ -142,12 +169,22 @@ PIXA      *pixa1, *pixad;
         pixDestroy(&pix2);
     }
 
-    lept_stderr("Writing to: /tmp/lept/otsu/result1.pdf\n");
-    pixaConvertToPdf(pixad, 75, 1.0, 0, 0, "Otsu thresholding",
-                     "/tmp/lept/otsu/result1.pdf");
+	snprintf(textstr, sizeof(textstr), "/tmp/lept/otsu/result.%s.pdf", sani_filename);
+	char* out_fullname = genPathname(textstr, NULL);
+	lept_stderr("Writing to: %s --> %s\n", textstr, out_fullname);
+    pixaConvertToPdf(pixad, 75, 1.0, 0, 0, "Otsu thresholding", out_fullname);
+	stringDestroy(&out_fullname);
     bmfDestroy(&bmf);
     pixDestroy(&pixs);
     pixDestroy(&pixg);
     pixaDestroy(&pixad);
+
+	LEPT_FREE(filename);
+	LEPT_FREE(sani_filename);
+	LEPT_FREE(filepath);
+  }
+
+    sarrayDestroy(&sargv);
+
     return 0;
 }

@@ -35,11 +35,17 @@
 #endif
 #endif
 
+
+/*! String array: an array of C strings */
+typedef struct Sarray SARRAY;
+
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-	const char *lept_locate_file_in_seatchpath(const char *file);
+	const char *lept_locate_file_in_searchpath(const char *file);
+
+	SARRAY *lept_locate_all_files_in_searchpaths(int count, const char **array);
 
 #ifdef __cplusplus
 }
