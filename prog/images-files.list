@@ -1,0 +1,21 @@
+#
+# list of image files to test
+#
+# entries MAY contain wildcards.
+#
+# Note: any resulting duplicate file paths will be removed, so path specs MAY safely "overlap"
+#       when you want to select multiple (overlapping) subsets of files.
+#
+#
+# Extra: specify a set of paths to search; these MAY include wildcards as well!
+#
+# The FIRST path which delivers 1 or more matches for a line (a.k.a. 'spec') will be used for that line.
+# Another spec line MAY use another path in the given search set, but every line will only use ONE path from the (wild-card-expanded) search set!
+#
+SEARCHPATH=.;lept/demo-data;../../thirdparty/leptonica/prog;N:/image-4-ocr-corpus/**/;/tmp/lept/**/
+
+*.(jpg|jpeg|tif|tiff|webp|gif|bmp|jfif)
+10[0-9][0-9][0-9][0-9]-*.(jpg|jpeg|tif|tiff|webp|gif|bmp|jfif)
+issue[1-9][1-9][1-9]*.(jpg|jpeg|tif|tiff|webp|gif|bmp|jfif)
+
+scones-low-contrast-original.png
