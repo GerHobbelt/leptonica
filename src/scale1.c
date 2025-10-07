@@ -1331,8 +1331,8 @@ pixScaleBySampling(PIX       *pixs,
  * \param[in]    pixs      1, 2, 4, 8, 16, 32 bpp
  * \param[in]    scalex    must be > 0.0
  * \param[in]    scaley    must be > 0.0
- * \param[in]    shiftx    0.5 for default; 0.0 to mihimize edge effects
- * \param[in]    shifty    0.5 for default; 0.0 to mihimize edge effects
+ * \param[in]    shiftx    0.5 for default; 0.0 to minimize edge effects
+ * \param[in]    shifty    0.5 for default; 0.0 to minimize edge effects
  * \return  pixd, or NULL on error
  *
  * <pre>
