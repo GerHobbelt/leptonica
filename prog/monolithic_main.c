@@ -201,6 +201,7 @@ MONOLITHIC_CMD_TABLE_START()
 { "numaranktest", { .fa = lept_numaranktest_main } },
 { "otsutest1", { .fa = lept_otsutest1_main } },
 { "otsutest2", { .fa = lept_otsutest2_main } },
+{ "otsutest3", { .fa = lept_otsutest3_main } },
 { "overlap", { .fa = lept_overlap_reg_main } },
 { "pageseg", { .fa = lept_pageseg_reg_main } },
 { "pagesegtest1", { .fa = lept_pagesegtest1_main } },

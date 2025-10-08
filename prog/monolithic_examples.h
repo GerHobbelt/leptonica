@@ -194,6 +194,7 @@ int lept_numa3_reg_main(int argc, const char **argv);
 int lept_numaranktest_main(int argc, const char **argv);
 int lept_otsutest1_main(int argc, const char **argv);
 int lept_otsutest2_main(int argc, const char **argv);
+int lept_otsutest3_main(int argc, const char **argv);
 int lept_overlap_reg_main(int argc, const char **argv);
 int lept_pageseg_reg_main(int argc, const char **argv);
 int lept_pagesegtest1_main(int argc, const char **argv);
