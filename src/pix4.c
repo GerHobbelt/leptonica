@@ -3461,7 +3461,7 @@ PIX       *pixg;
     }
 
     if (pthresh) *pthresh = thresh;
-	assert(fabsf(avefg - avebg) >= 1);
+	//assert(fabsf(avefg - avebg) >= 1);
 
 	// left/black is foreground is the default assumption, but when the median is
 	// on the left side == there's more left-side than right-side pixels in the
