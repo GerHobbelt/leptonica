@@ -65,6 +65,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     pi = 3.1415926535;
     da1 = l_dnaCreate(50);
     for (i = 0; i < 5000; i++) {

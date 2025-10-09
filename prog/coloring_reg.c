@@ -73,6 +73,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
         /* Read in the bg colors */
     for (i = 0; i < 4; i++)
         sscanf(bgcolors[i], "%d %d %d", &rval[i], &gval[i], &bval[i]);

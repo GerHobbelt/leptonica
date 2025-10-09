@@ -177,10 +177,10 @@ L_STRCODE    *strc;
 #if 0
     pixa1 = l_bootnum_gen1();
 /*    pixa1 = pixaRead("recog/digits/bootnum1.pa"); */
-    pixaWrite("/tmp/lept/junk.pa", pixa1);
-    pixa2 = pixaRead("/tmp/lept/junk.pa");
-    pixaWrite("/tmp/lept/junk1.pa", pixa2);
-    pixa3 = pixaRead("/tmp/lept/junk1.pa");
+    pixaWrite("/tmp/lept/recog/digits/junk.pa", pixa1);
+    pixa2 = pixaRead("/tmp/lept/recog/digits/junk.pa");
+    pixaWrite("/tmp/lept/recog/digits/junk1.pa", pixa2);
+    pixa3 = pixaRead("/tmp/lept/recog/digits/junk1.pa");
     n = pixaGetCount(pixa3);
     for (i = 0; i < n; i++) {
         pix = pixaGetPix(pixa3, i, L_CLONE);

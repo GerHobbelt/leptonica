@@ -204,8 +204,20 @@ struct BG_THRES_PT_INFO {
 			struct BG_THRES_PT_INFO* ptpx = &allbg_pta[nx_offset + j];
 
 			pixt = pixTilingGetTile(pt, i, j);
-			pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
-				&fgval, &bgval, NULL);
+
+			PIX* pixplt = NULL;
+			PIX** pixplt_ref = (ppixd != NULL ? &pixplt : NULL);
+
+				pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
+					&fgval, &bgval, pixplt_ref);
+
+			if (pixplt) {
+				lept_mkdir("lept/otsu3");
+				char textstr[256];
+				snprintf(textstr, sizeof(textstr), "/tmp/lept/otsu3/%s_%s.histogram4binarize_alt-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreFrac-%.1f.png", leptDebugGetFilenamePrefix(), "pixOtsuAdaptiveThreshold2", i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				pixWrite(textstr, pixplt, IFF_PNG);
+				pixDestroy(&pixplt);
+			}
 
 			ptpx->thresh = thresh;
 			ptpx->bgval = bgval;
@@ -291,9 +303,15 @@ struct BG_THRES_PT_INFO {
 					l_float32  avefg, avebg;
 					l_float32  numfg, numbg;
 					NUMA* na = pixGetGrayHistogram(pixt, 1);
+					NUMA* nascore = NULL;
+					NUMA** nascore_ref = (ppixd != NULL ? &nascore : NULL);
 
 					l_float32 mean, median, mode, variance;
 					numaGetHistogramStats(na, 0.0, 1.0, &mean, &median, &mode, &variance);
+
+					l_int32 tile_thresh;
+					l_float32 sum;
+					l_int32 median_pos;
 
 					// now that we know the median, we're going to tweak the histogram to ensure
 					// it's got a single hump at the 'background' side of the median:
@@ -301,23 +319,21 @@ struct BG_THRES_PT_INFO {
 					// for the background:
 					if (!black_is_fg) {
 						// when black is BACKGROUND: create the hump at `floor(median)`:
-						l_float32 sum;
-						l_int32 median_pos = median;
+						median_pos = (l_int32)median;
 						numaGetSumOnInterval(na, 0, median_pos, &sum);
 						numaZeroValues(na, 0, median_pos);
 						numaSetValue(na, median_pos, sum);
 
-						l_int32 tile_thresh;
-						numaSplitDistribution(na, scorefract, &tile_thresh, &avebg, &avefg, &numbg, &numfg, NULL);
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avebg, &avefg, &numbg, &numfg, nascore_ref);
 
 						if (!(fabsf(avefg - avebg) >= 1) && numfg > 0.0 && numbg > 0.0) {
-							fprintf(stderr, "klunt!\n");
+							L_WARNING("klunt! !black_is_fg ... fabsf(avefg(%f) - avebg(%f)) >= 1) && numfg(%f) > 0.0 && numbg(%f) > 0.0\n", __func__, avefg, avebg, numfg, numbg);
 						}
 						if (tile_thresh <= median) {
-							fprintf(stderr, "klunt!\n");
+							L_WARNING("klunt! !black_is_fg ... tile_thresh(%f) <= median(%f)\n", __func__, tile_thresh, median);
 						}
 						if (numbg == 0.0) {
-							fprintf(stderr, "klunt!\n");
+							L_WARNING("klunt! !black_is_fg ... numbg == 0.0 :: avefg(%f), avebg(%f), numfg(%f), numbg(%f)\n", __func__, avefg, avebg, numfg, numbg);
 						}
 
 						// when the histogram is a single-hump type, there is no foreground at all.
@@ -341,7 +357,7 @@ struct BG_THRES_PT_INFO {
 
 							l_ok black_is_fg2 = (fgval < bgval);
 							if (black_is_fg != black_is_fg2) {
-								fprintf(stderr, "klunt!\n");
+								L_WARNING("klunt! !black_is_fg ... black_is_fg != black_is_fg2 :: fgval(%f) < bgval(%f), avefg(%f), avebg(%f), numfg(%f), numbg(%f)\n", __func__, fgval, bgval, avefg, avebg, numfg, numbg);
 							}
 
 							pixSetPixel(pixthresh, j, i, tile_thresh);
@@ -350,20 +366,19 @@ struct BG_THRES_PT_INFO {
 					}
 					else {
 						// when black is FOREGROUND: create the hump at `ceil(median)`:
-						l_float32 sum;
-						l_int32 median_pos = ceil(median);
+						median_pos = (l_int32)ceil(median);
 						numaGetSumOnInterval(na, median_pos, -1, &sum);
 						numaZeroValues(na, median_pos, -1);
 						numaSetValue(na, median_pos, sum);
 
-						l_int32 tile_thresh;
-						numaSplitDistribution(na, scorefract, &tile_thresh, &avefg, &avebg, &numfg, &numbg, NULL);
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avefg, &avebg, &numfg, &numbg, nascore_ref);
 
 						if (!(fabsf(avefg - avebg) >= 1) && numbg > 0.0 && numfg > 0.0) {
+							L_WARNING("klunt! ... fabsf(avefg(%f) - avebg(%f)) >= 1) && numfg(%f) > 0.0 && numbg(%f) > 0.0\n", __func__, avefg, avebg, numfg, numbg);
 							fprintf(stderr, "klunt!\n");
 						}
 						if (numbg == 0.0) {
-							fprintf(stderr, "klunt!\n");
+							L_WARNING("klunt! ... numbg == 0.0 :: avefg(%f), avebg(%f), numfg(%f), numbg(%f)\n", __func__, avefg, avebg, numfg, numbg);
 						}
 
 						// when the histogram is a single-hump type, there is no foreground at all.
@@ -387,12 +402,45 @@ struct BG_THRES_PT_INFO {
 
 							l_ok black_is_fg2 = (fgval < bgval);
 							if (black_is_fg != black_is_fg2) {
-								fprintf(stderr, "klunt!\n");
+								L_WARNING("klunt! ... black_is_fg != black_is_fg2 :: fgval(%f) < bgval(%f), avefg(%f), avebg(%f), numfg(%f), numbg(%f)\n", __func__, fgval, bgval, avefg, avebg, numfg, numbg);
 							}
 
 							pixSetPixel(pixthresh, j, i, tile_thresh);
 							black_is_fg_weight++;
 						}
+					}
+
+					if (nascore != NULL) {
+						l_float32 maxscore;
+						l_float32 maxnum;
+						GPLOT* gplot;
+						NUMA* nax;
+						NUMA* nay;
+
+						/* Prepare for plotting a vertical line at the split point */
+						nax = numaMakeConstant(tile_thresh, 2);
+						numaGetMax(na, &maxnum, NULL);
+						nay = numaMakeConstant(0, 2);
+						numaReplaceNumber(nay, 1, (l_int32)(0.5 * maxnum));
+
+						/* Plot the score function */
+						char buf[256];
+						char title[32];
+						lept_mkdir("lept/otsu3");
+						snprintf(buf, sizeof(buf), "/tmp/lept/otsu3/%s_plots.%d", leptDebugGetFilenamePrefix(), i);
+						snprintf(title, sizeof(title), "Plot %d", i);
+						gplot = gplotCreate(buf, GPLOT_PNG,
+							"Otsu score function for splitting",
+							"Grayscale value", "Score");
+						gplotAddPlot(gplot, NULL, nascore, GPLOT_LINES, title);
+						numaGetMax(nascore, &maxscore, NULL);
+						numaReplaceNumber(nay, 1, maxscore);
+						gplotAddPlot(gplot, nax, nay, GPLOT_LINES, NULL);
+						gplotMakeOutput(gplot);
+						gplotDestroy(&gplot);
+						numaDestroy(&nax);
+						numaDestroy(&nay);
+						numaDestroy(&nascore);
 					}
 
 					pixDestroy(&pixt);

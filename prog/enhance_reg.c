@@ -75,7 +75,9 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
     lept_mkdir("lept/enhance");
+
     pix = pixRead(DEMOPATH("test24.jpg"));  /* rgb */
     w = pixGetWidth(pix);
     scalefact = 150.0 / (l_float32)w;  /* scale to w = 150 */

@@ -67,6 +67,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/baseline");
+
     pixs = pixRead(DEMOPATH("keystone.png"));
 
         /* Test function for deskewing using projective transform

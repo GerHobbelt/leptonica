@@ -1120,11 +1120,60 @@ PIX     *pix;
         if ((pix = pixaGetPix(pixa, i, L_CLONE)) == NULL)
             continue;
         str = sarrayGetString(sa, i, L_NOCOPY);
-        pixSetText(pix, str);
+		/* only persist non-empty text; empty text is equivalent to no text at all */
+		if (str && *str)
+			pixSetText(pix, str);
+		else
+			pixSetText(pix, NULL);
         pixDestroy(&pix);
     }
 
     return 0;
+}
+
+
+/*!
+ * \brief   pixaGetText()
+ *
+ * \param[in]    pixa
+ * \return  an array of texts collected from the images in %pixa, one slot per image.
+ *
+ * <pre>
+ * Notes:
+ *      (1) Each pix in %pixa which has no (or empty) text attached is represented by an empty string.
+ *      (2) As PixSetText() expects an input array of the same size as its %pixa argument, we always
+ *          output an array of the same size as %pixa as well. You are advised to call pixaCountText()
+ *          to check if there will be any texts in %pixa to fetch, before you invoke pixaGetText().
+ * </pre>
+ */
+SARRAY *
+pixaGetText(PIXA* pixa)
+{
+	char* str;
+	l_int32  i, n;
+	PIX* pix;
+	SARRAY* sa;
+
+	if (!pixa)
+		return (SARRAY *)ERROR_PTR("pixa not defined", __func__, NULL);
+
+	n = pixaGetCount(pixa);
+	sa = sarrayCreate(n);
+	if (!sa)
+		return (SARRAY *)ERROR_PTR("sa not made", __func__, NULL);
+
+	for (i = 0; i < n; i++) {
+		if ((pix = pixaGetPix(pixa, i, L_CLONE)) == NULL)
+			continue;
+		str = pixGetText(pix);
+		if (str != NULL)
+			sarrayAddString(sa, str, L_COPY);
+		else
+			sarrayAddString(sa, "", L_COPY);
+		pixDestroy(&pix);
+	}
+
+	return sa;
 }
 
 

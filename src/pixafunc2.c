@@ -1003,6 +1003,160 @@ PIXA     *pixa1, *pixa2;
 
 
 /*!
+ * \brief   pixaDisplayTiledInColumnsWithText()
+ *
+ * \param[in]    pixas
+ * \param[in]    nx           number of columns in output image
+ * \param[in]    scalefactor  applied to every pix; use 1.0 for no scaling
+ * \param[in]    spacing      between images, and on outside; can be < 0
+ * \param[in]    border       width of black border added to each image;
+ *                            use 0 for no border
+  * \param[in]    fontsize     4, 6, ... 20
+  * \param[in]    textcolor    0xrrggbb00
+ * \return  pixd of tiled images, or NULL on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) This is a version of pixaDisplayTiledInColumns() that prints, below
+ *          each pix, the text in the pix text field.  Up to 127 chars
+ *          of text in the pix text field are rendered below each pix.
+ *      (2) This renders a pixa to a single image with &nx columns of
+ *          subimages.  The background color is white, and each row
+ *          is tiled such that the top of each pix is aligned and
+ *          each pix is separated by 'spacing' from the next one.
+ *          A black border can be added to each pix.
+ *      (3) The output depth is determined by the largest depth
+ *          required by the pix in the pixa.  Colormaps are removed.
+ *      (4) A serialized boxa giving the location in pixd of each input
+ *          pix (without added border) is stored in the text string of pixd.
+ *          This allows, e.g., regeneration of a pixa from pixd, using
+ *          pixaCreateFromBoxa().  If there is no scaling and the depth of
+ *          each input pix in the pixa is the same, this tiling operation
+ *          can be inverted using the boxa (except for loss of text in
+ *          each of the input pix):
+ *            pix1 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 0, 30, 2);
+ *            char *boxatxt = pixGetText(pix1);
+ *            boxa1 = boxaReadMem((l_uint8 *)boxatxt, strlen(boxatxt));
+ *            pixa2 = pixaCreateFromBoxa(pix1, boxa1, NULL);
+ * </pre>
+ */
+PIX*
+pixaDisplayTiledInColumnsWithText(PIXA* pixas,
+								l_int32    nx,
+								l_float32  scalefactor,
+								l_int32    spacing,
+								l_int32    border,
+								l_int32    fontsize,
+								l_uint32   textcolor)
+{
+	l_int32   i, j, index, n, x, y, nrows, wb, hb, w, h, maxd, maxh, bordval, res;
+	BOX* box;
+	BOXA* boxa;
+	PIX* pix1, * pix2, * pix3, * pix4, * pixd;
+	PIXA* pixa1, * pixa2;
+	char  buf[128];
+	char* textstr;
+	L_BMF* bmf;
+	SARRAY* sa;
+
+	if (!pixas)
+		return (PIX*)ERROR_PTR("pixas not defined", __func__, NULL);
+	border = L_MAX(border, 0);
+	if (scalefactor <= 0.0) scalefactor = 1.0;
+	if ((n = pixaGetCount(pixas)) == 0)
+		return (PIX*)ERROR_PTR("no components", __func__, NULL);
+
+	if (fontsize < 4 || fontsize > 20 || (fontsize & 1)) {
+		l_int32 fsize = L_MAX(L_MIN(fontsize, 20), 4);
+		if (fsize & 1) fsize--;
+		L_WARNING("changed fontsize from %d to %d\n", __func__,
+			fontsize, fsize);
+		fontsize = fsize;
+	}
+
+	/* preserve all images' texts */
+	sa = pixaGetText(pixas);
+	if (!sa)
+		return (PIX*)ERROR_PTR("sa not made", __func__, NULL);
+
+	bmf = bmfCreate(NULL, fontsize);
+
+	/* Convert to same depth, if necessary */
+	pixa1 = pixaConvertToSameDepth(pixas);
+	pixaGetDepthInfo(pixa1, &maxd, NULL);
+
+	/* Scale and optionally add border */
+	pixa2 = pixaCreate(n);
+	bordval = (maxd == 1) ? 1 : 0;
+	for (i = 0; i < n; i++) {
+		if ((pix1 = pixaGetPix(pixa1, i, L_CLONE)) == NULL)
+			continue;
+		if (scalefactor != 1.0)
+			pix2 = pixScale(pix1, scalefactor, scalefactor);
+		else
+			pix2 = pixClone(pix1);
+		if (border)
+			pix3 = pixAddBorder(pix2, border, bordval);
+		else
+			pix3 = pixClone(pix2);
+		if (i == 0) res = pixGetXRes(pix3);
+
+		/* as many of the above operations will have lost the original pix' text, we need to fetch it from the original source */
+		textstr = sarrayGetString(sa, i, L_NOCOPY);
+		if (textstr && strlen(textstr) > 0) {
+			snprintf(buf, sizeof(buf), "%s", textstr);
+			pix4 = pixAddSingleTextblock(pix3, bmf, buf, textcolor,
+				L_ADD_BELOW, NULL);
+		}
+		else {
+			pix4 = pixClone(pix3);
+		}
+		pixaAddPix(pixa2, pix4, L_INSERT);
+		pixDestroy(&pix1);
+		pixDestroy(&pix2);
+		pixDestroy(&pix3);
+	}
+	pixaDestroy(&pixa1);
+	sarrayDestroy(&sa);
+	if (pixaGetCount(pixa2) != n) {
+		n = pixaGetCount(pixa2);
+		L_WARNING("only got %d components\n", __func__, n);
+		if (n == 0) {
+			pixaDestroy(&pixa2);
+			return (PIX*)ERROR_PTR("no components", __func__, NULL);
+		}
+	}
+
+	/* Compute layout parameters and save as a boxa */
+	boxa = boxaCreate(n);
+	nrows = (n + nx - 1) / nx;
+	y = spacing;
+	for (i = 0, index = 0; i < nrows; i++) {
+		x = spacing;
+		maxh = 0;
+		for (j = 0; j < nx && index < n; j++) {
+			pixaGetPixDimensions(pixa2, index, &wb, &hb, NULL);
+			box = boxCreate(x, y, wb, hb);
+			boxaAddBox(boxa, box, L_INSERT);
+			maxh = L_MAX(maxh, hb + spacing);
+			x += wb + spacing;
+			index++;
+		}
+		y += maxh;
+	}
+	pixaSetBoxa(pixa2, boxa, L_INSERT);
+
+	/* Render the output pix */
+	boxaGetExtent(boxa, &w, &h, NULL);
+	pixd = pixaDisplay(pixa2, w + spacing, h + spacing);
+	pixSetResolution(pixd, res, res);
+
+	pixaDestroy(&pixa2);
+	return pixd;
+}
+
+
+/*!
  * \brief   pixaDisplayTiledAndScaled()
  *
  * \param[in]    pixa

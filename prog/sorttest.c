@@ -63,17 +63,17 @@ PIXA    *pixa, *pixas, *pixas2;
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
 
-#if 0
+#if 1
     boxa = pixConnComp(pixs, NULL, 8);
     n = boxaGetCount(boxa);
 
-    boxas = boxaSort(boxa, L_SORT_BY_PERIMETER, L_SORT_DECREASING, NULL);
+    BOXA *boxas = boxaSort(boxa, L_SORT_BY_PERIMETER, L_SORT_DECREASING, NULL);
     ns = boxaGetCount(boxas);
     lept_stderr("Number of cc: n = %d, ns = %d\n", n, ns);
     boxaWrite("/tmp/junkboxa.ba", boxas);
 
     for (i = 0; i < n; i++) {
-        box = boxaGetBox(boxas, i, L_CLONE);
+        BOX *box = boxaGetBox(boxas, i, L_CLONE);
         pixRenderBox(pixs, box, 2, L_FLIP_PIXELS);
         boxDestroy(&box);
     }

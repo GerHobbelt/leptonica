@@ -64,6 +64,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     for (i = 0; i < 4; i++) {
 /*        if (i != 2) continue; */
         TestImage(image[i], i, rp);

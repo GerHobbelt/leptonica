@@ -2859,7 +2859,6 @@ PIXA    *pixa1, *pixad;
     if ((n = pixaGetCount(pixas)) == 0)
         return (PIXA *)ERROR_PTR("no components", __func__, NULL);
 
-
         /* Remove colormaps if necessary */
     pixaGetRenderingDepth(pixas, &depth);
     pixaAnyColormaps(pixas, &hascmap);
@@ -2896,7 +2895,7 @@ PIXA    *pixa1, *pixad;
 
     boxa = pixaGetBoxa(pixas, L_COPY);
     pixaSetBoxa(pixad, boxa, L_INSERT);
-    pixaDestroy(&pixa1);
+	pixaDestroy(&pixa1);
     return pixad;
 }
 

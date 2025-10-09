@@ -67,6 +67,9 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/testboxes");
+	lept_mkdir("lept/regout");
+
 #if DO_ALL
         /* Make word boxes using pixWordMaskByDilation() */
     pix1 = pixRead(DEMOPATH("lucasta.150.jpg"));

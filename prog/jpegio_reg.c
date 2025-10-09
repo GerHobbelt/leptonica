@@ -86,6 +86,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     DoJpegTest1(rp, DEMOPATH("test8.jpg"));
     DoJpegTest1(rp, DEMOPATH("fish24.jpg"));
     DoJpegTest1(rp, DEMOPATH("test24.jpg"));

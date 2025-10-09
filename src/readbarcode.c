@@ -232,11 +232,12 @@ PIXA      *pixa;
     pixDestroy(&pix2);
     boxaDestroy(&boxa);
 
-#if  DEBUG_DESKEW
-    pix3 = pixaDisplayTiledInRows(pixa, 8, 1000, 1.0, 0, 30, 2);
-    pixWrite("/tmp/lept/pix3.png", pix3, IFF_PNG);
-    pixDestroy(&pix3);
-#endif  /* DEBUG_DESKEW */
+	if (debugflag) {
+		lept_mkdir("lept/barcode");
+		pix3 = pixaDisplayTiledInRows(pixa, 8, 1000, 1.0, 0, 30, 2);
+		pixWrite("/tmp/lept/barcode/pix3.png", pix3, IFF_PNG);
+		pixDestroy(&pix3);
+	}
 
     return pixa;
 }
@@ -360,9 +361,11 @@ NUMA      *na;
         na = pixExtractBarcodeWidths2(pixs, 120, &winwidth,
                                       NULL, debugflag);
 #if  DEBUG_WIDTHS
-        if (method == L_USE_WINDOWS)
-            lept_stderr("Window width for barcode: %7.3f\n", winwidth);
-        numaWriteStderr(na);
+	if (debugflag) {
+		if (method == L_USE_WINDOWS)
+			lept_stderr("Window width for barcode: %7.3f\n", winwidth);
+		numaWriteStderr(na);
+	}
 #endif  /* DEBUG_WIDTHS */
 
     if (!na)

@@ -85,7 +85,9 @@ PIX       *pixs1, *pixs2, *pixd;
     type = atoi(argv[3]);
     pixd = NULL;
     fileout = argv[4];
-    setLeptDebugOK(1);
+
+	setLeptDebugOK(1);
+	lept_mkdir("lept/comp");
 
         /* If comparing image files with 16 bps and spp > 1,
          * comment this line out to strip 16 --> 8 spp */

@@ -73,6 +73,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/expand");
+
     pixa = pixaCreate(0);
     for (i = 0; i < 8; i++) {
 		char fname[256];

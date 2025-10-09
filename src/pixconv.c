@@ -3353,7 +3353,9 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	//pixCopySpp(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
         /* Replication table gray --> rgb */

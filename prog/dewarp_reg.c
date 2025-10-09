@@ -67,6 +67,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
         /* Read page 7, normalize for varying background and binarize */
     pixs = pixRead(DEMOPATH("1555.007.jpg"));
     pixn = pixBackgroundNormSimple(pixs, NULL, NULL);

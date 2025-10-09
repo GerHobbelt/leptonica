@@ -91,6 +91,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
         /* selaRead() / selaWrite()  */
     sela1 = selaAddBasic(NULL);
     selaWrite("/tmp/lept/regout/sel.0.sela", sela1);

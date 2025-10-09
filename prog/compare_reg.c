@@ -66,6 +66,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/comp");
+
     /* ------------ Test of pixBestCorrelation() --------------- */
     pix0 = pixRead(DEMOPATH("harmoniam100-11.png"));
     pix1 = pixConvertTo1(pix0, 160);

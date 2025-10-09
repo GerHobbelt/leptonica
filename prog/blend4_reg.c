@@ -64,6 +64,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     pixa = pixaCreate(0);
 
         /* Blending on a light image */

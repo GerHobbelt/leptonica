@@ -1983,7 +1983,7 @@ numaSplitDistribution(NUMA       *na,
 l_int32    i, n, bestsplit, minrange, maxrange, maxindex, left, right;
 l_float32  ave1, ave2, ave1prev, ave2prev;
 l_float32  num1, num2, num1prev, num2prev;
-l_float32  val, valprev, minval, sum, fract1, median;
+l_float32  val, valprev, minval, sum, fract1, median, mode, variance, average;
 l_float32  norm, score, minscore, maxscore;
 NUMA      *nascore, *naave1, *naave2, *nanum1, *nanum2;
 l_ok      rv = 0;
@@ -2005,7 +2005,8 @@ l_ok      rv = 0;
         return ERROR_INT("sum <= 0.0", __func__, 1);
     norm = 4.0f / ((l_float32)(n - 1) * (n - 1));
     ave1prev = 0.0;
-    numaGetHistogramStats(na, 0.0, 1.0, &ave2prev, &median, NULL, NULL);
+    numaGetHistogramStats(na, 0.0, 1.0, &ave2prev, &median, &mode, &variance);
+	average = ave2prev;
     num1prev = 0.0;
     num2prev = sum;
 
@@ -2213,7 +2214,7 @@ l_ok      rv = 0;
 		//
 		if (ave1prev != ave2prev)     // double-check our expectations; while we're at it, throw caution about IEEE754 accuracies in the wind and do an `!=` check.
 		{
-			fprintf(stderr, "This was very much unexpected! (not anymore thx to debugging a magic image)\n");
+			L_WARNING("This was very much unexpected! (not anymore thx to debugging a magic image)\n", __func__);
 		}
 
 		l_int32 bump_index = (black_is_fg ? 0 : n - 1);
@@ -2222,14 +2223,14 @@ l_ok      rv = 0;
 		val += sum;
 		numaSetValue(na2, bump_index, val);
 	    if (pnascore) {  /* debug mode */
-	        lept_stderr("faking a double hump in the histogram by pumping up the count at index/color %d\n", bump_index);
+			L_WARNING("faking a double hump in the histogram by pumping up the count at index/color %d\n", __func__, bump_index);
 	    }
 
 		// re-try all the above, now with a 'faked/tweaked' 2 hump histo:
 		l_int32 th;
 		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2, pnascore);
 		if (th != bestsplit) {
-			fprintf(stderr, "ehhhhhhh!!!\n");
+			L_WARNING("ehhhhhhh!!!\n", __func__);
 		}
 		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2, pnascore);
 		// correct for our faked second hump: it'll otherwise show up in the output statistics
@@ -2260,16 +2261,38 @@ l_ok      rv = 0;
 	    if (pnum2) numaGetFValue(nanum2, bestsplit, pnum2);
 
 	    if (pnascore) {  /* debug mode */
-	        lept_stderr("minrange = %d, maxrange = %d\n", minrange, maxrange);
+			static int index = 0;
+			char namebuf[100];
+
+			if (index == 0) {
+				lept_rmdir("lept/nascore");
+			}
+			index++;
+			lept_mkdir("lept/nascore");
+			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-scores-%03d", index);
+
+			lept_stderr("left = %d, right = %d\n", left, right);
+			lept_stderr("minrange = %d, maxrange = %d\n", minrange, maxrange);
 			lept_stderr("minscore = %f, maxscore = %f\n", minscore, maxscore);
 			lept_stderr("bestsplit = %d\n", bestsplit);
+			lept_stderr("black_is_fg = %d\n", black_is_fg);
 			lept_stderr("minval = %10.0f\n", minval);
 			lept_stderr("num1prev = %f, num2prev = %f\n", num1prev, num2prev);
 			lept_stderr("ave1prev = %f, ave2prev = %f\n", ave1prev, ave2prev);
-	        gplotSimple1(nascore, GPLOT_PNG, "/tmp/lept/nascore",
+			lept_stderr("mean = %f, median = %f, mode = %f, variance = %f\n", average, median, mode, variance);
+	        gplotSimple1(nascore, GPLOT_PNG, namebuf,
 	                     "Score for split distribution");
-	        *pnascore = nascore;
-					nascore = NULL;
+			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-histovalues-%03d", index);
+			gplotSimple1(na, GPLOT_PNG, namebuf,
+				"Raw histogram values for split distribution");
+			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-na.num1-%03d", index);
+			gplotSimple1(nanum1, GPLOT_PNG, namebuf,
+				"NANUM1 values for split distribution");
+			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-na.num2-%03d", index);
+			gplotSimple1(nanum2, GPLOT_PNG, namebuf,
+				"NANUM2 values for split distribution");
+			*pnascore = nascore;
+			nascore = NULL;
 	    }
 	}
 
@@ -2278,8 +2301,8 @@ ende:
     if (pave2) numaDestroy(&naave2);
     if (pnum1) numaDestroy(&nanum1);
     if (pnum2) numaDestroy(&nanum2);
-	 numaDestroy(&nascore);
-	 return rv;
+	numaDestroy(&nascore);
+	return rv;
 }
 
 

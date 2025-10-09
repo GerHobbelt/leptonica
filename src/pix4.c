@@ -2603,7 +2603,8 @@ PIXCMAP   *cmap;
         ret = 1;
     }
     if (array && pixadb) {
-        pixd = pixDisplayColorArray(array, nbins, 200, 5, fontsize);
+		lept_mkdir("lept/regout");
+		pixd = pixDisplayColorArray(array, nbins, 200, 5, fontsize);
         pixWriteDebug("/tmp/lept/regout/rankhisto.png", pixd, IFF_PNG);
         pixDestroy(&pixd);
     }
@@ -3401,6 +3402,18 @@ PIX       *pixg, *pixm;
 }
 
 
+static inline l_float32 lifted_and_bounded(l_float32 num, l_float32 lift_perunage, l_float32 numtotal, l_float32 maxnum)
+{
+	l_float32 rv = lift_perunage * numtotal;
+	l_float32 scale = (1.0 - lift_perunage);
+	rv += num * scale;
+	// and the value should be made proportional to the original NA[] Y plot range:
+	scale = maxnum / numtotal;
+	rv *= scale;
+	return rv;
+}
+
+
 /*!
  * \brief   pixSplitDistributionFgBg()
  *
@@ -3491,20 +3504,82 @@ PIX       *pixg;
     if (pbgval) *pbgval = (l_int32)(avebg + 0.5);
 
     if (ppixdb) {
-        lept_mkdir("lept/redout");
-        gplot = gplotCreate("/tmp/lept/redout/histplot", GPLOT_PNG, "Histogram",
+		static int index = 0;
+		PIX* pixplot, * pixtsc, * pixtbr, * pixtctr;
+		PIXA* pixadb;
+		char namebuf[100];
+		l_float32 sumfg, sumbg;
+
+		if (index == 0) {
+			lept_rmdir("lept/redout");
+		}
+		index++;
+		lept_mkdir("lept/redout");
+		snprintf(namebuf, sizeof(namebuf), "/tmp/lept/redout/histplot-%03d", index);
+			gplot = gplotCreate(namebuf, GPLOT_PNG, "Histogram",
                             "Grayscale value", "Number of pixels");
         gplotAddPlot(gplot, NULL, na, GPLOT_LINES, NULL);
+
         nax = numaMakeConstant(thresh, 2);
         numaGetMax(na, &maxnum, NULL);
         nay = numaMakeConstant(0, 2);
-        numaReplaceNumber(nay, 1, (l_int32)(0.5 * maxnum));
+        numaReplaceNumber(nay, 1, 0.5 * maxnum);
         snprintf(buf, sizeof(buf), "score fract = %3.1f", scorefract);
         gplotAddPlot(gplot, nax, nay, GPLOT_LINES, buf);
-        *ppixdb = gplotMakeOutputPix(gplot);
-        gplotDestroy(&gplot);
-        numaDestroy(&nax);
-        numaDestroy(&nay);
+		numaDestroy(&nax);
+		numaDestroy(&nay);
+
+		nax = numaMakeConstant(avefg, 2);
+		numaGetSum(na, &sumfg);
+		nay = numaMakeConstant(0, 2);
+		numaReplaceNumber(nay, 1, lifted_and_bounded(numfg, 0.1, sumfg, maxnum));
+		snprintf(buf, sizeof(buf), "avefg = %5.1f", avefg);
+		gplotAddPlot(gplot, nax, nay, GPLOT_LINES, buf);
+		numaDestroy(&nax);
+		numaDestroy(&nay);
+
+		nax = numaMakeConstant(avebg, 2);
+		numaGetSum(na, &sumbg);
+		nay = numaMakeConstant(0, 2);
+		numaReplaceNumber(nay, 1, lifted_and_bounded(numfg, 0.1, sumbg, maxnum));
+		snprintf(buf, sizeof(buf), "avefg = %5.1f", avebg);
+		gplotAddPlot(gplot, nax, nay, GPLOT_LINES, buf);
+		numaDestroy(&nax);
+		numaDestroy(&nay);
+
+		pixplot = gplotMakeOutputPix(gplot);
+
+		/* create a final chart image of: chart on top, image tile from which this histogram was taken at the bottom, with a border to clearly delineate it. */
+		pixadb = pixaCreate(2);
+		pixaAddPix(pixadb, pixplot, L_INSERT);
+		/* scale the pix (image tile) to approximate the plot image width; to keep the original pixels obvious, this must be a *sampled* scaling */
+		int pw, ph, tw, th;
+		pixGetDimensions(pixplot, &pw, &ph, NULL);
+		pixGetDimensions(pixg, &tw, &th, NULL);
+		l_float32 scalex = (l_float32)pw / (l_float32)tw;
+		/* also calc scale based on height: we do not want the tile image to 'overpower' the plot, visually: the plot should be about twice as prominent in vertical space occupied. */
+		l_float32 scaley = (l_float32)ph / (l_float32)(th * 2);
+		scalex = L_MIN(scalex, scaley);
+		pixtsc = pixScaleBySamplingWithShift(pixg, scalex, scalex, 0, 0);
+		pixtbr = pixAddBorder(pixtsc, 2, 0);
+		/* and center the image tile below the plot */
+		pixGetDimensions(pixtbr, &tw, &th, NULL);
+		int center = (pw - tw) / 2;
+		if (center > 0) {
+			pixtctr = pixAddBlackOrWhiteBorder(pixtbr, center, center, 0, 0, L_GET_WHITE_VAL);
+		}
+		else {
+			pixtctr = pixClone(pixtbr);
+		}
+		pixGetDimensions(pixtctr, &tw, &th, NULL);
+		pixaAddPix(pixadb, pixtctr, L_INSERT);
+		pixplot = pixaDisplayTiledInColumns(pixadb, 1, 1.0, 0, 0);
+		*ppixdb = pixplot;
+
+		pixaDestroy(&pixadb);
+		pixDestroy(&pixtsc);
+		pixDestroy(&pixtbr);
+		gplotDestroy(&gplot);
     }
 
     pixDestroy(&pixg);

@@ -106,6 +106,7 @@ PIXA       *pixa, *pixadb;
 
     setLeptDebugOK(1);
     lept_mkdir("lept/jb_rankhaus");
+	lept_mkdir("lept/jb");
 
 #if 0   /* Choose library function or detailed steps */
 

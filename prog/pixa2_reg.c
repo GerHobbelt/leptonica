@@ -59,6 +59,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     /* ----------------  Find all the jpg and tif images --------------- */
     sa1 = getSortedPathnamesInDirectory(".", ".jpg", 0, 0);
     sa2 = getSortedPathnamesInDirectory(".", ".tif", 0, 0);

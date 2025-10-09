@@ -190,8 +190,19 @@ PIXTILING  *pt;
     for (i = 0; i < ny; i++) {
         for (j = 0; j < nx; j++) {
             pixt = pixTilingGetTile(pt, i, j);
+			PIX* pixplt = NULL;
+			PIX** pixplt_ref = (ppixd != NULL ? &pixplt : NULL);
             pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
-                                     NULL, NULL, NULL);
+                                     NULL, NULL, pixplt_ref);
+
+			if (pixplt) {
+				lept_mkdir("lept/otsu");
+				char textstr[256];
+				snprintf(textstr, sizeof(textstr), "/tmp/lept/otsu/%s_%s.histogram4binarize-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreFrac-%.1f.png", leptDebugGetFilenamePrefix(), "pixOtsuAdaptiveThreshold2", i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				pixWrite(textstr, pixplt, IFF_PNG);
+				pixDestroy(&pixplt);
+			}
+
             pixSetPixel(pixthresh, j, i, thresh);  /* see note (4) */
             pixDestroy(&pixt);
         }

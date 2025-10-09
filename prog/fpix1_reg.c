@@ -94,6 +94,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
         /* Gaussian kernel */
     pixa = pixaCreate(0);
     kel = makeGaussianKernel(5, 5, 3.0, 4.0);

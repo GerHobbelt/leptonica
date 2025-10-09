@@ -64,6 +64,8 @@ L_REGPARAMS  *rp;
    if (regTestSetup(argc, argv, &rp))
         return 1;
 
+   lept_mkdir("lept/regout");
+
     pixs = pixRead(DEMOPATH("feyn.tif"));
     pix1 = pixScaleToGray6(pixs);
     pixDisplayWithTitle(pix1, 100, 600, NULL, rp->display);

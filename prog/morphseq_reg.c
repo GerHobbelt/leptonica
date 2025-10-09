@@ -64,20 +64,20 @@ PIX  *pixs, *pixg, *pixc, *pixd;
         return ERROR_INT(" Syntax:  morphseq_reg", __func__, 1);
 
     setLeptDebugOK(1);
-    lept_mkdir("lept");
+    lept_mkdir("lept/morphseq");
     pixs = pixRead(DEMOPATH("feyn.tif"));
 
         /* 1 bpp */
     pixd = pixMorphSequence(pixs, SEQUENCE1, -1);
     pixDestroy(&pixd);
     pixd = pixMorphSequence(pixs, SEQUENCE1, DISPLAY_SEPARATION);
-    pixWrite("/tmp/lept/morphseq1.png", pixd, IFF_PNG);
+    pixWrite("/tmp/lept/morphseq/morphseq1.png", pixd, IFF_PNG);
     pixDestroy(&pixd);
 
     pixd = pixMorphCompSequence(pixs, SEQUENCE2, -2);
     pixDestroy(&pixd);
     pixd = pixMorphCompSequence(pixs, SEQUENCE2, DISPLAY_SEPARATION);
-    pixWrite("/tmp/lept/morphseq2.png", pixd, IFF_PNG);
+    pixWrite("/tmp/lept/morphseq/morphseq2.png", pixd, IFF_PNG);
     pixDestroy(&pixd);
 
     lept_stderr("\n ------------------ Error messages -----------------\n");
@@ -86,13 +86,13 @@ PIX  *pixs, *pixg, *pixc, *pixd;
     pixd = pixMorphSequenceDwa(pixs, SEQUENCE2, -3);
     pixDestroy(&pixd);
     pixd = pixMorphSequenceDwa(pixs, SEQUENCE2, DISPLAY_SEPARATION);
-    pixWrite("/tmp/lept/morphseq3.png", pixd, IFF_PNG);
+    pixWrite("/tmp/lept/morphseq/morphseq3.png", pixd, IFF_PNG);
     pixDestroy(&pixd);
 
     pixd = pixMorphCompSequenceDwa(pixs, SEQUENCE2, -4);
     pixDestroy(&pixd);
     pixd = pixMorphCompSequenceDwa(pixs, SEQUENCE2, DISPLAY_SEPARATION);
-    pixWrite("/tmp/lept/morphseq4.png", pixd, IFF_PNG);
+    pixWrite("/tmp/lept/morphseq/morphseq4.png", pixd, IFF_PNG);
     pixDestroy(&pixd);
 
         /* 8 bpp */
@@ -100,11 +100,11 @@ PIX  *pixs, *pixg, *pixc, *pixd;
     pixd = pixGrayMorphSequence(pixg, SEQUENCE3, -5, 150);
     pixDestroy(&pixd);
     pixd = pixGrayMorphSequence(pixg, SEQUENCE3, DISPLAY_SEPARATION, 150);
-    pixWrite("/tmp/lept/morphseq5.png", pixd, IFF_PNG);
+    pixWrite("/tmp/lept/morphseq/morphseq5.png", pixd, IFF_PNG);
     pixDestroy(&pixd);
 
     pixd = pixGrayMorphSequence(pixg, SEQUENCE4, -6, 300);
-    pixWrite("/tmp/lept/morphseq6.png", pixd, IFF_PNG);
+    pixWrite("/tmp/lept/morphseq/morphseq6.png", pixd, IFF_PNG);
     pixDestroy(&pixd);
 
         /* 32 bpp */
@@ -112,7 +112,7 @@ PIX  *pixs, *pixg, *pixc, *pixd;
     pixd = pixColorMorphSequence(pixc, SEQUENCE5, -7, 150);
     pixDestroy(&pixd);
     pixd = pixColorMorphSequence(pixc, SEQUENCE5, DISPLAY_SEPARATION, 450);
-    pixWrite("/tmp/lept/morphseq7.png", pixd, IFF_PNG);
+    pixWrite("/tmp/lept/morphseq/morphseq7.png", pixd, IFF_PNG);
     pixDestroy(&pixc);
     pixDestroy(&pixd);
 

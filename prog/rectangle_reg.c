@@ -67,6 +67,9 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/rect");
+	lept_mkdir("lept/regout");
+
     /* ---------------- Largest rectangles in image ---------------- */
     pixs = pixRead(DEMOPATH("test1.png"));
     pix1 = pixConvertTo8(pixs, FALSE);

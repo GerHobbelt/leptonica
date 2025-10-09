@@ -5,6 +5,9 @@
 #include "leptonica/allheaders.h"
 #include "leptonica-wrap.h"
 
+#include "mupdf/helpers/system-header-files.h"
+#include "mupdf/helpers/jmemcust.h"
+
 // define a name for the monolith
 #define USAGE_NAME   "leptonica_tools"
 
@@ -325,10 +328,13 @@ MONOLITHIC_CMD_TABLE_END();
 
 static void custom_prep(void)
 {
+	// register a mupdf-aligned default heap memory manager for jpeg/jpeg-turbo
+	fz_set_default_jpeg_sys_mem_mgr();
 	fz_set_leptonica_mem(fz_get_global_context());
 #if 0
 	leptSetStderrHandler(NULL);
 #endif
+	leptDebugSetFilenamePrefix(333, NULL);
 }
 
 #define MONOLITHIC_SUBCLUSTER_MAIN_INIT()  custom_prep()

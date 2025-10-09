@@ -56,7 +56,7 @@ PIX        *pixs2, *pixn2, *pixg2, *pixb2, *pixd2;
 PIX        *pixd3, *pixc1, *pixc2;
 
     setLeptDebugOK(1);
-    lept_mkdir("lept");
+    lept_mkdir("lept/dewarp4");
 
 /*    pixs = pixRead(DEMOPATH("1555.007.jpg")); */
     pixs = pixRead(DEMOPATH("cat.035.jpg"));
@@ -71,10 +71,10 @@ PIX        *pixd3, *pixc1, *pixc2;
         /* Run the basic functions */
     dew1 = dewarpCreate(pixb, 35);
     dewarpaInsertDewarp(dewa1, dew1);
-    dewarpBuildPageModel(dew1, "/tmp/lept/dewarp_junk35.pdf");
+    dewarpBuildPageModel(dew1, "/tmp/lept/dewarp4/dewarp_junk35.pdf");
     dewarpPopulateFullRes(dew1, pixg, 0, 0);
     dewarpaApplyDisparity(dewa1, 35, pixg, 200, 0, 0, &pixd,
-                          "/tmp/lept/dewarp_debug_35.pdf");
+                          "/tmp/lept/dewarp4/dewarp_debug_35.pdf");
 
         /* Normalize another image. */
 /*    pixs2 = pixRead(DEMOPATH("1555.003.jpg")); */
@@ -86,17 +86,17 @@ PIX        *pixd3, *pixc1, *pixc2;
         /* Run the basic functions */
     dew2 = dewarpCreate(pixb2, 7);
     dewarpaInsertDewarp(dewa1, dew2);
-    dewarpBuildPageModel(dew2, "/tmp/lept/dewarp_junk7.pdf");
+    dewarpBuildPageModel(dew2, "/tmp/lept/dewarp4/dewarp_junk7.pdf");
     dewarpaApplyDisparity(dewa1, 7, pixg, 200, 0, 0, &pixd2,
-                          "/tmp/lept/dewarp_debug_7.pdf");
+                          "/tmp/lept/dewarp4/dewarp_debug_7.pdf");
 
         /* Serialize and deserialize dewarpa */
-    dewarpaWrite("/tmp/lept/dewarpa1.dewa", dewa1);
-    dewa2 = dewarpaRead("/tmp/lept/dewarpa1.dewa");
-    dewarpaWrite("/tmp/lept/dewarpa2.dewa", dewa2);
-    dewa3 = dewarpaRead("/tmp/lept/dewarpa2.dewa");
+    dewarpaWrite("/tmp/lept/dewarp4/dewarpa1.dewa", dewa1);
+    dewa2 = dewarpaRead("/tmp/lept/dewarp4/dewarpa1.dewa");
+    dewarpaWrite("/tmp/lept/dewarp4/dewarpa2.dewa", dewa2);
+    dewa3 = dewarpaRead("/tmp/lept/dewarp4/dewarpa2.dewa");
     dewarpDebug(dewa3->dewarp[7], "dew1", 7);
-    dewarpaWrite("/tmp/lept/dewarpa3.dewa", dewa3);
+    dewarpaWrite("/tmp/lept/dewarp4/dewarpa3.dewa", dewa3);
 
         /* Repopulate and show the vertical disparity arrays */
     dewarpPopulateFullRes(dew1, NULL, 0, 0);
@@ -107,7 +107,7 @@ PIX        *pixd3, *pixc1, *pixc2;
     pixc2 = fpixRenderContours(dew3->fullvdispar, 2.0, 0.2);
     pixDisplay(pixc2, 1400, 900);
     dewarpaApplyDisparity(dewa2, 35, pixb, 200, 0, 0, &pixd3,
-                          "/tmp/lept/dewarp_debug_35b.pdf");
+                          "/tmp/lept/dewarp4/dewarp_debug_35b.pdf");
     pixDisplay(pixd, 0, 1000);
     pixDisplay(pixd2, 600, 1000);
     pixDisplay(pixd3, 1200, 1000);

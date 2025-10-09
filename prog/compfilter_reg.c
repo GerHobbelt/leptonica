@@ -83,6 +83,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/filter");
+
         /* Draw 4 filled boxes of different sizes */
     pixs = pixCreate(200, 200, 1);
     box1 = boxCreate(10, 10, 20, 30);

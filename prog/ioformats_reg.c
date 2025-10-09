@@ -144,6 +144,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     /* --------- Part 1: Test all formats for r/w to file ---------*/
 
     failure = FALSE;

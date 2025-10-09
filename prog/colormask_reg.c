@@ -68,6 +68,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
         /* Make a graded frame color */
     pixs = pixCreate(650, 900, 32);
     for (i = 0; i < 900; i++) {

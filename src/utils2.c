@@ -3717,7 +3717,7 @@ getPathBasename(const char* path, int strip_off_extension)
  * \brief   sanitizePathToIdentifier()
  *
  * \param[in]    dst
- * \param[in]    dstsize
+ * \param[in]    dstsize        the size of the target buffer %dst, including the space for the mandatory NUL string sentinel.
  * \param[in]    numeric_id     (optional) sequence number; set to 0 if unused
  * \param[in]    str            the string to mangle into an identifier or eqv.
  * \param[in]    additional_acceptable_set
@@ -3725,7 +3725,7 @@ getPathBasename(const char* path, int strip_off_extension)
  *
  * <pre>
  * Notes:
- *      (1) The returned name must be freed by the caller, using lept_free, unless its an alias of `dst`.
+ *      (1) The returned name must be freed by the caller, using lept_free, unless it's an alias of `dst`.
  * </pre>
  */
 char *
@@ -3733,7 +3733,7 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 {
 	if (!str)
 		return (char*)ERROR_PTR("str not defined", __func__, NULL);
-	if (dstsize < 30)
+	if (dstsize < 20)
 		return (char*)ERROR_PTR("dstsize is too small", __func__, NULL);
 	char* buffer = dst;
 	if (!buffer) {
@@ -3744,8 +3744,9 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 	if (!additional_acceptable_set)
 		additional_acceptable_set = "_";
 
-	l_uint64     key;
-	if (l_hashStringToUint64Fast(str, &key))
+	l_uint64 key = 0;
+	// we can only produce hashes for non-empty strings:
+	if (*str && l_hashStringToUint64Fast(str, &key))
 		return (char*)ERROR_PTR("hash not made", __func__, NULL);
 	// fold hash into a 20 bit number:
 	key ^= key >> 20;
@@ -3807,6 +3808,8 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 					break;
 				if (*p >= '0' && *p <= '9')
 					break;
+				if (*p == '_')
+					break;
 				if (strchr(additional_acceptable_set, *p))
 					break;
 				if (!has_replaced) {
@@ -3837,6 +3840,8 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 						break;
 					if (*p >= '0' && *p <= '9')
 						break;
+					if (*p == '_')
+						break;
 					if (strchr(additional_acceptable_set, *p))
 						break;
 					if (!has_replaced) {
@@ -3857,7 +3862,7 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 		}
 	}
 
-	if (strchr(additional_acceptable_set, '#')) {
+	if (*str && strchr(additional_acceptable_set, '#')) {
 		// can lead with sequence number
 		if (slen < sw) {
 			if (numeric_id != 0)
@@ -3886,6 +3891,8 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 						continue;
 					if (*p >= '0' && *p <= '9')
 						continue;
+					if (*p == '_')
+						continue;
 					leadlen = p - sani_str;
 					break;
 				}
@@ -3902,6 +3909,8 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 					if (*p >= 'a' && *p <= 'z')
 						continue;
 					if (*p >= '0' && *p <= '9')
+						continue;
+					if (*p == '_')
 						continue;
 					sani_tail = p + 1;
 					break;
@@ -3921,7 +3930,7 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 			}
 		}
 	}
-	else {
+	else if (*str) {
 		// must produce a decent indentifier at all times:
 		if (slen < sw) {
 			if (numeric_id != 0)
@@ -3950,6 +3959,8 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 						continue;
 					if (*p >= '0' && *p <= '9')
 						continue;
+					if (*p == '_')
+						continue;
 					leadlen = p - sani_str;
 					break;
 				}
@@ -3966,6 +3977,8 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 					if (*p >= 'a' && *p <= 'z')
 						continue;
 					if (*p >= '0' && *p <= '9')
+						continue;
+					if (*p == '_')
 						continue;
 					sani_tail = p + 1;
 					break;
@@ -3985,6 +3998,71 @@ sanitizePathToIdentifier(char* dst, size_t dstsize, size_t numeric_id, const cha
 			}
 		}
 	}
+	else {
+		assert(*str == 0);
+		assert(slen < sw);  // there's always plenty space for this unique id construction as there's a zero-length source string involved.
+		assert(numeric_id != 0);
+
+		if (strchr(additional_acceptable_set, '#')) {
+			// can lead with sequence number
+			snprintf(buffer, dstsize, "#%0*zu__", numwidth, numeric_id);
+		}
+		else {
+			// must produce a decent indentifier at all times:
+			snprintf(buffer, dstsize, "u__%0*zu", numwidth, numeric_id);
+		}
+	}
 
 	return buffer;
 }
+
+
+#define PREFIX_MAX  40
+
+static char l_filename_prefix[PREFIX_MAX + 1] = { 0 };
+
+
+/*!
+ * \brief   leptDebugSetFilenamePrefix()
+ *
+ * \param[in]    numeric_id     (optional) sequence number; set to 0 if unused
+ * \param[in]    filename_prefix
+ *
+ * <pre>
+ * Notes:
+ *      (1) The given prefix will be added to every debug plot, image, etc. file produced by leptonica.
+ *          This is useful when, for example, processing source images in bulk and you wish to quickly
+ *          locate the relevant debug/diagnostics outputs for a given source image.
+ *      (2) By passing NULL, the prefix is erased.
+ *      (3) To keep matters sane all around, the prefix size is limited to 40 characters and is sanitized
+ *          by sanitizePathToIdentifier(...,%numeric_id,%filename_prefix) before use.
+ * </pre>
+ */
+void
+leptDebugSetFilenamePrefix(size_t numeric_id, const char* filename_prefix)
+{
+	if (filename_prefix && *filename_prefix) {
+		if (!sanitizePathToIdentifier(l_filename_prefix, PREFIX_MAX + 1, numeric_id, filename_prefix, "@#-"))
+			l_filename_prefix[0] = 0;
+	}
+	else if (numeric_id != 0) {
+		if (!sanitizePathToIdentifier(l_filename_prefix, PREFIX_MAX + 1, numeric_id, "", "@#-"))
+			l_filename_prefix[0] = 0;
+	}
+	else {
+		l_filename_prefix[0] = 0;
+	}
+}
+
+
+/*!
+ * \brief   leptDebugGetFilenamePrefix()
+ *
+ * \return  the previously set filename prefix string or an empty string if no prefix has been set up.
+ */
+const char*
+leptDebugGetFilenamePrefix(void)
+{
+	return l_filename_prefix;
+}
+

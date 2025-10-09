@@ -66,6 +66,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     lept_rmfile("/tmp/lept/regout/insert3.ba");
     lept_rmfile("/tmp/lept/regout/insert4.ba");
     lept_rmfile("/tmp/lept/regout/insert6.pa");

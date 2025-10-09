@@ -62,6 +62,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     pixs = pixRead(DEMOPATH("scots-frag.tif"));
     pixa1 = pixaCreate(12);
 

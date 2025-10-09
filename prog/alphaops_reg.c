@@ -86,6 +86,9 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+	lept_mkdir("lept/alpha");
+
     /* ------------------------ (1) ----------------------------*/
         /* Blend with a white background */
     pix1 = pixRead(DEMOPATH("books_logo.png"));

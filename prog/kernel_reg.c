@@ -72,6 +72,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     paa = pixaaCreate(0);
 
         /* Test creating from a string */

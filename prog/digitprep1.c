@@ -65,7 +65,9 @@ PIXAA     *paa;
     }
 
     setLeptDebugOK(1);
-    if ((pixs = pixRead(DEMOPATH("barcode-digits.png"))) == NULL)
+	lept_mkdir("lept/digitprep");
+
+	if ((pixs = pixRead(DEMOPATH("barcode-digits.png"))) == NULL)
         return ERROR_INT("pixs not read", __func__, 1);
 
         /* Extract the digits and scale to HEIGHT */
@@ -95,7 +97,7 @@ PIXAA     *paa;
 
         /* Save in a pixaa, with 1 pix in each pixa */
     paa = pixaaCreateFromPixa(pixad, 1, L_CHOOSE_CONSECUTIVE, L_CLONE);
-    pixaaWrite("/tmp/lept/barcode_digits.paa", paa);
+    pixaaWrite("/tmp/lept/digitprep/barcode_digits.paa", paa);
 
         /* Show result */
     pix1 = pixaaDisplayByPixa(paa, 50, 1.0, 20, 20, 0);

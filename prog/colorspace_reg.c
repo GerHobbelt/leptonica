@@ -70,6 +70,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
         /* Generate a pdf of results when called with display */
     pixa = pixaCreate(0);
 

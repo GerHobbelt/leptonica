@@ -77,6 +77,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
             /* Test basic serialization/deserialization */
     data32 = NULL;
     for (i = 0; i < nfiles; i++) {

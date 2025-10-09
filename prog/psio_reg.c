@@ -90,6 +90,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
 #if !USE_PSIO
     lept_stderr("psio writing is not enabled\n"
                 "See environ.h: #define USE_PSIO 1\n\n");

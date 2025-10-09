@@ -73,6 +73,7 @@ l_int32     i;
 L_STRCODE  *strc;
 
     setLeptDebugOK(1);
+	lept_mkdir("lept/auto");
 
         /* Method 1: generate autogen.137.c and autogen.137.h  */
     strc = strcodeCreate(137);

@@ -95,6 +95,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     pixs = pixRead(DEMOPATH("tickets.tif"));
     flag = (rp->display) ? -1 : 0;
     boxa = LocateBarcodes(pixs, &pixd, flag);

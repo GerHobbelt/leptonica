@@ -941,12 +941,12 @@ LEPT_DLL extern PIX * gplotMakeOutputPix ( GPLOT *gplot );
 LEPT_DLL extern l_ok gplotMakeOutput ( GPLOT *gplot );
 LEPT_DLL extern l_ok gplotGenCommandFile ( GPLOT *gplot );
 LEPT_DLL extern l_ok gplotGenDataFiles ( GPLOT *gplot );
-LEPT_DLL extern l_ok gplotSimple1 ( NUMA *na, l_int32 outformat, const char *outroot, const char *title );
-LEPT_DLL extern l_ok gplotSimple2 ( NUMA *na1, NUMA *na2, l_int32 outformat, const char *outroot, const char *title );
-LEPT_DLL extern l_ok gplotSimpleN ( NUMAA *naa, l_int32 outformat, const char *outroot, const char *title );
-LEPT_DLL extern PIX * gplotSimplePix1 ( NUMA *na, const char *title );
-LEPT_DLL extern PIX * gplotSimplePix2 ( NUMA *na1, NUMA *na2, const char *title );
-LEPT_DLL extern PIX * gplotSimplePixN ( NUMAA *naa, const char *title );
+LEPT_DLL extern l_ok gplotSimple1 (NUMA *na, l_int32 outformat, const char *outroot, const char *title );
+LEPT_DLL extern l_ok gplotSimple2 (NUMA *na1, NUMA *na2, l_int32 outformat, const char *outroot, const char *title );
+LEPT_DLL extern l_ok gplotSimpleN (NUMAA *naa, l_int32 outformat, const char *outroot, const char *title );
+LEPT_DLL extern PIX * gplotSimplePix1 ( NUMA *na, const char *outroot, const char *title );
+LEPT_DLL extern PIX * gplotSimplePix2 ( NUMA *na1, NUMA *na2, const char *outroot, const char *title );
+LEPT_DLL extern PIX * gplotSimplePixN ( NUMAA *naa, const char *outroot, const char *title );
 LEPT_DLL extern GPLOT * gplotSimpleXY1 ( NUMA *nax, NUMA *nay, l_int32 plotstyle, l_int32 outformat, const char *outroot, const char *title );
 LEPT_DLL extern GPLOT * gplotSimpleXY2 ( NUMA *nax, NUMA *nay1, NUMA *nay2, l_int32 plotstyle, l_int32 outformat, const char *outroot, const char *title );
 LEPT_DLL extern GPLOT * gplotSimpleXYN ( NUMA *nax, NUMAA *naay, l_int32 plotstyle, l_int32 outformat, const char *outroot, const char *title );
@@ -1735,6 +1735,7 @@ LEPT_DLL extern l_ok pixaVerifyDepth ( PIXA *pixa, l_int32 *psame, l_int32 *pmax
 LEPT_DLL extern l_ok pixaVerifyDimensions ( PIXA *pixa, l_int32 *psame, l_int32 *pmaxw, l_int32 *pmaxh );
 LEPT_DLL extern l_ok pixaIsFull ( PIXA *pixa, l_int32 *pfullpa, l_int32 *pfullba );
 LEPT_DLL extern l_ok pixaCountText ( PIXA *pixa, l_int32 *pntext );
+LEPT_DLL extern SARRAY * pixaGetText ( PIXA *pixa );
 LEPT_DLL extern l_ok pixaSetText ( PIXA *pixa, const char *text, SARRAY *sa );
 LEPT_DLL extern void *** pixaGetLinePtrs ( PIXA *pixa, l_int32 *psize );
 LEPT_DLL extern l_ok pixaWriteStreamInfo ( FILE *fp, PIXA *pixa );
@@ -1846,6 +1847,7 @@ LEPT_DLL extern PIX * pixaDisplayUnsplit ( PIXA *pixa, l_int32 nx, l_int32 ny, l
 LEPT_DLL extern PIX * pixaDisplayTiled ( PIXA *pixa, l_int32 maxwidth, l_int32 background, l_int32 spacing );
 LEPT_DLL extern PIX * pixaDisplayTiledInRows ( PIXA *pixa, l_int32 outdepth, l_int32 maxwidth, l_float32 scalefactor, l_int32 background, l_int32 spacing, l_int32 border );
 LEPT_DLL extern PIX * pixaDisplayTiledInColumns ( PIXA *pixas, l_int32 nx, l_float32 scalefactor, l_int32 spacing, l_int32 border );
+LEPT_DLL extern PIX * pixaDisplayTiledInColumnsWithText ( PIXA *pixas, l_int32 nx, l_float32 scalefactor, l_int32 spacing, l_int32 border, l_int32 fontsize, l_uint32 textcolor );
 LEPT_DLL extern PIX * pixaDisplayTiledAndScaled ( PIXA *pixa, l_int32 outdepth, l_int32 tilewidth, l_int32 ncols, l_int32 background, l_int32 spacing, l_int32 border );
 LEPT_DLL extern PIX * pixaDisplayTiledWithText ( PIXA *pixa, l_int32 maxwidth, l_float32 scalefactor, l_int32 spacing, l_int32 border, l_int32 fontsize, l_uint32 textcolor );
 LEPT_DLL extern PIX * pixaDisplayTiledByIndex ( PIXA *pixa, NUMA *na, l_int32 width, l_int32 spacing, l_int32 border, l_int32 fontsize, l_uint32 textcolor );
@@ -2799,6 +2801,8 @@ LEPT_DLL extern void changeFormatForMissingLib ( l_int32 *pformat );
 LEPT_DLL extern l_ok pixDisplayWrite ( PIX *pixs, l_int32 reduction );
 LEPT_DLL extern l_uint8 * zlibCompress ( const l_uint8 *datain, size_t nin, size_t *pnout );
 LEPT_DLL extern l_uint8 * zlibUncompress ( const l_uint8 *datain, size_t nin, size_t *pnout );
+LEPT_DLL extern void leptDebugSetFilenamePrefix ( size_t numeric_id, const char * filename_prefix );
+LEPT_DLL extern const char * leptDebugGetFilenamePrefix ( void );
 
 /* defined in morph.c */
 LEPT_DLL extern l_int32 MORPH_BC;

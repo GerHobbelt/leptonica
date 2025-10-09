@@ -58,6 +58,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     pixa = pixaCreate(6);
 
     pixt = BlendTest("marge.jpg", "feyn-word.tif", 0.5);

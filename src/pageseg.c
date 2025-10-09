@@ -1870,8 +1870,9 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
     na1 = pixCountByColumn(pix4, NULL);
 
     if (pixadb) {
-        gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot", NULL);
-        pix5 = pixRead("/tmp/lept/plot.png");
+		lept_mkdir("lept/textcol");
+		gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/textcol/plot", NULL);
+        pix5 = pixRead("/tmp/lept/textcol/plot.png");
         pixaAddPix(pixadb, pix5, L_INSERT);
     }
 

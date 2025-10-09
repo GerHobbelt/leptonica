@@ -65,6 +65,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
         /* --- Set up the 8 bpp blending image --- */
     pixg = pixCreate(660, 500, 8);
     for (i = 0; i < 500; i++)

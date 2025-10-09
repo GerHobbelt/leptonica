@@ -77,6 +77,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     pixa = pixaCreate(0);
 
         /* Start with a 32 bpp image and a mask.  Use the

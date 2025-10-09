@@ -90,6 +90,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/regout");
+
     DoJp2kTest1(rp, DEMOPATH("karen8.jpg"));
     DoJp2kTest1(rp, DEMOPATH("test24.jpg"));
 /*    DoJp2kTest2(rp, DEMOPATH("karen8.jpg"));  */  /* encode fails on smallest image */
