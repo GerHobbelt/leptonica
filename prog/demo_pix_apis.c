@@ -714,10 +714,6 @@ int main(int argc, const char **argv)
 {
 	L_REGPARAMS  *rp;
 
-	// register a mupdf-aligned default heap memory manager for jpeg/jpeg-turbo
-	fz_set_default_jpeg_sys_mem_mgr();
-	fz_set_leptonica_mem(fz_get_global_context());
-
 	if (regTestSetup(MIN(argc, 1), argv, &rp))
 		return 1;
 	rp->mode = L_REG_DISPLAY;
