@@ -57,6 +57,8 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	lept_mkdir("lept/projection");
+
         /* Use for input two different images */
     pixs = pixRead(DEMOPATH("projectionstats.jpg"));
     pix1 = pixConvertTo8(pixs, 0);
