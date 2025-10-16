@@ -85,16 +85,11 @@ L_REGPARAMS  *rp;
      * -------------------------------------------------------------------*/
     na = numaRead(DEMOPATH("lyra.5.na"));
     numaWindowedStats(na, 5, &na1, &na2, &na3, &na4);
-    gplotSimple1(na, GPLOT_PNG, "/tmp/lept/numa2/lyra1", "Original");
-    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/numa2/lyra2", "Mean");
-    gplotSimple1(na2, GPLOT_PNG, "/tmp/lept/numa2/lyra3", "Mean Square");
-    gplotSimple1(na3, GPLOT_PNG, "/tmp/lept/numa2/lyra4", "Variance");
-    gplotSimple1(na4, GPLOT_PNG, "/tmp/lept/numa2/lyra5", "RMS Difference");
-    pix1 = pixRead("/tmp/lept/numa2/lyra1.png");
-    pix2 = pixRead("/tmp/lept/numa2/lyra2.png");
-    pix3 = pixRead("/tmp/lept/numa2/lyra3.png");
-    pix4 = pixRead("/tmp/lept/numa2/lyra4.png");
-    pix5 = pixRead("/tmp/lept/numa2/lyra5.png");
+	pix1 = gplotSimplePix1(na, "/tmp/lept/numa2/lyra1", "Original");
+	pix2 = gplotSimplePix1(na1, "/tmp/lept/numa2/lyra2", "Mean");
+	pix3 = gplotSimplePix1(na2, "/tmp/lept/numa2/lyra3", "Mean Square");
+	pix4 = gplotSimplePix1(na3, "/tmp/lept/numa2/lyra4", "Variance");
+	pix5 = gplotSimplePix1(na4, "/tmp/lept/numa2/lyra5", "RMS Difference");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
@@ -144,16 +139,12 @@ L_REGPARAMS  *rp;
     na2 = pixExtractOnLine(pixg, 40, 30, 40, 170, 1);
     na3 = pixExtractOnLine(pixg, 20, 170, 180, 30, 1);
     na4 = pixExtractOnLine(pixg, 20, 190, 180, 10, 1);
-    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/numa2/ext1", "Horizontal");
-    gplotSimple1(na2, GPLOT_PNG, "/tmp/lept/numa2/ext2", "Vertical");
-    gplotSimple1(na3, GPLOT_PNG, "/tmp/lept/numa2/ext3",
+	pix1 = gplotSimplePix1(na1, "/tmp/lept/numa2/ext1", "Horizontal");
+	pix2 = gplotSimplePix1(na2, "/tmp/lept/numa2/ext2", "Vertical");
+	pix3 = gplotSimplePix1(na3, "/tmp/lept/numa2/ext3",
                 "Slightly more horizontal than vertical");
-    gplotSimple1(na4, GPLOT_PNG, "/tmp/lept/numa2/ext4",
+	pix4 = gplotSimplePix1(na4, "/tmp/lept/numa2/ext4",
                 "Slightly more vertical than horizontal");
-    pix1 = pixRead("/tmp/lept/numa2/ext1.png");
-    pix2 = pixRead("/tmp/lept/numa2/ext2.png");
-    pix3 = pixRead("/tmp/lept/numa2/ext3.png");
-    pix4 = pixRead("/tmp/lept/numa2/ext4.png");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 7 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 8 */

@@ -1205,8 +1205,7 @@ NUMA      *na1, *na2, *na3;
 
     if (ppixhisto) {
         lept_mkdir("lept/histo");
-        gplotSimple1(na3, GPLOT_PNG, "/tmp/lept/histo/histo", NULL);
-        *ppixhisto = pixRead("/tmp/lept/histo/histo.png");
+		*ppixhisto = gplotSimplePix1(na3, "/tmp/lept/histo/histo", NULL);
     }
     if (pnahisto)
         *pnahisto = na3;

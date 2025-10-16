@@ -102,15 +102,13 @@ L_REGPARAMS  *rp;
     pixaAddPix(pixa, pixhsv, L_INSERT);
     pixaAddPix(pixa, pixg, L_INSERT);
     pixaAddPix(pixa, pixf, L_INSERT);
-    gplotSimple1(nahue, GPLOT_PNG, "/tmp/lept/regout/junkhue",
+    pix3 = gplotSimplePix1(nahue, "/tmp/lept/regout/junkhue",
                  "Histogram of hue values");
-    pix3 = pixRead("/tmp/lept/regout/junkhue.png");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1 */
     pixDisplayWithTitle(pix3, 100, 300, "Histo of hue", rp->display);
     pixaAddPix(pixa, pix3, L_INSERT);
-    gplotSimple1(nasat, GPLOT_PNG, "/tmp/lept/regout/junksat",
+	pix3 = gplotSimplePix1(nasat, "/tmp/lept/regout/junksat",
                  "Histogram of saturation values");
-    pix3 = pixRead("/tmp/lept/regout/junksat.png");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
     pixDisplayWithTitle(pix3, 100, 800, "Histo of saturation", rp->display);
     pixaAddPix(pixa, pix3, L_INSERT);

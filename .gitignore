@@ -51,3 +51,7 @@ conv2doxy
 
 # test results
 /prog/*.trs
+
+# scratch space for new functionality
+/tmp/
+

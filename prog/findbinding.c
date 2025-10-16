@@ -142,8 +142,7 @@ PIXA      *pixa;
         /* Plot the windowed variance as a function of the y-value
          * of the window location */
     lept_stderr("maxvar = %f, ymax = %d\n", maxvar, ymax);
-    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/binding/root", NULL);
-    pix7 = pixRead("/tmp/lept/binding/root.png");
+	pix7 = gplotSimplePix1(na1, "/tmp/lept/binding/root", "windowed variance");
     pixDisplay(pix7, 0, 800);
     pixaAddPix(pixa, pix7, L_COPY);
 

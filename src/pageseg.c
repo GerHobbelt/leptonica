@@ -1871,8 +1871,7 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
 
     if (pixadb) {
 		lept_mkdir("lept/textcol");
-		gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/textcol/plot", NULL);
-        pix5 = pixRead("/tmp/lept/textcol/plot.png");
+		pix5 = gplotSimplePix1(na1, "/tmp/lept/textcol/plot", NULL);
         pixaAddPix(pixadb, pix5, L_INSERT);
     }
 

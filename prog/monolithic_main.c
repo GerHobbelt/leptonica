@@ -334,7 +334,7 @@ static void custom_prep(void)
 #if 0
 	leptSetStderrHandler(NULL);
 #endif
-	leptDebugSetFilenamePrefix(333, NULL);
+	leptDebugSetFilenamePrefix(NULL);
 }
 
 #define MONOLITHIC_SUBCLUSTER_MAIN_INIT()  custom_prep()

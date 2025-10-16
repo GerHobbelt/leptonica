@@ -256,8 +256,7 @@ L_REGPARAMS  *rp;
 
     na1 = numaGammaTRC(0.8, 0, 220);
     na2 = numaGammaTRC(1.0, 40, 220);
-    gplotSimple2(na1, na2, GPLOT_PNG, "/tmp/lept/enhance/junkp", NULL);
-    pix1 = pixRead("/tmp/lept/enhance/junkp.png");
+	pix1 = gplotSimplePix2(na1, na2, "/tmp/lept/enhance/junkp", NULL);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 13 */
     pixaAddPix(pixa1, pix1, L_COPY);
     numaDestroy(&na1);
