@@ -693,6 +693,14 @@ LEPT_DLL extern l_int32  LeptMsgSeverity;
 #define snprintf(buf, size, ...)  _snprintf_s(buf, size, _TRUNCATE, __VA_ARGS__)
 #endif
 
+
+ /*------------------------------------------------------------------------*
+  *               image debugging & diagnostics config                     *
+  *------------------------------------------------------------------------*/
+
+// opaque definition: use the leptDebugXYZ APIs to deal...
+typedef struct l_diag_predef_parts *LDIAG_CTX;
+
 #ifdef __cplusplus
 }
 #endif

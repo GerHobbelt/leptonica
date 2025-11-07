@@ -59,8 +59,7 @@
 #define main   lept_otsutest2_main
 #endif
 
-int main(int    argc,
-	const char** argv)
+int main(int argc, const char** argv)
 {
 	char       textstr[L_MAX(256, MAX_PATH)];
 	l_int32    i, thresh, fgval, bgval;
