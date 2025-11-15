@@ -208,15 +208,18 @@ struct BG_THRES_PT_INFO {
 			PIX* pixplt = NULL;
 			PIX** pixplt_ref = (ppixd != NULL ? &pixplt : NULL);
 
-				pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
-					&fgval, &bgval, pixplt_ref);
+			pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
+				NULL, NULL, pixplt_ref);
 
 			if (pixplt) {
-				lept_mkdir("lept/otsu3");
-				char textstr[256];
-				snprintf(textstr, sizeof(textstr), "/tmp/lept/otsu3/%s_%s.histogram4binarize_alt-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreFrac-%.1f.png", leptDebugGetFilenamePrefix(), "pixOtsuAdaptiveThreshold2", i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
-				pixWrite(textstr, pixplt, IFF_PNG);
+				LDIAG_CTX dbgpix_spec = pixGetDiagnosticsSpecFromAny(ppixd, pixs, NULL));
+				pixSetDiagnosticsSpec(pixplt, dbgpix_spec);
+
+				lept_mkdir("lept/otsu");
+				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", dbgpix_spec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
+				stringDestroy(&pixd_path);
 			}
 
 			ptpx->thresh = thresh;
@@ -424,12 +427,11 @@ struct BG_THRES_PT_INFO {
 						numaReplaceNumber(nay, 1, (l_int32)(0.5 * maxnum));
 
 						/* Plot the score function */
-						char buf[256];
 						char title[32];
 						lept_mkdir("lept/otsu3");
-						snprintf(buf, sizeof(buf), "/tmp/lept/otsu3/%s_plots.%d", leptDebugGetFilenamePrefix(), i);
+						const char* plot_path = leptDebugGenFilepathEx("lept/otsu3", dbgpix_spec, "%s.plots.%d", __func__, i);
 						snprintf(title, sizeof(title), "Plot %d", i);
-						gplot = gplotCreate(buf, GPLOT_PNG,
+						gplot = gplotCreate(plot_path, GPLOT_PNG,
 							"Otsu score function for splitting",
 							"Grayscale value", "Score");
 						gplotAddPlot(gplot, NULL, nascore, GPLOT_LINES, title);
@@ -438,6 +440,7 @@ struct BG_THRES_PT_INFO {
 						gplotAddPlot(gplot, nax, nay, GPLOT_LINES, NULL);
 						gplotMakeOutput(gplot);
 						gplotDestroy(&gplot);
+						stringDestroy(&plot_path);
 						numaDestroy(&nax);
 						numaDestroy(&nay);
 						numaDestroy(&nascore);
@@ -962,7 +965,6 @@ PIX     *pixg, *pixsc, *pixm = NULL, *pixms = NULL, *pixth = NULL, *pixd = NULL;
     return 0;
 }
 
-#endif
 
 /*!
  * \brief   pixSauvolaGetThreshold()
@@ -1119,7 +1121,6 @@ PIX       *pixd;
     return pixd;
 }
 
-#if 0
 
 /*----------------------------------------------------------------------*
  *      Contrast normalization followed by Sauvola binarization         *

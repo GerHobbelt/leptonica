@@ -475,7 +475,8 @@ PIX       *pix1, *pix2, *pixd;
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixCopyText(pixd, pixs);
-    pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyInputFormat(pixd, pixs);
     return pixd;
 }
 
@@ -607,7 +608,9 @@ PIX       *pixd;
         pixScaleAndTransferAlpha(pixd, pixs, scalex, scaley);
 
     pixCopyInputFormat(pixd, pixs);
-    return pixd;
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	return pixd;
 }
 
 
@@ -650,7 +653,9 @@ PIX       *pixd;
         pixScaleAndTransferAlpha(pixd, pixs, 2.0, 2.0);
 
     pixCopyInputFormat(pixd, pixs);
-    return pixd;
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	return pixd;
 }
 
 
@@ -799,7 +804,8 @@ PIX       *pixd;
     if ((pixd = pixCreate(wd, hd, 8)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyText(pixd, pixs);
-    pixCopyResolution(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
     pixScaleResolution(pixd, scalex, scaley);
     datad = pixGetData(pixd);
@@ -840,7 +846,9 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    pixScaleResolution(pixd, 2.0, 2.0);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixScaleResolution(pixd, 2.0, 2.0);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     scaleGray2xLILow(datad, wpld, datas, ws, hs, wpls);
@@ -879,7 +887,9 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    pixScaleResolution(pixd, 4.0, 4.0);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixScaleResolution(pixd, 4.0, 4.0);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     scaleGray4xLILow(datad, wpld, datas, ws, hs, wpls);
@@ -939,7 +949,9 @@ PIX       *pixd;
     pixCopyInputFormat(pixd, pixs);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, 2.0, 2.0);
-    wpld = pixGetWpl(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
 
         /* Do all but last src line */
@@ -1026,7 +1038,9 @@ PIX       *pixd = NULL;
         goto cleanup;
     }
     pixCopyInputFormat(pixd, pixs);
-    pixCopyResolution(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, 2.0, 2.0);
     wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
@@ -1131,7 +1145,9 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     }
     pixCopyInputFormat(pixd, pixs);
-    pixCopyResolution(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, 4.0, 4.0);
     wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
@@ -1229,7 +1245,9 @@ PIX       *pixd = NULL;
         goto cleanup;
     }
     pixCopyInputFormat(pixd, pixs);
-    pixCopyResolution(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, 4.0, 4.0);
     wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
@@ -1377,7 +1395,8 @@ PIX       *pixd;
     pixScaleResolution(pixd, scalex, scaley);
     pixCopyColormap(pixd, pixs);
     pixCopyText(pixd, pixs);
-    pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyInputFormat(pixd, pixs);
     pixCopySpp(pixd, pixs);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
@@ -1526,7 +1545,9 @@ PIX       *pixd;
     hd = hs / factor;
     if ((pixd = pixCreate(wd, hd, 8)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-    pixCopyResolution(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
     scale = 1.f / (l_float32) factor;
     pixScaleResolution(pixd, scale, scale);
@@ -1590,7 +1611,9 @@ PIX       *pixd;
     hd = hs / factor;
     if ((pixd = pixCreate(wd, hd, 1)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-    pixCopyResolution(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
     scale = 1. / (l_float32) factor;
     pixScaleResolution(pixd, scale, scale);
@@ -1654,7 +1677,9 @@ PIX       *pixd;
     hd = hs / factor;
     if ((pixd = pixCreate(wd, hd, 1)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-    pixCopyResolution(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
     scale = 1.f / (l_float32) factor;
     pixScaleResolution(pixd, scale, scale);
@@ -1762,7 +1787,9 @@ PIX       *pixs, *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
     pixScaleResolution(pixd, scalex, scaley);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     scaleSmoothLow(datad, wd, hd, wpld, datas, ws, hs, d, wpls, isize);
     if (d == 32 && pixGetSpp(pixs) == 4)
@@ -1854,7 +1881,9 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
     pixScaleResolution(pixd, 0.5, 0.5);
-    wpld = pixGetWpl(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
     scaleRGBToGray2Low(datad, wd, hd, wpld, datas, wpls, rwt, gwt, bwt);
     return pixd;
@@ -2004,7 +2033,9 @@ PIX       *pixs, *pixd, *pix1, *pix2, *pix3;
     pixCopyInputFormat(pixd, pixs);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, scalex, scaley);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     if (d == 8) {
         scaleGrayAreaMapLow(datad, wd, hd, wpld, datas, ws, hs, wpls);
@@ -2072,7 +2103,9 @@ PIX       *pixs, *pixd;
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     pixCopyInputFormat(pixd, pixs);
-    pixCopyResolution(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, 0.5, 0.5);
     scaleAreaMapLow2(datad, wd, hd, wpld, datas, d, wpls);
     if (pixGetSpp(pixs) == 4)
@@ -2218,7 +2251,8 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyColormap(pixd, pixs);
     pixCopyText(pixd, pixs);
-    pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyInputFormat(pixd, pixs);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, scalex, scaley);
     datad = pixGetData(pixd);

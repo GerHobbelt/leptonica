@@ -269,7 +269,8 @@ PIXA    *pixas, *pixad;
         pixCopyResolution(pixd, pixs);
         pixCopyColormap(pixd, pixs);
         pixCopyText(pixd, pixs);
-        pixCopyInputFormat(pixd, pixs);
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		pixCopyInputFormat(pixd, pixs);
     }
     pixaDestroy(&pixad);
     return pixd;
@@ -492,7 +493,8 @@ PIXA    *pixas, *pixad;
         pixCopyResolution(pixd, pixs);
         pixCopyColormap(pixd, pixs);
         pixCopyText(pixd, pixs);
-        pixCopyInputFormat(pixd, pixs);
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		pixCopyInputFormat(pixd, pixs);
     }
     pixaDestroy(&pixad);
     return pixd;
@@ -619,7 +621,8 @@ PIXA    *pixas, *pixad;
         pixCopyResolution(pixd, pixs);
         pixCopyColormap(pixd, pixs);
         pixCopyText(pixd, pixs);
-        pixCopyInputFormat(pixd, pixs);
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		pixCopyInputFormat(pixd, pixs);
     }
     pixaDestroy(&pixad);
     return pixd;
@@ -745,7 +748,8 @@ PIXA    *pixas, *pixad;
         pixCopyResolution(pixd, pixs);
         pixCopyColormap(pixd, pixs);
         pixCopyText(pixd, pixs);
-        pixCopyInputFormat(pixd, pixs);
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		pixCopyInputFormat(pixd, pixs);
     }
     pixaDestroy(&pixad);
     return pixd;
@@ -875,7 +879,8 @@ PIXA    *pixas, *pixad;
         pixCopyResolution(pixd, pixs);
         pixCopyColormap(pixd, pixs);
         pixCopyText(pixd, pixs);
-        pixCopyInputFormat(pixd, pixs);
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		pixCopyInputFormat(pixd, pixs);
     }
     pixaDestroy(&pixad);
     return pixd;
@@ -1004,7 +1009,8 @@ PIXA    *pixas, *pixad;
         pixCopyResolution(pixd, pixs);
         pixCopyColormap(pixd, pixs);
         pixCopyText(pixd, pixs);
-        pixCopyInputFormat(pixd, pixs);
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		pixCopyInputFormat(pixd, pixs);
     }
     pixaDestroy(&pixad);
     return pixd;
@@ -1986,7 +1992,8 @@ PIXA    *pixad;
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         pix2 = pixScaleToSize(pix1, wd, hd);
         pixCopyText(pix2, pix1);
-        pixaAddPix(pixad, pix2, L_INSERT);
+		pixCloneDiagnosticsSpec(pix2, pix1);
+		pixaAddPix(pixad, pix2, L_INSERT);
         pixDestroy(&pix1);
     }
     return pixad;
@@ -2071,7 +2078,8 @@ PIXA    *pixad;
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         pix2 = pixScale(pix1, scalex, scaley);
         pixCopyText(pix2, pix1);
-        pixaAddPix(pixad, pix2, L_INSERT);
+		pixCloneDiagnosticsSpec(pix2, pix1);
+		pixaAddPix(pixad, pix2, L_INSERT);
         pixDestroy(&pix1);
     }
 
@@ -2120,7 +2128,8 @@ PIXA    *pixad;
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         pix2 = pixScaleBySampling(pix1, scalex, scaley);
         pixCopyText(pix2, pix1);
-        pixaAddPix(pixad, pix2, L_INSERT);
+		pixCloneDiagnosticsSpec(pix2, pix1);
+		pixaAddPix(pixad, pix2, L_INSERT);
         pixDestroy(&pix1);
     }
 

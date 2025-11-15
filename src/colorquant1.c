@@ -682,6 +682,8 @@ PIXCMAP   *cmap;
     pixSetColormap(pixd, cmap);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Force darkest color to black if each component <= 4 */
     pixcmapGetRankIntensity(cmap, 0.0, &index);
@@ -996,7 +998,9 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
         /* Make the canonical index tables */
@@ -1747,7 +1751,9 @@ PIXCMAP        *cmap;
     wpld = pixGetWpl(pixd);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    cmap = pixcmapCreate(depth);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	cmap = pixcmapCreate(depth);
     pixSetColormap(pixd, cmap);
 
         /* Average the colors in each octcube leaf. */
@@ -2294,6 +2300,8 @@ PIXCMAP   *cmap;
 
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /*----------------------------------------------------------*
          * If we're using the minimum number of colors, it is       *
@@ -2619,7 +2627,9 @@ PIXCMAP   *cmap;
     }
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    cmap = pixcmapCreate(depth);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	cmap = pixcmapCreate(depth);
     for (j = 0; j < size; j++)  /* reserve octcube colors */
         pixcmapAddColor(cmap, 1, 1, 1);  /* a color that won't be used */
     for (j = 0; j < graylevels; j++) {  /* set grayscale colors */
@@ -2823,7 +2833,9 @@ PIXCMAP   *cmap;
     pixSetColormap(pixd, cmap);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
         /* Set dest pix values to colortable indices */
@@ -2991,7 +3003,9 @@ PIXCMAP   *cmap;
     pixSetColormap(pixd, cmap);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     for (i = 0; i < h; i++) {
         lines = datas + i * wpls;
@@ -3141,7 +3155,9 @@ PIXCMAP   *cmap;
     }
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
         /* For each pixel, get the octree index for its leaf octcube.
@@ -3405,7 +3421,9 @@ PIX       *pixd;
     pixd = pixCreate(w, h, 32);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
@@ -3639,6 +3657,8 @@ PIXCMAP   *cmapc;
     pixSetColormap(pixd, cmapc);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Insert the colormap index of the color nearest to the input pixel */
     datas = pixGetData(pixs);

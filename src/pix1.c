@@ -438,7 +438,8 @@ PIX     *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyColormap(pixd, pixs);
     pixCopyText(pixd, pixs);
-    pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyInputFormat(pixd, pixs);
     pixSetPadBits(pixd, 0);
     return pixd;
 }
@@ -660,6 +661,11 @@ char      *text;
             pixdata_free(data);
         if ((text = pixGetText(pix)) != NULL)
             LEPT_FREE(text);
+
+		LDIAG_CTX diag_spec = pixGetDiagnosticsSpec(pix);
+		if (diag_spec != NULL)
+			leptDestroyDiagnoticsSpecInstance(&diag_spec);
+
         pixDestroyColormap(pix);
         LEPT_FREE(pix);
     }
@@ -737,6 +743,7 @@ l_int32  bytes;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
     pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Copy image data */
     memcpy(pixd->data, pixs->data, bytes);
@@ -790,7 +797,9 @@ l_uint32  *data;
     pixSetWpl(pixd, wpl);
     pixFreeAndSetData(pixd, data);  /* free old data and assign new data */
     pixCopyResolution(pixd, pixs);
-    return 0;
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	return 0;
 }
 
 
@@ -924,11 +933,13 @@ PIX     *pixs;
         nbytes = 4 * pixGetWpl(pixs) * pixGetHeight(pixs);
         memcpy(pixGetData(pixd), pixGetData(pixs), nbytes);
         pixCopyColormap(pixd, pixs);
-        if (copytext)
-            pixCopyText(pixd, pixs);
+		if (copytext) {
+			pixCopyText(pixd, pixs);
+		}
     }
 
-    pixCopySpp(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopySpp(pixd, pixs);
     pixCopyResolution(pixd, pixs);
     pixCopyDimensions(pixd, pixs);
     if (copyformat)

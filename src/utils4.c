@@ -138,7 +138,9 @@
 #include <errno.h>     /* for errno */
 #include <string.h>
 #include <stddef.h>
+
 #include "allheaders.h"
+#include "pix_internal.h"
 
 #if defined(__APPLE__) || defined(_WIN32)
 /* Rewrite paths starting with /tmp for macOS, iOS and Windows. */
@@ -161,6 +163,8 @@ struct l_diag_predef_parts {
 	const char* process_name;        //!< the part which identifies what we are doing right now (at a high abstraction level)
 	const char* default_path_template_str; //!< you can customize the preferred file path formatting template.
 
+	l_atomic             refcount;   /*!< reference count (1 if no clones)  */
+
 	unsigned int must_regenerate : 1;		//!< set when l_filename_prefix changes mandate a freshly (re)generated target file prefix for subsequent requests.
 	unsigned int must_bump_batch_id : 1;	//!< set when %batch_unique_id should be incremented before next use.
 	unsigned int must_bump_step_id : 1;		//!< set when %step_id should be incremented before next use.
@@ -170,18 +174,21 @@ struct l_diag_predef_parts {
 
 
 
-LDIAG_CTX leptCreateDiagnoticsSpecInstance(void)
+LDIAG_CTX
+leptCreateDiagnoticsSpecInstance(void)
 {
 	LDIAG_CTX dst = (LDIAG_CTX)LEPT_CALLOC(1, sizeof(*dst));
 	if (!dst)
 	{
-		return (LDIAG_CTX)ERROR_PTR("l_diag_filename_predef_parts not made", __func__, NULL);
+		return (LDIAG_CTX)ERROR_PTR("LDIAG_CTX not made", __func__, NULL);
 	}
+	dst->refcount = 1;
 	return dst;
 }
 
 
-void leptDestroyDiagnoticsSpecInstance(LDIAG_CTX* spec_ptr)
+void
+leptDestroyDiagnoticsSpecInstance(LDIAG_CTX* spec_ptr)
 {
 	if (!spec_ptr) {
 		L_WARNING("ptr address is null!\n", __func__);
@@ -192,8 +199,153 @@ void leptDestroyDiagnoticsSpecInstance(LDIAG_CTX* spec_ptr)
 	if (spec == NULL)
 		return;
 
-	LEPT_FREE(spec);
+	/* Decrement the ref count.  If it is 0, destroy the spec. */
+	if (--spec->refcount == 0) {
+		stringDestroy(&spec->basepath);
+		stringDestroy(&spec->active_filename);
+		stringDestroy(&spec->process_name);
+		stringDestroy(&spec->default_path_template_str);
+		LEPT_FREE(spec);
+	}
 	*spec_ptr = NULL;
+}
+
+
+LDIAG_CTX
+leptCopyDiagnoticsSpecInstance(LDIAG_CTX spec)
+{
+	if (!spec)
+	{
+		return (LDIAG_CTX)ERROR_PTR("image diagnostics spec not defined", __func__, NULL);
+	}
+	LDIAG_CTX dst = (LDIAG_CTX)LEPT_MALLOC(sizeof(*dst));
+	if (!dst)
+	{
+		return (LDIAG_CTX)ERROR_PTR("LDIAG_CTX not made", __func__, NULL);
+	}
+
+	memcpy(dst, spec, sizeof(*spec));
+
+	dst->refcount = 1;
+
+	dst->basepath = stringNew(spec->basepath);
+	dst->active_filename = stringNew(spec->active_filename);
+	dst->process_name = stringNew(spec->process_name);
+	dst->default_path_template_str = stringNew(spec->default_path_template_str);
+
+	return dst;
+}
+
+
+LDIAG_CTX
+leptCloneDiagnoticsSpecInstance(LDIAG_CTX spec)
+{
+	if (!spec)
+	{
+		return (LDIAG_CTX)ERROR_PTR("image diagnostics spec not defined", __func__, NULL);
+	}
+	spec->refcount++;
+	return spec;
+}
+
+
+LDIAG_CTX
+pixGetDiagnosticsSpec(PIX* pixs)
+{
+	if (!pixs)
+		return (LDIAG_CTX)ERROR_PTR("pixs not defined", __func__, NULL);
+
+	return pixs->diag_spec;
+}
+
+
+LDIAG_CTX
+pixGetDiagnosticsSpecFromAny(PIX** ppix1, PIX* pix2, ...)
+{
+	LDIAG_CTX rv = NULL;
+	if (ppix1 != NULL && *ppix1 != NULL)
+		rv = (*ppix1)->diag_spec;
+	if (pix2 == NULL || rv != NULL)
+		return rv;
+
+	va_list ap;
+	va_start(ap, pix2);
+	do {
+		assert(pix2 != NULL);
+		rv = pix2->diag_spec;
+		if (rv != NULL)
+			break;
+
+		pix2 = va_arg(ap, PIX *);
+	} while (pix2 != NULL);
+	va_end(ap);
+
+	return rv;
+}
+
+
+
+l_ok
+pixSetDiagnosticsSpec(PIX* pix, LDIAG_CTX spec)
+{
+	if (!pix)
+		return ERROR("pix not defined", __func__, 1);
+
+	if (pix->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pix->diag_spec);
+
+	if (spec) {
+		pix->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+	}
+	else {
+		pix->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+pixCopyDiagnosticsSpec(PIX* pixd, const PIX* pixs)
+{
+	if (!pixs)
+		return ERROR("pixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR("pixd not defined", __func__, 1);
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (pixs->diag_spec) {
+		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+pixCloneDiagnosticsSpec(PIX* pixd, const PIX* pixs)
+{
+	if (!pixs)
+		return ERROR("pixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR("pixd not defined", __func__, 1);
+
+	if (pixd->diag_spec == pixs->diag_spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (pixs->diag_spec) {
+		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(pixs->diag_spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
 }
 
 
@@ -328,7 +480,7 @@ void
 leptDebugSetBetchUniqueId(LDIAG_CTX spec, size_t numeric_id)
 {
 	if (spec->batch_unique_id != numeric_id) {
-		leptDebugSetStepId(0);
+		leptDebugSetStepId(spec, 0);
 
 		spec->must_bump_batch_id = (numeric_id == 0);
 		spec->must_regenerate = 1;
@@ -348,7 +500,7 @@ leptDebugIncrementBatchUniqueId(LDIAG_CTX spec)
 	spec->must_bump_batch_id = 0;
 	spec->must_regenerate = 1;
 
-	leptDebugSetStepId(0);
+	leptDebugSetStepId(spec, 0);
 }
 
 
@@ -361,7 +513,7 @@ size_t
 leptDebugGetBatchUniqueId(LDIAG_CTX spec)
 {
 	if (spec->must_bump_batch_id) {
-		leptDebugIncrementBatchUniqueId();
+		leptDebugIncrementBatchUniqueId(spec);
 	}
 	return spec->batch_unique_id;
 }
@@ -386,7 +538,7 @@ void
 leptDebugSetStepId(LDIAG_CTX spec, size_t numeric_id)
 {
 	if (spec->step_id != numeric_id) {
-		leptDebugSetItemId(0);
+		leptDebugSetItemId(spec, 0);
 
 		spec->must_bump_step_id = (numeric_id == 0);
 		spec->must_regenerate = 1;
@@ -405,7 +557,7 @@ leptDebugIncrementStepId(LDIAG_CTX spec)
 	++spec->step_id;
 	spec->must_bump_step_id = 0;
 	spec->must_regenerate = 1;
-	leptDebugSetItemId(0);
+	leptDebugSetItemId(spec, 0);
 }
 
 
@@ -418,7 +570,7 @@ size_t
 leptDebugGetStepId(LDIAG_CTX spec)
 {
 	if (spec->must_bump_step_id) {
-		leptDebugIncrementStepId();
+		leptDebugIncrementStepId(spec);
 	}
 	return spec->step_id;
 }
@@ -497,7 +649,7 @@ l_uint64
 leptDebugGetItemId(LDIAG_CTX spec)
 {
 	if (spec->must_bump_item_id) {
-		leptDebugIncrementItemId();
+		leptDebugIncrementItemId(spec);
 	}
 	return spec->item_id;
 }
@@ -620,14 +772,14 @@ leptDebugGetProcessName(LDIAG_CTX spec)
  *            When the sanitizer filter spec is empty, the default '_' string is assumed and text fields will each be sanitized suitable for
  *            all (non-antiquated) file systems -- MSDOS/FAT comes to mind: there we have a 8.3 filename size restriction,
  *            which is not met by our default template; if you wish to support such a filesystem, you are well-advised to use
- *            a '{8H}.' template instead to ensure your filenames at least will suit the target filesystem. But I digres...
+ *            a '{8H}.' template instead to ensure your filenames at least will suit the target filesystem. But I digress...
  *          - Whatever the OPTIONAL text sanitizer filter expression '@' field may be, empty or otherwise, any sanitized string will:
  *            + have any sanitized character sequence replaced by a single replacement character,
  *            + have both head and tail ends trimmed to either a single '_' underscore or nothing-at-all.
  *
  *            The latter rule is to prevent ever generating filenames which start or end with '.' dots or one or more '~' or '$' characters, which
  *            have special meaning and/or effects in many operation systems. In other words: the sanitizer prevents you from ever being able
- *            to produce filenames such as UNIX-hiiden '.gitignore' or NTFS-endangering '$Index' or Unix-hairy '~home` when passing anything
+ *            to produce filenames such as UNIX-hidden '.gitignore' or NTFS-endangering '$Index' or Unix-hairy '~home` when passing anything
  *            through our sanitization filter. We also do not ever produce filenames that might look like command line arguments, such as '-xvzf'
  *            when using a format spec like this one: '{t:@_-}'
  *		(4) Only when the leptDebugGenFilename() / leptDebugGenFilpath() API calls supply their own template strings containing
@@ -655,8 +807,7 @@ leptDebugGetProcessName(LDIAG_CTX spec)
  *            zeroes if necessary. Thus '{05i}' is equivalent to C `printf("%05u", item_id)`.
  *          - If 'nn' is a non-zero-prefixed decimal number and the field type (x) is numeric, , it : the maximum width of the field.
  *            If 'nn' is 0-prefixed, the field is always extended to its maximum width, using leading zeroes.
- *            Hence '{5i}' is equivalent to C printf("%.5s"
- *          where these '{xyz}' template elements are recong
+ *            Hence '{5i}' is equivalent to C `printf("%.5s", ...)`
  *      (3) To keep matters sane all around, the prefix size is limited to 40 characters and is sanitized
  *          by sanitizePathToIdentifier(...,%numeric_id,%filename_prefix) before use.
  * </pre>
@@ -718,6 +869,20 @@ leptDebugGenFilename(LDIAG_CTX spec, const char* filename_fmt_str, ...)
  */
 const char*
 leptDebugGenFilepath(LDIAG_CTX spec, const char* path_fmt_str, ...)
+{
+
+}
+
+
+const char*
+leptDebugGenFilenameEx(const char* directory, LDIAG_CTX spec, const char* filename_fmt_str, ...)
+{
+
+}
+
+
+const char*
+leptDebugGenFilepathEx(const char* directory, LDIAG_CTX spec, const char* path_fmt_str, ...)
 {
 
 }

@@ -85,12 +85,12 @@ PIXAC   *pixac1, *pixac2, *pixac3;
     lept_mkdir("lept/adapt");
 
         /* Using a variety of different thresholds */
-    GenCleans("cavalerie.29.jpg", &index, 80, bmf);
-    GenCleans("cavalerie.29.jpg", &index, 60, bmf);
-    GenCleans("cavalerie.29.jpg", &index, 40, bmf);
-    GenCleans("cavalerie.11.jpg", &index, 80, bmf);
-    GenCleans("cavalerie.11.jpg", &index, 60, bmf);
-    GenCleans("cavalerie.11.jpg", &index, 40, bmf);
+    GenCleans(DEMOPATH("cavalerie.29.jpg"), &index, 80, bmf);
+    GenCleans(DEMOPATH("cavalerie.29.jpg"), &index, 60, bmf);
+    GenCleans(DEMOPATH("cavalerie.29.jpg"), &index, 40, bmf);
+    GenCleans(DEMOPATH("cavalerie.11.jpg"), &index, 80, bmf);
+    GenCleans(DEMOPATH("cavalerie.11.jpg"), &index, 60, bmf);
+    GenCleans(DEMOPATH("cavalerie.11.jpg"), &index, 40, bmf);
 
         /* Read the images and convert to a 4-up pixa */
     pixa1 = convertToNUpPixa("/tmp/lept/adapt", "adapt_", 2, 2, 500,

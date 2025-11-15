@@ -237,7 +237,7 @@
  * \return  dest copy of %src string, or NULL on error
  */
 char *
-stringNew(const char  *src)
+stringNew(const char *src)
 {
 l_int32  len;
 char    *dest;
@@ -2967,11 +2967,25 @@ char   empty[4] = "";
  *          slashes (except in the cases where %dir == "/" and
  *          %fname == NULL, or v.v.).
  *      (4) If both %dir and %fname are null, produces an empty string.
- *      (5) Neither %dir nor %fname can begin with '..' when the other starts with a '/'.
+ *      (5) %fname is always treated as a relative path, appended to %dir, even if %fname starts with a '/'.
  *      (6) The result is not canonicalized or tested for correctness:
  *          garbage in (e.g., /&%), garbage out.
  *      (7) "." and ".." directories are folded when possible, i.e. "abc/def/../xyz/./blub" --> "abc/xyz/blub"
- *      (7) Examples:
+ *      (8) "/tmp/" at the start of the resulting concatenated path is treated special, as are any 
+ *          MSWindows drive nad (UNC) network drive / share name path elements: ".." will NOT fold these, i.e.
+ *            pathJoin("Z:/abc", "../../x") --> "Z:/x", NOT "/x" NOR "x".
+ *          Ditto for "/tmp/": 
+ *            pathJoin("/tmp/abc", "../../x") --> "/tmp/x"
+ *          while
+ *            pathJoin("/abc/def", "../../x") --> "/x"
+ *          and
+ *            pathJoin("/abc/", "Z:/x/y") --> "/abc/Z:/x/y", which is normalized to "/abc/drv_Z/x/y".
+ *            pathJoin("/abc/", "//?/Z:/x/y") --> "/abc/?/Z:/x/y", which is normalized to "/abc/drv_Z/x/y".
+ *            pathJoin("/abc/", "//?/$Server/$Share/x/y") --> "/abc/?/$Server/$Share/x/y", which is normalized to "/abc/$Server/$Share/x/y".
+ *          where it should be noted that any MSWindows drive nad (UNC) network drive / share name path element
+ *          that starts %fname WILL NOT be removed when folding any '../' element either: even while these are
+ *          'normalized' into regular path elements following %dir, such elements are indestructible that way!
+ *      (9) Examples:
  *             //tmp// + //abc/  -->  /tmp/abc
  *             tmp/ + /abc/      -->  tmp/abc
  *             tmp/ + abc/       -->  tmp/abc

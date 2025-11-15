@@ -182,7 +182,9 @@ PIX       *pixd;
     pixCopyColormap(pixd, pixs);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    pixCopySpp(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopySpp(pixd, pixs);
 
     datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);

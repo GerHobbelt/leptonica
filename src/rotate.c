@@ -282,7 +282,8 @@ PIX       *pixd;
     pixCopyColormap(pixd, pixs);
     pixCopySpp(pixd, pixs);
     pixCopyText(pixd, pixs);
-    xoff = (wnew - w) / 2;
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	xoff = (wnew - w) / 2;
     yoff = (hnew - h) / 2;
 
         /* Set background to color to be rotated in */

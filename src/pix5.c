@@ -1062,7 +1062,8 @@ PIX     *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyColormap(pixd, pixs);
     pixCopyText(pixd, pixs);
-    pixRasterop(pixd, 0, 0, bw, bh, PIX_SRC, pixs, bx, by);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixRasterop(pixd, 0, 0, bw, bh, PIX_SRC, pixs, bx, by);
 
     if (pboxc)
         *pboxc = boxc;
@@ -1286,7 +1287,8 @@ PIX     *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyColormap(pixd, pixs);
     pixCopyText(pixd, pixs);
-    pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyInputFormat(pixd, pixs);
     pixRasterop(pixd, 0, 0, wd, hd, PIX_SRC, pixs, 0, 0);
     return pixd;
 }
@@ -1341,7 +1343,8 @@ PIX     *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyColormap(pixd, pixs);
     pixCopyText(pixd, pixs);
-    pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixCopyInputFormat(pixd, pixs);
     pixRasterop(pixd, 0, 0, ws, hs, PIX_SRC, pixs, 0, 0);
     if (ws >= w && hs >= h)
         return pixd;

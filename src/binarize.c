@@ -163,7 +163,8 @@ pixOtsuAdaptiveThreshold(PIX       *pixs,
                          l_int32    smoothy,
                          l_float32  scorefract,
                          PIX      **ppixth,
-                         PIX      **ppixd)
+                         PIX      **ppixd,
+                         LDIAG_CTX dbgpix_spec)
 {
 l_int32     w, h, nx, ny, i, j, thresh;
 l_uint32    val;
@@ -191,16 +192,16 @@ PIXTILING  *pt;
         for (j = 0; j < nx; j++) {
             pixt = pixTilingGetTile(pt, i, j);
 			PIX* pixplt = NULL;
-			PIX** pixplt_ref = (ppixd != NULL ? &pixplt : NULL);
+			PIX** pixplt_ref = ((ppixd != NULL && dbgpix_spec != NULL) ? &pixplt : NULL);
             pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
                                      NULL, NULL, pixplt_ref);
 
 			if (pixplt) {
 				lept_mkdir("lept/otsu");
-				char textstr[256];
-				snprintf(textstr, sizeof(textstr), "/tmp/lept/otsu/%s_%s.histogram4binarize-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreFrac-%.1f.png", leptDebugGetFilenamePrefix(), "pixOtsuAdaptiveThreshold2", i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
-				pixWrite(textstr, pixplt, IFF_PNG);
+				const char *pixd_path = leptDebugGenFilepath(dbgpix_spec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
+				stringDestroy(&pixd_path);
 			}
 
             pixSetPixel(pixthresh, j, i, thresh);  /* see note (4) */

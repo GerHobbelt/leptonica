@@ -181,7 +181,8 @@ SARRAY   *salines;
         pixCopyColormap(pixd, pixs);
         pixCopyResolution(pixd, pixs);
         pixCopyText(pixd, pixs);
-        pixSetBlackOrWhite(pixd, L_BRING_IN_WHITE);
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		pixSetBlackOrWhite(pixd, L_BRING_IN_WHITE);
         if (location == L_ADD_ABOVE)
             pixRasterop(pixd, 0, extra, w, h, PIX_SRC, pixs, 0, 0);
         else  /* add below */
@@ -343,7 +344,8 @@ SARRAY   *sa;
         pixCopyColormap(pixd, pixs);
         pixCopyResolution(pixd, pixs);
         pixCopyText(pixd, pixs);
-        pixSetBlackOrWhite(pixd, L_BRING_IN_WHITE);
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		pixSetBlackOrWhite(pixd, L_BRING_IN_WHITE);
         if (location == L_ADD_ABOVE)
             pixRasterop(pixd, 0, hadd, w, h, PIX_SRC, pixs, 0, 0);
         else  /* add below */
@@ -354,7 +356,8 @@ SARRAY   *sa;
         pixCopyColormap(pixd, pixs);
         pixCopyResolution(pixd, pixs);
         pixCopyText(pixd, pixs);
-        pixSetBlackOrWhite(pixd, L_BRING_IN_WHITE);
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		pixSetBlackOrWhite(pixd, L_BRING_IN_WHITE);
         if (location == L_ADD_LEFT)
             pixRasterop(pixd, wadd, 0, w, h, PIX_SRC, pixs, 0, 0);
         else  /* add to right */

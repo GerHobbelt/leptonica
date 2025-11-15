@@ -2746,7 +2746,7 @@ LEPT_DLL extern l_ok convertSepCharsInPath ( char *path, l_int32 type );
 LEPT_DLL extern l_int32 getPathRootLength ( const char* path );
 LEPT_DLL extern char * getPathBasename ( const char* path, int strip_off_extension );
 LEPT_DLL extern uint64_t getPathHash ( const char* path );
-//LEPT_DLL extern char * genPathname ( const char *dir, const char *fname );
+LEPT_DLL extern char * genPathname ( const char *dir, const char *fname );
 //LEPT_DLL extern char * sanitizePathToIdentifier ( char *dst, size_t dstsize, const char *str, const char *additional_acceptable_set );
 LEPT_DLL extern l_ok makeTempDirname ( char *result, size_t nbytes, const char *subdir );
 LEPT_DLL extern l_ok modifyTrailingSlash ( char *path, size_t nbytes, l_int32 flag );
@@ -2805,6 +2805,14 @@ LEPT_DLL extern l_uint8 * zlibUncompress ( const l_uint8 *datain, size_t nin, si
 
 LEPT_DLL extern LDIAG_CTX leptCreateDiagnoticsSpecInstance ( void );
 LEPT_DLL extern void leptDestroyDiagnoticsSpecInstance ( LDIAG_CTX* spec_ref );
+LEPT_DLL extern LDIAG_CTX leptCopyDiagnoticsSpecInstance ( LDIAG_CTX spec );
+LEPT_DLL extern LDIAG_CTX leptCloneDiagnoticsSpecInstance ( LDIAG_CTX spec );
+
+LEPT_DLL extern LDIAG_CTX pixGetDiagnosticsSpec( PIX* pix );
+LEPT_DLL extern LDIAG_CTX pixGetDiagnosticsSpecFromAny(PIX** ppix1, PIX* pix2, ... );
+LEPT_DLL extern l_ok pixSetDiagnosticsSpec( PIX* pix, LDIAG_CTX spec );
+LEPT_DLL extern l_ok pixCopyDiagnosticsSpec( PIX* pixd, const PIX* pixs );
+LEPT_DLL extern l_ok pixCloneDiagnosticsSpec( PIX* pixd, const PIX* pixs );
 
 LEPT_DLL extern void leptDebugSetFileBasepath ( LDIAG_CTX spec, const char * directory );
 LEPT_DLL extern const char * leptDebugGetFileBasePath ( LDIAG_CTX spec );
@@ -2828,6 +2836,8 @@ LEPT_DLL extern void leptDebugSetFilepathDefaultFormat ( LDIAG_CTX spec, const c
 LEPT_DLL extern const char * leptDebugGetFilepathDefaultFormat ( LDIAG_CTX spec );
 LEPT_DLL extern const char * leptDebugGenFilename ( LDIAG_CTX spec, const char * filename_fmt_str, ... );
 LEPT_DLL extern const char * leptDebugGenFilepath ( LDIAG_CTX spec, const char * path_fmt_str , ... );
+LEPT_DLL extern const char * leptDebugGenFilenameEx ( const char * directory, LDIAG_CTX spec, const char * filename_fmt_str, ... );
+LEPT_DLL extern const char * leptDebugGenFilepathEx ( const char * directory, LDIAG_CTX spec, const char * path_fmt_str, ... );
 LEPT_DLL extern const char * leptDebugGetLastGenFilepath ( LDIAG_CTX spec );
 
 /* defined in morph.c */

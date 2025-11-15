@@ -225,7 +225,9 @@ PIX       *pixt, *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
         /* Remove colormap if it exists */
@@ -463,7 +465,9 @@ PIX       *pixt, *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
         /* Remove colormap if it exists.  If there is a colormap,
@@ -664,7 +668,9 @@ PIX       *pixd;
     pixd = pixCreate(w, h, 1);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
@@ -836,7 +842,9 @@ PIX       *pixg, *pixd;
     pixd = pixCreate(w, h, 1);
     pixCopyResolution(pixd, pixg);
     pixCopyInputFormat(pixd, pixs);
-    datag = pixGetData(pixg);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datag = pixGetData(pixg);
     wplg = pixGetWpl(pixg);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
@@ -929,7 +937,9 @@ PIX       *pixg, *pixd;
     pixd = pixCreate(w, h, 1);
     pixCopyResolution(pixd, pixg);
     pixCopyInputFormat(pixd, pixs);
-    datag = pixGetData(pixg);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datag = pixGetData(pixg);
     wplg = pixGetWpl(pixg);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
@@ -1059,7 +1069,9 @@ PIXCMAP   *cmap;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
         /* If there is a colormap, remove it */
@@ -1377,7 +1389,9 @@ PIXCMAP   *cmap;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
     if (cmapflag) {   /* hold out (4 - nlevels) cmap entries */
@@ -1517,7 +1531,9 @@ PIXCMAP   *cmap;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
     if (cmapflag) {   /* hold out (16 - nlevels) cmap entries */
@@ -1646,7 +1662,9 @@ PIXCMAP   *cmap;
     pixGetDimensions(pixd, &w, &h, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     for (i = 0; i < h; i++) {
         lined = datad + i * wpld;
@@ -1769,7 +1787,9 @@ PIXCMAP   *cmap;
     }
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    pixSetColormap(pixd, cmap);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixSetColormap(pixd, cmap);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -2140,7 +2160,9 @@ PIX       *pixd;
     pixd = pixCreate(w, h, 1);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datas = pixGetData(pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
@@ -2212,7 +2234,9 @@ PIX       *pixd;
     pixd = pixCreate(w, h, 1);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datas = pixGetData(pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
@@ -2360,6 +2384,8 @@ PIXCMAP   *cmap;
     }
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Use original mask, if it exists, to select gray pixels */
     na = pixGetGrayHistogramMasked(pixs, pixm, 0, 0, 1);
@@ -2566,7 +2592,9 @@ PIX       *pixd;
     pixSetColormap(pixd, cmapd);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datas = pixGetData(pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datas = pixGetData(pixs);
     datad = pixGetData(pixd);
     wpls = pixGetWpl(pixs);
     wpld = pixGetWpl(pixd);
@@ -2634,7 +2662,9 @@ PIX       *pixt, *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
         /* Remove colormap if it exists */
