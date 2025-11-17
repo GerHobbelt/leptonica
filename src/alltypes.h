@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdint.h>
 
     /* General and configuration defs */
 #include "leptonica/endianness.h"
