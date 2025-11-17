@@ -289,7 +289,7 @@ l_ok
 pixSetDiagnosticsSpec(PIX* pix, LDIAG_CTX spec)
 {
 	if (!pix)
-		return ERROR("pix not defined", __func__, 1);
+		return ERROR_INT("pix not defined", __func__, 1);
 
 	if (pix->diag_spec == spec)
 		return 0;
@@ -310,9 +310,9 @@ l_ok
 pixCopyDiagnosticsSpec(PIX* pixd, const PIX* pixs)
 {
 	if (!pixs)
-		return ERROR("pixs not defined", __func__, 1);
+		return ERROR_INT("pixs not defined", __func__, 1);
 	if (!pixd)
-		return ERROR("pixd not defined", __func__, 1);
+		return ERROR_INT("pixd not defined", __func__, 1);
 
 	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
 
@@ -330,9 +330,9 @@ l_ok
 pixCloneDiagnosticsSpec(PIX* pixd, const PIX* pixs)
 {
 	if (!pixs)
-		return ERROR("pixs not defined", __func__, 1);
+		return ERROR_INT("pixs not defined", __func__, 1);
 	if (!pixd)
-		return ERROR("pixd not defined", __func__, 1);
+		return ERROR_INT("pixd not defined", __func__, 1);
 
 	if (pixd->diag_spec == pixs->diag_spec)
 		return 0;
@@ -852,7 +852,7 @@ leptDebugGetFilepathDefaultFormat(LDIAG_CTX spec)
 const char*
 leptDebugGenFilename(LDIAG_CTX spec, const char* filename_fmt_str, ...)
 {
-
+	return NULL;
 }
 
 
@@ -870,21 +870,21 @@ leptDebugGenFilename(LDIAG_CTX spec, const char* filename_fmt_str, ...)
 const char*
 leptDebugGenFilepath(LDIAG_CTX spec, const char* path_fmt_str, ...)
 {
-
+	return NULL;
 }
 
 
 const char*
 leptDebugGenFilenameEx(const char* directory, LDIAG_CTX spec, const char* filename_fmt_str, ...)
 {
-
+	return NULL;
 }
 
 
 const char*
 leptDebugGenFilepathEx(const char* directory, LDIAG_CTX spec, const char* path_fmt_str, ...)
 {
-
+	return NULL;
 }
 
 
@@ -896,7 +896,7 @@ leptDebugGenFilepathEx(const char* directory, LDIAG_CTX spec, const char* path_f
 const char*
 leptDebugGetLastGenFilepath(LDIAG_CTX spec)
 {
-
+	return NULL;
 }
 
 

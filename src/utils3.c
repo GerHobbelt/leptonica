@@ -524,15 +524,15 @@ uint64_t
 getPathHash(const char* str)
 {
 	if (!str)
-		return ERROR("str not defined", __func__, 0);
+		return ERROR_INT("str not defined", __func__, 0);
 	if (!*str)
-		return ERROR("str is unacceptably empty", __func__, 0);
+		return ERROR_INT("str is unacceptably empty", __func__, 0);
 
 	int slen = strlen(str);
 
 	l_uint64 key = 0;
 	if (l_hashStringToUint64Fast(str, &key))
-		return ERROR("hash not made", __func__, 0);
+		return ERROR_INT("hash not made", __func__, 0);
 
 	if (key == 0)
 		key = 1;

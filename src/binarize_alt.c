@@ -212,7 +212,7 @@ struct BG_THRES_PT_INFO {
 				NULL, NULL, pixplt_ref);
 
 			if (pixplt) {
-				LDIAG_CTX dbgpix_spec = pixGetDiagnosticsSpecFromAny(ppixd, pixs, NULL));
+				LDIAG_CTX dbgpix_spec = pixGetDiagnosticsSpecFromAny(ppixd, pixs, NULL);
 				pixSetDiagnosticsSpec(pixplt, dbgpix_spec);
 
 				lept_mkdir("lept/otsu");
