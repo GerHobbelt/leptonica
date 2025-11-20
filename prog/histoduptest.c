@@ -179,7 +179,7 @@ PIXAC       *pac;
     lept_stderr("*******  (%d, %d), (%d, %d)  *******\n", w1, h1, w2, h2);
     pixa1 = pixaCreate(0);
         /* Set @minratio very small to allow comparison for all pairs */
-    compareTilesByHisto(naa3, naa4, 0.1, w1, h1, w2, h2, &score, pixa1);
+    compareTilesByHisto(diagspec, naa3, naa4, 0.1, w1, h1, w2, h2, &score, pixa1);
     pixaDestroy(&pixa1);
     lept_stderr("score = %5.3f\n", score);
     pixaDestroy(&pixa1);

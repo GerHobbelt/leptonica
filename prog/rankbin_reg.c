@@ -89,8 +89,8 @@ L_REGPARAMS  *rp;
     pixa = pixaCreate(0);
     numaGetRankBinValues(na1, 10, &na3);
     numaGetRankBinValues(na2, 10, &na4);
-    pix1 = gplotSimplePix1(na3, "width vs rank bins (10)");
-    pix2 = gplotSimplePix1(na4, "height vs rank bins (10)");
+    pix1 = gplotSimplePix1(diagspec, na3, "width vs rank bins (10)");
+    pix2 = gplotSimplePix1(diagspec, na4, "height vs rank bins (10)");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     numaDestroy(&na3);
@@ -101,8 +101,8 @@ L_REGPARAMS  *rp;
         /* Make the rank bin arrays of average values, with 30 bins */
     numaGetRankBinValues(na1, 30, &na3);
     numaGetRankBinValues(na2, 30, &na4);
-    pix1 = gplotSimplePix1(na3, "width vs rank bins (30)");
-    pix2 = gplotSimplePix1(na4, "height vs rank bins (30)");
+    pix1 = gplotSimplePix1(diagspec, na3, "width vs rank bins (30)");
+    pix2 = gplotSimplePix1(diagspec, na4, "height vs rank bins (30)");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
     numaDestroy(&na3);
@@ -185,8 +185,8 @@ L_REGPARAMS  *rp;
     pix1 = pixRead(DEMOPATH("karen8.jpg"));
     na1 = pixGetGrayHistogram(pix1, 1);
     numaDiscretizeHistoInBins(na1, 1000, &na2, &na3);
-    pix2 = gplotSimplePix1(na3, "rank vs gray");
-    pix3 = gplotSimplePix1(na2, "gray vs rank-binval");
+    pix2 = gplotSimplePix1(diagspec, na3, "rank vs gray");
+    pix3 = gplotSimplePix1(diagspec, na2, "gray vs rank-binval");
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 11 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 12 */
     pixaAddPix(pixa, pix2, L_INSERT);

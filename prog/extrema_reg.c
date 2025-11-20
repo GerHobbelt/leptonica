@@ -76,7 +76,7 @@ L_REGPARAMS  *rp;
         f += 63.4 * cos(0.21 * (l_float32)i);
         numaAddNumber(na1, f);
     }
-    gplot = gplotCreate("/tmp/lept/extrema/plot", GPLOT_PNG,
+    gplot = gplotCreate(diagspec, "/tmp/lept/extrema/plot", GPLOT_PNG,
                         "Extrema test", "x", "y");
     gplotAddPlot(gplot, NULL, na1, GPLOT_LINES, "plot 1");
 

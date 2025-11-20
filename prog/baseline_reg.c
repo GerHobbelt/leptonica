@@ -67,9 +67,16 @@ L_REGPARAMS  *rp;
     if (regTestSetup(argc, argv, &rp))
         return 1;
 
+	LDIAG_CTX diagspec = leptCopyDiagnoticsSpecInstance(rp->diag_spec);
+
 	lept_mkdir("lept/baseline");
 
-    pixs = pixRead(DEMOPATH("keystone.png"));
+	//leptDebugGetFileBasePath(diagspec);
+	leptDebugAppendFileBasepath(diagspec, "baseline");
+
+	const char* sourcefilepath = DEMOPATH("keystone.png");
+    pixs = pixRead(sourcefilepath);
+	leptDebugSetFilenameForPrefix(diagspec, sourcefilepath, TRUE);
 
         /* Test function for deskewing using projective transform
 	 * on linear approximation for local skew angle */
@@ -78,7 +85,7 @@ L_REGPARAMS  *rp;
 
         /* Test function for finding local skew angles */
     na = pixGetLocalSkewAngles(pixs, 10, 0, 0, 0.0, 0.0, 0.0, NULL, NULL, 1);
-    pix2 = gplotSimplePix1(na, "/tmp/lept/baseline/ang", "Angles in degrees");
+    pix2 = gplotSimplePix1(diagspec, na, "/tmp/lept/baseline/ang", "Angles in degrees");
 
 	pix3 = pixRead("/tmp/lept/baseline/skew.png");
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */

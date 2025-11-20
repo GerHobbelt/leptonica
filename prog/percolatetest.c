@@ -138,7 +138,7 @@ PTAA    *ptaa;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 0, 0);
     pixWrite("/tmp/lept/perc/file3.png", pix3, IFF_PNG);
-    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot1",
+    gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/plot1",
                  "Number of components: 4 cc");
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -171,7 +171,7 @@ PTAA    *ptaa;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 0, 360);
     pixWrite("/tmp/lept/perc/file4.png", pix3, IFF_PNG);
-    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot2",
+    gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/plot2",
                  "Number of components: 8 cc");
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -202,7 +202,7 @@ PTAA    *ptaa;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 0, 0);
     pixWrite("/tmp/lept/perc/file5.png", pix3, IFF_PNG);
-    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot3",
+    gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/plot3",
                  "Number of components: 4 connected");
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -233,7 +233,7 @@ PTAA    *ptaa;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 340, 0);
     pixWrite("/tmp/lept/perc/file6.png", pix3, IFF_PNG);
-    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot4",
+    gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/plot4",
                  "Number of components: 8 connected");
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -264,7 +264,7 @@ PTAA    *ptaa;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 0, 0);
     pixWrite("/tmp/lept/perc/file7.png", pix3, IFF_PNG);
-    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot5",
+    gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/plot5",
                  "Number of components: 8 connected");
     pixDestroy(&pixs);
     pixDestroy(&pix1);

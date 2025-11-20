@@ -89,6 +89,7 @@ struct GPlot
     char          *title;      /*!< optional                         */
     char          *xlabel;     /*!< optional x axis label            */
     char          *ylabel;     /*!< optional y axis label            */
+	LDIAG_CTX      diag_spec;  /*!< image diagnostics helper spec associated with pix & plots; used to help display/diagnose behaviour in the more complex algorithms */
 };
 typedef struct GPlot  GPLOT;
 

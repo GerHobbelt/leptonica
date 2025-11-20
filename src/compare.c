@@ -1021,7 +1021,7 @@ PIX            *pixt;
         numaGetNonzeroRange(na, TINY, &first, &last);
         nac = numaClipToInterval(na, 0, last);
         snprintf(buf, sizeof(buf), "/tmp/lept/comp/compare_gray%d", index);
-        gplot = gplotCreate(buf, plottype,
+        gplot = gplotCreate(diagspec, buf, plottype,
                             "Pixel Difference Histogram", "diff val",
                             "number of pixels");
         gplotAddPlot(gplot, NULL, nac, GPLOT_LINES, "gray");
@@ -1150,7 +1150,7 @@ PIX            *pixr, *pixg, *pixb;
         nagc = numaClipToInterval(nag, 0, last);
         nabc = numaClipToInterval(nab, 0, last);
         snprintf(buf, sizeof(buf), "/tmp/lept/comp/compare_rgb%d", index);
-        gplot = gplotCreate(buf, plottype,
+        gplot = gplotCreate(diagspec, buf, plottype,
                             "Pixel Difference Histogram", "diff val",
                             "number of pixels");
         gplotAddPlot(gplot, NULL, narc, GPLOT_LINES, "red");
@@ -1516,7 +1516,7 @@ NUMA       *nah, *nan, *nac;
         lept_mkdir("lept/comp");
         numaGetNonzeroRange(nan, 0.0, &first, &last);
         nac = numaClipToInterval(nan, first, last);
-        gplotSimple1(nac, GPLOT_PNG, "/tmp/lept/comp/histo",
+        gplotSimple1(diagspec, nac, GPLOT_PNG, "/tmp/lept/comp/histo",
                      "Difference histogram");
         l_fileDisplay("/tmp/lept/comp/histo.png", 500, 0, 1.0);
         lept_stderr("\nNonzero values in normalized histogram:");
@@ -2090,7 +2090,7 @@ PIX        *pix;
                 continue;
             numaGetIValue(naw, j, &w2);
             numaGetIValue(nah, j, &h2);
-            compareTilesByHisto(n3a[i], n3a[j], minratio, w1, h1, w2, h2,
+            compareTilesByHisto(diagspec, n3a[i], n3a[j], minratio, w1, h1, w2, h2,
                                 &score, NULL);
             scores[nim * i + j] = score;
             scores[nim * j + i] = score;  /* the score array is symmetric */
@@ -2283,8 +2283,9 @@ PIXA      *pixa;
     if (!naa2) return 0;
 
         /* Compare histograms */
-    pixa = (debugflag) ? pixaCreate(0) : NULL;
-    compareTilesByHisto(naa1, naa2, minratio, w1c, h1c, w2c, h2c, pscore, pixa);
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+	pixa = (debugflag) ? pixaCreate(0) : NULL;
+    compareTilesByHisto(diagspec, naa1, naa2, minratio, w1c, h1c, w2c, h2c, pscore, pixa);
     pixaDestroy(&pixa);
     return 0;
 }
@@ -2636,7 +2637,7 @@ PIXA      *pixa1, *pixa2, *pixa3;
         na3 = numaTransform(na2, 0, 255.0 / maxval);
         if (pixadebug) {
             snprintf(buf, sizeof(buf), "/tmp/lept/compplot/plot.%d", i);
-            gplotSimple1(na3, GPLOT_PNG, buf, "Histos");
+            gplotSimple1(diagspec, na3, GPLOT_PNG, buf, "Histos");
         }
 
         numaaAddNuma(naa, na3, L_INSERT);
@@ -2782,7 +2783,7 @@ l_float32  ratio;
  * </pre>
  */
 l_ok
-compareTilesByHisto(NUMAA      *naa1,
+compareTilesByHisto(LDIAG_CTX diagspec, NUMAA      *naa1,
                     NUMAA      *naa2,
                     l_float32   minratio,
                     l_int32     w1,
@@ -2826,7 +2827,6 @@ NUMA      *na1, *na2, *nadist, *nascore;
         lept_mkdir("lept/comptile");
     }
 
-
         /* Evaluate histograms in each tile.  Remove white before
          * computing EMD, because there are may be a lot of white
          * pixels due to padding, and we don't want to include them.
@@ -2852,7 +2852,7 @@ NUMA      *na1, *na2, *nadist, *nascore;
         minscore = L_MIN(minscore, score);
         if (pixadebug) {
             snprintf(buf1, sizeof(buf1), "/tmp/lept/comptile/plot.%d", i);
-            gplotSimple2(na1, na2, GPLOT_PNG, buf1, "Histos");
+            gplotSimple2(diagspec, na1, na2, GPLOT_PNG, buf1, "Histos");
         }
         numaDestroy(&na1);
         numaDestroy(&na2);
@@ -2864,6 +2864,7 @@ NUMA      *na1, *na2, *nadist, *nascore;
             PIX  *pix1, *pix2;
             snprintf(buf1, sizeof(buf1), "/tmp/lept/comptile/plot.%d.png", i);
             pix1 = pixRead(buf1);
+			pixSetDiagnosticsSpec(pix1, diagspec);
             numaGetFValue(nadist, i, &dist);
             numaGetFValue(nascore, i, &score);
             snprintf(buf2, sizeof(buf2),
@@ -3136,7 +3137,7 @@ PIXA      *pixa1, *pixa2;
         na5 = numaTransform(na3, 0, 255.0 / maxval1);
         na6 = numaTransform(na4, 0, 255.0 / maxval2);
         if (pixadebug) {
-            gplotSimple2(na5, na6, GPLOT_PNG, "/tmp/lept/comp/plot1", "Histos");
+            gplotSimple2(diagspec, na5, na6, GPLOT_PNG, "/tmp/lept/comp/plot1", "Histos");
         }
 
             /* To compare histograms, use the normalized earthmover distance.

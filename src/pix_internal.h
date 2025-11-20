@@ -192,7 +192,7 @@ struct Pix
     l_int32              informat;  /*!< input file format, IFF_*          */
     l_int32              special;   /*!< special instructions for I/O, etc */
     char                *text;      /*!< text string associated with pix   */
-	LDIAG_CTX            diag_spec; /*!< image diagnostics helper spec associated with pix; used to help display/diagnose behaviour in the more complex algorithms */
+	LDIAG_CTX            diag_spec; /*!< image diagnostics helper spec associated with pix & plots; used to help display/diagnose behaviour in the more complex algorithms */
     struct PixColormap  *colormap;  /*!< colormap (may be null)            */
     l_uint32            *data;      /*!< the image data                    */
 };
@@ -354,7 +354,8 @@ struct FPix
                                     /*!< (use 0 if unknown)                */
     l_int32              yres;      /*!< image res (ppi) in y direction    */
                                     /*!< (use 0 if unknown)                */
-    l_float32           *data;      /*!< the float image data              */
+	LDIAG_CTX            diag_spec; /*!< image diagnostics helper spec associated with pix & plots; used to help display/diagnose behaviour in the more complex algorithms */
+	l_float32           *data;      /*!< the float image data              */
 };
 
 /*! Array of FPix */

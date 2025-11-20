@@ -95,18 +95,18 @@ PIXA    *pixa;
     pixRowStats(pixd, NULL, &na2, &na4, &na6, &na8, &na10, &na12);
     pixDestroy(&pixd);
 
-    pix1 = gplotSimplePix1(na1, "Mean value");
-    pix2 = gplotSimplePix1(na2, "Mean value");
-    pix3 = gplotSimplePix1(na3, "Median value");
-    pix4 = gplotSimplePix1(na4, "Median value");
-    pix5 = gplotSimplePix1(na5, "Mode value");
-    pix6 = gplotSimplePix1(na6, "Mode value");
-    pix7 = gplotSimplePix1(na7, "Mode count");
-    pix8 = gplotSimplePix1(na8, "Mode count");
-    pix9 = gplotSimplePix1(na9, "Variance");
-    pix10 = gplotSimplePix1(na10, "Variance");
-    pix11 = gplotSimplePix1(na11, "Square Root Variance");
-    pix12 = gplotSimplePix1(na12, "Square Root Variance");
+    pix1 = gplotSimplePix1(diagspec, na1, "Mean value");
+    pix2 = gplotSimplePix1(diagspec, na2, "Mean value");
+    pix3 = gplotSimplePix1(diagspec, na3, "Median value");
+    pix4 = gplotSimplePix1(diagspec, na4, "Median value");
+    pix5 = gplotSimplePix1(diagspec, na5, "Mode value");
+    pix6 = gplotSimplePix1(diagspec, na6, "Mode value");
+    pix7 = gplotSimplePix1(diagspec, na7, "Mode count");
+    pix8 = gplotSimplePix1(diagspec, na8, "Mode count");
+    pix9 = gplotSimplePix1(diagspec, na9, "Variance");
+    pix10 = gplotSimplePix1(diagspec, na10, "Variance");
+    pix11 = gplotSimplePix1(diagspec, na11, "Square Root Variance");
+    pix12 = gplotSimplePix1(diagspec, na12, "Square Root Variance");
 
          /* This is run twice, on two different images */
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0, 19 */

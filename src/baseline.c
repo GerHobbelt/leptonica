@@ -202,9 +202,10 @@ PTA       *pta;
     }
     numaDestroy(&nasum);
 
-    if (pixadb) {  /* show the difference signal */
-        lept_mkdir("lept/baseline");
-        pix2 = gplotSimplePix1(nadiff, "lept/baseline", "Diff Sig");
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	if (pixadb) {  /* show the difference signal */
+		lept_mkdir("lept/baseline");
+        pix2 = gplotSimplePix1(diagspec, nadiff, "lept/baseline", "Diff Sig");
         pixaAddPix(pixadb, pix2, L_INSERT);
     }
 
@@ -253,7 +254,7 @@ PTA       *pta;
     }
 
     if (pixadb) {  /* show the raster locations for the peaks */
-        gplot = gplotCreate("/tmp/lept/baseline/loc", GPLOT_PNG, "Peak locs",
+        gplot = gplotCreate(diagspec, "/tmp/lept/baseline/loc", GPLOT_PNG, "Peak locs",
                             "rasterline", "height");
         gplotAddPlot(gplot, naloc, naval, GPLOT_POINTS, "locs");
         gplotMakeOutput(gplot);
@@ -640,9 +641,10 @@ PTA       *pta;
     }
 
     if (debug) {
-        lept_mkdir("lept/baseline");
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+		lept_mkdir("lept/baseline");
         ptaGetArrays(pta, &nax, &nay);
-        gplot = gplotCreate("/tmp/lept/baseline/skew", GPLOT_PNG,
+        gplot = gplotCreate(diagspec, "/tmp/lept/baseline/skew", GPLOT_PNG,
                             "skew as fctn of y", "y (in raster lines from top)",
                             "angle (in degrees)");
         gplotAddPlot(gplot, NULL, naskew, GPLOT_POINTS, "linear lsf");

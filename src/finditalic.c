@@ -225,7 +225,7 @@ SEL     *sel_ital1, *sel_ital2, *sel_ital3;
         upper = L_MAX(30, 3 * size);
         na = pixRunHistogramMorph(pix1, L_RUN_OFF, L_HORIZ, upper);
         pixDestroy(&pix1);
-        gplot = gplotCreate("/tmp/lept/ital/runhisto", GPLOT_PNG,
+        gplot = gplotCreate(diagspec, "/tmp/lept/ital/runhisto", GPLOT_PNG,
                 "Histogram of horizontal runs of white pixels, vs length",
                 "run length", "number of runs");
         gplotAddPlot(gplot, NULL, na, GPLOT_LINES, "plot1");

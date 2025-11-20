@@ -135,12 +135,19 @@ L_REGPARAMS  *rp;
     if ((testname = getRootNameFromArgv0(argv[0])) == NULL)
         return ERROR_INT("invalid root", __func__, 1);
 
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/regout");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, testname);
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
     setLeptDebugOK(1);  /* required for testing */
 
     rp = (L_REGPARAMS *)LEPT_CALLOC(1, sizeof(L_REGPARAMS));
     *prp = rp;
     rp->testname = testname;
-    rp->index = -1;  /* increment before each test */
+	rp->diag_spec = diagspec;
+	rp->index = -1;  /* increment before each test */
 
         /* Initialize to true.  A failure in any test is registered
          * as a failure of the regression test. */
@@ -248,6 +255,7 @@ size_t   nbytes;
     LEPT_FREE(results_file);
     LEPT_FREE(message);
 
+	leptDestroyDiagnoticsSpecInstance(&rp->diag_spec);
     LEPT_FREE(rp->testname);
     LEPT_FREE(rp);
     return retval;

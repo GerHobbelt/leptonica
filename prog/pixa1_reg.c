@@ -107,7 +107,7 @@ L_REGPARAMS  *rp;
         pixDestroy(&pixd);
     }
 
-    gplot = gplotCreate("/tmp/lept/pixa/root1", GPLOT_PNG,
+    gplot = gplotCreate(diagspec, "/tmp/lept/pixa/root1", GPLOT_PNG,
                         "Select large: number of cc vs size removed",
                         "min size", "number of c.c.");
     gplotAddPlot(gplot, nax, nay1, GPLOT_LINES, "select if both");
@@ -155,7 +155,7 @@ L_REGPARAMS  *rp;
         pixDestroy(&pixd);
     }
 
-    gplot = gplotCreate("/tmp/lept/pixa/root2", GPLOT_PNG,
+    gplot = gplotCreate(diagspec, "/tmp/lept/pixa/root2", GPLOT_PNG,
                         "Remove large: number of cc vs size removed",
                         "min size", "number of c.c.");
     gplotAddPlot(gplot, nax, nay1, GPLOT_LINES, "select if both");

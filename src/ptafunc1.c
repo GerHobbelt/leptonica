@@ -1860,13 +1860,13 @@ PIX            *pixt;
 
         snprintf(buffer, sizeof(buffer), "/tmp/lept/plot/%03d", count++);
         rtitle = stringJoin("Red: ", title);
-        gplotSimple1(nar, outformat, buffer, rtitle);
+        gplotSimple1(diagspec, nar, outformat, buffer, rtitle);
         snprintf(buffer, sizeof(buffer), "/tmp/lept/plot/%03d", count++);
         gtitle = stringJoin("Green: ", title);
-        gplotSimple1(nag, outformat, buffer, gtitle);
+        gplotSimple1(diagspec, nag, outformat, buffer, gtitle);
         snprintf(buffer, sizeof(buffer), "/tmp/lept/plot/%03d", count++);
         btitle = stringJoin("Blue: ", title);
-        gplotSimple1(nab, outformat, buffer, btitle);
+        gplotSimple1(diagspec, nab, outformat, buffer, btitle);
         numaDestroy(&nar);
         numaDestroy(&nag);
         numaDestroy(&nab);
@@ -1886,7 +1886,7 @@ PIX            *pixt;
         }
 
         snprintf(buffer, sizeof(buffer), "/tmp/lept/plot/%03d", count++);
-        gplotSimple1(na, outformat, buffer, title);
+        gplotSimple1(diagspec, na, outformat, buffer, title);
         numaDestroy(&na);
     }
     pixDestroy(&pixt);

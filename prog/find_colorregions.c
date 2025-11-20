@@ -251,7 +251,7 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
     pixDestroy(&pix2);
     if (pixadb) {
         L_INFO("val at 0.95 rank = %5.1f\n", __func__, val95);
-		pix3 = gplotSimplePix1(nah, "/tmp/lept/histo1", "gray histo");
+		pix3 = gplotSimplePix1(diagspec, nah, "/tmp/lept/histo1", "gray histo");
         pix4 = pixExpandReplicate(pix3, 2);
         pixaAddPix(pixadb, pix4, L_INSERT);
         pixDestroy(&pix3);

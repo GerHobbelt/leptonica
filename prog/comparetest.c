@@ -149,7 +149,7 @@ PIX       *pixs1, *pixs2, *pixd;
                 lept_stderr("Nonzero diff range: first = %d, last = %d\n",
                              first, last);
                 na2 = numaClipToInterval(na1, first, last);
-                gplot = gplotCreate("/tmp/lept/comp/rank", GPLOT_PNG,
+                gplot = gplotCreate(diagspec, "/tmp/lept/comp/rank", GPLOT_PNG,
                                     "Pixel Rank Difference",
                                     "pixel val difference", "rank");
                 gplotAddPlot(gplot, NULL, na2, GPLOT_LINES, "rank");

@@ -2280,16 +2280,16 @@ l_ok      rv = 0;
 			lept_stderr("num1prev = %f, num2prev = %f\n", num1prev, num2prev);
 			lept_stderr("ave1prev = %f, ave2prev = %f\n", ave1prev, ave2prev);
 			lept_stderr("mean = %f, median = %f, mode = %f, variance = %f\n", average, median, mode, variance);
-	        gplotSimple1(nascore, GPLOT_PNG, namebuf,
+	        gplotSimple1(diagspec, nascore, GPLOT_PNG, namebuf,
 	                     "Score for split distribution");
 			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-histovalues-%03d", index);
-			gplotSimple1(na, GPLOT_PNG, namebuf,
+			gplotSimple1(diagspec, na, GPLOT_PNG, namebuf,
 				"Raw histogram values for split distribution");
 			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-na.num1-%03d", index);
-			gplotSimple1(nanum1, GPLOT_PNG, namebuf,
+			gplotSimple1(diagspec, nanum1, GPLOT_PNG, namebuf,
 				"NANUM1 values for split distribution");
 			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-na.num2-%03d", index);
-			gplotSimple1(nanum2, GPLOT_PNG, namebuf,
+			gplotSimple1(diagspec, nanum2, GPLOT_PNG, namebuf,
 				"NANUM2 values for split distribution");
 			*pnascore = nascore;
 			nascore = NULL;
@@ -3082,7 +3082,7 @@ NUMA      *nat, *nac;
 
     *pbestthresh = estthresh - 80.0f + 2.0f * (l_float32)(maxstart + maxend);
 
-#if  DEBUG_CROSSINGS
+#if DEBUG_CROSSINGS
     lept_stderr("\nCrossings attain a maximum at %d thresholds, between:\n"
                 "  thresh[%d] = %5.1f and thresh[%d] = %5.1f\n",
                 nmax, maxstart, estthresh - 80.0 + 4.0 * maxstart,
@@ -3319,7 +3319,7 @@ l_float32  bestwidth, bestshift, bestscore;
                 bestscore = score;
                 bestwidth = width;
                 bestshift = shift;
-#if  DEBUG_FREQUENCY
+#if DEBUG_FREQUENCY
                 lept_stderr("width = %7.3f, shift = %7.3f, score = %7.3f\n",
                             width, shift, score);
 #endif  /* DEBUG_FREQUENCY */

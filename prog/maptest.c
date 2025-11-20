@@ -123,7 +123,7 @@ RB_TYPE   *pval;
         /* Build a histogram the old-fashioned way */
     na = pixGetCmapHistogram(pix, 1);
     numaWrite("/tmp/lept/map/map2.na", na);
-    gplotSimple1(na, GPLOT_PNG, "/tmp/lept/map/map3", NULL);
+    gplotSimple1(diagspec, na, GPLOT_PNG, "/tmp/lept/map/map3", NULL);
     numaDestroy(&na);
 
         /* Build a separate map from (rgb) --> colormap index ... */
@@ -227,7 +227,7 @@ RB_TYPE  *pval;
             numaAddNumber(na, ival);
         }
     }
-    gplotSimple1(na, GPLOT_PNG, rootname, NULL);
+    gplotSimple1(diagspec, na, GPLOT_PNG, rootname, NULL);
     snprintf(buf, sizeof(buf), "%s.png", rootname);
     l_fileDisplay(buf, 700, 0, 1.0);
     numaDestroy(&na);
@@ -266,7 +266,7 @@ NUMA         *na;
     maxn2 = amapGetCountForColor(m, maxcolor);
     if (maxn != maxn2)
         lept_stderr(" Error: maxn2 = %d; not equal to %d\n", maxn, maxn2);
-    gplotSimple1(na, GPLOT_PNG, rootname, NULL);
+    gplotSimple1(diagspec, na, GPLOT_PNG, rootname, NULL);
     snprintf(buf, sizeof(buf), "%s.png", rootname);
     l_fileDisplay(buf, 1400, 0, 1.0);
     numaDestroy(&na);

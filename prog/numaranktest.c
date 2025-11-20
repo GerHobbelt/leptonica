@@ -85,7 +85,7 @@ PIX       *pix;
         numaHistogramGetRankFromVal(nah, rval, &rank);
         numaAddNumber(nar, rank);
     }
-    gplotSimple1(nar, GPLOT_PNG, "/tmp/lept/numa/rank", "rank vs val");
+    gplotSimple1(diagspec, nar, GPLOT_PNG, "/tmp/lept/numa/rank", "rank vs val");
     l_fileDisplay("/tmp/lept/numa/rank.png", 0, 0, 1.0);
 
     nav = numaCreate(0);
@@ -93,7 +93,7 @@ PIX       *pix;
         numaHistogramGetValFromRank(nah, rank, &rval);
         numaAddNumber(nav, rval);
     }
-    gplotSimple1(nav, GPLOT_PNG, "/tmp/lept/numa/val", "val vs rank");
+    gplotSimple1(diagspec, nav, GPLOT_PNG, "/tmp/lept/numa/val", "val vs rank");
     l_fileDisplay("/tmp/lept/numa/val.png", 750, 0, 1.0);
 
     pixDestroy(&pix);

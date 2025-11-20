@@ -132,7 +132,7 @@ L_REGPARAMS  *rp;
     numaaAddNuma(naa, na1, L_INSERT);  /* portrait, double-sided */
     numaaAddNuma(naa, na2, L_INSERT);  /* landscape, double-sided */
     numaaAddNuma(naa, na5, L_INSERT);  /* landscape, single-sided */
-	pix3 = gplotSimplePixN(naa, "/tmp/lept/regout/nearline",
+	pix3 = gplotSimplePixN(diagspec, naa, "/tmp/lept/regout/nearline",
                  "Average minimums along lines");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 7 */
     pixDisplayWithTitle(pix3, 100, 100, NULL, rp->display);
@@ -179,7 +179,7 @@ L_REGPARAMS  *rp;
     numaaAddNuma(naa, na1, L_INSERT);
     numaaAddNuma(naa, na2, L_INSERT);
     numaaAddNuma(naa, na3, L_INSERT);
-	pix4 = gplotSimplePixN(naa, "/tmp/lept/regout/nearline2",
+	pix4 = gplotSimplePixN(diagspec, naa, "/tmp/lept/regout/nearline2",
                  "Min along line");
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 9 */
     pixDisplayWithTitle(pix4, 800, 100, NULL, rp->display);

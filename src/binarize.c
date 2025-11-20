@@ -1080,8 +1080,9 @@ PIX       *pix1, *pix2, *pix3;
         pixDestroy(&pix3);
     }
     if (debugflag) {
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(&pixs, pixm, NULL);
         lept_mkdir("lept/binarize");
-        gplot = gplotCreate("/tmp/lept/binarize", GPLOT_PNG,
+        gplot = gplotCreate(diagspec, "/tmp/lept/binarize", GPLOT_PNG,
                             "number of cc vs. threshold",
                             "threshold", "number of cc");
         gplotAddPlot(gplot, NULL, na4, GPLOT_LINES, "plot 4cc");
@@ -1121,6 +1122,7 @@ PIX       *pix1, *pix2, *pix3;
         if (ppixd) {
             *ppixd = pixConvertTo1(pix2, globthresh);
             pixCopyResolution(*ppixd, pixs);
+			pixCloneDiagnosticsSpec(*ppixd, pixs);
         }
         if (debugflag) lept_stderr("global threshold = %d\n", globthresh);
         pixDestroy(&pix2);
@@ -1205,8 +1207,9 @@ NUMA      *na1, *na2, *na3;
     L_INFO("fractional area under first peak: %5.3f\n", __func__, fract);
 
     if (ppixhisto) {
-        lept_mkdir("lept/histo");
-		*ppixhisto = gplotSimplePix1(na3, "/tmp/lept/histo/histo", NULL);
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+		lept_mkdir("lept/histo");
+		*ppixhisto = gplotSimplePix1(diagspec, na3, "/tmp/lept/histo/histo", NULL);
     }
     if (pnahisto)
         *pnahisto = na3;

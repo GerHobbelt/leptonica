@@ -2712,9 +2712,9 @@ PIX        *pix1;
 
             /* Plot the gray bin value and the rank(gray) values */
         numaDiscretizeHistoInBins(na, nbins, &nabinval, &narank);
-        pix1 = gplotSimplePix1(nabinval, "Gray value in each bin");
+        pix1 = gplotSimplePix1(diagspec, nabinval, "Gray value in each bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(narank, "rank as function of gray value");
+        pix1 = gplotSimplePix1(diagspec, narank, "rank as function of gray value");
         pixaAddPix(pixadb, pix1, L_INSERT);
         numaDestroy(&na);
         numaDestroy(&nabinval);
@@ -2773,11 +2773,11 @@ PIX        *pix1;
             numaAddNumber(nablue, bval);
         }
         lept_mkdir("lept/regout");
-        pix1 = gplotSimplePix1(nared, "Average red val vs. rank bin");
+        pix1 = gplotSimplePix1(diagspec, nared, "Average red val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(nagreen, "Average green val vs. rank bin");
+        pix1 = gplotSimplePix1(diagspec, nagreen, "Average green val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(nablue, "Average blue val vs. rank bin");
+        pix1 = gplotSimplePix1(diagspec, nablue, "Average blue val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
         numaDestroy(&nared);
         numaDestroy(&nagreen);
@@ -3516,7 +3516,7 @@ PIX       *pixg;
 		index++;
 		lept_mkdir("lept/redout");
 		snprintf(namebuf, sizeof(namebuf), "/tmp/lept/redout/histplot-%03d", index);
-			gplot = gplotCreate(namebuf, GPLOT_PNG, "Histogram",
+			gplot = gplotCreate(diagspec, namebuf, GPLOT_PNG, "Histogram",
                             "Grayscale value", "Number of pixels");
         gplotAddPlot(gplot, NULL, na, GPLOT_LINES, NULL);
 

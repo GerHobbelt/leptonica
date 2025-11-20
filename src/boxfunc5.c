@@ -1290,7 +1290,7 @@ NUMA           *nal, *nat, *nar, *nab;
         snprintf(buf, sizeof(buf), "/tmp/lept/plots/sides.%d", plotid++);
         snprintf(titlebuf, sizeof(titlebuf), "Box sides vs. box index");
     }
-    gplot = gplotCreate(buf, GPLOT_PNG, titlebuf,
+    gplot = gplotCreate(diagspec, buf, GPLOT_PNG, titlebuf,
                         "box index", "side location");
     gplotAddPlot(gplot, NULL, nal, GPLOT_LINES, "left side");
     gplotAddPlot(gplot, NULL, nat, GPLOT_LINES, "top side");
@@ -1407,7 +1407,7 @@ NUMA           *naw, *nah;
         snprintf(buf, sizeof(buf), "/tmp/lept/plots/size.%d", plotid++);
         snprintf(titlebuf, sizeof(titlebuf), "Box size vs. box index");
     }
-    gplot = gplotCreate(buf, GPLOT_PNG, titlebuf,
+    gplot = gplotCreate(diagspec, buf, GPLOT_PNG, titlebuf,
                         "box index", "box dimension");
     gplotAddPlot(gplot, NULL, naw, GPLOT_LINES, "width");
     gplotAddPlot(gplot, NULL, nah, GPLOT_LINES, "height");

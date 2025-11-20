@@ -185,6 +185,8 @@ struct BG_THRES_PT_INFO {
     if (sx < 16 || sy < 16)
         return ERROR_INT("sx and sy must be >= 16", __func__, 1);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+
 	black_is_fg_weight = 0;
 	all_bg_count = 0;
 
@@ -212,11 +214,9 @@ struct BG_THRES_PT_INFO {
 				NULL, NULL, pixplt_ref);
 
 			if (pixplt) {
-				LDIAG_CTX dbgpix_spec = pixGetDiagnosticsSpecFromAny(ppixd, pixs, NULL);
-				pixSetDiagnosticsSpec(pixplt, dbgpix_spec);
-
+				pixSetDiagnosticsSpec(pixplt, diagspec);
 				lept_mkdir("lept/otsu");
-				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", dbgpix_spec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", diagspec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
 				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
 				stringDestroy(&pixd_path);
@@ -429,9 +429,9 @@ struct BG_THRES_PT_INFO {
 						/* Plot the score function */
 						char title[32];
 						lept_mkdir("lept/otsu3");
-						const char* plot_path = leptDebugGenFilepathEx("lept/otsu3", dbgpix_spec, "%s.plots.%d", __func__, i);
+						const char* plot_path = leptDebugGenFilepathEx("lept/otsu3", diagspec, "%s.plots.%d", __func__, i);
 						snprintf(title, sizeof(title), "Plot %d", i);
-						gplot = gplotCreate(plot_path, GPLOT_PNG,
+						gplot = gplotCreate(diagspec, plot_path, GPLOT_PNG,
 							"Otsu score function for splitting",
 							"Grayscale value", "Score");
 						gplotAddPlot(gplot, NULL, nascore, GPLOT_LINES, title);

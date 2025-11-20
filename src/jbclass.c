@@ -1520,14 +1520,14 @@ PIX      *pix1, *pix2;
          PIX   *pix3, *pix4;
             L_INFO("Best dilation: %d\n", __func__, L_MAX(3, ibest + 1));
             naseq = numaMakeSequence(1, 1, numaGetCount(nacc));
-            pix3 = gplotGeneralPix2(naseq, nacc, GPLOT_LINES,
+            pix3 = gplotGeneralPix2(diagspec, naseq, nacc, GPLOT_LINES,
                                     "/tmp/lept/jb/numcc",
                                     "Number of cc vs. horizontal dilation",
                                     "Sel horiz", "Number of cc");
             pixaAddPix(pixadb, pix3, L_INSERT);
             numaDestroy(&naseq);
             naseq = numaMakeSequence(1, 1, numaGetCount(nadiff));
-            pix3 = gplotGeneralPix2(naseq, nadiff, GPLOT_LINES,
+            pix3 = gplotGeneralPix2(diagspec, naseq, nadiff, GPLOT_LINES,
                                     "/tmp/lept/jb/diffcc",
                                     "Diff count of cc vs. horizontal dilation",
                                     "Sel horiz", "Diff in cc");

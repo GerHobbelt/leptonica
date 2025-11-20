@@ -116,7 +116,7 @@ L_REGPARAMS  *rp;
     nax = numaMakeSequence(1, 1, 20);
     nay1 = numaCreate(20);
     nay2 = numaCreate(20);
-    gplot = gplotCreate("/tmp/lept/rank/plots", GPLOT_PNG,
+    gplot = gplotCreate(diagspec, "/tmp/lept/rank/plots", GPLOT_PNG,
                         "sec/MPix vs filter size", "size", "time");
     pixa = pixaCreate(20);
     for (i = 1; i <= 20; i++) {

@@ -133,7 +133,7 @@ L_REGPARAMS  *rp;
     }
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
-    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/regout/enhance.7",
+    gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/regout/enhance.7",
                  "Average Saturation");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
     pixDisplayWithTitle(pix1, 900, 100, "Saturation", rp->display);
@@ -256,7 +256,7 @@ L_REGPARAMS  *rp;
 
     na1 = numaGammaTRC(0.8, 0, 220);
     na2 = numaGammaTRC(1.0, 40, 220);
-	pix1 = gplotSimplePix2(na1, na2, "/tmp/lept/enhance/junkp", NULL);
+	pix1 = gplotSimplePix2(diagspec, na1, na2, "/tmp/lept/enhance/junkp", NULL);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 13 */
     pixaAddPix(pixa1, pix1, L_COPY);
     numaDestroy(&na1);

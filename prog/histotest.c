@@ -87,7 +87,7 @@ PIXA    *pixa1;
         if ((na1 = pixOctcubeHistogram(pixs, sigbits, NULL)) == NULL)
             return ERROR_INT("na1 not made", __func__, 1);
         lept_stderr("histo time = %7.3f sec\n", stopTimer());
-        gplot = gplotCreate("/tmp/lept/histo/color", GPLOT_PNG,
+        gplot = gplotCreate(diagspec, "/tmp/lept/histo/color", GPLOT_PNG,
                             "color histogram with octcube indexing",
                             "octcube index", "number of pixels in cube");
         gplotAddPlot(gplot, NULL, na1, GPLOT_LINES, "input pix");
@@ -99,7 +99,7 @@ PIXA    *pixa1;
         if ((na1 = pixGetGrayHistogram(pixs, 1)) == NULL)
             return ERROR_INT("na1 not made", __func__, 1);
         numaWrite("/tmp/junk.na", na1);
-        gplot = gplotCreate("/tmp/lept/histo/gray", GPLOT_PNG,
+        gplot = gplotCreate(diagspec, "/tmp/lept/histo/gray", GPLOT_PNG,
                             "grayscale histogram", "gray value",
                             "number of pixels");
         gplotSetScaling(gplot, GPLOT_LOG_SCALE_Y);

@@ -292,7 +292,7 @@ l_int32  d;
         pixd = pixAbsDifference(pix1, pix2);
         pixGetColorHistogram(pixd, 1, &nar, &nag, &nab);
         naseq = numaMakeSequence(0., 1., 256);
-        gplot = gplotCreate("/tmp/lept/scale/c_absdiff", GPLOT_PNG,
+        gplot = gplotCreate(diagspec, "/tmp/lept/scale/c_absdiff", GPLOT_PNG,
                             "Number vs diff", "diff", "number");
         gplotSetScaling(gplot, GPLOT_LOG_SCALE_Y);
         gplotAddPlot(gplot, naseq, nar, GPLOT_POINTS, "red");
@@ -348,7 +348,7 @@ l_int32  d;
         pixd = pixAbsDifference(pix1, pix2);
         nagray = pixGetGrayHistogram(pixd, 1);
         naseq = numaMakeSequence(0., 1., 256);
-        gplot = gplotCreate("/tmp/lept/scale/g_absdiff", GPLOT_PNG,
+        gplot = gplotCreate(diagspec, "/tmp/lept/scale/g_absdiff", GPLOT_PNG,
                             "Number vs diff", "diff", "number");
         gplotSetScaling(gplot, GPLOT_LOG_SCALE_Y);
         gplotAddPlot(gplot, naseq, nagray, GPLOT_POINTS, "gray");

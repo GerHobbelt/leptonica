@@ -189,7 +189,7 @@ const char  *gplotfileoutputs[] = {"",
  * </pre>
  */
 GPLOT  *
-gplotCreate(const char  *rootname,
+gplotCreate(LDIAG_CTX diagspec, const char  *rootname,
             l_int32      outformat,
             const char  *title,
             const char  *xlabel,
@@ -223,6 +223,7 @@ GPLOT   *gplot;
     gplot->plotdata = sarrayCreate(0);
     gplot->plotlabels = sarrayCreate(0);
     gplot->plotstyles = numaCreate(0);
+	gplot->diag_spec = leptCloneDiagnoticsSpecInstance(diagspec);
 
         /* Save title, labels, rootname, outformat, cmdname, outname */
     newroot = genPathname(rootname, NULL);
@@ -274,6 +275,7 @@ GPLOT  *gplot;
     sarrayDestroy(&gplot->plotdata);
     sarrayDestroy(&gplot->plotlabels);
     numaDestroy(&gplot->plotstyles);
+	leptDestroyDiagnoticsSpecInstance(&gplot->diag_spec);
     LEPT_FREE(gplot->outname);
     if (gplot->title)
         LEPT_FREE(gplot->title);
@@ -653,14 +655,14 @@ FILE    *fp;
  * </pre>
  */
 l_ok
-gplotSimple1(NUMA        *na,
+gplotSimple1(LDIAG_CTX diagspec, NUMA        *na,
              l_int32      outformat,
              const char  *outroot,
              const char  *title)
 {
 GPLOT  *gplot;
 
-    gplot = gplotSimpleXY1(NULL, na, GPLOT_LINES, outformat, outroot, title);
+    gplot = gplotSimpleXY1(diagspec, NULL, na, GPLOT_LINES, outformat, outroot, title);
     if (!gplot)
         return ERROR_INT("failed to generate plot", __func__, 1);
     gplotDestroy(&gplot);
@@ -689,7 +691,7 @@ GPLOT  *gplot;
  * </pre>
  */
 l_ok
-gplotSimple2(NUMA        *na1,
+gplotSimple2(LDIAG_CTX diagspec, NUMA        *na1,
              NUMA        *na2,
              l_int32      outformat,
              const char  *outroot,
@@ -697,7 +699,7 @@ gplotSimple2(NUMA        *na1,
 {
 GPLOT  *gplot;
 
-    gplot = gplotSimpleXY2(NULL, na1, na2, GPLOT_LINES,
+    gplot = gplotSimpleXY2(diagspec, NULL, na1, na2, GPLOT_LINES,
                            outformat, outroot, title);
     if (!gplot)
         return ERROR_INT("failed to generate plot", __func__, 1);
@@ -727,14 +729,14 @@ GPLOT  *gplot;
  * </pre>
  */
 l_ok
-gplotSimpleN(NUMAA       *naa,
+gplotSimpleN(LDIAG_CTX diagspec, NUMAA       *naa,
              l_int32      outformat,
              const char  *outroot,
              const char  *title)
 {
 GPLOT  *gplot;
 
-    gplot = gplotSimpleXYN(NULL, naa, GPLOT_LINES, outformat, outroot, title);
+    gplot = gplotSimpleXYN(diagspec, NULL, naa, GPLOT_LINES, outformat, outroot, title);
     if (!gplot)
         return ERROR_INT("failed to generate plot", __func__, 1);
     gplotDestroy(&gplot);
@@ -758,7 +760,7 @@ GPLOT  *gplot;
  * </pre>
  */
 PIX *
-gplotSimplePix1(NUMA        *na,
+gplotSimplePix1(LDIAG_CTX diagspec, NUMA        *na,
                 const char  *title)
 {
 char            buf[64];
@@ -771,7 +773,7 @@ PIX            *pix;
 
     lept_mkdir("lept/gplot/pix");
     snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix1.%d", index++);
-    gplot = gplotSimpleXY1(NULL, na, GPLOT_LINES, GPLOT_PNG, buf, title);
+    gplot = gplotSimpleXY1(diagspec, NULL, na, GPLOT_LINES, GPLOT_PNG, buf, title);
     if (!gplot)
         return (PIX *)ERROR_PTR("failed to generate plot", __func__, NULL);
     pix = pixRead(gplot->outname);
@@ -799,7 +801,7 @@ PIX            *pix;
  * </pre>
  */
 PIX *
-gplotSimplePix2(NUMA        *na1,
+gplotSimplePix2(LDIAG_CTX diagspec, NUMA        *na1,
                 NUMA        *na2,
                 const char  *title)
 {
@@ -813,7 +815,7 @@ PIX            *pix;
 
     lept_mkdir("lept/gplot/pix");
     snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix2.%d", index++);
-    gplot = gplotSimpleXY2(NULL, na1, na2, GPLOT_LINES, GPLOT_PNG, buf, title);
+    gplot = gplotSimpleXY2(diagspec, NULL, na1, na2, GPLOT_LINES, GPLOT_PNG, buf, title);
     if (!gplot)
         return (PIX *)ERROR_PTR("failed to generate plot", __func__, NULL);
     pix = pixRead(gplot->outname);
@@ -841,7 +843,7 @@ PIX            *pix;
  * </pre>
  */
 PIX *
-gplotSimplePixN(NUMAA       *naa,
+gplotSimplePixN(LDIAG_CTX diagspec, NUMAA       *naa,
                 const char  *title)
 {
 char            buf[64];
@@ -854,7 +856,7 @@ PIX            *pix;
 
     lept_mkdir("lept/gplot/pix");
     snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pixN.%d", index++);
-    gplot = gplotSimpleXYN(NULL, naa, GPLOT_LINES, GPLOT_PNG, buf, title);
+    gplot = gplotSimpleXYN(diagspec, NULL, naa, GPLOT_LINES, GPLOT_PNG, buf, title);
     if (!gplot)
         return (PIX *)ERROR_PTR("failed to generate plot", __func__, NULL);
     pix = pixRead(gplot->outname);
@@ -891,7 +893,7 @@ PIX            *pix;
  * </pre>
  */
 GPLOT *
-gplotSimpleXY1(NUMA        *nax,
+gplotSimpleXY1(LDIAG_CTX diagspec, NUMA        *nax,
                NUMA        *nay,
                l_int32      plotstyle,
                l_int32      outformat,
@@ -911,7 +913,7 @@ GPLOT  *gplot;
     if (!outroot)
         return (GPLOT *)ERROR_PTR("outroot not specified", __func__, NULL);
 
-    if ((gplot = gplotCreate(outroot, outformat, title, NULL, NULL)) == 0)
+    if ((gplot = gplotCreate(diagspec, outroot, outformat, title, NULL, NULL)) == 0)
         return (GPLOT *)ERROR_PTR("gplot not made", __func__, NULL);
     gplotAddPlot(gplot, nax, nay, plotstyle, NULL);
     gplotMakeOutput(gplot);
@@ -946,7 +948,7 @@ GPLOT  *gplot;
  * </pre>
  */
 GPLOT *
-gplotSimpleXY2(NUMA        *nax,
+gplotSimpleXY2(LDIAG_CTX diagspec, NUMA        *nax,
                NUMA        *nay1,
                NUMA        *nay2,
                l_int32      plotstyle,
@@ -968,7 +970,7 @@ GPLOT  *gplot;
     if (!outroot)
         return (GPLOT *)ERROR_PTR("outroot not specified", __func__, NULL);
 
-    if ((gplot = gplotCreate(outroot, outformat, title, NULL, NULL)) == 0)
+    if ((gplot = gplotCreate(diagspec, outroot, outformat, title, NULL, NULL)) == 0)
         return (GPLOT *)ERROR_PTR("gplot not made", __func__, NULL);
     gplotAddPlot(gplot, nax, nay1, plotstyle, NULL);
     gplotAddPlot(gplot, nax, nay2, plotstyle, NULL);
@@ -1003,7 +1005,7 @@ GPLOT  *gplot;
  * </pre>
  */
 GPLOT *
-gplotSimpleXYN(NUMA        *nax,
+gplotSimpleXYN(LDIAG_CTX diagspec, NUMA        *nax,
                NUMAA       *naay,
                l_int32      plotstyle,
                l_int32      outformat,
@@ -1027,7 +1029,7 @@ NUMA    *nay;
     if (!outroot)
         return (GPLOT *)ERROR_PTR("outroot not specified", __func__, NULL);
 
-    if ((gplot = gplotCreate(outroot, outformat, title, NULL, NULL)) == 0)
+    if ((gplot = gplotCreate(diagspec, outroot, outformat, title, NULL, NULL)) == 0)
         return (GPLOT *)ERROR_PTR("gplot not made", __func__, NULL);
     for (i = 0; i < n; i++) {
         nay = numaaGetNuma(naay, i, L_CLONE);
@@ -1058,7 +1060,7 @@ NUMA    *nay;
  * </pre>
  */
 PIX *
-gplotGeneralPix1(NUMA        *na,
+gplotGeneralPix1(LDIAG_CTX diagspec, NUMA        *na,
                  l_int32      plotstyle,
                  const char  *rootname,
                  const char  *title,
@@ -1075,7 +1077,7 @@ PIX   *pix;
     if (!rootname)
         return (PIX *)ERROR_PTR("rootname not defined", __func__, NULL);
 
-    gplot = gplotCreate(rootname, GPLOT_PNG, title, xlabel, ylabel);
+    gplot = gplotCreate(diagspec, rootname, GPLOT_PNG, title, xlabel, ylabel);
     if (!gplot)
         return (PIX *)ERROR_PTR("gplot not made", __func__, NULL);
     gplotAddPlot(gplot, NULL, na, plotstyle, NULL);
@@ -1105,7 +1107,7 @@ PIX   *pix;
  * </pre>
  */
 PIX *
-gplotGeneralPix2(NUMA        *na1,
+gplotGeneralPix2(LDIAG_CTX diagspec, NUMA        *na1,
                  NUMA        *na2,
                  l_int32      plotstyle,
                  const char  *rootname,
@@ -1125,7 +1127,7 @@ PIX   *pix;
     if (!rootname)
         return (PIX *)ERROR_PTR("rootname not defined", __func__, NULL);
 
-    gplot = gplotCreate(rootname, GPLOT_PNG, title, xlabel, ylabel);
+    gplot = gplotCreate(diagspec, rootname, GPLOT_PNG, title, xlabel, ylabel);
     if (!gplot)
         return (PIX *)ERROR_PTR("gplot not made", __func__, NULL);
     gplotAddPlot(gplot, na1, na2, plotstyle, NULL);
@@ -1155,7 +1157,7 @@ PIX   *pix;
  * </pre>
  */
 PIX *
-gplotGeneralPixN(NUMA        *nax,
+gplotGeneralPixN(LDIAG_CTX diagspec, NUMA        *nax,
                  NUMAA       *naay,
                  l_int32      plotstyle,
                  const char  *rootname,
@@ -1179,7 +1181,7 @@ PIX     *pix;
     if (!rootname)
         return (PIX *)ERROR_PTR("rootname not defined", __func__, NULL);
 
-    gplot = gplotCreate(rootname, GPLOT_PNG, title, xlabel, ylabel);
+    gplot = gplotCreate(diagspec, rootname, GPLOT_PNG, title, xlabel, ylabel);
     if (!gplot)
         return (PIX *)ERROR_PTR("gplot not made", __func__, NULL);
     for (i = 0; i < n; i++) {
@@ -1203,7 +1205,7 @@ PIX     *pix;
  * \return  gplot, or NULL on error
  */
 GPLOT *
-gplotRead(const char  *filename)
+gplotRead(LDIAG_CTX diagspec, const char  *filename)
 {
 char     buf[Bufsize];
 char    *rootname, *title, *xlabel, *ylabel;
@@ -1243,7 +1245,7 @@ GPLOT   *gplot;
     ylabel = stringNew(buf + 14);
     ylabel[strlen(ylabel) - 1] = '\0';
 
-    gplot = gplotCreate(rootname, outformat, title, xlabel, ylabel);
+    gplot = gplotCreate(diagspec, rootname, outformat, title, xlabel, ylabel);
     LEPT_FREE(rootname);
     LEPT_FREE(title);
     LEPT_FREE(xlabel);

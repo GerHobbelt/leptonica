@@ -73,13 +73,13 @@ PIX       *pixs;
         return ERROR_INT("pixs not made", __func__, 1);
 
     na = numaContrastTRC(factor);
-    gplotSimple1(na, GPLOT_PNG, "/tmp/lept/contrast/trc1", "contrast trc");
+    gplotSimple1(diagspec, na, GPLOT_PNG, "/tmp/lept/contrast/trc1", "contrast trc");
     l_fileDisplay("/tmp/lept/contrast/trc1.png", 0, 100, 1.0);
     numaDestroy(&na);
 
          /* Plot contrast TRC maps */
     nax = numaMakeSequence(0.0, 1.0, 256);
-    gplot = gplotCreate("/tmp/lept/contrast/trc2", GPLOT_PNG,
+    gplot = gplotCreate(diagspec, "/tmp/lept/contrast/trc2", GPLOT_PNG,
         "Atan mapping function for contrast enhancement",
         "value in", "value out");
     for (iplot = 0; fact[iplot] >= 0.0; iplot++) {

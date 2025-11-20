@@ -124,6 +124,7 @@ struct L_RegParams
     l_int32  success;   /*!< overall result of the test                       */
     l_int32  display;   /*!< 1 if in display mode; 0 otherwise                */
     L_TIMER  tstart;    /*!< marks beginning of the reg test                  */
+	LDIAG_CTX diag_spec; /*!< image diagnostics helper spec associated with pix & plots; used to help display/diagnose behaviour in the more complex algorithms */
 };
 typedef struct L_RegParams  L_REGPARAMS;
 

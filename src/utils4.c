@@ -260,11 +260,11 @@ pixGetDiagnosticsSpec(PIX* pixs)
 
 
 LDIAG_CTX
-pixGetDiagnosticsSpecFromAny(PIX** ppix1, PIX* pix2, ...)
+pixGetDiagnosticsSpecFromAny(PIX* pix1, PIX* pix2, ...)
 {
 	LDIAG_CTX rv = NULL;
-	if (ppix1 != NULL && *ppix1 != NULL)
-		rv = (*ppix1)->diag_spec;
+	if (pix1 != NULL)
+		rv = pix1->diag_spec;
 	if (pix2 == NULL || rv != NULL)
 		return rv;
 
@@ -349,6 +349,248 @@ pixCloneDiagnosticsSpec(PIX* pixd, const PIX* pixs)
 }
 
 
+LDIAG_CTX
+fpixGetDiagnosticsSpec(FPIX* fpixs)
+{
+	if (!fpixs)
+		return (LDIAG_CTX)ERROR_PTR("fpixs not defined", __func__, NULL);
+
+	return fpixs->diag_spec;
+}
+
+
+LDIAG_CTX
+fpixGetDiagnosticsSpecFromAny(FPIX* pix1, FPIX* pix2, ...)
+{
+	LDIAG_CTX rv = NULL;
+	if (pix1 != NULL)
+		rv = pix1->diag_spec;
+	if (pix2 == NULL || rv != NULL)
+		return rv;
+
+	va_list ap;
+	va_start(ap, pix2);
+	do {
+		assert(pix2 != NULL);
+		rv = pix2->diag_spec;
+		if (rv != NULL)
+			break;
+
+		pix2 = va_arg(ap, FPIX*);
+	} while (pix2 != NULL);
+	va_end(ap);
+
+	return rv;
+}
+
+
+
+l_ok
+fpixSetDiagnosticsSpec(FPIX* pix, LDIAG_CTX spec)
+{
+	if (!pix)
+		return ERROR_INT("fpix not defined", __func__, 1);
+
+	if (pix->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pix->diag_spec);
+
+	if (spec) {
+		pix->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+	}
+	else {
+		pix->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+fpixCopyDiagnosticsSpec(FPIX* pixd, const FPIX* pixs)
+{
+	if (!pixs)
+		return ERROR_INT("fpixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR_INT("fpixd not defined", __func__, 1);
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (pixs->diag_spec) {
+		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+fpixCloneDiagnosticsSpec(FPIX* pixd, const FPIX* pixs)
+{
+	if (!pixs)
+		return ERROR_INT("fpixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR_INT("fpixd not defined", __func__, 1);
+
+	if (pixd->diag_spec == pixs->diag_spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (pixs->diag_spec) {
+		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(pixs->diag_spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+LDIAG_CTX
+pixaGetDiagnosticsSpec(PIXA* pixa)
+{
+	if (!pixa)
+		return (LDIAG_CTX)ERROR_PTR("pixa not defined", __func__, NULL);
+
+	l_int32 cnt = pixaGetCount(pixa);
+	for (l_int32 i = 0; i < cnt; cnt++) {
+		PIX* pix1 = pixaGetPix(pixa, i, L_CLONE);
+		if (pix1->diag_spec != NULL)
+			return pix1->diag_spec;
+		pixDestroy(&pix1);
+	}
+	return NULL;
+}
+
+
+LDIAG_CTX
+pixaGetDiagnosticsSpecFromAny(PIXA* pixa1, PIXA* pixa2, ...)
+{
+	LDIAG_CTX rv = NULL;
+	if (pixa1 != NULL)
+		rv = pixaGetDiagnosticsSpec(pixa1);
+	if (pixa2 == NULL || rv != NULL)
+		return rv;
+
+	va_list ap;
+	va_start(ap, pixa2);
+	do {
+		assert(pixa2 != NULL);
+		rv = pixaGetDiagnosticsSpec(pixa2);
+		if (rv != NULL)
+			break;
+
+		pixa2 = va_arg(ap, PIXA*);
+	} while (pixa2 != NULL);
+	va_end(ap);
+
+	return rv;
+}
+
+
+LDIAG_CTX
+gplotGetDiagnosticsSpec(GPLOT* gplot)
+{
+	if (!gplot)
+		return (LDIAG_CTX)ERROR_PTR("gplot not defined", __func__, NULL);
+
+	return gplot->diag_spec;
+}
+
+
+LDIAG_CTX
+gplotGetDiagnosticsSpecFromAny(GPLOT* gplot1, GPLOT* gplot2, ...)
+{
+	LDIAG_CTX rv = NULL;
+	if (gplot1 != NULL)
+		rv = gplot1->diag_spec;
+	if (gplot2 == NULL || rv != NULL)
+		return rv;
+
+	va_list ap;
+	va_start(ap, gplot2);
+	do {
+		assert(gplot2 != NULL);
+		rv = gplot2->diag_spec;
+		if (rv != NULL)
+			break;
+
+		gplot2 = va_arg(ap, GPLOT*);
+	} while (gplot2 != NULL);
+	va_end(ap);
+
+	return rv;
+}
+
+
+
+l_ok
+gplotSetDiagnosticsSpec(GPLOT* gplot, LDIAG_CTX spec)
+{
+	if (!gplot)
+		return ERROR_INT("gplot not defined", __func__, 1);
+
+	if (gplot->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&gplot->diag_spec);
+
+	if (spec) {
+		gplot->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+	}
+	else {
+		gplot->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+gplotCopyDiagnosticsSpec(GPLOT* gplotd, const GPLOT* gplots)
+{
+	if (!gplots)
+		return ERROR_INT("gplots not defined", __func__, 1);
+	if (!gplotd)
+		return ERROR_INT("gplotd not defined", __func__, 1);
+
+	leptDestroyDiagnoticsSpecInstance(&gplotd->diag_spec);
+
+	if (gplots->diag_spec) {
+		gplotd->diag_spec = leptCopyDiagnoticsSpecInstance(gplots->diag_spec);
+	}
+	else {
+		gplotd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+gplotCloneDiagnosticsSpec(GPLOT* gplotd, const GPLOT* gplots)
+{
+	if (!gplots)
+		return ERROR_INT("gplots not defined", __func__, 1);
+	if (!gplotd)
+		return ERROR_INT("gplotd not defined", __func__, 1);
+
+	if (gplotd->diag_spec == gplots->diag_spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&gplotd->diag_spec);
+
+	if (gplots->diag_spec) {
+		gplotd->diag_spec = leptCloneDiagnoticsSpecInstance(gplots->diag_spec);
+	}
+	else {
+		gplotd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
 /*!
  * \brief   leptDebugSetFileBasepath()
  *
@@ -394,6 +636,49 @@ leptDebugSetFileBasepath(LDIAG_CTX spec, const char* directory)
 
 
 /*!
+ * \brief   leptDebugAppendFileBasepath()
+ *
+ * \param[in]    directory         always interpreted as relative to the currently configured base path (using /tmp/lept/ when NULL) where all target files are meant to land.
+ *
+ * <pre>
+ * Notes:
+ *      (1) The given directory will be used for every debug plot, image, etc. file produced by leptonica.
+ *          This is useful when, for example, processing source images in bulk and you wish to quickly
+ *          locate the relevant debug/diagnostics outputs for a given source image.
+ *      (2) Changing the base path is not assumed to imply you're going to run another batch, unlike when you use leptDebugSetFileBasepath().
+ * </pre>
+ */
+void
+leptDebugAppendFileBasepath(LDIAG_CTX spec, const char* directory)
+{
+	if (!directory) {
+		directory = "";
+	}
+
+	if (spec->basepath) {
+		const char* base = spec->basepath;
+		// TODO:
+		// do we allow '../' elements in a relative directory spec?
+		// 
+		// Current affairs assume this path is set by (safe) application code,
+		// rather than (unsafe) arbitrary end user input...
+		spec->basepath = pathJoin(base, directory);
+		stringDestroy(&base);
+	}
+	else {
+		// TODO:
+		// do we allow '../' elements in a relative directory spec?
+		// 
+		// Current affairs assume this path is set by (safe) application code,
+		// rather than (unsafe) arbitrary end user input...
+		spec->basepath = pathJoin("/tmp/lept/debug", directory);
+	}
+
+	spec->must_regenerate = 1;
+}
+
+
+/*!
  * \brief   leptDebugGetFileBasePath()
  *
  * \return  the previously set target filename base path; usually pointing somewhere inside the /tmp/lept/ directory tree.
@@ -411,7 +696,7 @@ leptDebugGetFileBasePath(LDIAG_CTX spec)
 /*!
  * \brief   leptDebugSetFilenameForPrefix()
  *
- * \param[in]    source_filename
+ * \param[in]    source_filename           the path to the file; may be relative or absolute or just the file name itself.
  * \param[in]    strip_off_extension
  *
  * <pre>
