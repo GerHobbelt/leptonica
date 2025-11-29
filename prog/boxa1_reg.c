@@ -85,13 +85,13 @@ L_REGPARAMS  *rp;
     pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
     pixDestroy(&pix1);
 
-    boxaCompareRegions(boxa1, boxa1, 100, &same, &diffarea, &diffxor, NULL);
+    boxaCompareRegions(boxa1, boxa1, 100, &same, &diffarea, &diffxor, NULL, NULL);
     regTestCompareValues(rp, 1, same, 0.0);  /* 1 */
     regTestCompareValues(rp, 0.0, diffarea, 0.0);  /* 2 */
     regTestCompareValues(rp, 0.0, diffxor, 0.0);  /* 3 */
 
     boxa2 = boxaTransform(boxa1, -13, -13, 1.0, 1.0);
-    boxaCompareRegions(boxa1, boxa2, 10, &same, &diffarea, &diffxor, NULL);
+    boxaCompareRegions(boxa1, boxa2, 10, &same, &diffarea, &diffxor, NULL, NULL);
     regTestCompareValues(rp, 1, same, 0.0);  /* 4 */
     regTestCompareValues(rp, 0.0, diffarea, 0.0);  /* 5 */
     regTestCompareValues(rp, 0.0, diffxor, 0.0);  /* 6 */

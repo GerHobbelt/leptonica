@@ -2673,6 +2673,11 @@ PIX        *pix1;
     if (nbins < 1 || nbins > 100)
         return ERROR_INT("nbins not in [1,100]", __func__, 1);
 
+	LDIAG_CTX diagspec = NULL;
+	if (pixadb) {
+		diagspec = pixGetDiagnosticsSpecFromAny(pixs, pixg, NULL);
+	}
+
         /* Require that each bin has at least 5 pixels. */
     pixGetDimensions(pixs, &w, &h, NULL);
     npts = (w + factor - 1) * (h + factor - 1) / (factor * factor);
@@ -2712,9 +2717,9 @@ PIX        *pix1;
 
             /* Plot the gray bin value and the rank(gray) values */
         numaDiscretizeHistoInBins(na, nbins, &nabinval, &narank);
-        pix1 = gplotSimplePix1(diagspec, nabinval, "Gray value in each bin");
+        pix1 = gplotSimplePix1(diagspec, nabinval, "lept/regout/grey-bin", "Gray value in each bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(diagspec, narank, "rank as function of gray value");
+        pix1 = gplotSimplePix1(diagspec, narank, "lept/regout/rank-grey", "rank as function of gray value");
         pixaAddPix(pixadb, pix1, L_INSERT);
         numaDestroy(&na);
         numaDestroy(&nabinval);
@@ -2773,11 +2778,11 @@ PIX        *pix1;
             numaAddNumber(nablue, bval);
         }
         lept_mkdir("lept/regout");
-        pix1 = gplotSimplePix1(diagspec, nared, "Average red val vs. rank bin");
+		pix1 = gplotSimplePix1(diagspec, nared, "lept/regout/red-bin", "Average red val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(diagspec, nagreen, "Average green val vs. rank bin");
+        pix1 = gplotSimplePix1(diagspec, nagreen, "lept/regout/green-bin", "Average green val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(diagspec, nablue, "Average blue val vs. rank bin");
+        pix1 = gplotSimplePix1(diagspec, nablue, "lept/regout/blue-bin", "Average blue val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
         numaDestroy(&nared);
         numaDestroy(&nagreen);

@@ -103,9 +103,9 @@ L_REGPARAMS  *rp;
     boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
     boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_LOC_DIFF, 80, 20, 1);
     boxa3 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_SIZE_DIFF, 80, 20, 1);
-    boxaPlotSides(boxa1, "initial", NULL, NULL, NULL, NULL, &pix1);
-    boxaPlotSides(boxa2, "side-smoothing", NULL, NULL, NULL, NULL, &pix2);
-    boxaPlotSides(boxa3, "size-smoothing", NULL, NULL, NULL, NULL, &pix3);
+    boxaPlotSides(boxa1, "initial", NULL, NULL, NULL, NULL, &pix1, diagspec);
+    boxaPlotSides(boxa2, "side-smoothing", NULL, NULL, NULL, NULL, &pix2, diagspec);
+    boxaPlotSides(boxa3, "size-smoothing", NULL, NULL, NULL, NULL, &pix3, diagspec);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 4 */

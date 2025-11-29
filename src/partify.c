@@ -85,7 +85,7 @@ PIXAC  *pixac;
         return ERROR_INT("dirname not defined", __func__, 1);
     if (nparts < 0 || nparts > 10)
         return ERROR_INT("nparts not in [1 ... 10]", __func__, 1);
-    if (!outroot || outroot[0] == '\n')
+    if (!outroot || outroot[0] == '\n' || outroot[0] == '\0')
         return ERROR_INT("outroot undefined or empty", __func__, 1);
 
     pixadb = (debugfile) ? pixaCreate(0) : NULL;
@@ -113,7 +113,7 @@ PIXAC  *pixac;
  *
  * <pre>
  * Notes:
- *      (1) See partifyPixac().
+ *      (1) See partifyFiles().
  *      (2) If the image files do not have a resolution, 300 ppi is assumed.
  * </pre>
  */

@@ -158,16 +158,16 @@ PIX     *pix1;
 
     boxad = boxaMergeEvenOdd(boxame, boxamo, 0);
     if (debug) {
-        boxaPlotSides(boxas, NULL, NULL, NULL, NULL, NULL, &pix1);
+        boxaPlotSides(boxas, NULL, NULL, NULL, NULL, NULL, &pix1, diagspec);
         pixWrite("/tmp/lept/smooth/plotsides1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSides(boxad, NULL, NULL, NULL, NULL, NULL, &pix1);
+        boxaPlotSides(boxad, NULL, NULL, NULL, NULL, NULL, &pix1, diagspec);
         pixWrite("/tmp/lept/smooth/plotsides2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxas, NULL, NULL, NULL, &pix1);
+        boxaPlotSizes(boxas, NULL, NULL, NULL, &pix1, diagspec);
         pixWrite("/tmp/lept/smooth/plotsizes1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxad, NULL, NULL, NULL, &pix1);
+        boxaPlotSizes(boxad, NULL, NULL, NULL, &pix1, diagspec);
         pixWrite("/tmp/lept/smooth/plotsizes2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
     }
@@ -246,16 +246,16 @@ PIX     *pix1;
 
     if (debug) {
         lept_mkdir("lept/windowed");
-        boxaPlotSides(boxaf, NULL, NULL, NULL, NULL, NULL, &pix1);
+        boxaPlotSides(boxaf, NULL, NULL, NULL, NULL, NULL, &pix1, diagspec);
         pixWrite("/tmp/lept/windowed/plotsides1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSides(boxad, NULL, NULL, NULL, NULL, NULL, &pix1);
+        boxaPlotSides(boxad, NULL, NULL, NULL, NULL, NULL, &pix1, diagspec);
         pixWrite("/tmp/lept/windowed/plotsides2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxaf, NULL, NULL, NULL, &pix1);
+        boxaPlotSizes(boxaf, NULL, NULL, NULL, &pix1, diagspec);
         pixWrite("/tmp/lept/windowed/plotsizes1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxad, NULL, NULL, NULL, &pix1);
+        boxaPlotSizes(boxad, NULL, NULL, NULL, &pix1, diagspec);
         pixWrite("/tmp/lept/windowed/plotsizes2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
     }
@@ -1238,7 +1238,8 @@ boxaPlotSides(BOXA        *boxa,
               NUMA       **pnat,
               NUMA       **pnar,
               NUMA       **pnab,
-              PIX        **ppixd)
+              PIX        **ppixd,
+	          LDIAG_CTX    diagspec)
 {
 char            buf[128], titlebuf[128];
 char           *dataname;
@@ -1367,7 +1368,8 @@ boxaPlotSizes(BOXA        *boxa,
               const char  *plotname,
               NUMA       **pnaw,
               NUMA       **pnah,
-              PIX        **ppixd)
+              PIX        **ppixd,
+	          LDIAG_CTX    diagspec)
 {
 char            buf[128], titlebuf[128];
 static l_int32  plotid = 0;

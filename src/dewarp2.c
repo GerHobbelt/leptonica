@@ -1527,7 +1527,8 @@ FPIX      *fpix;
     }
     if (dew->debug) {
         lept_mkdir("lept/dew");
-        gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/dew/0091", NULL);
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixb);
+		gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/dew/0091", NULL);
         lept_mv("/tmp/lept/dew/0091.png", "lept/dewmod", NULL, NULL);
         pixWriteDebug("/tmp/lept/dewmod/0090.png", pix1, IFF_PNG);
     }
@@ -1572,7 +1573,8 @@ FPIX      *fpix;
     denom = L_MAX(1.0, (l_float32)(L_MIN(first, last)));
     fract = (l_float32)delta / denom;
     if (dew->debug) {
-        L_INFO("Slope-disparity: first = %d, last = %d, fract = %7.3f\n",
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixb);
+		L_INFO("Slope-disparity: first = %d, last = %d, fract = %7.3f\n",
                __func__, first, last, fract);
         gplotSimple1(diagspec, na2, GPLOT_PNG, "/tmp/lept/dew/0092", NULL);
         lept_mv("/tmp/lept/dew/0092.png", "lept/dewmod", NULL, NULL);
@@ -1596,7 +1598,8 @@ FPIX      *fpix;
     numaArithOp(na2, na2, na3, L_ARITH_DIVIDE);
     numaDestroy(&na3);
     if (dew->debug) {
-        L_INFO("Average background density: %5.1f\n", __func__, aveval);
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixb);
+		L_INFO("Average background density: %5.1f\n", __func__, aveval);
         gplotSimple1(diagspec, na2, GPLOT_PNG, "/tmp/lept/dew/0093", NULL);
         lept_mv("/tmp/lept/dew/0093.png", "lept/dewmod", NULL, NULL);
     }
@@ -1608,7 +1611,8 @@ FPIX      *fpix;
     ptaGetQuarticLSF(pta1, &ca, &cb, &cc, &cd, &ce, &na3);
     ptaGetArrays(pta1, &na4, NULL);
     if (dew->debug) {
-        gplot = gplotSimpleXY1(diagspec, na4, na3, GPLOT_LINES, GPLOT_PNG,
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixb);
+		gplot = gplotSimpleXY1(diagspec, na4, na3, GPLOT_LINES, GPLOT_PNG,
                               "/tmp/lept/dew/0094", NULL);
         gplotDestroy(&gplot);
         lept_mv("/tmp/lept/dew/0094.png", "lept/dewmod", NULL, NULL);

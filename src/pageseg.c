@@ -1870,8 +1870,9 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
     na1 = pixCountByColumn(pix4, NULL);
 
     if (pixadb) {
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 		lept_mkdir("lept/textcol");
-		pix5 = gplotSimplePix1(diagspec, na1, "/tmp/lept/textcol/plot", NULL);
+		pix5 = gplotSimplePix1(diagspec, na1, "/tmp/lept/textcol/plot", "text column counts");
         pixaAddPix(pixadb, pix5, L_INSERT);
     }
 

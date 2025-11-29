@@ -85,7 +85,7 @@ L_REGPARAMS  *rp;
 
         /* Test function for finding local skew angles */
     na = pixGetLocalSkewAngles(pixs, 10, 0, 0, 0.0, 0.0, 0.0, NULL, NULL, 1);
-    pix2 = gplotSimplePix1(diagspec, na, "/tmp/lept/baseline/ang", "Angles in degrees");
+    pix2 = gplotSimplePix1(diagspec, na, "lept/baseline/ang", "Angles in degrees");
 
 	pix3 = pixRead("/tmp/lept/baseline/skew.png");
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */

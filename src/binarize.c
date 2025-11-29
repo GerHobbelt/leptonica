@@ -163,8 +163,7 @@ pixOtsuAdaptiveThreshold(PIX       *pixs,
                          l_int32    smoothy,
                          l_float32  scorefract,
                          PIX      **ppixth,
-                         PIX      **ppixd,
-                         LDIAG_CTX dbgpix_spec)
+                         PIX      **ppixd)
 {
 l_int32     w, h, nx, ny, i, j, thresh;
 l_uint32    val;
@@ -192,13 +191,14 @@ PIXTILING  *pt;
         for (j = 0; j < nx; j++) {
             pixt = pixTilingGetTile(pt, i, j);
 			PIX* pixplt = NULL;
-			PIX** pixplt_ref = ((ppixd != NULL && dbgpix_spec != NULL) ? &pixplt : NULL);
+			PIX** pixplt_ref = (ppixd != NULL ? &pixplt : NULL);
             pixSplitDistributionFgBg(pixt, scorefract, 1, &thresh,
                                      NULL, NULL, pixplt_ref);
 
 			if (pixplt) {
+				pixSetDiagnosticsSpec(pixplt, diagspec);
 				lept_mkdir("lept/otsu");
-				const char *pixd_path = leptDebugGenFilepath(dbgpix_spec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", diagspec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
 				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
 				stringDestroy(&pixd_path);
@@ -1080,7 +1080,7 @@ PIX       *pix1, *pix2, *pix3;
         pixDestroy(&pix3);
     }
     if (debugflag) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(&pixs, pixm, NULL);
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pixs, pixm, NULL);
         lept_mkdir("lept/binarize");
         gplot = gplotCreate(diagspec, "/tmp/lept/binarize", GPLOT_PNG,
                             "number of cc vs. threshold",
@@ -1209,7 +1209,7 @@ NUMA      *na1, *na2, *na3;
     if (ppixhisto) {
 		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 		lept_mkdir("lept/histo");
-		*ppixhisto = gplotSimplePix1(diagspec, na3, "/tmp/lept/histo/histo", NULL);
+		*ppixhisto = gplotSimplePix1(diagspec, na3, "lept/histo/histo", "thresholds histogram");
     }
     if (pnahisto)
         *pnahisto = na3;
