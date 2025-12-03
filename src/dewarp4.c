@@ -85,7 +85,7 @@ static const l_int32  GrayInValue = 200;
  *                               0 otherwise; default is to skip
  * \param[out]   ppixd           dewarped result
  * \param[out]   pdewa           [optional] dewa with single page; NULL to skip
- * \param[in]    debug           1 for debugging output, 0 otherwise
+ * \param[in]    diagspec        non-NULL for debugging output, NULL otherwise
  * \return  0 if OK, 1 on error list of page numbers, or NULL on error
  *
  * <pre>
@@ -104,7 +104,7 @@ dewarpSinglePage(PIX         *pixs,
                  l_int32      check_columns,
                  PIX        **ppixd,
                  L_DEWARPA  **pdewa,
-                 l_int32      debug)
+                 LDIAG_CTX    diagspec)
 {
 L_DEWARPA  *dewa;
 PIX        *pixb;
@@ -123,7 +123,7 @@ PIX        *pixb;
         return ERROR_INT("pixb not made", __func__, 1);
     }
 
-    dewarpSinglePageRun(pixs, pixb, dewa, ppixd, debug);
+    dewarpSinglePageRun(pixs, pixb, dewa, ppixd, diagspec);
 
     if (pdewa)
         *pdewa = dewa;
@@ -210,7 +210,7 @@ PIX  *pix1, *pix2;
  * \param[in]    pixb    1 bpp
  * \param[in]    dewa    initialized
  * \param[out]   ppixd   dewarped result
- * \param[in]    debug   1 for debugging output, 0 otherwise
+ * \param[in]    diagspec   non-NULL for debugging output, NULL otherwise
  * \return  0 if OK, 1 on error list of page numbers, or NULL on error
  *
  * <pre>
@@ -227,7 +227,7 @@ dewarpSinglePageRun(PIX        *pixs,
                     PIX        *pixb,
                     L_DEWARPA  *dewa,
                     PIX       **ppixd,
-                    l_int32     debug)
+                    LDIAG_CTX   diagspec)
 {
 const char  *debugfile;
 l_int32      vsuccess, ret;
@@ -243,13 +243,13 @@ L_DEWARP    *dew;
     if (!dewa)
         return ERROR_INT("dewa not defined", __func__, 1);
 
-    if (debug)
+    if (diagspec)
         lept_mkdir("lept/dewarp");
 
         /* Generate the page model */
     dew = dewarpCreate(pixb, 0);
     dewarpaInsertDewarp(dewa, dew);
-    debugfile = (debug) ? "/tmp/lept/dewarp/singlepage_model.pdf" : NULL;
+    debugfile = (diagspec) ? "/tmp/lept/dewarp/singlepage_model.pdf" : NULL;
     dewarpBuildPageModel(dew, debugfile);
     dewarpaModelStatus(dewa, 0, &vsuccess, NULL);
     if (vsuccess == 0) {
@@ -259,7 +259,7 @@ L_DEWARP    *dew;
     }
 
         /* Apply the page model */
-    debugfile = (debug) ? "/tmp/lept/dewarp/singlepage_apply.pdf" : NULL;
+    debugfile = (diagspec) ? "/tmp/lept/dewarp/singlepage_apply.pdf" : NULL;
     ret = dewarpaApplyDisparity(dewa, 0, pixs, 255, 0, 0, ppixd, debugfile);
     if (ret)
         L_ERROR("invalid model; failure to apply disparity\n", __func__);
@@ -339,7 +339,7 @@ NUMA      *namodels, *napages;
 l_ok
 dewarpaSetValidModels(L_DEWARPA  *dewa,
                       l_int32     notests,
-                      l_int32     debug)
+                      LDIAG_CTX   diagspec)
 {
 l_int32    i, n, maxcurv, diffcurv, diffedge;
 L_DEWARP  *dew;
@@ -352,7 +352,7 @@ L_DEWARP  *dew;
         if ((dew = dewarpaGetDewarp(dewa, i)) == NULL)
             continue;
 
-        if (debug) {
+        if (diagspec) {
             if (dew->hasref == 1) {
                 L_INFO("page %d: has only a ref model\n", __func__, i);
             } else if (dew->vsuccess == 0) {
@@ -443,7 +443,7 @@ L_DEWARP  *dew;
 l_ok
 dewarpaInsertRefModels(L_DEWARPA  *dewa,
                        l_int32     notests,
-                       l_int32     debug)
+                       LDIAG_CTX   diagspec)
 {
 l_int32    i, j, n, val, min, distdown, distup;
 L_DEWARP  *dew;
@@ -455,7 +455,7 @@ NUMA      *na, *nah;
         L_INFO("maxdist < 2; no ref models can be used\n", __func__);
 
         /* Make an indicator numa for pages with valid models. */
-    dewarpaSetValidModels(dewa, notests, debug);
+    dewarpaSetValidModels(dewa, notests, diagspec);
     n = dewa->maxpage + 1;
     na = numaMakeConstant(0, n);
     for (i = 0; i < n; i++) {

@@ -59,6 +59,13 @@ const char      *filein, *fileout;
     angle = atof(argv[2]);
     fileout = argv[3];
 
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/rotate");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "rotatetest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
     setLeptDebugOK(1);
     lept_mkdir("lept/rotate");
 
@@ -114,7 +121,7 @@ const char      *filein, *fileout;
     pixDestroy(&pixs);
 #endif
 
-#if 0
+#if 01
 {
     l_float32  pops;
 
@@ -154,7 +161,7 @@ const char      *filein, *fileout;
         pixWrite(fileout, pixd, IFF_JFIF_JPEG);
 #endif
 
-#if 0
+#if 01
         /* compare the standard area-map color rotation with
          * the fast area-map color rotation, on a pixel basis */
     {
@@ -173,7 +180,7 @@ const char      *filein, *fileout;
     pixd = pixAbsDifference(pix1, pix2);
     pixGetColorHistogram(pixd, 1, &nar, &nag, &nab);
     naseq = numaMakeSequence(0., 1., 256);
-    gplot = gplotCreate("/tmp/lept/rotate/absdiff", GPLOT_PNG,
+    gplot = gplotCreate(diagspec, "/tmp/lept/rotate/absdiff", GPLOT_PNG,
                         "Number vs diff", "diff", "number");
     gplotAddPlot(gplot, naseq, nar, GPLOT_POINTS, "red");
     gplotAddPlot(gplot, naseq, nag, GPLOT_POINTS, "green");

@@ -239,7 +239,7 @@ lstackExtendArray(L_STACK  *lstack)
  * \return  count, or 0 on error
  */
 l_int32
-lstackGetCount(L_STACK  *lstack)
+lstackGetCount(const L_STACK  *lstack)
 {
     if (!lstack)
         return ERROR_INT("lstack not defined", __func__, 1);

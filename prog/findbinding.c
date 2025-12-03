@@ -69,6 +69,13 @@ PIXA      *pixa;
     if (argc != 1)
         return ERROR_INT(" Syntax:  findbinding", __func__, 1);
 
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/binding");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "findbindingtest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
     setLeptDebugOK(1);
     lept_mkdir("lept/binding");
     pixa = pixaCreate(0);

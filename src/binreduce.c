@@ -96,7 +96,8 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, 0.5, 0.5);
-    wpld = pixGetWpl(pixd);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
 
     tab = (intab) ? intab : makeSubsampleTab2x();
@@ -252,7 +253,8 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, 0.5, 0.5);
-    wpld = pixGetWpl(pixd);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
 
     tab = (intab) ? intab : makeSubsampleTab2x();

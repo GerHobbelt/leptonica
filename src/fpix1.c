@@ -294,7 +294,11 @@ FPIX       *fpix;
     if (--fpix->refcount == 0) {
         if ((data = fpixGetData(fpix)) != NULL)
             LEPT_FREE(data);
-        LEPT_FREE(fpix);
+
+		if (fpix->diag_spec)
+			leptDestroyDiagnoticsSpecInstance(&fpix->diag_spec);
+
+		LEPT_FREE(fpix);
     }
     *pfpix = NULL;
 }
@@ -648,7 +652,12 @@ FPIXA   *fpixa;
         for (i = 0; i < fpixa->n; i++)
             fpixDestroy(&fpixa->fpix[i]);
         LEPT_FREE(fpixa->fpix);
-        LEPT_FREE(fpixa);
+		fpixa->fpix = NULL;
+
+		if (fpixa->diag_spec != NULL)
+			leptDestroyDiagnoticsSpecInstance(&fpixa->diag_spec);
+
+		LEPT_FREE(fpixa);
     }
     *pfpixa = NULL;
 }
@@ -775,7 +784,7 @@ size_t  oldsize, newsize;
  * \return  count, or 0 if no pixa
  */
 l_int32
-fpixaGetCount(FPIXA  *fpixa)
+fpixaGetCount(const FPIXA  *fpixa)
 {
     if (!fpixa)
         return ERROR_INT("fpixa not defined", __func__, 0);
@@ -793,7 +802,7 @@ fpixaGetCount(FPIXA  *fpixa)
  * \return  fpix, or NULL on error
  */
 FPIX *
-fpixaGetFPix(FPIXA   *fpixa,
+fpixaGetFPix(const FPIXA   *fpixa,
              l_int32  index,
              l_int32  accesstype)
 {
@@ -820,7 +829,7 @@ fpixaGetFPix(FPIXA   *fpixa,
  * \return  0 if OK, 1 on error
  */
 l_ok
-fpixaGetFPixDimensions(FPIXA    *fpixa,
+fpixaGetFPixDimensions(const FPIXA    *fpixa,
                        l_int32   index,
                        l_int32  *pw,
                        l_int32  *ph)
@@ -1015,7 +1024,8 @@ DPIX    *dpixd;
     dpixGetDimensions(dpixs, &w, &h);
     dpixd = dpixCreate(w, h);
     dpixCopyResolution(dpixd, dpixs);
-    return dpixd;
+	dpixCloneDiagnosticsSpec(dpixd, dpixs);
+	return dpixd;
 }
 
 
@@ -1062,7 +1072,9 @@ DPIX       *dpixd;
 
     if ((dpixd = dpixCreateTemplate(dpixs)) == NULL)
         return (DPIX *)ERROR_PTR("dpixd not made", __func__, NULL);
-    datas = dpixGetData(dpixs);
+	dpixCloneDiagnosticsSpec(dpixd, dpixs);
+	dpixCopyResolution(dpixd, dpixs);
+	datas = dpixGetData(dpixs);
     datad = dpixGetData(dpixd);
     memcpy(datad, datas, bytes);
     return dpixd;
@@ -1099,7 +1111,11 @@ DPIX       *dpix;
     if (--dpix->refcount == 0) {
         if ((data = dpixGetData(dpix)) != NULL)
             LEPT_FREE(data);
-        LEPT_FREE(dpix);
+
+		if (dpix->diag_spec != NULL)
+			leptDestroyDiagnoticsSpecInstance(&dpix->diag_spec);
+
+		LEPT_FREE(dpix);
     }
     *pdpix = NULL;
 }

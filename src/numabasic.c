@@ -627,7 +627,7 @@ l_int32  n;
  * \return  count, or 0 if no numbers or on error
  */
 l_int32
-numaGetCount(NUMA  *na)
+numaGetCount(const NUMA  *na)
 {
     if (!na)
         return ERROR_INT("na not defined", __func__, 0);
@@ -1546,7 +1546,7 @@ size_t  oldsize, newsize;
  * \return  count number of numa, or 0 if no numa or on error
  */
 l_int32
-numaaGetCount(NUMAA  *naa)
+numaaGetCount(const NUMAA  *naa)
 {
     if (!naa)
         return ERROR_INT("naa not defined", __func__, 0);

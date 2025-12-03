@@ -196,6 +196,7 @@ PIXTILING  *pt;
                                      NULL, NULL, pixplt_ref);
 
 			if (pixplt) {
+				LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 				pixSetDiagnosticsSpec(pixplt, diagspec);
 				lept_mkdir("lept/otsu");
 				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", diagspec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
@@ -220,7 +221,8 @@ PIXTILING  *pt;
     if (ppixd) {
         pixd = pixCreate(w, h, 1);
         pixCopyResolution(pixd, pixs);
-        for (i = 0; i < ny; i++) {
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		for (i = 0; i < ny; i++) {
             for (j = 0; j < nx; j++) {
                 pixt = pixTilingGetTile(pt, i, j);
                 pixGetPixel(pixth, j, i, &val);
@@ -665,7 +667,8 @@ PIX     *pixg, *pixsc, *pixm = NULL, *pixms = NULL, *pixth = NULL, *pixd = NULL;
     if (ppixd) {
         pixd = pixApplyLocalThreshold(pixsc, pixth);
         pixCopyResolution(pixd, pixs);
-    }
+		pixCloneDiagnosticsSpec(pixd, pixs);
+	}
 
     if (ppixm)
         *ppixm = pixm;
@@ -817,8 +820,9 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixth undefined or not 8 bpp", __func__, NULL);
 
     pixGetDimensions(pixs, &w, &h, NULL);
-    pixd = pixCreate(w, h, 1);
-    datas = pixGetData(pixs);
+	pixd = pixCreate(w, h, 1);
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(pixs, pixth, NULL));
+	datas = pixGetData(pixs);
     datat = pixGetData(pixth);
     datad = pixGetData(pixd);
     wpls = pixGetWpl(pixs);

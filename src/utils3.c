@@ -165,15 +165,17 @@ static inline char is_Win32_drive_letter(char c)
 	return (c >= 'A' && c <= 'Z');
 }
 
+#if 0
 // Accepts both Unix and Windows pathname separators, on any platform.
 //
 // Notes:
 // If you expected \-escaped paths on UNIX or other platforms, you'ld better have de-escaped those paths before using in leptonica *anywhere*!
 //
-static inline int is_separator(char c)
+static inline int leptIsSeparator(char c)
 {
 	return (c == '/' || c == '\\');
 }
+#endif
 
 /*!
  * \brief   gobble_server_share_path_part()
@@ -198,7 +200,7 @@ gobble_server_share_path_part(const char* path)
 	const char* p = strpbrk(path, "\\/");
 	if (p)
 	{
-		if (is_Win32_drive_letter(path[0]) && path[1] == ':' && is_separator(path[2]))
+		if (is_Win32_drive_letter(path[0]) && path[1] == ':' && leptIsSeparator(path[2]))
 		{
 			return path + 3;
 		}
@@ -232,15 +234,15 @@ getPathRootLength(const char* path)
 	if (!path)
 		return 0;
 
-	int is_rooted = is_separator(path[0]);
+	int is_rooted = leptIsSeparator(path[0]);
 	if (is_rooted)
 	{
-		int is_unc_path = is_separator(path[1]);
+		int is_unc_path = leptIsSeparator(path[1]);
 		if (is_unc_path)
 		{
-			if (path[2] && strchr(".?", path[2]) && is_separator(path[3]))
+			if (path[2] && strchr(".?", path[2]) && leptIsSeparator(path[3]))
 			{
-				if (strncasecmp(path + 4, "UNC", 3) == 0 && is_separator(path[4 + 3]))
+				if (strncasecmp(path + 4, "UNC", 3) == 0 && leptIsSeparator(path[4 + 3]))
 				{
 					// gobble up server\share\ part of this \\?\UNC\ path (while reckoning with DOS drive specs)
 					const char* p = gobble_server_share_path_part(path + 8);
@@ -269,7 +271,7 @@ getPathRootLength(const char* path)
 	else
 	{
 		// MAY be a DOS root path!
-		if (is_Win32_drive_letter(path[0]) && path[1] == ':' && is_separator(path[2]))
+		if (is_Win32_drive_letter(path[0]) && path[1] == ':' && leptIsSeparator(path[2]))
 		{
 			return 3;
 		}

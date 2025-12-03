@@ -62,6 +62,13 @@ PIX       *pix;
     filein = argv[1];
     sampling = atoi(argv[2]);
 
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/numa");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "numaranktest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
     setLeptDebugOK(1);
     lept_mkdir("lept/numa");
 

@@ -80,6 +80,13 @@ NUMA      *nax, *nay1, *nay2;
     if (argc != 1)
         return ERROR_INT(" Syntax:  custom_log_plot_test", __func__, 1);
 
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/plot");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "custom_log_plot_test");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
     setLeptDebugOK(1);
 
 	{

@@ -67,7 +67,15 @@ SELA      *selalinear;
 
     if (argc != 1)
         return ERROR_INT(" Syntax: dwamorph2_reg", __func__, 1);
-    setLeptDebugOK(1);
+
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/morph");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "dwamorph2test");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
+	setLeptDebugOK(1);
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     pixt = pixCreateTemplate(pixs);

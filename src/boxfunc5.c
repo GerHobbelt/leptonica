@@ -108,7 +108,7 @@ boxaSmoothSequenceMedian(BOXA    *boxas,
                          l_int32  subflag,
                          l_int32  maxdiff,
                          l_int32  extrapixels,
-                         l_int32  debug)
+						 LDIAG_CTX diagspec)
 {
 l_int32  n;
 BOXA    *boxae, *boxao, *boxamede, *boxamedo, *boxame, *boxamo, *boxad;
@@ -136,38 +136,38 @@ PIX     *pix1;
     }
 
     boxaSplitEvenOdd(boxas, 0, &boxae, &boxao);
-    if (debug) {
+    if (diagspec) {
         lept_mkdir("lept/smooth");
         boxaWriteDebug("/tmp/lept/smooth/boxae.ba", boxae);
         boxaWriteDebug("/tmp/lept/smooth/boxao.ba", boxao);
     }
 
-    boxamede = boxaWindowedMedian(boxae, halfwin, debug);
-    boxamedo = boxaWindowedMedian(boxao, halfwin, debug);
-    if (debug) {
+    boxamede = boxaWindowedMedian(boxae, halfwin, diagspec);
+    boxamedo = boxaWindowedMedian(boxao, halfwin, diagspec);
+    if (diagspec) {
         boxaWriteDebug("/tmp/lept/smooth/boxamede.ba", boxamede);
         boxaWriteDebug("/tmp/lept/smooth/boxamedo.ba", boxamedo);
     }
 
     boxame = boxaModifyWithBoxa(boxae, boxamede, subflag, maxdiff, extrapixels);
     boxamo = boxaModifyWithBoxa(boxao, boxamedo, subflag, maxdiff, extrapixels);
-    if (debug) {
+    if (diagspec) {
         boxaWriteDebug("/tmp/lept/smooth/boxame.ba", boxame);
         boxaWriteDebug("/tmp/lept/smooth/boxamo.ba", boxamo);
     }
 
     boxad = boxaMergeEvenOdd(boxame, boxamo, 0);
-    if (debug) {
-        boxaPlotSides(boxas, NULL, NULL, NULL, NULL, NULL, &pix1, diagspec);
+    if (diagspec) {
+        boxaPlotSides(boxas, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/smooth/plotsides1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSides(boxad, NULL, NULL, NULL, NULL, NULL, &pix1, diagspec);
+        boxaPlotSides(boxad, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/smooth/plotsides2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxas, NULL, NULL, NULL, &pix1, diagspec);
+        boxaPlotSizes(boxas, NULL, diagspec, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/smooth/plotsizes1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxad, NULL, NULL, NULL, &pix1, diagspec);
+        boxaPlotSizes(boxad, NULL, diagspec, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/smooth/plotsizes2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
     }
@@ -203,7 +203,7 @@ PIX     *pix1;
 BOXA *
 boxaWindowedMedian(BOXA    *boxas,
                    l_int32  halfwin,
-                   l_int32  debug)
+                   LDIAG_CTX diagspec)
 {
 l_int32  n, i, left, top, right, bot;
 BOX     *box;
@@ -223,7 +223,7 @@ PIX     *pix1;
     }
 
         /* Fill invalid boxes in the input sequence */
-    if ((boxaf = boxaFillSequence(boxas, L_USE_ALL_BOXES, debug)) == NULL)
+    if ((boxaf = boxaFillSequence(boxas, L_USE_ALL_BOXES, diagspec)) == NULL)
         return (BOXA *)ERROR_PTR("filled boxa not made", __func__, NULL);
 
         /* Get the windowed median output from each of the sides */
@@ -244,18 +244,18 @@ PIX     *pix1;
         boxaAddBox(boxad, box, L_INSERT);
     }
 
-    if (debug) {
+    if (diagspec) {
         lept_mkdir("lept/windowed");
-        boxaPlotSides(boxaf, NULL, NULL, NULL, NULL, NULL, &pix1, diagspec);
+        boxaPlotSides(boxaf, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsides1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSides(boxad, NULL, NULL, NULL, NULL, NULL, &pix1, diagspec);
+        boxaPlotSides(boxad, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsides2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxaf, NULL, NULL, NULL, &pix1, diagspec);
+        boxaPlotSizes(boxaf, NULL, diagspec, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsizes1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxad, NULL, NULL, NULL, &pix1, diagspec);
+        boxaPlotSizes(boxad, NULL, diagspec, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsizes2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
     }
@@ -839,8 +839,9 @@ PIX     *pix;
     if (pixadb) {
         l_int32 ndb = pixaGetCount(pixadb);
         if (ndb == 0 || ndb == 5) {  /* first of even and odd box sets */
+			LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixadb);
             adjustSidePlotName(buf, sizeof(buf), "init", select);
-            boxaPlotSides(boxas, buf, NULL, NULL, NULL, NULL, &pix);
+            boxaPlotSides(boxas, buf, diagspec, NULL, NULL, NULL, NULL, &pix);
             pixaAddPix(pixadb, pix, L_INSERT);
         }
     }
@@ -890,8 +891,9 @@ PIX     *pix;
     }
 
     if (pixadb) {
-        adjustSidePlotName(buf, sizeof(buf), "final", select);
-        boxaPlotSides(boxad, buf, NULL, NULL, NULL, NULL, &pix);
+		LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixadb);
+		adjustSidePlotName(buf, sizeof(buf), "final", select);
+        boxaPlotSides(boxad, buf, diagspec, NULL, NULL, NULL, NULL, &pix);
         pixaAddPix(pixadb, pix, L_INSERT);
     }
     return boxad;
@@ -1234,12 +1236,12 @@ NUMA      *naind, *nadelw, *nadelh;
 l_ok
 boxaPlotSides(BOXA        *boxa,
               const char  *plotname,
+	          LDIAG_CTX    diagspec,
               NUMA       **pnal,
               NUMA       **pnat,
               NUMA       **pnar,
               NUMA       **pnab,
-              PIX        **ppixd,
-	          LDIAG_CTX    diagspec)
+              PIX        **ppixd)
 {
 char            buf[128], titlebuf[128];
 char           *dataname;
@@ -1300,7 +1302,7 @@ NUMA           *nal, *nat, *nar, *nab;
     *ppixd = gplotMakeOutputPix(gplot);
     gplotDestroy(&gplot);
 
-    if (debugprint) {
+    if (diagspec) {
         dataname = (plotname) ? stringNew(plotname) : stringNew("no_name");
         numaGetMedian(nal, &med);
         numaGetMeanDevFromMedian(nal, med, &dev);
@@ -1366,10 +1368,10 @@ NUMA           *nal, *nat, *nar, *nab;
 l_ok
 boxaPlotSizes(BOXA        *boxa,
               const char  *plotname,
+	          LDIAG_CTX    diagspec,
               NUMA       **pnaw,
               NUMA       **pnah,
-              PIX        **ppixd,
-	          LDIAG_CTX    diagspec)
+              PIX        **ppixd)
 {
 char            buf[128], titlebuf[128];
 static l_int32  plotid = 0;

@@ -1869,7 +1869,8 @@ PIXCMAP  *cmap;
     pixSetColormap(pixd, cmap);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    return pixd;
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	return pixd;
 }
 
 
@@ -1986,6 +1987,7 @@ l_uint32  *tab, *datas, *datad, *lines, *lined;
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Use a table to convert 2 src bits at a time */
     tab = (l_uint32 *)LEPT_CALLOC(4, sizeof(l_uint32));
@@ -2059,6 +2061,7 @@ l_uint32  *datas, *datad, *lines, *lined;
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
     val[0] = val0;
     val[1] = val1;
@@ -2165,6 +2168,7 @@ l_uint32  *datas, *datad, *lines, *lined;
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Use a table to convert 8 src bits to 16 dest bits */
     tab = (l_uint16 *)LEPT_CALLOC(256, sizeof(l_uint16));
@@ -2284,6 +2288,7 @@ l_uint32  *tab, *datas, *datad, *lines, *lined;
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Use a table to convert 8 src bits to 32 bit dest word */
     tab = (l_uint32 *)LEPT_CALLOC(256, sizeof(l_uint32));
@@ -2403,7 +2408,8 @@ l_uint32  *tab, *datas, *datad, *lines, *lined;
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-    pixSetPadBits(pixs, 0);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixSetPadBits(pixs, 0);
 
         /* Use a table to convert 4 src bits at a time */
     tab = (l_uint32 *)LEPT_CALLOC(16, sizeof(l_uint32));

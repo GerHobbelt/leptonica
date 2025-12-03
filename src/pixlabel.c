@@ -350,7 +350,7 @@ pixConnCompIncrAdd(PIX       *pixs,
                    l_int32   *pncc,
                    l_float32  x,
                    l_float32  y,
-                   l_int32    debug)
+                   LDIAG_CTX  diagspec)
 {
 l_int32   conn, i, j, w, h, count, nvals, ns, firstindex;
 l_uint32  val;
@@ -401,7 +401,8 @@ PTA      *ptas, *ptad;
     pixSetPixel(pixs, x, y, firstindex);
     ptaaAddPt(ptaa, neigh[0], x, y);
     if (nvals == 1) {
-        if (debug == 1)
+		// TODO: should we re-do the debug level checks?
+        if (diagspec)
             lept_stderr("nvals = %d: neigh = (%d)\n", nvals, neigh[0]);
         LEPT_FREE(neigh);
         return 0;
@@ -415,18 +416,21 @@ PTA      *ptas, *ptad;
          *      first component, and
          *  (b) save the pixel locations in the pta for the first component. */
     if (nvals == 2) {
-        if (debug >= 1 && debug <= 2) {
+		// TODO: should we re-do the debug level checks?
+		if (diagspec) {
             lept_stderr("nvals = %d: neigh = (%d,%d)\n", nvals,
                         neigh[0], neigh[1]);
         }
     } else if (nvals == 3) {
-        if (debug >= 1 && debug <= 3) {
-            lept_stderr("nvals = %d: neigh = (%d,%d,%d)\n", nvals,
+		// TODO: should we re-do the debug level checks?
+		if (diagspec) {
+			lept_stderr("nvals = %d: neigh = (%d,%d,%d)\n", nvals,
                         neigh[0], neigh[1], neigh[2]);
         }
     } else {  /* nvals == 4 */
-        if (debug >= 1 && debug <= 4) {
-            lept_stderr("nvals = %d: neigh = (%d,%d,%d,%d)\n", nvals,
+		// TODO: should we re-do the debug level checks?
+		if (diagspec) {
+			lept_stderr("nvals = %d: neigh = (%d,%d,%d,%d)\n", nvals,
                         neigh[0], neigh[1], neigh[2], neigh[3]);
         }
     }

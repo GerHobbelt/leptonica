@@ -71,6 +71,13 @@ l_float32  fcolor;
 PIX       *pix1, *pix2, *pix3, *pix4;
 PIXA      *pixadb;
 
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/color");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "find_colorregions");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
     setLeptDebugOK(1);
     lept_mkdir("lept/color");
     pix1 = pixRead(DEMOPATH("colorpage.030.jpg"));
@@ -78,6 +85,7 @@ PIXA      *pixadb;
 
         /* More general method */
     pixadb = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixadb, diagspec);
     pixFindColorRegions(pix1, NULL, 4, 200, 60, 10, 90, 0.05,
                         &fcolor, &pix3, &pix4, pixadb);
     lept_stderr("ncolor = %f\n", fcolor);
@@ -214,6 +222,15 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
     if (lightthresh < 0) lightthresh = 220;
     if (mindiff < 0) mindiff = 50;
     if (colordiff < 0) colordiff = 40;
+
+
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = NULL;
+	if (pixadb) {
+		diagspec = pixaGetDiagnosticsSpec(pixadb);
+		if (!diagspec)
+			diagspec = pixGetDiagnosticsSpecFromAny(pixs, pixm, NULL);
+	}
 
         /* Check if pixm covers most of the image.  If so, just return. */
     pixGetDimensions(pixs, &w, &h, NULL);

@@ -56,6 +56,13 @@ l_int32  d;
     if (argc != 2)
         return ERROR_INT(" Syntax:  scaletest2 filein", __func__, 1);
 
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/scale");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "scaletest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
     setLeptDebugOK(1);
     lept_mkdir("lept/scale");
 

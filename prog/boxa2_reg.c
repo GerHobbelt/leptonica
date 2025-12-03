@@ -188,9 +188,10 @@ L_REGPARAMS  *rp;
         /* Plot the results */
     if (noutw > 0 || nouth > 0) {
         pixa1 = pixaCreate(2);
-        boxaPlotSizes(boxae, "even", NULL, NULL, &pix1, diagspec);
+		pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+        boxaPlotSizes(boxae, "even", rp->diag_spec, NULL, NULL, &pix1);
         pixaAddPix(pixa1, pix1, L_INSERT);
-        boxaPlotSizes(boxao, "odd", NULL, NULL, &pix1, diagspec);
+        boxaPlotSizes(boxao, "odd", rp->diag_spec, NULL, NULL, &pix1);
         pixaAddPix(pixa1, pix1, L_INSERT);
         pix1 = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 30, 2);
         regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */

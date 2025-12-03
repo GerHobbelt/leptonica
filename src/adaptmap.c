@@ -543,7 +543,8 @@ PIX       *pixmr, *pixmg, *pixmb, *pixmri, *pixmgi, *pixmbi;
     if (!pixd)
         ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
-    return pixd;
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	return pixd;
 }
 
 
@@ -623,7 +624,8 @@ PIX     *pixm;
         return ERROR_INT("pixm not made", __func__, 1);
     *ppixd = pixGetInvBackgroundMap(pixm, bgval, smoothx, smoothy);
     pixCopyResolution(*ppixd, pixs);
-    pixDestroy(&pixm);
+	pixCloneDiagnosticsSpec(*ppixd, pixs);
+	pixDestroy(&pixm);
     return 0;
 }
 
@@ -771,7 +773,8 @@ PIX     *pixm;
         return ERROR_INT("pixm not made", __func__, 1);
     *ppixd = pixGetInvBackgroundMap(pixm, bgval, 0, 0);
     pixCopyResolution(*ppixd, pixs);
-    pixDestroy(&pixm);
+	pixCloneDiagnosticsSpec(*ppixd, pixs);
+	pixDestroy(&pixm);
     return 0;
 }
 
@@ -1040,7 +1043,8 @@ PIX       *pixd, *piximi, *pixb, *pixf, *pixims;
 
     *ppixd = pixd;
     pixCopyResolution(*ppixd, pixs);
-    return 0;
+	pixCloneDiagnosticsSpec(*ppixd, pixs);
+	return 0;
 }
 
 
@@ -1235,7 +1239,10 @@ PIX       *pixmr, *pixmg, *pixmb;
     pixCopyResolution(*ppixmr, pixs);
     pixCopyResolution(*ppixmg, pixs);
     pixCopyResolution(*ppixmb, pixs);
-    return 0;
+	pixCloneDiagnosticsSpec(*ppixmr, pixs);
+	pixCloneDiagnosticsSpec(*ppixmg, pixs);
+	pixCloneDiagnosticsSpec(*ppixmb, pixs);
+	return 0;
 }
 
 
@@ -1322,7 +1329,8 @@ PIX       *pixm, *pix1, *pix2, *pix3, *pixims;
 
     *ppixm = pixm;
     pixCopyResolution(*ppixm, pixs);
-    return 0;
+	pixCloneDiagnosticsSpec(*ppixm, pixs);
+	return 0;
 }
 
 
@@ -1451,7 +1459,10 @@ PIX       *pixm, *pixmr, *pixmg, *pixmb, *pix1, *pix2, *pix3, *pixims;
     pixCopyResolution(*ppixmr, pixs);
     pixCopyResolution(*ppixmg, pixs);
     pixCopyResolution(*ppixmb, pixs);
-    return 0;
+	pixCloneDiagnosticsSpec(*ppixmr, pixs);
+	pixCloneDiagnosticsSpec(*ppixmg, pixs);
+	pixCloneDiagnosticsSpec(*ppixmb, pixs);
+	return 0;
 }
 
 
@@ -1632,7 +1643,8 @@ PIX      *pixd;
     }
 
     pixCopyResolution(pixd, pixs);
-    return pixd;
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	return pixd;
 }
 
 
@@ -1898,7 +1910,8 @@ PIX       *pixsm, *pixd;
 
     pixDestroy(&pixsm);
     pixCopyResolution(pixd, pixs);
-    return pixd;
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	return pixd;
 }
 
 
@@ -1941,7 +1954,8 @@ PIX       *pixd;
     pixGetDimensions(pixm, &wm, &hm, NULL);
     if ((pixd = pixCreateTemplate(pixs)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-    datad = pixGetData(pixd);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     for (i = 0; i < hm; i++) {
         lines = datas + sy * i * wpls;
@@ -2118,7 +2132,8 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     }
     pixCopyResolution(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
@@ -2713,7 +2728,9 @@ PIX     *pixmin1, *pixmax1, *pixmin2, *pixmax2;
     }
     pixCopyResolution(*ppixmin, pixs);
     pixCopyResolution(*ppixmax, pixs);
-    pixDestroy(&pixmin2);
+	pixCloneDiagnosticsSpec(*ppixmin, pixs);
+	pixCloneDiagnosticsSpec(*ppixmax, pixs);
+	pixDestroy(&pixmin2);
     pixDestroy(&pixmax2);
 
     return 0;

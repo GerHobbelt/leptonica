@@ -2020,7 +2020,7 @@ NUMA    *na;
  */
 l_ok
 recogDebugAverages(L_RECOG  *recog,
-                   l_int32   debug)
+                   LDIAG_CTX diagspec)
 {
 l_int32    i, j, n, np, index;
 l_float32  score;
@@ -2055,7 +2055,8 @@ PIXAA     *paa1, *paa2;
             recogIdentifyPix(recog, pix1, &pix2);
             rchExtract(recog->rch, &index, &score, NULL, NULL, NULL,
                        NULL, NULL);
-            if (debug >= 2)
+			// TODO: should we re-do the debug level checks?
+			if (diagspec)
                 lept_stderr("index = %d, score = %7.3f\n", index, score);
             pix3 = pixAddBorder(pix2, 2, 1);
             pixaAddPix(pixa, pix3, L_INSERT);
@@ -2066,7 +2067,8 @@ PIXAA     *paa1, *paa2;
         pixaDestroy(&pixat);
     }
     recog->pixdb_ave = pixaaDisplayByPixa(paa2, 50, 1.0, 20, 20, 0);
-    if (debug % 2) {
+	// TODO: should we re-do the debug level checks?
+	if (diagspec) {
         lept_mkdir("lept/recog");
         pixWriteDebug("/tmp/lept/recog/templ_match.png", recog->pixdb_ave,
                       IFF_PNG);

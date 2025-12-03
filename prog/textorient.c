@@ -89,7 +89,7 @@ PIX         *pixs, *pixd;
     setLeptDebugOK(1);
 
     pixs = pixRead(filein);
-    pixd = pixOrientCorrect(pixs, minupconf, minratio, NULL, NULL, NULL, 1);
+    pixd = pixOrientCorrect(pixs, minupconf, minratio, NULL, NULL, NULL, diagspec);
 
     pixformat = pixChooseOutputFormat(pixd);
     snprintf(buf, BUF_SIZE, "%s.%s", fileout,

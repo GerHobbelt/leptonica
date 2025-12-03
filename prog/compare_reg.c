@@ -93,7 +93,7 @@ L_REGPARAMS  *rp;
         /* Get the best correlation, searching around the translation
          * where the centroids coincide */
     pixBestCorrelation(pix1, pix2, area1, area2, etransx, etransy,
-                       4, stab, &delx, &dely, &score, 5);
+                       4, stab, &delx, &dely, &score, rp->diag_spec);
     lept_stderr("delx = %d, dely = %d, score = %7.4f\n", delx, dely, score);
     regTestCompareValues(rp, 32, delx, 0);   /* 0 */
     regTestCompareValues(rp, 12, dely, 0);   /* 1 */
@@ -113,7 +113,7 @@ L_REGPARAMS  *rp;
     pix1 = pixRead(DEMOPATH("harmoniam-11.tif"));
     pix2 = pixTranslate(NULL, pix1, -45, 25, L_BRING_IN_WHITE);
     l_pdfSetDateAndVersion(0);
-    pixCompareWithTranslation(pix1, pix2, 160, &delx, &dely, &score, 1);
+    pixCompareWithTranslation(pix1, pix2, 160, &delx, &dely, &score, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     lept_stderr("delx = %d, dely = %d\n", delx, dely);

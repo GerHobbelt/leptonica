@@ -1398,6 +1398,7 @@ DPIX       *dpix;
     pixGetDimensions(pixs, &w, &h, NULL);
     if ((dpix = dpixCreate(w, h)) ==  NULL)
         return (DPIX *)ERROR_PTR("dpix not made", __func__, NULL);
+	dpixSetDiagnosticsSpec(dpix, pixGetDiagnosticsSpec(pixs));
 
     datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
@@ -1586,6 +1587,7 @@ PIX       *pixt, *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     }
     pixCopyResolution(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
     wpld = pixGetWpl(pixd);
     wplt = pixGetWpl(pixt);

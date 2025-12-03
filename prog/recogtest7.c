@@ -101,7 +101,7 @@ L_RECOG  *recog1, *recog2;
 
 #if 1
     lept_stderr("\nShow averaged samples\n");
-    recogAverageSamples(recog1, 1);
+    recogAverageSamples(recog1, diagspec);
     recogShowAverageTemplates(recog1);
     pix1 = pixaGetPix(recog1->pixadb_ave, 0, L_CLONE);
     pixWrite("/tmp/lept/digits/unscaled_ave.png", pix1, IFF_PNG);

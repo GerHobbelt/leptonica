@@ -273,7 +273,7 @@ void  *item;
  * \return  count, or 0 on error
  */
 l_int32
-lqueueGetCount(L_QUEUE  *lq)
+lqueueGetCount(const L_QUEUE  *lq)
 {
     if (!lq)
         return ERROR_INT("lq not defined", __func__, 0);

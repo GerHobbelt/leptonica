@@ -81,7 +81,7 @@ L_RECOG  *recog;
     recogAverageSamples(recog, 0);
 
         /* Show the templates */
-    recogDebugAverages(recog, 1);
+    recogDebugAverages(recog, diagspec);
     recogShowMatchesInRange(recog, recog->pixa_tr, 0.0, 1.0, 1);
 
         /* Get a set of problem images to decode */

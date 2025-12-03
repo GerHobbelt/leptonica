@@ -662,9 +662,8 @@ char      *text;
         if ((text = pixGetText(pix)) != NULL)
             LEPT_FREE(text);
 
-		LDIAG_CTX diag_spec = pixGetDiagnosticsSpec(pix);
-		if (diag_spec != NULL)
-			leptDestroyDiagnoticsSpecInstance(&diag_spec);
+		if (pix->diag_spec != NULL)
+			leptDestroyDiagnoticsSpecInstance(&pix->diag_spec);
 
         pixDestroyColormap(pix);
         LEPT_FREE(pix);

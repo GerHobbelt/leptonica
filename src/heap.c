@@ -270,7 +270,7 @@ void   *item;
  * \return  count, or 0 on error
  */
 l_int32
-lheapGetCount(L_HEAP  *lh)
+lheapGetCount(const L_HEAP  *lh)
 {
     if (!lh)
         return ERROR_INT("lh not defined", __func__, 0);

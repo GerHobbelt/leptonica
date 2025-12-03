@@ -692,10 +692,10 @@ DLLIST  *cell;
  * \return  number of elements; 0 if no list or on error
  */
 l_int32
-listGetCount(DLLIST  *head)
+listGetCount(const DLLIST  *head)
 {
 l_int32  count;
-DLLIST  *elem;
+const DLLIST  *elem;
 
     if (!head)
         return ERROR_INT("head not defined", __func__, 0);

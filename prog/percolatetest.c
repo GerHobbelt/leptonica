@@ -63,6 +63,13 @@ PTAA    *ptaa;
         return 1;
     }
 
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/perc");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "percolatetest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
     setLeptDebugOK(1);
     lept_mkdir("lept/perc");
 
@@ -74,7 +81,7 @@ PTAA    *ptaa;
     srand(26);
     for (i = 0; i < 50; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, 2);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, diagspec);
         npta = ptaaGetCount(ptaa);
         lept_stderr("x,y = (%d,%d), num c.c. = %d, num pta = %d\n",
                     x, y, ncc, npta);
@@ -98,7 +105,7 @@ PTAA    *ptaa;
     srand(26);
     for (i = 0; i < 50; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, 2);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, diagspec);
         npta = ptaaGetCount(ptaa);
         lept_stderr("x,y = (%d,%d), num c.c. = %d, num pta = %d\n",
                     x, y, ncc, npta);
@@ -123,7 +130,7 @@ PTAA    *ptaa;
     srand(26);
     for (i = 0; i < 700; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, 2);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, diagspec);
         numaAddNumber(na1, ncc);
         npta = ptaaGetCount(ptaa);
         if (i < 100) {
@@ -156,7 +163,7 @@ PTAA    *ptaa;
     srand(26);
     for (i = 0; i < 700; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, 2);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, diagspec);
         numaAddNumber(na1, ncc);
         npta = ptaaGetCount(ptaa);
         if (i < 100) {
@@ -189,7 +196,7 @@ PTAA    *ptaa;
     srand(26);
     for (i = 0; i < 20000; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, 3);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, diagspec);
         npta = ptaaGetCount(ptaa);
         numaAddNumber(na1, ncc);
         if (i % 500 == 1) {
@@ -220,7 +227,7 @@ PTAA    *ptaa;
     lept_stderr("ncc = %d, npta = %d\n", ncc, ptaaGetCount(ptaa));
     for (i = 0; i < 20000; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, 3);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, diagspec);
         npta = ptaaGetCount(ptaa);
         numaAddNumber(na1, ncc);
         if (i % 500 == 1) {
@@ -251,7 +258,7 @@ PTAA    *ptaa;
     lept_stderr("ncc = %d, npta = %d\n", ncc, ptaaGetCount(ptaa));
     for (i = 0; i < 20000; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, 3);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, diagspec);
         npta = ptaaGetCount(ptaa);
         numaAddNumber(na1, ncc);
         if (i % 500 == 1) {

@@ -99,14 +99,22 @@ const char    *filein, *fileout;
         sel_size = atoi(argv[5]);
         final_colors = atoi(argv[6]);
     }
-    setLeptDebugOK(1);
+
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/colorseg");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "colorsegtest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
+	setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
     startTimer();
     pixt = pixRemoveColormap(pixs, REMOVE_CMAP_BASED_ON_SRC);
     pixd = pixColorSegment(pixt, max_dist, max_colors, sel_size,
-                           final_colors, 1);
+                           final_colors, diagspec);
     lept_stderr("Time to segment: %7.3f sec\n", stopTimer());
     pixWrite(fileout, pixd, IFF_PNG);
 

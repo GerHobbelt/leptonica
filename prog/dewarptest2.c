@@ -67,7 +67,15 @@ PIX        *pixs, *pixn, *pixg, *pixb, *pixd;
     if (argc != 2 && argc != 4)
         return ERROR_INT("Syntax: dewarptest2 method [image pageno]",
                          __func__, 1);
-    if (argc == 2) {
+
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/dewarp");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "dewarptest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
+	if (argc == 2) {
         pixs = pixRead(DEMOPATH("cat.035.jpg"));
         pageno = 35;
     }
@@ -83,7 +91,7 @@ PIX        *pixs, *pixn, *pixg, *pixb, *pixd;
     lept_mkdir("lept/dewarp");
 
     if (method == 1) {  /* Use single page dewarp function */
-        dewarpSinglePage(pixs, 0, 1, 1, 0, &pixd, NULL, 1);
+        dewarpSinglePage(pixs, 0, 1, 1, 0, &pixd, NULL, diagspec);
     } else {  /* Break down into multiple steps; require min of only 8 lines */
         dewa = dewarpaCreate(40, 30, 1, 8, 50);
         dewarpaUseBothArrays(dewa, 1);

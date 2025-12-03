@@ -60,7 +60,7 @@ static const l_int32  LEVEL_IN_OCTCUBE = 4;
 
 static l_int32 pixColorSegmentTryCluster(PIX *pixd, PIX *pixs,
                                          l_int32 maxdist, l_int32 maxcolors,
-                                         l_int32 debugflag);
+                                         LDIAG_CTX diagspec);
 
 /*------------------------------------------------------------------*
  *                 Unsupervised color segmentation                  *
@@ -73,7 +73,7 @@ static l_int32 pixColorSegmentTryCluster(PIX *pixd, PIX *pixs,
  * \param[in]    maxcolors max number of colors allowed in first pass
  * \param[in]    selsize linear size of sel for closing to remove noise
  * \param[in]    finalcolors max number of final colors allowed after 4th pass
- * \param[in]    debugflag  1 for debug output; 0 otherwise
+ * \param[in]    diagspec  non-NULL for debug output; NULL otherwise
  * \return  pixd 8 bit with colormap, or NULL on error
  *
  * <pre>
@@ -135,7 +135,7 @@ pixColorSegment(PIX     *pixs,
                 l_int32  maxcolors,
                 l_int32  selsize,
                 l_int32  finalcolors,
-                l_int32  debugflag)
+                LDIAG_CTX diagspec)
 {
 l_int32   *countarray;
 PIX       *pixd;
@@ -146,10 +146,10 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("must be rgb color", __func__, NULL);
 
         /* Phase 1; original segmentation */
-    pixd = pixColorSegmentCluster(pixs, maxdist, maxcolors, debugflag);
+    pixd = pixColorSegmentCluster(pixs, maxdist, maxcolors, diagspec);
     if (!pixd)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-    if (debugflag) {
+    if (diagspec) {
         lept_mkdir("lept/segment");
         pixWriteDebug("/tmp/lept/segment/colorseg1.png", pixd, IFF_PNG);
     }
@@ -157,13 +157,13 @@ PIX       *pixd;
         /* Phase 2; refinement in pixel assignment */
     countarray = (l_int32 *)LEPT_CALLOC(256, sizeof(l_int32));
     pixAssignToNearestColor(pixd, pixs, NULL, LEVEL_IN_OCTCUBE, countarray);
-    if (debugflag)
+    if (diagspec)
         pixWriteDebug("/tmp/lept/segment/colorseg2.png", pixd, IFF_PNG);
 
         /* Phase 3: noise removal by separately closing each color */
     pixColorSegmentClean(pixd, selsize, countarray);
     LEPT_FREE(countarray);
-    if (debugflag)
+    if (diagspec)
         pixWriteDebug("/tmp/lept/segment/colorseg3.png", pixd, IFF_PNG);
 
         /* Phase 4: removal of colors with small population and
@@ -179,7 +179,7 @@ PIX       *pixd;
  * \param[in]    pixs  32 bpp; 24-bit color
  * \param[in]    maxdist max euclidean dist to existing cluster
  * \param[in]    maxcolors max number of colors allowed in first pass
- * \param[in]    debugflag  1 for debug output; 0 otherwise
+ * \param[in]    diagspec  non-NULL for debug output; NULL otherwise
  * \return  pixd 8 bit with colormap, or NULL on error
  *
  * <pre>
@@ -199,7 +199,7 @@ PIX *
 pixColorSegmentCluster(PIX     *pixs,
                        l_int32  maxdist,
                        l_int32  maxcolors,
-                       l_int32  debugflag)
+                       LDIAG_CTX diagspec)
 {
 l_int32   w, h, newmaxdist, ret, niters, ncolors, success;
 PIX      *pixd;
@@ -216,17 +216,18 @@ PIXCMAP  *cmap;
     cmap = pixcmapCreate(8);
     pixSetColormap(pixd, cmap);
     pixCopyResolution(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
 
     newmaxdist = maxdist;
     niters = 0;
     success = TRUE;
     while (1) {
         ret = pixColorSegmentTryCluster(pixd, pixs, newmaxdist,
-                                        maxcolors, debugflag);
+                                        maxcolors, diagspec);
         niters++;
         if (!ret) {
             ncolors = pixcmapGetCount(cmap);
-            if (debugflag)
+            if (diagspec)
                 L_INFO("Success with %d colors after %d iters\n", __func__,
                        ncolors, niters);
             break;
@@ -269,7 +270,7 @@ pixColorSegmentTryCluster(PIX     *pixd,
                           PIX     *pixs,
                           l_int32  maxdist,
                           l_int32  maxcolors,
-                          l_int32  debugflag)
+                          LDIAG_CTX diagspec)
 {
 l_int32    rmap[256], gmap[256], bmap[256];
 l_int32    w, h, wpls, wpld, i, j, k, found, ret, index, ncolors;
@@ -339,7 +340,7 @@ PIXCMAP   *cmap;
                     gsum[index] = gval;
                     bsum[index] = bval;
                 } else {
-                    if (debugflag) {
+                    if (diagspec) {
                         L_INFO("maxcolors exceeded for maxdist = %d\n",
                                __func__, maxdist);
                     }

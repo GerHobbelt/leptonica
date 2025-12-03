@@ -86,6 +86,13 @@ PIX       *pixs1, *pixs2, *pixd;
     pixd = NULL;
     fileout = argv[4];
 
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/comp");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "comparetest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
 	setLeptDebugOK(1);
 	lept_mkdir("lept/comp");
 

@@ -86,7 +86,7 @@ L_REGPARAMS  *rp;
         nar = pixReversalProfile(pixg, 0.8, L_VERTICAL_LINE,
                                  0, h - 1, mindif, 1, 1);
         naro = numaOpen(nar, 11);
-        pix1 = gplotSimplePix1(diagspec, naro, "lept/crop/reversals-open", "Reversals Opened");
+        pix1 = gplotSimplePix1(rp->diag_spec, naro, "lept/crop/reversals-open", "Reversals Opened");
         regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0,2 */
         narl = numaLowPassIntervals(naro, 0.1, 0.0);
         nart = numaThresholdEdges(naro, 0.1, 0.5, 0.0);
@@ -98,7 +98,7 @@ L_REGPARAMS  *rp;
         nai = pixAverageIntensityProfile(pixgi, 0.8, L_VERTICAL_LINE,
                                          0, h - 1, 1, 1);
         naio = numaOpen(nai, 11);
-        pix2 = gplotSimplePix1(diagspec, naio, "lept/crop/intensities-open", "Intensities Opened");
+        pix2 = gplotSimplePix1(rp->diag_spec, naio, "lept/crop/intensities-open", "Intensities Opened");
         regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1,3 */
         nait = numaThresholdEdges(naio, 0.4, 0.6, 0.0);
         numaDestroy(&nai);
@@ -145,12 +145,12 @@ L_REGPARAMS  *rp;
     pixGetDimensions(pixs, &w, &h, NULL);
     na1 = pixReversalProfile(pixs, 0.98, L_HORIZONTAL_LINE,
                                   0, h - 1, 40, 3, 3);
-    pix1 = gplotSimplePix1(diagspec, na1, "lept/crop/reversals", "Reversals");
+    pix1 = gplotSimplePix1(rp->diag_spec, na1, "lept/crop/reversals", "Reversals");
     numaDestroy(&na1);
 
     na1 = pixAverageIntensityProfile(pixs, 0.98, L_HORIZONTAL_LINE,
                                     0, h - 1, 1, 1);
-    pix2 = gplotSimplePix1(diagspec, na1, "lept/crop/intensities", "Intensities");
+    pix2 = gplotSimplePix1(rp->diag_spec, na1, "lept/crop/intensities", "Intensities");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 5 */
     numaDestroy(&na1);

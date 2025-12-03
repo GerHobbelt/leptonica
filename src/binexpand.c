@@ -98,7 +98,8 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, (l_float32)xfact, (l_float32)yfact);
-    wpld = pixGetWpl(pixd);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
 
     for (i = 0; i < h; i++) {
@@ -157,7 +158,8 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, (l_float32)factor, (l_float32)factor);
-    wpld = pixGetWpl(pixd);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
     if (factor == 2) {
         tab2 = makeExpandTab2x();

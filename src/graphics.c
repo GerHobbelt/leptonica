@@ -2591,7 +2591,8 @@ PIX       *pixd;
         pixd = pixCreate(w, h, 1);
 
     pixCopyResolution(pixd, pixs);
-    datad = pixGetData(pixd);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);

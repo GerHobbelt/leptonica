@@ -616,7 +616,7 @@ selaExtendArray(SELA  *sela)
  * \return  count, or 0 on error
  */
 l_int32
-selaGetCount(SELA  *sela)
+selaGetCount(const SELA  *sela)
 {
     if (!sela)
         return ERROR_INT("sela not defined", __func__, 0);

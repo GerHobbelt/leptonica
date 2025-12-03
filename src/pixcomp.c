@@ -1114,7 +1114,7 @@ pixacompAddBox(PIXAC   *pixac,
  * \return  count, or 0 if no pixa
  */
 l_int32
-pixacompGetCount(PIXAC  *pixac)
+pixacompGetCount(const PIXAC  *pixac)
 {
     if (!pixac)
         return ERROR_INT("pixac not defined", __func__, 0);

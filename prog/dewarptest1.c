@@ -63,6 +63,13 @@ L_DEWARPA  *dewa;
 PIX        *pixs, *pixn, *pixg, *pixb, *pixd, *pixt1, *pixt2;
 PIX        *pixs2, *pixn2, *pixg2, *pixb2, *pixd2;
 
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/dewmod");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "dewarptest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
     setLeptDebugOK(1);
     lept_mkdir("lept/model");
     lept_rmdir("lept/dewmod");
@@ -142,7 +149,7 @@ PIX        *pixs2, *pixn2, *pixg2, *pixb2, *pixd2;
         /* Apply the previous disparity model to this image */
     dew2 = dewarpCreate(pixb2, 7);
     dewarpaInsertDewarp(dewa, dew2);
-    dewarpaInsertRefModels(dewa, 0, 1);
+    dewarpaInsertRefModels(dewa, 0, diagspec);
     dewarpaInfo(stderr, dewa);
     dewarpaApplyDisparity(dewa, 7, pixg2, 200, 0, 0, &pixd2,
                           "/tmp/lept/model/dewarp_apply2.pdf");

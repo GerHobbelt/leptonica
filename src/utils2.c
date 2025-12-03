@@ -3299,7 +3299,7 @@ size_t   size;
 		dir_root_len = getPathRootLength(cdir);
 		dir += 4;
 		// skip / after /tmp if it exists:
-		if (is_separator(*dir))
+		if (leptIsSeparator(*dir))
 			dir++;
 		reldirlen = strlen(dir);
 	}
@@ -3324,7 +3324,7 @@ size_t   size;
         /* Convert to unix path separators, and remove the trailing
          * slash in the directory, except when dir == "/"  */
     dirlen = strlen(cdir);
-    if (is_separator(cdir[dirlen - 1]) && dirlen > dir_root_len) {
+    if (leptIsSeparator(cdir[dirlen - 1]) && dirlen > dir_root_len) {
         cdir[dirlen - 1] = '\0';
     }
 

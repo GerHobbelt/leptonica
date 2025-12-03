@@ -843,7 +843,7 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs1);
     pixScaleResolution(pixd, scale, scale);
 	pixCopyText(pixd, pixs1);
-	pixCloneDiagnosticsSpec(pixd, pixs1);
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(pixs1, pixs2, NULL));
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 

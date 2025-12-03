@@ -200,7 +200,7 @@ PIXA       *pixa, *pixadb;
 
   #if  RENDER_DEBUG
         /* Use debugflag == TRUE to see outlines of each component. */
-    pixadb = jbDataRender(data, TRUE);
+    pixadb = jbDataRender(data, diagspec);
         /* Write the debug pages out */
     npages = pixaGetCount(pixadb);
     for (i = 0; i < npages; i++) {

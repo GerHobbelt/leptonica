@@ -84,7 +84,7 @@ L_REGPARAMS  *rp;
             for (j = 0; j <= 6; j++) {
                 selsize = j;
                 pix1 = pixColorSegment(pixs, maxdist, maxcolors, selsize,
-                                       finalcolors, 0);
+                                       finalcolors, NULL /* rp->diag_spec */);
                 pixaAddPix(pixa, pix1, L_INSERT);
             }
         }
@@ -98,7 +98,7 @@ L_REGPARAMS  *rp;
     pixDestroy(&pixs);
 
     pixs = pixRead(DEMOPATH("wyom.jpg"));
-    pix1 = pixColorSegment(pixs, 50, 6, 6, 6, 0);
+    pix1 = pixColorSegment(pixs, 50, 6, 6, 6, NULL /* rp->diag_spec */);
     cmap = pixGetColormap(pix1);
     nc = pixcmapGetCount(cmap);
     cmapr = pixcmapCreateRandom(8, 0, 0);

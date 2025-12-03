@@ -378,6 +378,7 @@ PIXA    *pixa;
                 return (PIXA *)ERROR_PTR("pix1 not made", __func__, NULL);
             }
             pixCopyColormap(pix1, pixs);
+			pixCloneDiagnosticsSpec(pix1, pixs);
             if (borderwidth == 0) {  /* initialize full image to white */
                 if (d == 1)
                     pixClearAll(pix1);
@@ -426,8 +427,13 @@ PIXA    *pixa;
         for (i = 0; i < pixa->n; i++)
             pixDestroy(&pixa->pix[i]);
         LEPT_FREE(pixa->pix);
+		pixa->pix = NULL;
         boxaDestroy(&pixa->boxa);
-        LEPT_FREE(pixa);
+
+		if (pixa->diag_spec != NULL)
+			leptDestroyDiagnoticsSpecInstance(&pixa->diag_spec);
+
+		LEPT_FREE(pixa);
     }
 
     *ppixa = NULL;
@@ -633,7 +639,7 @@ size_t  oldsize, newsize;
  * \return  count, or 0 if no pixa
  */
 l_int32
-pixaGetCount(PIXA  *pixa)
+pixaGetCount(const PIXA  *pixa)
 {
     if (!pixa)
         return ERROR_INT("pixa not defined", __func__, 0);
@@ -651,7 +657,7 @@ pixaGetCount(PIXA  *pixa)
  * \return  pix, or NULL on error
  */
 PIX *
-pixaGetPix(PIXA    *pixa,
+pixaGetPix(const PIXA    *pixa,
            l_int32  index,
            l_int32  accesstype)
 {

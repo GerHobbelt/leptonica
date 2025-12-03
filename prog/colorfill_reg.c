@@ -66,7 +66,7 @@ L_REGPARAMS  *rp;
     pixDisplayWithTitle(pix2, 0, 0, NULL, rp->display);
     pixDestroy(&pix2);
     cf = l_colorfillCreate(pix1, 1, 1);
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 15, 3, 1, 1);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 15, 3, 1, rp->diag_spec);
     pix2 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     pix3 = pixExpandReplicate(pix2, 10);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1 */
@@ -85,7 +85,7 @@ L_REGPARAMS  *rp;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 2 */
     pixaAddPix(pixa2, pix2, L_INSERT);
     cf = l_colorfillCreate(pix2, 1, 1);  /* 1 tile */
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 500, 1, 1);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 500, 1, rp->diag_spec);
     pix3 = pixaDisplayTiledInColumns(cf->pixam, cf->nx, 1.0, 10, 1);
     pix4 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 3 */
@@ -95,7 +95,7 @@ L_REGPARAMS  *rp;
     l_colorfillDestroy(&cf);
 
     cf = l_colorfillCreate(pix2, 2, 2);  /* 4 tiles */
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 500, 1, 1);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 500, 1, rp->diag_spec);
     pix3 = pixaDisplayTiledInColumns(cf->pixam, cf->nx, 1.0, 10, 1);
     pix4 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 5 */
@@ -116,7 +116,7 @@ L_REGPARAMS  *rp;
     pix2 = pixScale(pix1, 0.5, 0.5);
     pixDestroy(&pix1);
     cf = l_colorfillCreate(pix2, 1, 1);  /* 1 tile */
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 100, 1, 1);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 100, 1, rp->diag_spec);
     pix3 = pixaDisplayTiledInColumns(cf->pixam, cf->nx, 1.0, 10, 1);
     pix4 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 7 */
@@ -135,7 +135,7 @@ L_REGPARAMS  *rp;
     pixaDestroy(&pixa2);
 
     cf = l_colorfillCreate(pix2, 3, 3);  /* 9 tiles */
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 100, 1, 1);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 100, 1, rp->diag_spec);
     pix3 = pixaDisplayTiledInColumns(cf->pixam, cf->nx, 1.0, 10, 1);
     pix4 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 10 */

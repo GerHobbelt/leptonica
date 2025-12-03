@@ -477,7 +477,7 @@ l_int32  i, n;
  * \return  count, or 0 if no pta
  */
 l_int32
-ptaGetCount(PTA  *pta)
+ptaGetCount(const PTA  *pta)
 {
     if (!pta)
         return ERROR_INT("pta not defined", __func__, 0);
@@ -1067,7 +1067,7 @@ size_t  oldsize, newsize;
  * \return  count, or 0 if no ptaa
  */
 l_int32
-ptaaGetCount(PTAA  *ptaa)
+ptaaGetCount(const PTAA  *ptaa)
 {
     if (!ptaa)
         return ERROR_INT("ptaa not defined", __func__, 0);

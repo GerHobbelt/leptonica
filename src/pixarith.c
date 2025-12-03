@@ -687,7 +687,9 @@ PIX       *pixd;
     if ((pixd = pixCreate(w, h, depth)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);  /* but how did pixs get it initially? */
-    datas = pixGetData(pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datas = pixGetData(pixs);
     datad = pixGetData(pixd);
     wpls = pixGetWpl(pixs);
     wpld = pixGetWpl(pixd);
@@ -760,7 +762,9 @@ PIX       *pixd;
     if ((pixd = pixCreate(w, h, 1)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);  /* but how did pixs get it initially? */
-    datas = pixGetData(pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datas = pixGetData(pixs);
     datad = pixGetData(pixd);
     wpls = pixGetWpl(pixs);
     wpld = pixGetWpl(pixd);
@@ -970,7 +974,8 @@ PIX       *pixd;
     if ((pixd = pixCreate(w, h, d)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs1);
-    datas1 = pixGetData(pixs1);
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(pixs1, pixs2, NULL));
+	datas1 = pixGetData(pixs1);
     datas2 = pixGetData(pixs2);
     datad = pixGetData(pixd);
     wpls1 = pixGetWpl(pixs1);
@@ -1071,7 +1076,8 @@ PIX       *pixc1, *pixc2, *pixd;
     h = L_MIN(h, h2);
     pixd = pixCreate(w, h, 32);
     pixCopyResolution(pixd, pixs1);
-    datac1 = pixGetData(pixc1);
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(pixs1, pixs2, NULL));
+	datac1 = pixGetData(pixc1);
     datac2 = pixGetData(pixc2);
     datad = pixGetData(pixd);
     wplc1 = pixGetWpl(pixc1);
@@ -1245,7 +1251,9 @@ PIX        *pixd;
     if ((pixd = pixCreate(w, h, 8)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
-    datas = pixGetData(pixs);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datas = pixGetData(pixs);
     datad = pixGetData(pixd);
     wpls = pixGetWpl(pixs);
     wpld = pixGetWpl(pixd);

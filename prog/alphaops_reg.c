@@ -92,7 +92,8 @@ L_REGPARAMS  *rp;
     /* ------------------------ (1) ----------------------------*/
         /* Blend with a white background */
     pix1 = pixRead(DEMOPATH("books_logo.png"));
-    pixDisplayWithTitle(pix1, 100, 0, NULL, rp->display);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixDisplayWithTitle(pix1, 100, 0, NULL, rp->display);
     pix2 = pixAlphaBlendUniform(pix1, 0xffffff00);
     pixDisplayWithTitle(pix2, 100, 150, NULL, rp->display);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
@@ -124,7 +125,8 @@ L_REGPARAMS  *rp;
          * layer by converting to 8 bpp.  A small convolution fuzzes
          * the mask edges so that you don't see the pixels. */
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
-    pixGetDimensions(pixs, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixGetDimensions(pixs, &w, &h, NULL);
     pixg = pixConvert1To8(NULL, pixs, 0, 255);
     pixg2 = pixBlockconvGray(pixg, NULL, 1, 1);
     regTestWritePixAndCheck(rp, pixg2, IFF_JFIF_JPEG);  /* 5 */
@@ -138,7 +140,8 @@ L_REGPARAMS  *rp;
          * background image, pixb, and do the blending with pixcs1
          * explicitly using the alpha layer pixg2. */
     pixc = pixRead(DEMOPATH("tetons.jpg"));
-    pixcs1 = pixScaleToSize(pixc, w, h);
+	pixSetDiagnosticsSpec(pixc, rp->diag_spec);
+	pixcs1 = pixScaleToSize(pixc, w, h);
     regTestWritePixAndCheck(rp, pixcs1, IFF_JFIF_JPEG);  /* 6 */
     pixDisplayWithTitle(pixcs1, 300, 0, "viewable", rp->display);
     pixb = pixCreateTemplate(pixcs1);  /* black */
@@ -169,8 +172,10 @@ L_REGPARAMS  *rp;
          * look the same when viewed through the alpha layer,
          * but have much better compression. */
     pix1 = pixRead("/tmp/lept/alpha/cs1.png");  /* just pixcs1 */
-    pix2 = pixRead("/tmp/lept/alpha/cs2.png");  /* cleaned under transparent */
-    n1 = nbytesInFile("/tmp/lept/alpha/cs1.png");
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixRead("/tmp/lept/alpha/cs2.png");  /* cleaned under transparent */
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	n1 = nbytesInFile("/tmp/lept/alpha/cs1.png");
     n2 = nbytesInFile("/tmp/lept/alpha/cs2.png");
     lept_stderr(" Original: %d bytes\n Cleaned: %d bytes\n", n1, n2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 9 */
@@ -207,17 +212,23 @@ L_REGPARAMS  *rp;
     box = boxCreate(0, 85, 600, 100);
     pixa = pixaCreate(6);
     pix1 = pixRead(DEMOPATH("blend-green1.jpg"));
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pix1 = pixRead(DEMOPATH("blend-green2.png"));
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pix1 = pixRead(DEMOPATH("blend-green3.png"));
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pix1 = pixRead(DEMOPATH("blend-orange.jpg"));
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pix1 = pixRead(DEMOPATH("blend-yellow.jpg"));
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pix1 = pixRead(DEMOPATH("blend-red.png"));
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     n = pixaGetCount(pixa);
     pixa2 = pixaCreate(n);
     pixa3 = pixaCreate(n);
@@ -247,8 +258,10 @@ L_REGPARAMS  *rp;
     /* ------------------------ (4) ----------------------------*/
         /* Use one image as the alpha component for a second image */
     pix1 = pixRead(DEMOPATH("test24.jpg"));
-    pix2 = pixRead(DEMOPATH("marge.jpg"));
-    pix3 = pixScale(pix2, 1.9, 2.2);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixRead(DEMOPATH("marge.jpg"));
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	pix3 = pixScale(pix2, 1.9, 2.2);
     pix4 = pixConvertTo8(pix3, 0);
     pixSetRGBComponent(pix1, pix4, L_ALPHA_CHANNEL);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 24 */
@@ -291,7 +304,8 @@ L_REGPARAMS  *rp;
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 27 */
     pixWrite("/tmp/lept/alpha/fourcomp.png", pix5, IFF_PNG);
     pix6 = pixRead("/tmp/lept/alpha/fourcomp.png");
-    regTestComparePix(rp, pix5, pix6);  /* 28 */
+	pixSetDiagnosticsSpec(pix6, rp->diag_spec);
+	regTestComparePix(rp, pix5, pix6);  /* 28 */
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -316,6 +330,7 @@ DoBlendTest(PIX *pix, BOX *box, l_uint32 color, l_float32 gamma,
 PIX   *pix1, *pix2, *pix3, *pixd;
 PIXA  *pixa;
   pixa = pixaCreate(5);
+  pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pix));
   pix1 = pixRemoveColormap(pix, REMOVE_CMAP_TO_FULL_COLOR);
   pix2 = pixCopy(NULL, pix1);
   pixaAddPix(pixa, pix2, L_COPY);

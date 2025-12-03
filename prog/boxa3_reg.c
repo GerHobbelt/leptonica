@@ -172,9 +172,10 @@ PIXA  *pixa;
     boxa1 = boxaRead(DEMOPATH(boxafiles[index]));
 
         /* Read and display initial boxa */
-    boxaPlotSizes(boxa1, NULL, NULL, NULL, &pix1, diagspec);
-    boxaPlotSides(boxa1, NULL, NULL, NULL, NULL, NULL, &pix2, diagspec);
+    boxaPlotSizes(boxa1, NULL, rp->diag_spec, NULL, NULL, &pix1);
+    boxaPlotSides(boxa1, NULL, rp->diag_spec, NULL, NULL, NULL, NULL, &pix2);
     pixa = pixaCreate(2);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
@@ -186,10 +187,11 @@ PIXA  *pixa;
         /* Read and display reconciled boxa */
     boxa2 = boxaReconcileSizeByMedian(boxa1, L_CHECK_BOTH, 0.05, 0.04, 1.03,
                                       NULL, NULL, NULL);
-    boxaPlotSizes(boxa2, NULL, NULL, NULL, &pix1, diagspec);
-    boxaPlotSides(boxa2, NULL, NULL, NULL, NULL, NULL, &pix2, diagspec);
+    boxaPlotSizes(boxa2, NULL, rp->diag_spec, NULL, NULL, &pix1);
+    boxaPlotSides(boxa2, NULL, rp->diag_spec, NULL, NULL, NULL, NULL, &pix2);
     pixa = pixaCreate(2);
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 40, 42, 44 */

@@ -84,7 +84,7 @@ static l_int32 colorsAreSimilarForFill(l_uint32 val1, l_uint32 val2,
                                        l_int32 maxdiff);
 static l_int32 pixelColorIsValid(l_uint32 val, l_int32 minmax);
 static l_int32 pixelIsOnColorBoundary(PIX *pixs, l_int32 x, l_int32 y);
-static l_int32 evalColorfillData(L_COLORFILL *cf, l_int32 debug);
+static l_int32 evalColorfillData(L_COLORFILL *cf, LDIAG_CTX diagspec);
 
 
 /*---------------------------------------------------------------------*
@@ -193,7 +193,7 @@ L_COLORFILL  *cf;
  * \param[in]    maxdiff   max component diff to be in same color region
  * \param[in]    minarea   min number of pixels for a color region
  * \param[in]    smooth    low-pass kernel size (1,3,5); use 1 to skip
- * \param[in]    debug     generates debug images and fill info
+ * \param[in]    diagspec  generates debug images and fill info
  * \return  0 if OK, 1 on error
  *
  * <pre>
@@ -227,7 +227,7 @@ pixColorContentByLocation(L_COLORFILL  *cf,
                           l_int32       maxdiff,
                           l_int32       minarea,
                           l_int32       smooth,
-                          l_int32       debug)
+                          LDIAG_CTX     diagspec)
 {
 l_int32    i, n;
 PIX       *pix1, *pix2, *pix3;
@@ -263,7 +263,7 @@ PIXA      *pixas, *pixam;
         /* Evaluate color components.  Find the average color in each
          * component and determine if there is more than one color in
          * each of the tiles. */
-    evalColorfillData(cf, debug);
+    evalColorfillData(cf, diagspec);
 
     return 0;
 }
@@ -843,7 +843,7 @@ l_uint32  val, neigh;
  */
 static l_int32
 evalColorfillData(L_COLORFILL  *cf,
-                  l_int32       debug)
+                  LDIAG_CTX     diagspec)
 {
 l_int32    i, j, n, nc, w, h, x, y, count;
 l_float32  rval, gval, bval;
@@ -870,7 +870,11 @@ PIXA      *pixa1;
         nc = pixaGetCount(pixa1);
         na = numaCreate(0);
         da = l_dnaCreate(0);
-        pixdb = (debug) ? pixCreate(w, h, 32) : NULL;
+		pixdb = NULL;
+		if (diagspec) {
+			pixdb = pixCreate(w, h, 32);
+			pixSetDiagnosticsSpec(pixdb, diagspec);
+		}
         for (j = 0; j < nc; j++) {
             pix2 = pixaGetPix(pixa1, j, L_COPY);
             box1 = pixaGetBox(pixa1, j, L_COPY);
@@ -882,7 +886,7 @@ PIXA      *pixa1;
             l_dnaAddNumber(da, pixel);
             pixCountPixels(pix2, &count, tab);
             numaAddNumber(na, count);
-            if (debug)
+            if (diagspec)
                 pixPaintThroughMask(pixdb, pix2, x, y, pixel);
             boxDestroy(&box1);
             pixDestroy(&pix2);
@@ -895,7 +899,7 @@ PIXA      *pixa1;
         pixaDestroy(&pixa1);
     }
 
-    if (debug) {  /* first tile */
+    if (diagspec) {  /* first tile */
         na = numaaGetNuma(cf->naa, 0, L_CLONE);
         lept_stderr("Size of components in tile 0:");
         numaWriteStderr(na);

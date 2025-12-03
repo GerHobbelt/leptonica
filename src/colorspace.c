@@ -505,7 +505,8 @@ PIX       *pixt, *pixd;
         /* Convert RGB image */
     pixd = pixCreate(w, h, 8);
     pixCopyResolution(pixd, pixs);
-    wplt = pixGetWpl(pixt);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	wplt = pixGetWpl(pixt);
     datat = pixGetData(pixt);
     wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
@@ -578,7 +579,8 @@ PIX       *pixt, *pixd;
         /* Convert RGB image */
     pixd = pixCreate(w, h, 8);
     pixCopyResolution(pixd, pixs);
-    wplt = pixGetWpl(pixt);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	wplt = pixGetWpl(pixt);
     datat = pixGetData(pixt);
     wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
@@ -641,7 +643,8 @@ PIX       *pixt, *pixd;
         /* Convert RGB image */
     pixd = pixCreate(w, h, 8);
     pixCopyResolution(pixd, pixs);
-    wplt = pixGetWpl(pixt);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	wplt = pixGetWpl(pixt);
     datat = pixGetData(pixt);
     wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
@@ -1732,11 +1735,14 @@ FPIXA      *fpixa;
     if (!pixs || pixGetDepth(pixs) != 32)
         return (FPIXA *)ERROR_PTR("pixs undefined or not rgb", __func__, NULL);
 
+	LDIAG_CTX spec = pixGetDiagnosticsSpec(pixs);
+
         /* Convert RGB image */
     pixGetDimensions(pixs, &w, &h, NULL);
     fpixa = fpixaCreate(3);
     for (i = 0; i < 3; i++) {
         fpix = fpixCreate(w, h);
+		fpixSetDiagnosticsSpec(fpix, spec);
         fpixaAddFPix(fpixa, fpix, L_INSERT);
     }
     wpls = pixGetWpl(pixs);

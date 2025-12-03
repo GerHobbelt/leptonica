@@ -69,7 +69,7 @@ L_REGPARAMS  *rp;
     pixs = pixRead(DEMOPATH("italic.png"));
 
         /* Basic functionality with debug flag */
-    pixItalicWords(pixs, NULL, NULL, &boxa1, 1);
+    pixItalicWords(pixs, NULL, NULL, &boxa1, rp->diag_spec);
     boxaWrite("/tmp/lept/ital/ital1.ba", boxa1);
     regTestCheckFile(rp, "/tmp/lept/ital/ital1.ba");  /* 0 */
     regTestCheckFile(rp, "/tmp/lept/ital/ital.3.pdf");  /* 1 */
@@ -101,13 +101,13 @@ L_REGPARAMS  *rp;
     pixDisplayWithTitle(pixm, 400, 550, "Word mask", rp->display);
 
         /* Re-run italic finder using the word mask */
-    pixItalicWords(pixs, NULL, pixm, &boxa2, 1);
+    pixItalicWords(pixs, NULL, pixm, &boxa2, rp->diag_spec);
     boxaWrite("/tmp/lept/ital/ital2.ba", boxa2);
     regTestCheckFile(rp, "/tmp/lept/ital/ital2.ba");  /* 7 */
 
         /* Re-run italic finder using word mask bounding boxes */
     boxa3 = pixConnComp(pixm, NULL, 8);
-    pixItalicWords(pixs, boxa3, NULL, &boxa4, 1);
+    pixItalicWords(pixs, boxa3, NULL, &boxa4, rp->diag_spec);
     boxaWrite("/tmp/lept/ital/ital3.ba", boxa3);
     regTestCheckFile(rp, "/tmp/lept/ital/ital3.ba");  /* 8 */
     boxaWrite("/tmp/lept/ital/ital4.ba", boxa4);

@@ -1016,6 +1016,7 @@ PIX            *pixt;
 
         /* Don't bother to plot if the images are the same */
     if (plottype && !same) {
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
         L_INFO("Images differ: output plots will be generated\n", __func__);
         na = pixGetGrayHistogram(pixt, 1);
         numaGetNonzeroRange(na, TINY, &first, &last);
@@ -1137,7 +1138,8 @@ PIX            *pixr, *pixg, *pixb;
 
         /* Don't bother to plot if the images are the same */
     if (plottype && !same) {
-        L_INFO("Images differ: output plots will be generated\n", __func__);
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+		L_INFO("Images differ: output plots will be generated\n", __func__);
         nar = pixGetGrayHistogram(pixr, 1);
         nag = pixGetGrayHistogram(pixg, 1);
         nab = pixGetGrayHistogram(pixb, 1);
@@ -1513,7 +1515,8 @@ NUMA       *nah, *nan, *nac;
     array = numaGetFArray(nan, L_NOCOPY);
 
     if (details) {
-        lept_mkdir("lept/comp");
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+		lept_mkdir("lept/comp");
         numaGetNonzeroRange(nan, 0.0, &first, &last);
         nac = numaClipToInterval(nan, first, last);
         gplotSimple1(diagspec, nac, GPLOT_PNG, "/tmp/lept/comp/histo",
@@ -2090,7 +2093,7 @@ PIX        *pix;
                 continue;
             numaGetIValue(naw, j, &w2);
             numaGetIValue(nah, j, &h2);
-            compareTilesByHisto(diagspec, n3a[i], n3a[j], minratio, w1, h1, w2, h2,
+            compareTilesByHisto(n3a[i], n3a[j], minratio, w1, h1, w2, h2,
                                 &score, NULL);
             scores[nim * i + j] = score;
             scores[nim * j + i] = score;  /* the score array is symmetric */
@@ -2285,7 +2288,7 @@ PIXA      *pixa;
         /* Compare histograms */
 	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
 	pixa = (debugflag) ? pixaCreate(0) : NULL;
-    compareTilesByHisto(diagspec, naa1, naa2, minratio, w1c, h1c, w2c, h2c, pscore, pixa);
+    compareTilesByHisto(naa1, naa2, minratio, w1c, h1c, w2c, h2c, pscore, pixa);
     pixaDestroy(&pixa);
     return 0;
 }
@@ -2468,7 +2471,9 @@ PIX       *pix1, *pixd;
     pixd = pixCreate(wd, hd, 8);
     pixSetAll(pixd);  /* to white */
     pixCopyResolution(pixd, pixs);
-    pixRasterop(pixd, xs, ys, ws, hs, PIX_SRC, pix1, 0, 0);
+	pixCopyText(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	pixRasterop(pixd, xs, ys, ws, hs, PIX_SRC, pix1, 0, 0);
     pixDestroy(&pix1);
     return pixd;
 }
@@ -2592,6 +2597,7 @@ NUMA      *na1, *na2, *na3, *narv;
 NUMAA     *naa;
 PIX       *pix1;
 PIXA      *pixa1, *pixa2, *pixa3;
+LDIAG_CTX diagspec = NULL;
 
     if (!pnaa)
         return ERROR_INT("&naa not defined", __func__, 1);
@@ -2617,8 +2623,16 @@ PIXA      *pixa1, *pixa2, *pixa3;
         return ERROR_INT("invalid pix dimension", __func__, 1);
     findHistoGridDimensions(n, w, h, &nx, &ny, 1);
 
+	if (pixadebug) {
+		diagspec = pixaGetDiagnosticsSpec(pixadebug);
+	}
+	if (!diagspec) {
+		diagspec = pixGetDiagnosticsSpec(pix);
+	}
+
         /* Evaluate histograms in each tile */
     pixa1 = pixaSplitPix(pix, nx, ny, 0, 0);
+	pixaSetDiagnosticsSpec(pixa1, diagspec);
     ngrids = nx * ny;
     bmf = (pixadebug) ? bmfCreate(NULL, 6) : NULL;
     naa = numaaCreate(ngrids);
@@ -2628,6 +2642,7 @@ PIXA      *pixa1, *pixa2, *pixa3;
     }
     for (i = 0; i < ngrids; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
+		pixSetDiagnosticsSpec(pix1, diagspec);
 
             /* Get histograms, set white count to 0, normalize max to 255 */
         na1 = pixGetGrayHistogram(pix1, factor);
@@ -2636,7 +2651,7 @@ PIXA      *pixa1, *pixa2, *pixa3;
         numaGetMax(na2, &maxval, NULL);
         na3 = numaTransform(na2, 0, 255.0 / maxval);
         if (pixadebug) {
-            snprintf(buf, sizeof(buf), "/tmp/lept/compplot/plot.%d", i);
+			snprintf(buf, sizeof(buf), "/tmp/lept/compplot/plot.%d", i);
             gplotSimple1(diagspec, na3, GPLOT_PNG, buf, "Histos");
         }
 
@@ -2649,6 +2664,8 @@ PIXA      *pixa1, *pixa2, *pixa3;
         pix1 = pixaDisplayTiledInColumns(pixa1, nx, 1.0, 30, 2);
         pixaAddPix(pixadebug, pix1, L_INSERT);
         pixa2 = pixaReadFiles("/tmp/lept/compplot", ".png");
+		pixaSetDiagnosticsSpec(pixa2, diagspec);
+		// TODO: clone the images straight from gplotSimple1() above: forego the round-trip via filesystem storage of the PNG files produced by the gplot logic.
         pixa3 = pixaScale(pixa2, 0.4f, 0.4f);
         pix1 = pixaDisplayTiledInColumns(pixa3, nx, 1.0, 30, 2);
         pixaAddPix(pixadebug, pix1, L_INSERT);
@@ -2783,7 +2800,7 @@ l_float32  ratio;
  * </pre>
  */
 l_ok
-compareTilesByHisto(LDIAG_CTX diagspec, NUMAA      *naa1,
+compareTilesByHisto(NUMAA      *naa1,
                     NUMAA      *naa2,
                     l_float32   minratio,
                     l_int32     w1,
@@ -2822,8 +2839,11 @@ NUMA      *na1, *na2, *nadist, *nascore;
         return 0;
     }
 
-    if (pixadebug) {
-        lept_rmdir("lept/comptile");
+	LDIAG_CTX diagspec = NULL;
+	if (pixadebug) {
+		diagspec = pixaGetDiagnosticsSpec(pixadebug);
+
+		lept_rmdir("lept/comptile");
         lept_mkdir("lept/comptile");
     }
 
@@ -3106,6 +3126,14 @@ PIXA      *pixa1, *pixa2;
     if (!pix1 || !pix2)
         return ERROR_INT("pix1 and pix2 not both defined", __func__, 1);
 
+	LDIAG_CTX diagspec = NULL;
+	if (pixadebug) {
+		diagspec = pixaGetDiagnosticsSpec(pixadebug);
+		if (!diagspec) {
+			diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+		}
+	}
+
         /* Determine grid from n */
     pixGetDimensions(pix1, &w, &h, NULL);
     findHistoGridDimensions(n, w, h, &nx, &ny, 1);
@@ -3160,6 +3188,8 @@ PIXA      *pixa1, *pixa2;
             pixaAddPix(pixa3, pix5, L_INSERT);
             pixaAddPix(pixa3, pix6, L_INSERT);
             pix7 = pixRead("/tmp/lept/comp/plot1.png");
+			pixSetDiagnosticsSpec(pix7, diagspec);
+			// TODO: grab the images straight from the gplotSimple2() call above: forego the round-trip via the filesystem..
             pix8 = pixScaleToSize(pix7, 700, 0);
             snprintf(buf, sizeof(buf), "%5.3f", score);
             pix9 = pixAddTextlines(pix8, bmf, buf, 0x0000ff00, L_ADD_RIGHT);

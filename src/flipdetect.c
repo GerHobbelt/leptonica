@@ -302,7 +302,7 @@ pixOrientCorrect(PIX        *pixs,
                  l_float32  *pupconf,
                  l_float32  *pleftconf,
                  l_int32    *protation,
-                 l_int32     debug)
+                 LDIAG_CTX   diagspec)
 {
 l_int32    orient;
 l_float32  upconf, leftconf;

@@ -250,7 +250,7 @@ leptCloneDiagnoticsSpecInstance(LDIAG_CTX spec)
 
 
 LDIAG_CTX
-pixGetDiagnosticsSpec(PIX* pixs)
+pixGetDiagnosticsSpec(const PIX* pixs)
 {
 	if (!pixs)
 		return (LDIAG_CTX)ERROR_PTR("pixs not defined", __func__, NULL);
@@ -260,7 +260,7 @@ pixGetDiagnosticsSpec(PIX* pixs)
 
 
 LDIAG_CTX
-pixGetDiagnosticsSpecFromAny(PIX* pix1, PIX* pix2, ...)
+pixGetDiagnosticsSpecFromAny(const PIX* pix1, const PIX* pix2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (pix1 != NULL)
@@ -276,7 +276,7 @@ pixGetDiagnosticsSpecFromAny(PIX* pix1, PIX* pix2, ...)
 		if (rv != NULL)
 			break;
 
-		pix2 = va_arg(ap, PIX *);
+		pix2 = va_arg(ap, const PIX *);
 	} while (pix2 != NULL);
 	va_end(ap);
 
@@ -350,7 +350,7 @@ pixCloneDiagnosticsSpec(PIX* pixd, const PIX* pixs)
 
 
 LDIAG_CTX
-fpixGetDiagnosticsSpec(FPIX* fpixs)
+fpixGetDiagnosticsSpec(const FPIX* fpixs)
 {
 	if (!fpixs)
 		return (LDIAG_CTX)ERROR_PTR("fpixs not defined", __func__, NULL);
@@ -360,7 +360,7 @@ fpixGetDiagnosticsSpec(FPIX* fpixs)
 
 
 LDIAG_CTX
-fpixGetDiagnosticsSpecFromAny(FPIX* pix1, FPIX* pix2, ...)
+fpixGetDiagnosticsSpecFromAny(const FPIX* pix1, const FPIX* pix2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (pix1 != NULL)
@@ -376,7 +376,7 @@ fpixGetDiagnosticsSpecFromAny(FPIX* pix1, FPIX* pix2, ...)
 		if (rv != NULL)
 			break;
 
-		pix2 = va_arg(ap, FPIX*);
+		pix2 = va_arg(ap, const FPIX*);
 	} while (pix2 != NULL);
 	va_end(ap);
 
@@ -450,24 +450,128 @@ fpixCloneDiagnosticsSpec(FPIX* pixd, const FPIX* pixs)
 
 
 LDIAG_CTX
-pixaGetDiagnosticsSpec(PIXA* pixa)
+dpixGetDiagnosticsSpec(const DPIX* dpixs)
 {
-	if (!pixa)
-		return (LDIAG_CTX)ERROR_PTR("pixa not defined", __func__, NULL);
+	if (!dpixs)
+		return (LDIAG_CTX)ERROR_PTR("dpixs not defined", __func__, NULL);
 
-	l_int32 cnt = pixaGetCount(pixa);
-	for (l_int32 i = 0; i < cnt; cnt++) {
-		PIX* pix1 = pixaGetPix(pixa, i, L_CLONE);
-		if (pix1->diag_spec != NULL)
-			return pix1->diag_spec;
-		pixDestroy(&pix1);
-	}
-	return NULL;
+	return dpixs->diag_spec;
 }
 
 
 LDIAG_CTX
-pixaGetDiagnosticsSpecFromAny(PIXA* pixa1, PIXA* pixa2, ...)
+dpixGetDiagnosticsSpecFromAny(const DPIX* pix1, const DPIX* pix2, ...)
+{
+	LDIAG_CTX rv = NULL;
+	if (pix1 != NULL)
+		rv = pix1->diag_spec;
+	if (pix2 == NULL || rv != NULL)
+		return rv;
+
+	va_list ap;
+	va_start(ap, pix2);
+	do {
+		assert(pix2 != NULL);
+		rv = pix2->diag_spec;
+		if (rv != NULL)
+			break;
+
+		pix2 = va_arg(ap, const DPIX*);
+	} while (pix2 != NULL);
+	va_end(ap);
+
+	return rv;
+}
+
+
+l_ok
+dpixSetDiagnosticsSpec(DPIX* pix, LDIAG_CTX spec)
+{
+	if (!pix)
+		return ERROR_INT("dpix not defined", __func__, 1);
+
+	if (pix->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pix->diag_spec);
+
+	if (spec) {
+		pix->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+	}
+	else {
+		pix->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+dpixCopyDiagnosticsSpec(DPIX* pixd, const DPIX* pixs)
+{
+	if (!pixs)
+		return ERROR_INT("dpixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR_INT("dpixd not defined", __func__, 1);
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (pixs->diag_spec) {
+		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+dpixCloneDiagnosticsSpec(DPIX* pixd, const FPIX* pixs)
+{
+	if (!pixs)
+		return ERROR_INT("dpixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR_INT("dpixd not defined", __func__, 1);
+
+	if (pixd->diag_spec == pixs->diag_spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (pixs->diag_spec) {
+		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(pixs->diag_spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+LDIAG_CTX
+pixaGetDiagnosticsSpec(const PIXA* pixa)
+{
+	if (!pixa)
+		return (LDIAG_CTX)ERROR_PTR("pixa not defined", __func__, NULL);
+
+	if (pixa->diag_spec) {
+		return pixa->diag_spec;
+	}
+	else {
+		l_int32 cnt = pixaGetCount(pixa);
+		for (l_int32 i = 0; i < cnt; cnt++) {
+			PIX* pix1 = pixaGetPix(pixa, i, L_CLONE);
+			if (pix1->diag_spec != NULL)
+				return pix1->diag_spec;
+			pixDestroy(&pix1);
+		}
+		return NULL;
+	}
+}
+
+
+LDIAG_CTX
+pixaGetDiagnosticsSpecFromAny(const PIXA* pixa1, const PIXA* pixa2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (pixa1 != NULL)
@@ -483,7 +587,7 @@ pixaGetDiagnosticsSpecFromAny(PIXA* pixa1, PIXA* pixa2, ...)
 		if (rv != NULL)
 			break;
 
-		pixa2 = va_arg(ap, PIXA*);
+		pixa2 = va_arg(ap, const PIXA*);
 	} while (pixa2 != NULL);
 	va_end(ap);
 
@@ -491,8 +595,197 @@ pixaGetDiagnosticsSpecFromAny(PIXA* pixa1, PIXA* pixa2, ...)
 }
 
 
+l_ok
+pixaSetDiagnosticsSpec(PIXA* pixa, LDIAG_CTX spec)
+{
+	if (!pixa)
+		return ERROR_INT("pixa not defined", __func__, 1);
+
+	if (pixa->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixa->diag_spec);
+
+	if (spec) {
+		pixa->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+	}
+	else {
+		pixa->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+pixaCopyDiagnosticsSpec(PIXA* pixd, const PIXA* pixs)
+{
+	if (!pixs)
+		return ERROR_INT("pixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR_INT("pixd not defined", __func__, 1);
+
+	LDIAG_CTX spec = pixaGetDiagnosticsSpec(pixs);
+
+	if (pixd->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (spec) {
+		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+pixaCloneDiagnosticsSpec(PIXA* pixd, const PIXA* pixs)
+{
+	if (!pixs)
+		return ERROR_INT("pixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR_INT("pixd not defined", __func__, 1);
+
+	LDIAG_CTX spec = pixaGetDiagnosticsSpec(pixs);
+
+	if (pixd->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (spec) {
+		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
 LDIAG_CTX
-gplotGetDiagnosticsSpec(GPLOT* gplot)
+fpixaGetDiagnosticsSpec(const FPIXA* pixa)
+{
+	if (!pixa)
+		return (LDIAG_CTX)ERROR_PTR("fpixa not defined", __func__, NULL);
+
+	if (pixa->diag_spec) {
+		return pixa->diag_spec;
+	}
+	else {
+		l_int32 cnt = fpixaGetCount(pixa);
+		for (l_int32 i = 0; i < cnt; cnt++) {
+			FPIX* pix1 = fpixaGetFPix(pixa, i, L_CLONE);
+			if (pix1->diag_spec != NULL)
+				return pix1->diag_spec;
+			fpixDestroy(&pix1);
+		}
+		return NULL;
+	}
+}
+
+
+LDIAG_CTX
+fpixaGetDiagnosticsSpecFromAny(const FPIXA* pixa1, const FPIXA* pixa2, ...)
+{
+	LDIAG_CTX rv = NULL;
+	if (pixa1 != NULL)
+		rv = fpixaGetDiagnosticsSpec(pixa1);
+	if (pixa2 == NULL || rv != NULL)
+		return rv;
+
+	va_list ap;
+	va_start(ap, pixa2);
+	do {
+		assert(pixa2 != NULL);
+		rv = fpixaGetDiagnosticsSpec(pixa2);
+		if (rv != NULL)
+			break;
+
+		pixa2 = va_arg(ap, const FPIXA*);
+	} while (pixa2 != NULL);
+	va_end(ap);
+
+	return rv;
+}
+
+
+l_ok
+fpixaSetDiagnosticsSpec(FPIXA* pixa, LDIAG_CTX spec)
+{
+	if (!pixa)
+		return ERROR_INT("fpixa not defined", __func__, 1);
+
+	if (pixa->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixa->diag_spec);
+
+	if (spec) {
+		pixa->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+	}
+	else {
+		pixa->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+fpixaCopyDiagnosticsSpec(FPIXA* pixd, const FPIXA* pixs)
+{
+	if (!pixs)
+		return ERROR_INT("fpixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR_INT("fpixd not defined", __func__, 1);
+
+	LDIAG_CTX spec = fpixaGetDiagnosticsSpec(pixs);
+
+	if (pixd->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (spec) {
+		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+fpixaCloneDiagnosticsSpec(FPIXA* pixd, const FPIXA* pixs)
+{
+	if (!pixs)
+		return ERROR_INT("fpixs not defined", __func__, 1);
+	if (!pixd)
+		return ERROR_INT("fpixd not defined", __func__, 1);
+
+	LDIAG_CTX spec = fpixaGetDiagnosticsSpec(pixs);
+
+	if (pixd->diag_spec == spec)
+		return 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+
+	if (spec) {
+		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+	}
+	else {
+		pixd->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+LDIAG_CTX
+gplotGetDiagnosticsSpec(const GPLOT* gplot)
 {
 	if (!gplot)
 		return (LDIAG_CTX)ERROR_PTR("gplot not defined", __func__, NULL);
@@ -502,7 +795,7 @@ gplotGetDiagnosticsSpec(GPLOT* gplot)
 
 
 LDIAG_CTX
-gplotGetDiagnosticsSpecFromAny(GPLOT* gplot1, GPLOT* gplot2, ...)
+gplotGetDiagnosticsSpecFromAny(const GPLOT* gplot1, const GPLOT* gplot2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (gplot1 != NULL)
@@ -518,7 +811,7 @@ gplotGetDiagnosticsSpecFromAny(GPLOT* gplot1, GPLOT* gplot2, ...)
 		if (rv != NULL)
 			break;
 
-		gplot2 = va_arg(ap, GPLOT*);
+		gplot2 = va_arg(ap, const GPLOT*);
 	} while (gplot2 != NULL);
 	va_end(ap);
 
@@ -589,6 +882,97 @@ gplotCloneDiagnosticsSpec(GPLOT* gplotd, const GPLOT* gplots)
 	}
 	return 0;
 }
+
+
+#if 0
+
+LDIAG_CTX
+boxaGetDiagnosticsSpec(const BOXA* boxa)
+{
+	if (!boxa)
+		return (LDIAG_CTX)ERROR_PTR("boxa not defined", __func__, NULL);
+	return boxa->diag_spec;
+}
+
+
+LDIAG_CTX
+boxaGetDiagnosticsSpecFromAny(const BOXA* boxa1, const BOXA* boxa2, ...)
+{
+	LDIAG_CTX rv = NULL;
+	if (boxa1 != NULL)
+		rv = boxa1->diag_spec;
+	if (boxa2 == NULL || rv != NULL)
+		return rv;
+	va_list ap;
+	va_start(ap, boxa2);
+	do {
+		assert(boxa2 != NULL);
+		rv = boxa2->diag_spec;
+		if (rv != NULL)
+			break;
+		boxa2 = va_arg(ap, const BOXA*);
+	} while (boxa2 != NULL);
+	va_end(ap);
+	return rv;
+}
+
+
+l_ok
+boxaSetDiagnosticsSpec(BOXA* boxa, LDIAG_CTX spec)
+{
+	if (!boxa)
+		return ERROR_INT("boxa not defined", __func__, 1);
+	if (boxa->diag_spec == spec)
+		return 0;
+	leptDestroyDiagnoticsSpecInstance(&boxa->diag_spec);
+	if (spec) {
+		boxa->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+	}
+	else {
+		boxa->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+boxaCopyDiagnosticsSpec(BOXA* boxad, const BOXA* boxas)
+{
+	if (!boxas)
+		return ERROR_INT("boxas not defined", __func__, 1);
+	if (!boxad)
+		return ERROR_INT("boxad not defined", __func__, 1);
+	leptDestroyDiagnoticsSpecInstance(&boxad->diag_spec);
+	if (boxas->diag_spec) {
+		boxad->diag_spec = leptCopyDiagnoticsSpecInstance(boxas->diag_spec);
+	}
+	else {
+		boxad->diag_spec = NULL;
+	}
+	return 0;
+}
+
+
+l_ok
+boxaCloneDiagnosticsSpec(BOXA* boxad, const BOXA* boxas)
+{
+	if (!boxas)
+		return ERROR_INT("boxas not defined", __func__, 1);
+	if (!boxad)
+		return ERROR_INT("boxad not defined", __func__, 1);
+	if (boxad->diag_spec == boxas->diag_spec)
+		return 0;
+	leptDestroyDiagnoticsSpecInstance(&boxad->diag_spec);
+	if (boxas->diag_spec) {
+		boxad->diag_spec = leptCloneDiagnoticsSpecInstance(boxas->diag_spec);
+	}
+	else {
+		boxad->diag_spec = NULL;
+	}
+	return 0;
+}
+
+#endif
 
 
 /*!

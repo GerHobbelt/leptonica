@@ -600,7 +600,7 @@ l_int32  n;
  * \return  count, or 0 if no numbers or on error
  */
 l_int32
-l_dnaGetCount(L_DNA  *da)
+l_dnaGetCount(const L_DNA  *da)
 {
     if (!da)
         return ERROR_INT("da not defined", __func__, 0);
@@ -1395,7 +1395,7 @@ size_t  oldsize, newsize;
  * \return  count   number of l_dna, or 0 if no l_dna or on error
  */
 l_int32
-l_dnaaGetCount(L_DNAA  *daa)
+l_dnaaGetCount(const L_DNAA  *daa)
 {
     if (!daa)
         return ERROR_INT("daa not defined", __func__, 0);

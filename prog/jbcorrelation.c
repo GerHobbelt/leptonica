@@ -60,10 +60,10 @@
 #define   BUF_SIZE         512
 
     /* Select additional debug output */
-#define   DEBUG_TEST_DATA_IO        0
+#define   DEBUG_TEST_DATA_IO        1
 #define   RENDER_DEBUG              1
 #define   DISPLAY_DIFFERENCE        1
-#define   DISPLAY_ALL_INSTANCES     0
+#define   DISPLAY_ALL_INSTANCES     1
 
 static const char  rootname[] = "/tmp/lept/jb_correl/result";
 
@@ -199,7 +199,7 @@ PIXA       *pixa, *pixadb;
 
   #if  RENDER_DEBUG
         /* Use debugflag == TRUE to see outlines of each component. */
-    pixadb = jbDataRender(data, TRUE);
+    pixadb = jbDataRender(data, diagspec);
         /* Write the debug pages out */
     npages = pixaGetCount(pixadb);
     for (i = 0; i < npages; i++) {

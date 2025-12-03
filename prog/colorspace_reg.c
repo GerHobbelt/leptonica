@@ -172,10 +172,10 @@ L_REGPARAMS  *rp;
         }
         pixDestroy(&pix1);
     }
-    gplot1 = gplotCreate(diagspec, "/tmp/lept/regout/colorspace.10", GPLOT_PNG,
+    gplot1 = gplotCreate(rp->diag_spec, "/tmp/lept/regout/colorspace.10", GPLOT_PNG,
                          "Fraction with given color (diff from average)",
                          "white point space for red", "amount of color");
-    gplot2 = gplotCreate(diagspec, "/tmp/lept/regout/colorspace.11", GPLOT_PNG,
+    gplot2 = gplotCreate(rp->diag_spec, "/tmp/lept/regout/colorspace.11", GPLOT_PNG,
                          "Fraction with given color (min diff)",
                          "white point space for red", "amount of color");
     for (j = 0; j < 6; j++) {

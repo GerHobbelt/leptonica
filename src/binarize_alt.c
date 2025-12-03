@@ -496,7 +496,8 @@ struct BG_THRES_PT_INFO {
 		l_ok black_is_fg = (black_is_fg_weight >= 0);
 		pixd = pixCreate(w, h, 1);
         pixCopyResolution(pixd, pixs);
-        for (i = 0; i < ny; i++) {
+		pixCloneDiagnosticsSpec(pixd, pixs);
+		for (i = 0; i < ny; i++) {
             for (j = 0; j < nx; j++) {
                 pixt = pixTilingGetTile(pt, i, j);
                 pixGetPixel(pixth, j, i, &val);
@@ -947,7 +948,8 @@ PIX     *pixg, *pixsc, *pixm = NULL, *pixms = NULL, *pixth = NULL, *pixd = NULL;
     if (ppixd) {
         pixd = pixApplyLocalThreshold(pixsc, pixth);
         pixCopyResolution(pixd, pixs);
-    }
+		pixCloneDiagnosticsSpec(pixd, pixs);
+	}
 
     if (ppixm)
         *ppixm = pixm;

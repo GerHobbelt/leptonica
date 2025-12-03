@@ -81,17 +81,18 @@ L_REGPARAMS  *rp;
     box = boxCreate(117, 206, 26, 74);
     boxaAddBox(boxa1, box, L_INSERT);
     pix1 = DisplayBoxa(boxa1);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
     pixDestroy(&pix1);
 
-    boxaCompareRegions(boxa1, boxa1, 100, &same, &diffarea, &diffxor, NULL, NULL);
+    boxaCompareRegions(boxa1, boxa1, 100, &same, &diffarea, &diffxor, NULL);
     regTestCompareValues(rp, 1, same, 0.0);  /* 1 */
     regTestCompareValues(rp, 0.0, diffarea, 0.0);  /* 2 */
     regTestCompareValues(rp, 0.0, diffxor, 0.0);  /* 3 */
 
     boxa2 = boxaTransform(boxa1, -13, -13, 1.0, 1.0);
-    boxaCompareRegions(boxa1, boxa2, 10, &same, &diffarea, &diffxor, NULL, NULL);
+    boxaCompareRegions(boxa1, boxa2, 10, &same, &diffarea, &diffxor, NULL);
     regTestCompareValues(rp, 1, same, 0.0);  /* 4 */
     regTestCompareValues(rp, 0.0, diffarea, 0.0);  /* 5 */
     regTestCompareValues(rp, 0.0, diffxor, 0.0);  /* 6 */

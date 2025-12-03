@@ -202,7 +202,7 @@ PIXTILING  *pt;
  * \return  0 if OK, 1 on error
  */
 l_ok
-pixTilingGetCount(PIXTILING  *pt,
+pixTilingGetCount(const PIXTILING  *pt,
                   l_int32    *pnx,
                   l_int32    *pny)
 {

@@ -1515,6 +1515,10 @@ PIX      *pix1, *pix2;
     }
 
     if (pixadb) {
+		LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixadb);
+		if (!diagspec) {
+			diagspec = pixGetDiagnosticsSpecFromAny(pixs, (ppixm ? *ppixm : NULL), NULL);
+		}
         lept_mkdir("lept/jb");
         {NUMA  *naseq;
          PIX   *pix3, *pix4;

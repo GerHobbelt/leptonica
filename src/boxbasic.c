@@ -1340,7 +1340,7 @@ size_t  oldsize, newsize;
  * \return  count number of boxa, or 0 if no boxa or on error
  */
 l_int32
-boxaaGetCount(BOXAA  *baa)
+boxaaGetCount(const BOXAA  *baa)
 {
     if (!baa)
         return ERROR_INT("baa not defined", __func__, 0);

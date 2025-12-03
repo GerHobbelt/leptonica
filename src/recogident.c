@@ -768,8 +768,11 @@ PIX        *pixt, *pixt1, *pixt2;
     }
     nx = w1 - w2 + 1;
 
-    if (debugflag > 0)
-        fpix = fpixCreate(nx, 2 * maxyshift + 1);
+	if (debugflag > 0) {
+		fpix = fpixCreate(nx, 2 * maxyshift + 1);
+		LDIAG_CTX spec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+		fpixSetDiagnosticsSpec(fpix, spec);
+	}
     if (!tab8)
         tab = makePixelSumTab8();
     else
@@ -820,12 +823,12 @@ PIX        *pixt, *pixt1, *pixt2;
                 dely = shifty + j;
             }
 
-            if (debugflag > 0)
+            if (fpix != NULL)
                 fpixSetPixel(fpix, i, maxyshift + j, 1000.0 * score);
         }
     }
 
-    if (debugflag > 0) {
+    if (fpix != NULL) {
         char  buf[128];
         lept_mkdir("lept/recog");
         pixt1 = fpixDisplayMaxDynamicRange(fpix);

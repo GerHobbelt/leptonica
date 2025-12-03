@@ -79,7 +79,7 @@ L_REGPARAMS  *rp;
     pixs = pixRead(DEMOPATH("test8.jpg"));
     nasy= pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     numaMakeRankFromHistogram(0.0, 1.0, nasy, 350, &nax, &nay);
-    pix1 = gplotGeneralPix2(diagspec, nax, nay, GPLOT_LINES, "/tmp/lept/numa3/rank1",
+    pix1 = gplotGeneralPix2(rp->diag_spec, nax, nay, GPLOT_LINES, "/tmp/lept/numa3/rank1",
                             "test rank extractor", "pix val", "rank val");
     numaDestroy(&nasy);
     numaDestroy(&nax);
@@ -95,7 +95,7 @@ L_REGPARAMS  *rp;
       numaHistogramGetValFromRank(na, rank, &val);
       numaAddNumber(nap, val);
     }
-    pix2 = gplotGeneralPix1(diagspec, nap, GPLOT_LINES, "/tmp/lept/numa3/rank2",
+    pix2 = gplotGeneralPix1(rp->diag_spec, nap, GPLOT_LINES, "/tmp/lept/numa3/rank2",
                             "rank value", NULL, NULL);
     pixa = pixaCreate(2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
@@ -116,19 +116,19 @@ L_REGPARAMS  *rp;
      *                           Numa-morphology                          *
      * -------------------------------------------------------------------*/
     na = numaRead(DEMOPATH("lyra.5.na"));
-    pix1 = gplotGeneralPix1(diagspec, na, GPLOT_LINES, "/tmp/lept/numa3/lyra1",
+    pix1 = gplotGeneralPix1(rp->diag_spec, na, GPLOT_LINES, "/tmp/lept/numa3/lyra1",
                             "Original", NULL, NULL);
     na1 = numaErode(na, 21);
-    pix2 = gplotGeneralPix1(diagspec, na1, GPLOT_LINES, "/tmp/lept/numa3/lyra2",
+    pix2 = gplotGeneralPix1(rp->diag_spec, na1, GPLOT_LINES, "/tmp/lept/numa3/lyra2",
                             "Erosion", NULL, NULL);
     na2 = numaDilate(na, 21);
-    pix3 = gplotGeneralPix1(diagspec, na2, GPLOT_LINES, "/tmp/lept/numa3/lyra3",
+    pix3 = gplotGeneralPix1(rp->diag_spec, na2, GPLOT_LINES, "/tmp/lept/numa3/lyra3",
                             "Dilation", NULL, NULL);
     na3 = numaOpen(na, 21);
-    pix4 = gplotGeneralPix1(diagspec, na3, GPLOT_LINES, "/tmp/lept/numa3/lyra4",
+    pix4 = gplotGeneralPix1(rp->diag_spec, na3, GPLOT_LINES, "/tmp/lept/numa3/lyra4",
                             "Opening", NULL, NULL);
     na4 = numaClose(na, 21);
-    pix5 = gplotGeneralPix1(diagspec, na4, GPLOT_LINES, "/tmp/lept/numa3/lyra5",
+    pix5 = gplotGeneralPix1(rp->diag_spec, na4, GPLOT_LINES, "/tmp/lept/numa3/lyra5",
                             "Closing", NULL, NULL);
     pixa = pixaCreate(2);
     pixaAddPix(pixa, pix1, L_INSERT);
@@ -169,7 +169,7 @@ L_REGPARAMS  *rp;
         snprintf(buf1, sizeof(buf1), "/tmp/lept/numa3/histoplot-%d", hw);
         snprintf(buf2, sizeof(buf2), "halfwidth = %d, skip = 20, thresh = %d",
                  hw, thresh);
-        pix1 = gplotGeneralPix1(diagspec, na3, GPLOT_LINES, buf1, buf2, NULL, NULL);
+        pix1 = gplotGeneralPix1(rp->diag_spec, na3, GPLOT_LINES, buf1, buf2, NULL, NULL);
         if (hw == 4 || hw == 20)
             regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 7, 8 */
         pixaAddPix(pixa, pix1, L_INSERT);

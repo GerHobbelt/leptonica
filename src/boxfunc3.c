@@ -1443,9 +1443,9 @@ PIXA     *pixa;
 
     if (ppixdb) {
         pixa = pixaCreate(2);
-        pix1 = pixCreate(w, h, 32);
+		pixaSetDiagnosticsSpec(pixa, diagspec);
+		pix1 = pixCreate(w, h, 32);
         pixSetAll(pix1);
-		pixSetDiagnosticsSpec(pix1, diagspec);
         pixRenderHashBoxaBlend(pix1, boxa3, 5, 1, L_POS_SLOPE_LINE, 2,
                                255, 0, 0, 0.5);
         pixRenderHashBoxaBlend(pix1, boxa4, 5, 1, L_NEG_SLOPE_LINE, 2,

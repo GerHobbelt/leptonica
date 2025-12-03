@@ -110,7 +110,7 @@ SARRAY   *sa;
         pixaSetText(pixa2, NULL, NULL);
 
             /* Train a new recognizer from the boot and unlabeled samples */
-        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, 1);
+        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, diagspec);
         recog1 = recogCreateFromPixa(pixa3, 0, 40, linew, 128, 1);
         recogShowContent(stderr, recog1, 2, 1);
         if (i == 0)
@@ -129,7 +129,7 @@ SARRAY   *sa;
 
         /* Generate the boot recog, and show the unscaled and scaled
          * versions of the templates */
-    recogboot = recogMakeBootDigitRecog(0, 40, linew, 1, 1);
+    recogboot = recogMakeBootDigitRecog(0, 40, linew, 1, diagspec);
     recogWrite("/tmp/lept/recog/boot2.rec", recogboot);
     recogShowContent(stderr, recogboot, 3, 1);
 
@@ -141,7 +141,7 @@ SARRAY   *sa;
         pixaSetText(pixa2, NULL, NULL);
 
             /* Train a new recognizer from the boot and unlabeled samples */
-        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, 1);
+        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, diagspec);
         recog1 = recogCreateFromPixa(pixa3, 0, 40, linew, 128, 1);
         recogShowContent(stderr, recog1, 4, 1);
         if (i == 0)

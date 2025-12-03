@@ -98,7 +98,7 @@ L_RECOG  *recog1, *recog2;
 
 #if 1
     lept_stderr("AverageSamples\n");
-    recogAverageSamples(recog1, 1);
+    recogAverageSamples(recog1, diagspec);
     recogShowAverageTemplates(recog1);
     pix1 = pixaGetPix(recog1->pixadb_ave, 0, L_CLONE);
     pixWrite("/tmp/lept/digits/unscaled_ave.png", pix1, IFF_PNG);
@@ -172,7 +172,7 @@ L_RECOG  *recog1, *recog2;
     pixa1 = pixaRead("recog/sets/train03.pa");
     recog2 = recogCreateFromPixa(pixa1, 0, 40, 0, 128, 1);
     recogShowContent(stderr, recog2, 3, 1);
-    recogDebugAverages(recog2, 3);
+    recogDebugAverages(recog2, diagspec);
     pixWrite("/tmp/lept/digits/averages.png", recog2->pixdb_ave, IFF_PNG);
     recogShowAverageTemplates(recog2);
     pixaDestroy(&pixa1);

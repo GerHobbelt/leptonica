@@ -522,7 +522,7 @@ L_RECOG  *recog;
  * \return  count of classes in recog; 0 if no recog or on error
  */
 l_int32
-recogGetCount(L_RECOG  *recog)
+recogGetCount(const L_RECOG  *recog)
 {
     if (!recog)
         return ERROR_INT("recog not defined", __func__, 0);

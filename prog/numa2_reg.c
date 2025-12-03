@@ -85,11 +85,11 @@ L_REGPARAMS  *rp;
      * -------------------------------------------------------------------*/
     na = numaRead(DEMOPATH("lyra.5.na"));
     numaWindowedStats(na, 5, &na1, &na2, &na3, &na4);
-	pix1 = gplotSimplePix1(diagspec, na, "lept/numa2/lyra1", "Original");
-	pix2 = gplotSimplePix1(diagspec, na1, "lept/numa2/lyra2", "Mean");
-	pix3 = gplotSimplePix1(diagspec, na2, "lept/numa2/lyra3", "Mean Square");
-	pix4 = gplotSimplePix1(diagspec, na3, "lept/numa2/lyra4", "Variance");
-	pix5 = gplotSimplePix1(diagspec, na4, "lept/numa2/lyra5", "RMS Difference");
+	pix1 = gplotSimplePix1(rp->diag_spec, na, "lept/numa2/lyra1", "Original");
+	pix2 = gplotSimplePix1(rp->diag_spec, na1, "lept/numa2/lyra2", "Mean");
+	pix3 = gplotSimplePix1(rp->diag_spec, na2, "lept/numa2/lyra3", "Mean Square");
+	pix4 = gplotSimplePix1(rp->diag_spec, na3, "lept/numa2/lyra4", "Variance");
+	pix5 = gplotSimplePix1(rp->diag_spec, na4, "lept/numa2/lyra5", "RMS Difference");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
@@ -139,11 +139,11 @@ L_REGPARAMS  *rp;
     na2 = pixExtractOnLine(pixg, 40, 30, 40, 170, 1);
     na3 = pixExtractOnLine(pixg, 20, 170, 180, 30, 1);
     na4 = pixExtractOnLine(pixg, 20, 190, 180, 10, 1);
-	pix1 = gplotSimplePix1(diagspec, na1, "lept/numa2/ext1", "Horizontal");
-	pix2 = gplotSimplePix1(diagspec, na2, "lept/numa2/ext2", "Vertical");
-	pix3 = gplotSimplePix1(diagspec, na3, "lept/numa2/ext3",
+	pix1 = gplotSimplePix1(rp->diag_spec, na1, "lept/numa2/ext1", "Horizontal");
+	pix2 = gplotSimplePix1(rp->diag_spec, na2, "lept/numa2/ext2", "Vertical");
+	pix3 = gplotSimplePix1(rp->diag_spec, na3, "lept/numa2/ext3",
                 "Slightly more horizontal than vertical");
-	pix4 = gplotSimplePix1(diagspec, na4, "lept/numa2/ext4",
+	pix4 = gplotSimplePix1(rp->diag_spec, na4, "lept/numa2/ext4",
                 "Slightly more vertical than horizontal");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 7 */

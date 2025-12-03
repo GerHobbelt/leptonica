@@ -71,7 +71,7 @@ L_REGPARAMS  *rp;
 
         /* Input is a fairly clean boxa */
     boxa1 = boxaRead(DEMOPATH("boxa1.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, 0);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, NULL /* rp->diag_spec */);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
     scalefact = (l_float32)width / (l_float32)w;
@@ -86,7 +86,7 @@ L_REGPARAMS  *rp;
 
         /* Input is an unsmoothed and noisy boxa */
     boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, 0);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, NULL /* rp->diag_spec */);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
     scalefact = (l_float32)width / (l_float32)w;
@@ -101,11 +101,11 @@ L_REGPARAMS  *rp;
 
         /* Input is an unsmoothed and noisy boxa */
     boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_LOC_DIFF, 80, 20, 1);
-    boxa3 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_SIZE_DIFF, 80, 20, 1);
-    boxaPlotSides(boxa1, "initial", NULL, NULL, NULL, NULL, &pix1, diagspec);
-    boxaPlotSides(boxa2, "side-smoothing", NULL, NULL, NULL, NULL, &pix2, diagspec);
-    boxaPlotSides(boxa3, "size-smoothing", NULL, NULL, NULL, NULL, &pix3, diagspec);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_LOC_DIFF, 80, 20, rp->diag_spec);
+    boxa3 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_SIZE_DIFF, 80, 20, rp->diag_spec);
+	boxaPlotSides(boxa1, "initial", rp->diag_spec, NULL, NULL, NULL, NULL, &pix1);
+    boxaPlotSides(boxa2, "side-smoothing", rp->diag_spec, NULL, NULL, NULL, NULL, &pix2);
+    boxaPlotSides(boxa3, "size-smoothing", rp->diag_spec, NULL, NULL, NULL, NULL, &pix3);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 4 */
@@ -182,7 +182,7 @@ L_REGPARAMS  *rp;
 
         /* Input is a boxa smoothed with a median window filter */
     boxa1 = boxaRead(DEMOPATH("boxa3.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MIN, 20, 0, 1);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MIN, 20, 0, rp->diag_spec);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
     scalefact = (l_float32)width / (l_float32)w;

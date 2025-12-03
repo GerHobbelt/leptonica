@@ -86,28 +86,28 @@ L_REGPARAMS  *rp;
     pix1 = pixCopy(NULL, pixs);
     lept_stderr("\nTest orient detection for 4 orientations\n");
     pixOrientDetect(pix1, &upconf, &leftconf, 0, 0);
-    makeOrientDecision(upconf, leftconf, 0, 0, &orient, 1);
+    makeOrientDecision(upconf, leftconf, 0, 0, &orient, rp->diag_spec);
     regTestCompareValues(rp, upconf, 15.431, 0.1);  /* 4 */
     regTestCompareValues(rp, orient, 1, 0.0);  /* 5 */
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixRotate90(pix1, 1);
     pix1 = pix2;
     pixOrientDetect(pix1, &upconf, &leftconf, 0, 0);
-    makeOrientDecision(upconf, leftconf, 0, 0, &orient, 1);
+    makeOrientDecision(upconf, leftconf, 0, 0, &orient, rp->diag_spec);
     regTestCompareValues(rp, leftconf, -15.702, 0.1);  /* 6 */
     regTestCompareValues(rp, orient, 4, 0.0);  /* 7 */
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixRotate90(pix1, 1);
     pix1 = pix2;
     pixOrientDetect(pix1, &upconf, &leftconf, 0, 0);
-    makeOrientDecision(upconf, leftconf, 0, 0, &orient, 1);
+    makeOrientDecision(upconf, leftconf, 0, 0, &orient, rp->diag_spec);
     regTestCompareValues(rp, upconf, -15.702, 0.1);  /* 8 */
     regTestCompareValues(rp, orient, 3, 0.0);  /* 9 */
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixRotate90(pix1, 1);
     pix1 = pix2;
     pixOrientDetect(pix1, &upconf, &leftconf, 0, 0);
-    makeOrientDecision(upconf, leftconf, 0, 0, &orient, 1);
+    makeOrientDecision(upconf, leftconf, 0, 0, &orient, rp->diag_spec);
     regTestCompareValues(rp, leftconf, 15.431, 0.1);  /* 10 */
     regTestCompareValues(rp, orient, 2, 0.0);  /* 11 */
     pixaAddPix(pixa, pix1, L_INSERT);

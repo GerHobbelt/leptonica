@@ -61,7 +61,6 @@ l_int32 main(int    argc,
 {
 l_uint8     *bytea1, *bytea2;
 l_int32      i, j, n, maxi, maxj, istext, w1, h1, w2, h2;
-l_int32      debug;
 size_t       size1, size2;
 l_float32    score, maxscore;
 l_float32   *scores;
@@ -76,6 +75,13 @@ PIXAC       *pac;
         lept_stderr("Syntax: histoduptest\n");
         return 1;
     }
+
+	// if (regTestSetup(argc, argv, &rp))	return 1;
+	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
+	leptDebugSetFileBasepath(diagspec, "lept/comp");
+	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetProcessName(diagspec, "histoduptest");
+	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
 
         /* Set to 1 for more output from tests 1 and 2 */
     debug = 0;
@@ -103,7 +109,7 @@ PIXAC       *pac;
         /* Compare between every pair of images;
          * can also use n = 2, simthresh = 0.50.  */
     pixaComparePhotoRegionsByHisto(pixa2, 0.85, 1.3, 1, 3, 0.20,
-                                   &nai, &scores, &pix1, debug);
+                                   &nai, &scores, &pix1, diagspec);
     lept_free(scores);
 
         /* Show the similarity classes. */
@@ -133,7 +139,7 @@ PIXAC       *pac;
 
         /* Compare between every pair of images. */
     pixaComparePhotoRegionsByHisto(pixa2, 0.85, 1.3, 1, 3, 0.20,
-                                   &nai, &scores, &pix1, debug);
+                                   &nai, &scores, &pix1, diagspec);
     lept_free(scores);
 
         /* Show the similarity classes. */
@@ -179,7 +185,7 @@ PIXAC       *pac;
     lept_stderr("*******  (%d, %d), (%d, %d)  *******\n", w1, h1, w2, h2);
     pixa1 = pixaCreate(0);
         /* Set @minratio very small to allow comparison for all pairs */
-    compareTilesByHisto(diagspec, naa3, naa4, 0.1, w1, h1, w2, h2, &score, pixa1);
+    compareTilesByHisto(naa3, naa4, 0.1, w1, h1, w2, h2, &score, pixa1);
     pixaDestroy(&pixa1);
     lept_stderr("score = %5.3f\n", score);
     pixaDestroy(&pixa1);
