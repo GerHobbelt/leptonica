@@ -54,10 +54,10 @@ int main(int    argc,
 l_int32       i, j, x, y, val;
 PIX          *pixsq, *pixs, *pixc, *pixd;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "seed_spread", FALSE, &rp))
+		return 1;
 
     pixsq = pixCreate(3, 3, 32);
     pixSetAllArbitrary(pixsq, 0x00ff0000);

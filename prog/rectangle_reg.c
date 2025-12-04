@@ -62,13 +62,13 @@ BOX          *box1, *box2;
 BOXA         *boxa;
 PIX          *pixs, *pix1, *pix2, *pix3;
 PIXCMAP      *cmap;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "rect", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/rect");
-	lept_mkdir("lept/regout");
+	//lept_mkdir("lept/rect");
+	//lept_mkdir("lept/regout");
 
     /* ---------------- Largest rectangles in image ---------------- */
     pixs = pixRead(DEMOPATH("test1.png"));
@@ -113,7 +113,7 @@ L_REGPARAMS  *rp;
 
         /* Do 4 cases with vertical scan */
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_VERTICAL,
-                                L_GEOMETRIC_UNION, diagspec);
+                                L_GEOMETRIC_UNION, rp->diag_spec);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 2);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
@@ -122,7 +122,7 @@ L_REGPARAMS  *rp;
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_VERTICAL,
-                                L_GEOMETRIC_INTERSECTION, diagspec);
+                                L_GEOMETRIC_INTERSECTION, rp->diag_spec);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 3);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
@@ -131,7 +131,7 @@ L_REGPARAMS  *rp;
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_VERTICAL,
-                                L_LARGEST_AREA, diagspec);
+                                L_LARGEST_AREA, rp->diag_spec);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 4);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
@@ -140,7 +140,7 @@ L_REGPARAMS  *rp;
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_VERTICAL,
-                                L_SMALLEST_AREA, diagspec);
+                                L_SMALLEST_AREA, rp->diag_spec);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 5);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
@@ -150,7 +150,7 @@ L_REGPARAMS  *rp;
 
         /* Do 4 cases with horizontal scan */
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_HORIZONTAL,
-                                L_GEOMETRIC_UNION, diagspec);
+                                L_GEOMETRIC_UNION, rp->diag_spec);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 6);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
@@ -159,7 +159,7 @@ L_REGPARAMS  *rp;
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_HORIZONTAL,
-                                L_GEOMETRIC_INTERSECTION, diagspec);
+                                L_GEOMETRIC_INTERSECTION, rp->diag_spec);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 7);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
@@ -168,7 +168,7 @@ L_REGPARAMS  *rp;
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_HORIZONTAL,
-                                L_LARGEST_AREA, diagspec);
+                                L_LARGEST_AREA, rp->diag_spec);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 8);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
@@ -177,7 +177,7 @@ L_REGPARAMS  *rp;
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_HORIZONTAL,
-                                L_SMALLEST_AREA, diagspec);
+                                L_SMALLEST_AREA, rp->diag_spec);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 9);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);

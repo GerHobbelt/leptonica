@@ -61,10 +61,10 @@ int main(int    argc,
 {
 PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "binarize", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("w91frag.jpg"));
 

@@ -66,17 +66,18 @@ FILE         *fp;
 PIX          *pix1, *pix2;
 PIXA         *pixa, *pixa1, *pixa2, *pixa3;
 SARRAY       *sa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "mtiff_reg");
     exit(77);
 #endif
 
-   if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    lept_mkdir("lept/tiff");
+	if (regTestSetup(&argc, &argv, "tiff", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/tiff");
 
     /* ----------------------  Test multipage I/O  -----------------------*/
         /* This puts every image file in the directory with a string

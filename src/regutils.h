@@ -134,7 +134,8 @@ typedef struct L_RegParams  L_REGPARAMS;
 enum {
     L_REG_GENERATE = 0,
     L_REG_COMPARE = 1,
-    L_REG_DISPLAY = 2
+    L_REG_DISPLAY = 2,
+	L_REG_BASIC_EXEC = 4
 };
 
 

@@ -78,12 +78,12 @@ L_HASHMAP    *hmap;
 PTA          *pta0, *pta1, *pta2, *pta3;
 SARRAY       *sa0, *sa1, *sa2, *sa3;
 PIX          *pix1;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "hash", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/hash");
+    //lept_mkdir("lept/hash");
 
         /* Test string hashing with aset */
     sa0 = BuildShortStrings(3);

@@ -86,12 +86,12 @@ l_float32     val;
 PIX          *pix;
 SEL          *sel;
 SELA         *sela1, *sela2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "sel_io", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/regout");
+	//lept_mkdir("lept/regout");
 
         /* selaRead() / selaWrite()  */
     sela1 = selaAddBasic(NULL);

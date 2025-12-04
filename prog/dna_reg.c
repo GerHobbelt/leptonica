@@ -55,17 +55,18 @@ L_DNA        *da1, *da2, *da3, *da4, *da5;
 L_DNAA       *daa1, *daa2;
 GPLOT        *gplot;
 NUMA         *na, *nahisto, *nax;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "dna_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "dna", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
     pi = 3.1415926535;
     da1 = l_dnaCreate(50);

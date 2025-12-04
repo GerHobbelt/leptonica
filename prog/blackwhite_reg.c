@@ -60,10 +60,10 @@ l_int32       i, spp;
 l_uint32      bval, wval;
 PIX          *pixs, *pix1, *pix2, *pix3, *pixd;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "blackwhite", FALSE, &rp))
+		return 1;
 
         /* Scale each image and add a white boundary */
     pixa = pixaCreate(setsize);

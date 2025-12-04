@@ -115,7 +115,6 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix8, *pix16, *pix32;
 PIX          *pix, *pixt, *pixd;
 PIXA         *pixa;
 PIXCMAP      *cmap;
-L_REGPARAMS  *rp;
 
 #if  !HAVE_LIBJPEG
     lept_stderr("Omitting libjpeg tests in ioformats_reg\n");
@@ -141,10 +140,12 @@ L_REGPARAMS  *rp;
     lept_stderr("Omitting libgif tests in ioformats_reg\n");
 #endif  /* !HAVE_LIBGIF */
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "io_formats", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
     /* --------- Part 1: Test all formats for r/w to file ---------*/
 

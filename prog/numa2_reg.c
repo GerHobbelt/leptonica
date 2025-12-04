@@ -68,17 +68,18 @@ BOX         *box1, *box2, *box3;
 NUMA        *na, *na1, *na2, *na3, *na4;
 PIX         *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pixg, *pixd;
 PIXA        *pixa1;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", __func__);
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    lept_mkdir("lept/numa2");
+	if (regTestSetup(&argc, &argv, "numa2", FALSE, &rp))
+		return 1;
+
+	lept_mkdir("lept/numa2");
 
     /* -------------------------------------------------------------------*
      *                         Numa-windowed stats                        *

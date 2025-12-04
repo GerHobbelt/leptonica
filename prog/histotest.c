@@ -67,21 +67,17 @@ GPLOT   *gplot;
 NUMA    *na1, *na2;
 PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 PIXA    *pixa1;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "histo", TRUE, &rp))
+		return 1;
 
     if (argc != 3)
         return ERROR_INT(" Syntax:  histotest filein sigbits", __func__, 1);
     filein = argv[1];
     sigbits = atoi(argv[2]);
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/histo");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "histotest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
-    setLeptDebugOK(1);
-    lept_mkdir("lept/histo");
+    //lept_mkdir("lept/histo");
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
@@ -94,7 +90,7 @@ PIXA    *pixa1;
         if ((na1 = pixOctcubeHistogram(pixs, sigbits, NULL)) == NULL)
             return ERROR_INT("na1 not made", __func__, 1);
         lept_stderr("histo time = %7.3f sec\n", stopTimer());
-        gplot = gplotCreate(diagspec, "/tmp/lept/histo/color", GPLOT_PNG,
+        gplot = gplotCreate(rp->diag_spec, "/tmp/lept/histo/color", GPLOT_PNG,
                             "color histogram with octcube indexing",
                             "octcube index", "number of pixels in cube");
         gplotAddPlot(gplot, NULL, na1, GPLOT_LINES, "input pix");
@@ -106,7 +102,7 @@ PIXA    *pixa1;
         if ((na1 = pixGetGrayHistogram(pixs, 1)) == NULL)
             return ERROR_INT("na1 not made", __func__, 1);
         numaWrite("/tmp/junk.na", na1);
-        gplot = gplotCreate(diagspec, "/tmp/lept/histo/gray", GPLOT_PNG,
+        gplot = gplotCreate(rp->diag_spec, "/tmp/lept/histo/gray", GPLOT_PNG,
                             "grayscale histogram", "gray value",
                             "number of pixels");
         gplotSetScaling(gplot, GPLOT_LOG_SCALE_Y);

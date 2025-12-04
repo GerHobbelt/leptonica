@@ -65,12 +65,12 @@ NUMA         *naiw, *naih;  /* indicator arrays for small outlier dimensions */
 NUMA         *narbwe, *narbhe, *narbwo, *narbho;  /* rank-binned w and h */
 PIX          *pix1;
 PIXA         *pixa1;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "boxa", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/boxa");
+    //lept_mkdir("lept/boxa");
     boxa1 = boxaRead(DEMOPATH("boxa4.ba"));
 
         /* Fill invalid boxes */

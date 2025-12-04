@@ -81,13 +81,13 @@ PIX          *pixg2, *pixcs1, *pixcs2, *pixd1, *pixd2;
 PIXA         *pixa, *pixa2, *pixa3;
 PIXCMAP      *cmap, *cmap2;
 RGBA_QUAD    *cta;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "alpha", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/regout");
-	lept_mkdir("lept/alpha");
+	//lept_mkdir("lept/regout");
+	//lept_mkdir("lept/alpha");
 
     /* ------------------------ (1) ----------------------------*/
         /* Blend with a white background */

@@ -64,14 +64,18 @@ BOXA     *boxat;
 PIX      *pixd, *pix1, *pix2, *pixdb;
 PIXA     *pixa1, *pixa2, *pixa3;
 L_RECOG  *recog1, *recog2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog_digits", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         lept_stderr(" Syntax: recogtest1\n");
         return 1;
     }
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/digits");
+    //lept_mkdir("lept/digits");
+
     recog1 = NULL;
     recog2 = NULL;
 
@@ -98,7 +102,7 @@ L_RECOG  *recog1, *recog2;
 
 #if 1
     lept_stderr("AverageSamples\n");
-    recogAverageSamples(recog1, diagspec);
+    recogAverageSamples(recog1, rp->diag_spec);
     recogShowAverageTemplates(recog1);
     pix1 = pixaGetPix(recog1->pixadb_ave, 0, L_CLONE);
     pixWrite("/tmp/lept/digits/unscaled_ave.png", pix1, IFF_PNG);
@@ -172,7 +176,7 @@ L_RECOG  *recog1, *recog2;
     pixa1 = pixaRead("recog/sets/train03.pa");
     recog2 = recogCreateFromPixa(pixa1, 0, 40, 0, 128, 1);
     recogShowContent(stderr, recog2, 3, 1);
-    recogDebugAverages(recog2, diagspec);
+    recogDebugAverages(recog2, rp->diag_spec);
     pixWrite("/tmp/lept/digits/averages.png", recog2->pixdb_ave, IFF_PNG);
     recogShowAverageTemplates(recog2);
     pixaDestroy(&pixa1);

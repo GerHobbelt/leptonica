@@ -56,17 +56,17 @@ void PixaSortTest(L_REGPARAMS *rp, const char *fname, l_int32 index,
 int main(int    argc,
          const char **argv)
 {
-L_REGPARAMS  *rp;
-
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "ptra2_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    lept_mkdir("lept/ptra");
+	if (regTestSetup(&argc, &argv, "ptra", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/ptra");
 
         /* 0 - 8 */
     BoxaSortTest(rp, "feyn-fract.tif", 1, "Boxa sort test on small image");

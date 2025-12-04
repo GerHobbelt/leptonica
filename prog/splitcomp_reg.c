@@ -64,10 +64,10 @@ BOX          *box1, *box2, *box3, *box4;
 BOXA         *boxa;
 PIX          *pixs, *pixc, *pixt, *pixd, *pix32;
 PIXA         *pixas, *pixad;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "splitcomp", FALSE, &rp))
+		return 1;
 
         /* Generate and save 1 bpp masks */
     pixas = pixaCreate(0);

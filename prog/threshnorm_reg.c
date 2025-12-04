@@ -57,10 +57,10 @@ int main(int    argc,
 {
 PIX          *pixs, *pixd;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "thresh_norm", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("stampede2.jpg"));
     pixa = pixaCreate(0);

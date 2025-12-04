@@ -72,7 +72,6 @@ FILE         *fp1;
 PIX          *pixs, *pixt;
 PIXA         *pixa;
 SARRAY       *sa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "psio_reg");
@@ -87,10 +86,12 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "ps_io", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
 #if !USE_PSIO
     lept_stderr("psio writing is not enabled\n"

@@ -58,6 +58,10 @@ l_float64  gamma[] = {.5, 1.0, 1.5, 2.0, 2.5, -1.0};
 GPLOT     *gplot;
 NUMA      *na, *nax;
 PIX       *pixs, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "gamma", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  gammatest filein gam fileout", __func__, 1);
@@ -65,15 +69,7 @@ PIX       *pixs, *pixd;
     gam = atof(argv[2]);
     fileout = argv[3];
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/gamma");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "gammatest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
-    setLeptDebugOK(1);
-    lept_mkdir("lept/gamma");
+    //lept_mkdir("lept/gamma");
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
@@ -89,12 +85,12 @@ PIX       *pixs, *pixd;
     pixDestroy(&pixs);
 
     na = numaGammaTRC(gam, MINVAL, MAXVAL);
-    gplotSimple1(diagspec, na, GPLOT_PNG, "/tmp/lept/gamma/trc", "gamma trc");
+    gplotSimple1(rp->diag_spec, na, GPLOT_PNG, "/tmp/lept/gamma/trc", "gamma trc");
     l_fileDisplay("/tmp/lept/gamma/trc.png", 100, 100, 1.0);
     numaDestroy(&na);
 
         /* Plot gamma TRC maps */
-    gplot = gplotCreate(diagspec, "/tmp/lept/gamma/corr", GPLOT_PNG,
+    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/gamma/corr", GPLOT_PNG,
                         "Mapping function for gamma correction",
                         "value in", "value out");
     nax = numaMakeSequence(0.0, 1.0, 256);

@@ -75,19 +75,21 @@ l_int32       i, bl1, bl2, bl3, sbytes, formbytes, fontsize, rbytes;
 size_t        nbytes;
 PIX          *pix1 = NULL, *pix2, *pixd;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "genfonts_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    /* ------------  Generate pixa char bitmap files from file ----------- */
+	if (regTestSetup(&argc, &argv, "genfonts", FALSE, &rp))
+		return 1;
+
+	/* ------------  Generate pixa char bitmap files from file ----------- */
     lept_rmdir("lept/filefonts");
-    lept_mkdir("lept/filefonts");
+    //lept_mkdir("lept/filefonts");
+
     for (i = 0; i < 9; i++) {
         pixaSaveFont("fonts", "/tmp/lept/filefonts", sizes[i]);
         pathname = pathJoin("/tmp/lept/filefonts", outputfonts[i]);

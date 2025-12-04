@@ -52,10 +52,10 @@ BOX          *box1;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8;
 PIXA         *pixa;
 SEL          *sel;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "binmorph", FALSE, &rp))
+		return 1;
 
         /* Test making sel from a pix */
     pixa = pixaCreate(10);

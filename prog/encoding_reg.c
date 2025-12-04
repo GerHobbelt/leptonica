@@ -55,12 +55,12 @@ size_t        nbytes1, nbytes2, nbytes3, nbytes4, nbytes5, nbytes6, fbytes;
 char         *a85a, *a85c, *a85c2;
 l_uint8      *bina, *bina2, *bin85c, *bin85c2;
 PIX          *pix1;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "encode", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/encode");
+    //lept_mkdir("lept/encode");
 
         /* Test ascii85 encoding */
     bina = l_binaryRead(DEMOPATH("karen8.jpg"), &fbytes);

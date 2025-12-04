@@ -55,10 +55,10 @@ l_float32    mps;
 PIX         *pixs, *pixmin, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIX         *pix6, *pix7, *pix8, *pix9, *pix10, *pix11;
 PIXA        *pixa1;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "adaptnorm", FALSE, &rp))
+		return 1;
 
     /* ---------------------------------------------------------- *
      *     Normalize by adaptively expanding the dynamic range    *

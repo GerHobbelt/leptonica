@@ -61,10 +61,10 @@ PIXA         *pixa;
 PIXAA        *paa;
 PTA          *pta;
 PTAA         *ptaa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "maze", FALSE, &rp))
+		return 1;
 
     paa = pixaaCreate(2);
 

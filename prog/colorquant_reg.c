@@ -59,12 +59,12 @@ int main(int    argc,
          const char **argv)
 {
 l_int32       i;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "colorquant", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/regout");
+	//lept_mkdir("lept/regout");
 
     for (i = 0; i < 4; i++) {
 /*        if (i != 2) continue; */

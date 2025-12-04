@@ -78,12 +78,12 @@ NUMA         *na1, *na2, *na3, *na4, *na5;
 NUMA         *na2i, *na3i, *na4i, *nat, *naw, *nah;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2, *pixa3;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "filter", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/filter");
+	//lept_mkdir("lept/filter");
 
         /* Draw 4 filled boxes of different sizes */
     pixs = pixCreate(200, 200, 1);

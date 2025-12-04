@@ -72,10 +72,10 @@ int main(int    argc,
 l_int32       i;
 PIX          *pixs, *pixc;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "scale", FALSE, &rp))
+		return 1;
 
         /* Test 1 bpp */
     lept_stderr("\n-------------- Testing 1 bpp ----------\n");

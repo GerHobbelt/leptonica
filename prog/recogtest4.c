@@ -68,14 +68,17 @@ BOXA     *boxa;
 PIX      *pix1, *pix2, *pixdb;
 PIXA     *pixa1, *pixa2;
 L_RECOG  *recog;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         lept_stderr(" Syntax: recogtest4\n");
         return 1;
     }
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/recog");
+    //lept_mkdir("lept/recog");
 
         /* Generate the recognizer */
     pixa1 = pixaRead("recog/sets/train01.pa");
@@ -84,11 +87,11 @@ L_RECOG  *recog;
 #else   /* no scaling */
     recog = recogCreateFromPixa(pixa1, 0, 0, 0, 128, 1);
 #endif
-    recogAverageSamples(recog, diagspec);
+    recogAverageSamples(recog, rp->diag_spec);
     recogWrite("/tmp/lept/recog/rec1.rec", recog);
 
         /* Show the templates */
-    if (recogDebugAverages(recog, diagspec) != 0) {
+    if (recogDebugAverages(recog, rp->diag_spec) != 0) {
         lept_stderr("Averaging failed!!\n");
         return 1;
     }

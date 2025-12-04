@@ -52,10 +52,10 @@ int main(int    argc,
 {
 FPIX         *fpix1, *fpix2, *fpix3, *fpix4;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "fpix", FALSE, &rp))
+		return 1;
 
         /* Test orthogonal rotations */
     pix1 = pixRead(DEMOPATH("marge.jpg"));

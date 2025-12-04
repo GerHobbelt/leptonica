@@ -50,13 +50,12 @@ int main(int    argc,
          const char **argv)
 {
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "logic_ops", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("test1.png"));
-
 
         /* pixInvert */
     pix1 = pixInvert(NULL, pixs);

@@ -65,10 +65,10 @@ l_int32 main(int    argc,
 l_int32       index;
 PIX          *pixs, *pix1, *pixc, *pixd;
 PIXCMAP      *cmap;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "shear", FALSE, &rp))
+		return 1;
 
     lept_stderr("Test binary image:\n");
     pixs = pixRead(BINARY_IMAGE);

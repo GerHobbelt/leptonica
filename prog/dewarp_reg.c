@@ -62,12 +62,12 @@ PIX          *pixs, *pixn, *pixg, *pixd, *pixb, *pix1, *pixt1, *pixt2;
 PIX          *pixs2, *pixn2, *pixg2, *pixb2;
 PTA          *pta, *ptad;
 PTAA         *ptaa1, *ptaa2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "dewarp", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/regout");
+	//lept_mkdir("lept/regout");
 
         /* Read page 7, normalize for varying background and binarize */
     pixs = pixRead(DEMOPATH("1555.007.jpg"));

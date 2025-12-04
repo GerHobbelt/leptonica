@@ -54,10 +54,10 @@ int main(int    argc,
 L_COLORFILL  *cf;
 PIX          *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "colorfill", FALSE, &rp))
+		return 1;
 
         /* Test on a small image */
     pix1 = makeSmallTestPix(0x3070A000, 0xA0703000);

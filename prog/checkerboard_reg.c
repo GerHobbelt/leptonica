@@ -53,10 +53,10 @@ static void LocateCheckerboardCorners(L_REGPARAMS *rp,
 int main(int    argc,
          const char **argv)
 {
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "checkerboard", FALSE, &rp))
+		return 1;
 
     LocateCheckerboardCorners(rp, DEMOPATH("checkerboard1.tif"), 2);
     LocateCheckerboardCorners(rp, DEMOPATH("checkerboard2.tif"), 4);

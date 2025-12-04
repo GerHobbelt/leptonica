@@ -60,10 +60,10 @@ int main(int    argc,
 {
 PIX          *pixs, *pixg, *pixc, *pix1;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "blend", FALSE, &rp))
+		return 1;
 
         /* Set up blenders */
     pixg = pixRead(DEMOPATH("blender8.png"));

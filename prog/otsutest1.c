@@ -61,9 +61,13 @@ int main(int    argc,
 l_int32  i;
 PIX     *pix;
 PIXA    *pixa;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/otsu");
+	if (regTestSetup(&argc, &argv, "otsu", FALSE, &rp))
+		return 1;
+
+    //lept_mkdir("lept/otsu");
+
     for (i = 0; i < NTests; i++)
         GenerateSplitPlot(i);
 
@@ -117,7 +121,7 @@ NUMA      *na1, *na2, *nascore, *nax, *nay;
         /* Plot the input histogram with the split location */
     snprintf(buf, sizeof(buf), "/tmp/lept/otsu/plot.%d", i);
     snprintf(title, sizeof(title), "Plot %d", i);
-    gplot = gplotCreate(diagspec, buf, GPLOT_PNG,
+    gplot = gplotCreate(rp->diag_spec, buf, GPLOT_PNG,
                         "Histogram: mixture of 2 gaussians",
                         "Grayscale value", "Number of pixels");
     gplotAddPlot(gplot, NULL, na1, GPLOT_LINES, title);
@@ -130,7 +134,7 @@ NUMA      *na1, *na2, *nascore, *nax, *nay;
         /* Plot the score function */
     snprintf(buf, sizeof(buf), "/tmp/lept/otsu/plots.%d", i);
     snprintf(title, sizeof(title), "Plot %d", i);
-    gplot = gplotCreate(diagspec, buf, GPLOT_PNG,
+    gplot = gplotCreate(rp->diag_spec, buf, GPLOT_PNG,
                         "Otsu score function for splitting",
                         "Grayscale value", "Score");
     gplotAddPlot(gplot, NULL, nascore, GPLOT_LINES, title);

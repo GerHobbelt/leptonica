@@ -60,17 +60,18 @@ BOX          *box1;
 NUMA         *na, *nax, *nay, *nap, *nasy, *na1, *na2, *na3, *na4;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pixd;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "numa3_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    lept_mkdir("lept/numa3");
+	if (regTestSetup(&argc, &argv, "numa3", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/numa3");
 
     /* -------------------------------------------------------------------*
      *                             Rank extraction                        *

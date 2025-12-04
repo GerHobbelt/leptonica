@@ -49,10 +49,10 @@ int main(int    argc,
          const char **argv)
 {
 PIX          *pix, *pixs, *pix1, *pix2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "dither", FALSE, &rp))
+		return 1;
 
     pix = pixRead(DEMOPATH("test8.jpg"));
     pixs = pixGammaTRC(NULL, pix, 1.3, 0, 255);  /* gamma of 1.3, for fun */

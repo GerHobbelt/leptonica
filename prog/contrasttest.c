@@ -58,6 +58,10 @@ l_float32  fact[] = {0.2f, 0.4f, 0.6f, 0.8f, 1.0f, -1.0f};
 GPLOT     *gplot;
 NUMA      *na, *nax;
 PIX       *pixs;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "contrast", TRUE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  contrasttest filein factor fileout",
@@ -66,27 +70,19 @@ PIX       *pixs;
     factor = atof(argv[2]);
     fileout = argv[3];
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/contradt");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "contrasttest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
-    setLeptDebugOK(1);
-    lept_mkdir("lept/contrast");
+    //lept_mkdir("lept/contrast");
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
 
     na = numaContrastTRC(factor);
-    gplotSimple1(diagspec, na, GPLOT_PNG, "/tmp/lept/contrast/trc1", "contrast trc");
+    gplotSimple1(rp->diag_spec, na, GPLOT_PNG, "/tmp/lept/contrast/trc1", "contrast trc");
     l_fileDisplay("/tmp/lept/contrast/trc1.png", 0, 100, 1.0);
     numaDestroy(&na);
 
          /* Plot contrast TRC maps */
     nax = numaMakeSequence(0.0, 1.0, 256);
-    gplot = gplotCreate(diagspec, "/tmp/lept/contrast/trc2", GPLOT_PNG,
+    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/contrast/trc2", GPLOT_PNG,
         "Atan mapping function for contrast enhancement",
         "value in", "value out");
     for (iplot = 0; fact[iplot] >= 0.0; iplot++) {

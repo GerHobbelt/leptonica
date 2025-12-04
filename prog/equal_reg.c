@@ -61,12 +61,12 @@ int main(int    argc,
          const char **argv)
 {
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "equal", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/equal");
+    //lept_mkdir("lept/equal");
 
     pixs = pixRead(DEMOPATH(FEYN1));
     pixWrite("/tmp/lept/equal/junkfeyn.png", pixs, IFF_PNG);

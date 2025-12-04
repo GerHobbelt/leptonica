@@ -89,10 +89,10 @@ PIX          *pix, *pixs, *pixb, *pixg, *pixc, *pixcs;
 PIX          *pixd, *pix1, *pix2, *pix3;
 PIXA         *pixa;
 PTA          *ptas, *ptad;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "affine", FALSE, &rp))
+		return 1;
 
     pix = pixRead(DEMOPATH("feyn.tif"));
     pixs = pixScale(pix, 0.22, 0.22);

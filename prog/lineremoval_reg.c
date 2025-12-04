@@ -52,10 +52,10 @@ l_float32     angle, conf, deg2rad;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIX          *pix6, *pix7, *pix8, *pix9;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "lines", FALSE, &rp))
+		return 1;
 
     deg2rad = 3.14159 / 180.;
     pixs = pixRead(DEMOPATH("dave-orig.png"));

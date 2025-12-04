@@ -66,14 +66,17 @@ NUMA     *nascore;
 PIX      *pix1, *pix2, *pix3, *pixdb;
 PIXA     *pixa1, *pixa2;
 L_RECOG  *recog;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         lept_stderr(" Syntax: recogtest6\n");
         return 1;
     }
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/recog");
+    //lept_mkdir("lept/recog");
 
         /* Generate the recognizer */
     pixa1 = pixaRead("recog/sets/train01.pa");
@@ -81,7 +84,7 @@ L_RECOG  *recog;
     recogAverageSamples(recog, 0);
 
         /* Show the templates */
-    recogDebugAverages(recog, diagspec);
+    recogDebugAverages(recog, rp->diag_spec);
     recogShowMatchesInRange(recog, recog->pixa_tr, 0.0, 1.0, 1);
 
         /* Get a set of problem images to decode */

@@ -51,6 +51,10 @@ l_int32    i, w, h, d, rotflag;
 PIX       *pixs, *pixt, *pixd;
 l_float32  angle, deg2rad, ang;
 const char      *filein, *fileout;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "rotate", TRUE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  rotatetest1 filein angle fileout",
@@ -59,15 +63,7 @@ const char      *filein, *fileout;
     angle = atof(argv[2]);
     fileout = argv[3];
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/rotate");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "rotatetest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
-    setLeptDebugOK(1);
-    lept_mkdir("lept/rotate");
+	//lept_mkdir("lept/rotate");
 
     deg2rad = 3.1415926535 / 180.;
     if ((pixs = pixRead(filein)) == NULL)
@@ -180,7 +176,7 @@ const char      *filein, *fileout;
     pixd = pixAbsDifference(pix1, pix2);
     pixGetColorHistogram(pixd, 1, &nar, &nag, &nab);
     naseq = numaMakeSequence(0., 1., 256);
-    gplot = gplotCreate(diagspec, "/tmp/lept/rotate/absdiff", GPLOT_PNG,
+    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/rotate/absdiff", GPLOT_PNG,
                         "Number vs diff", "diff", "number");
     gplotAddPlot(gplot, naseq, nar, GPLOT_POINTS, "red");
     gplotAddPlot(gplot, naseq, nag, GPLOT_POINTS, "green");

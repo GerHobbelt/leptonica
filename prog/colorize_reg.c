@@ -64,17 +64,18 @@ FPIX         *fpix;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 PIX          *pix8, *pix9, *pix10, *pix11, *pix12, *pix13, *pix14, *pix15;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "colorize_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-              return 1;
+	L_REGPARAMS* rp;
 
-    pixa = pixaCreate(0);
+	if (regTestSetup(&argc, &argv, "colorize", FALSE, &rp))
+		return 1;
+
+	pixa = pixaCreate(0);
     pixs = pixRead(DEMOPATH("breviar.38.150.jpg"));
     pixaAddPix(pixa, pixs, L_CLONE);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 0 */

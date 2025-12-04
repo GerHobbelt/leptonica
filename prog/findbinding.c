@@ -65,19 +65,16 @@ l_float32  ave, rankval, maxvar, variance, norm, conf, angle, radangle;
 NUMA      *na1;
 PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 PIXA      *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "binding", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  findbinding", __func__, 1);
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/binding");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "findbindingtest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+    //lept_mkdir("lept/binding");
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/binding");
     pixa = pixaCreate(0);
 
     pix1 = pixRead(DEMOPATH("binding-example.45.jpg"));
@@ -149,7 +146,7 @@ PIXA      *pixa;
         /* Plot the windowed variance as a function of the y-value
          * of the window location */
     lept_stderr("maxvar = %f, ymax = %d\n", maxvar, ymax);
-	pix7 = gplotSimplePix1(diagspec, na1, "lept/binding/root", "windowed variance");
+	pix7 = gplotSimplePix1(rp->diag_spec, na1, "lept/binding/root", "windowed variance");
     pixDisplay(pix7, 0, 800);
     pixaAddPix(pixa, pix7, L_COPY);
 

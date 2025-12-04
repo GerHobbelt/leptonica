@@ -71,10 +71,10 @@ l_float32     pi, scale, angle;
 PIX          *pixc, *pixm, *pix1, *pix2, *pix3;
 PIXA         *pixa;
 PTA          *pta1, *pta2, *pta3, *pta4;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "smallpix", FALSE, &rp))
+		return 1;
 
         /* Make a small test image, the hard way! */
     pi = 3.1415926535;

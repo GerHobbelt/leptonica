@@ -55,16 +55,12 @@ BOXA    *boxa1, *boxa2;
 NUMA    *nai1, *nai2;
 NUMAA   *naa1, *naa2;
 PIX     *pixs, *pixt, *pixb1, *pixb2;
+L_REGPARAMS* rp;
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/comp");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "comparepages");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+	if (regTestSetup(&argc, &argv, "comp", FALSE, &rp))
+		return 1;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/comp");
+    //lept_mkdir("lept/comp");
 
     pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
     pixb1 = pixConvertTo1(pixs, 128);
@@ -85,7 +81,7 @@ PIX     *pixs, *pixt, *pixb1, *pixb2;
     pixDisplay(pixb2, 600, 0);
     pixGetWordBoxesInTextlines(pixb2, 10, 10, 500, 50, &boxa2, &nai2);
     naa2 = boxaExtractSortedPattern(boxa2, nai2);
-    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, diagspec);
+    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, rp->diag_spec);
     lept_stderr("Translation.  same?: %d\n\n", same);
     boxaDestroy(&boxa2);
     numaDestroy(&nai2);
@@ -100,7 +96,7 @@ PIX     *pixs, *pixt, *pixb1, *pixb2;
     pixDisplay(pixb2, 900, 0);
     pixGetWordBoxesInTextlines(pixb2, 10, 10, 500, 50, &boxa2, &nai2);
     naa2 = boxaExtractSortedPattern(boxa2, nai2);
-    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, diagspec);
+    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, rp->diag_spec);
     lept_stderr("Aligned part below h/3.  same?: %d\n\n", same);
     boxaDestroy(&boxa2);
     numaDestroy(&nai2);
@@ -115,7 +111,7 @@ PIX     *pixs, *pixt, *pixb1, *pixb2;
     pixDisplay(pixb2, 1200, 0);
     pixGetWordBoxesInTextlines(pixb2, 10, 10, 500, 50, &boxa2, &nai2);
     naa2 = boxaExtractSortedPattern(boxa2, nai2);
-    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, diagspec);
+    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, rp->diag_spec);
     lept_stderr("Top/Bot switched; no alignment.  Same?: %d\n", same);
     boxaDestroy(&boxa2);
     numaDestroy(&nai2);

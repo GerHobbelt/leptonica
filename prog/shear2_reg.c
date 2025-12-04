@@ -55,15 +55,16 @@ l_int32 main(int    argc,
 L_BMF        *bmf;
 PIX          *pixs1, *pixs2, *pixg, *pixt, *pixd;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "shear2_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "shear", FALSE, &rp))
+		return 1;
 
     bmf = bmfCreate(DEMOPATH("fonts"), 8);
     pixs1 = pixCreate(301, 301, 32);

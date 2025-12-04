@@ -70,24 +70,21 @@ NUMAA       *naa1, *naa2, *naa3, *naa4;
 PIX         *pix1, *pix2;
 PIXA        *pixa1, *pixa2, *pixa3;
 PIXAC       *pac;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "histodup", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         lept_stderr("Syntax: histoduptest\n");
         return 1;
     }
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/comp");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "histoduptest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
         /* Set to 1 for more output from tests 1 and 2 */
     debug = 0;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/comp");
+    //lept_mkdir("lept/comp");
+
     pac = pixacompRead("dinos.pac");  /* resolution = 75 ppi */
 
 #if TEST1
@@ -109,7 +106,7 @@ PIXAC       *pac;
         /* Compare between every pair of images;
          * can also use n = 2, simthresh = 0.50.  */
     pixaComparePhotoRegionsByHisto(pixa2, 0.85, 1.3, 1, 3, 0.20,
-                                   &nai, &scores, &pix1, diagspec);
+                                   &nai, &scores, &pix1, rp->diag_spec);
     lept_free(scores);
 
         /* Show the similarity classes. */
@@ -139,7 +136,7 @@ PIXAC       *pac;
 
         /* Compare between every pair of images. */
     pixaComparePhotoRegionsByHisto(pixa2, 0.85, 1.3, 1, 3, 0.20,
-                                   &nai, &scores, &pix1, diagspec);
+                                   &nai, &scores, &pix1, rp->diag_spec);
     lept_free(scores);
 
         /* Show the similarity classes. */

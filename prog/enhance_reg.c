@@ -65,18 +65,19 @@ NUMA         *na1, *na2, *na3;
 PIX          *pix, *pixs, *pixs1, *pixs2, *pixd;
 PIX          *pix0, *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2, *pixaf;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "enhance_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
-    lept_mkdir("lept/enhance");
+	if (regTestSetup(&argc, &argv, "enhance", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
+    //lept_mkdir("lept/enhance");
 
     pix = pixRead(DEMOPATH("test24.jpg"));  /* rgb */
     w = pixGetWidth(pix);

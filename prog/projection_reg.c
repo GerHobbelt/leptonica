@@ -52,12 +52,12 @@ int main(int    argc,
          const char **argv)
 {
 PIX          *pixs, *pix1, *pix2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "projection", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/projection");
+	//lept_mkdir("lept/projection");
 
         /* Use for input two different images */
     pixs = pixRead(DEMOPATH("projectionstats.jpg"));

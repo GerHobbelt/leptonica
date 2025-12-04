@@ -59,12 +59,12 @@ BOX          *box;
 BOXA         *boxa1, *boxa2, *boxa3;
 PIX          *pix1;
 PTA          *pta;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "boxa", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/boxa");
+    //lept_mkdir("lept/boxa");
 
         /* Make a boxa and display its contents */
     boxa1 = boxaCreate(6);

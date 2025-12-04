@@ -57,10 +57,10 @@ l_uint32      val;
 BOX          *box;
 PIX          *pix0, *pixs, *pixse, *pixd1, *pixd2;
 SEL          *sel;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "raster_op", FALSE, &rp))
+		return 1;
 
     pix0 = pixRead(DEMOPATH("feyn-fract.tif"));
     box = boxCreate(293, 37, pixGetWidth(pix0) - 691, pixGetHeight(pix0) -145);

@@ -81,7 +81,6 @@ L_BMF        *bmf, *bmftop;
 PIX          *pixs, *pixt, *pixd;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
 SARRAY       *sa;
 
 #if !defined(HAVE_LIBPNG)
@@ -89,10 +88,12 @@ SARRAY       *sa;
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    bmf = bmfCreate(DEMOPATH("fonts"), 6);
+	if (regTestSetup(&argc, &argv, "write_text", FALSE, &rp))
+		return 1;
+
+	bmf = bmfCreate(DEMOPATH("fonts"), 6);
     bmftop = bmfCreate(DEMOPATH("fonts"), 10);
     pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
     pix1 = pixScale(pixs, 0.4, 0.4);          /* 8 bpp grayscale */

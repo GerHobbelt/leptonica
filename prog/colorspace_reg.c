@@ -60,17 +60,18 @@ PIX          *pixs, *pix0, *pix1, *pix2, *pix3;
 PIX          *pixr, *pixg, *pixb;  /* for color content extraction */
 PIXA         *pixa, *pixat;
 PIXCMAP      *cmap;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "colorspace_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "colorspace", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
         /* Generate a pdf of results when called with display */
     pixa = pixaCreate(0);

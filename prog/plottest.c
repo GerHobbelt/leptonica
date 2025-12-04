@@ -76,19 +76,15 @@ size_t     size1, size2;
 l_float32  x, y1, y2, pi;
 GPLOT     *gplot1, *gplot2, *gplot3, *gplot4, *gplot5;
 NUMA      *nax, *nay1, *nay2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "plot", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  plottest", __func__, 1);
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/plot");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "plottest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
-    setLeptDebugOK(1);
-    lept_mkdir("lept/plot");
+    //lept_mkdir("lept/plot");
 
         /* Generate plot data */
     nax = numaCreate(0);
@@ -105,7 +101,7 @@ NUMA      *nax, *nay1, *nay2;
     }
 
         /* Show the plot */
-    gplot1 = gplotCreate(diagspec, "/tmp/lept/plot/set1", GPLOT_OUTPUT, "Example plots",
+    gplot1 = gplotCreate(rp->diag_spec, "/tmp/lept/plot/set1", GPLOT_OUTPUT, "Example plots",
                          "theta", "f(theta)");
     gplotAddPlot(gplot1, nax, nay1, GPLOT_STYLE, "sin (2.4 * theta)");
     gplotAddPlot(gplot1, nax, nay2, GPLOT_STYLE, "cos (2.4 * theta)");
@@ -121,7 +117,7 @@ NUMA      *nax, *nay1, *nay2;
 
         /* Test gplot serialization */
     gplotWrite("/tmp/lept/plot/plot1.gp", gplot1);
-    if ((gplot2 = gplotRead(diagspec, "/tmp/lept/plot/plot1.gp")) == NULL)
+    if ((gplot2 = gplotRead(rp->diag_spec, "/tmp/lept/plot/plot1.gp")) == NULL)
         return ERROR_INT("gplotRead failure!", __func__, 1);
     gplotWrite("/tmp/lept/plot/plot2.gp", gplot2);
 
@@ -141,20 +137,20 @@ NUMA      *nax, *nay1, *nay2;
     lept_free(str2);
 
         /* Read from file and regenerate the plot */
-    gplot3 = gplotRead(diagspec, "/tmp/lept/plot/plot2.gp");
+    gplot3 = gplotRead(rp->diag_spec, "/tmp/lept/plot/plot2.gp");
     stringReplace(&gplot3->title , "Example plots regen");
     gplot3->outformat = GPLOT_PNG;
     gplotMakeOutput(gplot3);
 
         /* Build gplot but do not make the output formatted stuff */
-    gplot4 = gplotCreate(diagspec, "/tmp/lept/plot/set2", GPLOT_OUTPUT,
+    gplot4 = gplotCreate(rp->diag_spec, "/tmp/lept/plot/set2", GPLOT_OUTPUT,
                          "Example plots 2", "theta", "f(theta)");
     gplotAddPlot(gplot4, nax, nay1, GPLOT_STYLE, "sin (2.4 * theta)");
     gplotAddPlot(gplot4, nax, nay2, GPLOT_STYLE, "cos (2.4 * theta)");
 
         /* Write, read back, and generate the plot */
     gplotWrite("/tmp/lept/plot/plot4.gp", gplot4);
-    if ((gplot5 = gplotRead(diagspec, "/tmp/lept/plot/plot4.gp")) == NULL)
+    if ((gplot5 = gplotRead(rp->diag_spec, "/tmp/lept/plot/plot4.gp")) == NULL)
         return ERROR_INT("gplotRead failure!", __func__, 1);
     gplotMakeOutput(gplot5);
     l_fileDisplay("/tmp/lept/plot/set2.png", 750, 100, 1.0);

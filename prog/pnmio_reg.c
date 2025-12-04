@@ -53,10 +53,10 @@ l_uint8      *data;
 size_t        size;
 FILE         *fp;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "pnm_io", FALSE, &rp))
+		return 1;
 
 #if !USE_PNMIO
     lept_stderr("pnm/pam writing is not enabled\n"
@@ -67,7 +67,7 @@ L_REGPARAMS  *rp;
 #endif  /* abort */
 
     lept_rmdir("lept/pnm");
-    lept_mkdir("lept/pnm");
+    //lept_mkdir("lept/pnm");
 
         /* Test 1 bpp (pbm) read/write */
     pix1 = pixRead(DEMOPATH("char.tif"));

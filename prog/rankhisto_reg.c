@@ -57,17 +57,18 @@ l_uint32     *array, *marray;
 NUMA         *na, *nabinval, *narank;
 PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "rankhisto_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-        /* Find the rank bin colors */
+	if (regTestSetup(&argc, &argv, "rank_histo", FALSE, &rp))
+		return 1;
+
+	/* Find the rank bin colors */
     pixs = pixRead(DEMOPATH("map1.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
     factor = L_MAX(1, (l_int32)sqrt((l_float64)(w * h / 20000.0)));

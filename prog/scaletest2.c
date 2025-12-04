@@ -52,19 +52,15 @@ int main(int    argc,
 {
 PIX     *pixs;
 l_int32  d;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "scale", TRUE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  scaletest2 filein", __func__, 1);
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/scale");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "scaletest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
-    setLeptDebugOK(1);
-    lept_mkdir("lept/scale");
+	//lept_mkdir("lept/scale");
 
     if ((pixs = pixRead(argv[1])) == NULL)
        	return ERROR_INT("pixs not made", __func__, 1);
@@ -299,7 +295,7 @@ l_int32  d;
         pixd = pixAbsDifference(pix1, pix2);
         pixGetColorHistogram(pixd, 1, &nar, &nag, &nab);
         naseq = numaMakeSequence(0., 1., 256);
-        gplot = gplotCreate(diagspec, "/tmp/lept/scale/c_absdiff", GPLOT_PNG,
+        gplot = gplotCreate(rp->diag_spec, "/tmp/lept/scale/c_absdiff", GPLOT_PNG,
                             "Number vs diff", "diff", "number");
         gplotSetScaling(gplot, GPLOT_LOG_SCALE_Y);
         gplotAddPlot(gplot, naseq, nar, GPLOT_POINTS, "red");
@@ -355,7 +351,7 @@ l_int32  d;
         pixd = pixAbsDifference(pix1, pix2);
         nagray = pixGetGrayHistogram(pixd, 1);
         naseq = numaMakeSequence(0., 1., 256);
-        gplot = gplotCreate(diagspec, "/tmp/lept/scale/g_absdiff", GPLOT_PNG,
+        gplot = gplotCreate(rp->diag_spec, "/tmp/lept/scale/g_absdiff", GPLOT_PNG,
                             "Number vs diff", "diff", "number");
         gplotSetScaling(gplot, GPLOT_LOG_SCALE_Y);
         gplotAddPlot(gplot, naseq, nagray, GPLOT_POINTS, "gray");

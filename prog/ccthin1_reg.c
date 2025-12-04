@@ -54,10 +54,10 @@ PIX          *pix1, *pix2;
 PIXA         *pixa;
 SEL          *sel, *sel1, *sel2, *sel3;
 SELA         *sela, *sela4, *sela8, *sela48;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "ccthin", FALSE, &rp))
+		return 1;
 
     pixa = pixaCreate(0);
 

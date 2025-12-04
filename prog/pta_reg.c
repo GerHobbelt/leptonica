@@ -71,10 +71,10 @@ PIX          *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa;
 PTA          *pta, *pta1, *pta2, *pta3;
 PTAA         *ptaafg, *ptaabg;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "pta", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     boxa = pixConnComp(pixs, NULL, 8);

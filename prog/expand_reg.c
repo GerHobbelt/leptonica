@@ -68,12 +68,12 @@ char         filename[][64] = {BINARY_IMAGE,
 BOX          *box;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "expand", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/expand");
+	//lept_mkdir("lept/expand");
 
     pixa = pixaCreate(0);
     for (i = 0; i < 8; i++) {

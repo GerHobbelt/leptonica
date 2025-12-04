@@ -59,12 +59,12 @@ int main(int    argc,
 l_int32       i, w, h;
 PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "blend", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/regout");
+	//lept_mkdir("lept/regout");
 
     pixa = pixaCreate(0);
 

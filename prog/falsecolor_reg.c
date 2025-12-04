@@ -54,10 +54,10 @@ l_int32       i, j, val8, val16;
 NUMA         *na;
 PIX          *pix1, *pix8, *pix16, *pix8f, *pix16f;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "falsecolor", FALSE, &rp))
+		return 1;
 
     pix8 = pixCreate(768, 100, 8);
     pix16 = pixCreate(768, 100, 16);

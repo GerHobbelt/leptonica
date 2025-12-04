@@ -67,12 +67,12 @@ l_float32     frand, fval;
 HEAPEL       *item;
 NUMA         *na1, *na2, *na3, *na4, *na5;
 L_HEAP       *lh;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "heap", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/heap");
+    //lept_mkdir("lept/heap");
 
         /* Make a numa of random numbers */
     na1 = numaCreate(5);

@@ -70,22 +70,19 @@ int main(int    argc,
 l_float32  fcolor;
 PIX       *pix1, *pix2, *pix3, *pix4;
 PIXA      *pixadb;
+L_REGPARAMS* rp;
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/color");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "find_colorregions");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+	if (regTestSetup(&argc, &argv, "color_regions", FALSE, &rp))
+		return 1;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/color");
+    //lept_mkdir("lept/color");
+
     pix1 = pixRead(DEMOPATH("colorpage.030.jpg"));
 /*    pix1 = pixRead(DEMOPATH("map.057.jpg")); */
 
         /* More general method */
     pixadb = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixadb, diagspec);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
     pixFindColorRegions(pix1, NULL, 4, 200, 60, 10, 90, 0.05,
                         &fcolor, &pix3, &pix4, pixadb);
     lept_stderr("ncolor = %f\n", fcolor);
@@ -223,8 +220,6 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
     if (mindiff < 0) mindiff = 50;
     if (colordiff < 0) colordiff = 40;
 
-
-	// if (regTestSetup(argc, argv, &rp))	return 1;
 	LDIAG_CTX diagspec = NULL;
 	if (pixadb) {
 		diagspec = pixaGetDiagnosticsSpec(pixadb);

@@ -60,15 +60,16 @@ l_int32 main(int    argc,
              const char **argv)
 {
 l_int32       i;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "boxa3_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "boxa", FALSE, &rp))
+		return 1;
 
     for (i = 0; i < 3; i++)
         TestBoxa(rp, i);

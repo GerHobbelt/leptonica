@@ -57,17 +57,18 @@ l_float32     f, val;
 GPLOT        *gplot;
 NUMA         *na1, *na2, *na3;
 PIX          *pix1;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "extrema_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    lept_mkdir("lept/extrema");
+	if (regTestSetup(&argc, &argv, "extrema", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/extrema");
 
         /* Generate a 1D signal and plot it */
     na1 = numaCreate(500);

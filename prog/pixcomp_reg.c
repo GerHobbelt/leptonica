@@ -67,13 +67,14 @@ PIX          *pix, *pix1, *pix2, *pix3;
 PIXA         *pixa, *pixa1;
 PIXC         *pixc, *pixc1, *pixc2;
 PIXAC        *pixac, *pixac1, *pixac2;
-L_REGPARAMS  *rp;
 SARRAY       *sa;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+L_REGPARAMS* rp;
 
-    lept_mkdir("lept/comp");
+	if (regTestSetup(&argc, &argv, "pixcomp", FALSE, &rp))
+		return 1;
+
+    //lept_mkdir("lept/comp");
 
     pixac = pixacompCreate(1);
     pixa = pixaCreate(0);

@@ -74,8 +74,6 @@ void DoJpegTest4(L_REGPARAMS *rp, const char *fname);
 int main(int    argc,
          const char **argv)
 {
-L_REGPARAMS  *rp;
-
 #if !HAVE_LIBJPEG
     lept_stderr("jpegio is not enabled\n"
                 "See environ.h: #define HAVE_LIBJPEG\n"
@@ -83,10 +81,12 @@ L_REGPARAMS  *rp;
     return 0;
 #endif  /* abort */
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "jpeg_io", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
     DoJpegTest1(rp, DEMOPATH("test8.jpg"));
     DoJpegTest1(rp, DEMOPATH("fish24.jpg"));

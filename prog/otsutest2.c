@@ -67,9 +67,12 @@ int main(int argc, const char** argv)
 	L_BMF* bmf;
 	PIX* pixs, * pixb, * pixg, * pixp, * pix1, * pix2, * pix3;
 	PIXA* pixa1, * pixad;
+	L_REGPARAMS* rp;
 
-	setLeptDebugOK(1);
-	lept_mkdir("lept/otsu2");
+	if (regTestSetup(&argc, &argv, "otsu2", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/otsu2");
 
 	SARRAY* sargv = NULL;
 	if (argc <= 1)

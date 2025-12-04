@@ -66,12 +66,12 @@ NUMA        *na;
 SARRAY      *sa;
 PIX         *pix1, *pix2;
 PIXA        *pixa1, *pixa2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "class", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/class");
+    //lept_mkdir("lept/class");
 
         /* Set up the input data */
     pix1 = pixRead(DEMOPATH("pageseg1.tif"));

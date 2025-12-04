@@ -63,10 +63,10 @@ l_int32       i, j, k, index, conn, depth, bc;
 BOX          *box;
 PIX          *pix, *pixs, *pixd;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "distance", FALSE, &rp))
+		return 1;
 
     pix = pixRead(DEMOPATH("feyn.tif"));
     box = boxCreate(383, 338, 1480, 1050);

@@ -73,16 +73,13 @@ PIX      *pixm, *pixm2, *pixd2, *pixs2;
 PIXA     *pixa1, *pixa2;
 PIXAA    *paa;
 PIXCMAP  *cmap, *cmapg;
+L_REGPARAMS* rp;
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/misc");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "misctest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+	if (regTestSetup(&argc, &argv, "misc", FALSE, &rp))
+		return 1;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/misc");
+    //lept_mkdir("lept/misc");
+
     paa = pixaaCreate(0);
 
         /* Combine two grayscale images using a mask */
@@ -218,26 +215,26 @@ PIXCMAP  *cmap, *cmapg;
     pixa1 = pixaCreate(0);
     boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
     boxaSplitEvenOdd(boxa1, 0, &boxae, &boxao);
-    boxaPlotSides(boxae, "1-sides-even", diagspec, NULL, NULL, NULL, NULL, &pix1);
+    boxaPlotSides(boxae, "1-sides-even", rp->diag_spec, NULL, NULL, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
-    boxaPlotSides(boxao, "1-sides-odd", diagspec, NULL, NULL, NULL, NULL, &pix1);
+    boxaPlotSides(boxao, "1-sides-odd", rp->diag_spec, NULL, NULL, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
-    boxaPlotSizes(boxae, "1-sizes-even", diagspec, NULL, NULL, &pix1);
+    boxaPlotSizes(boxae, "1-sizes-even", rp->diag_spec, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
-    boxaPlotSizes(boxao, "1-sizes-odd", diagspec, NULL, NULL, &pix1);
+    boxaPlotSizes(boxao, "1-sizes-odd", rp->diag_spec, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
     boxaDestroy(&boxae);
     boxaDestroy(&boxao);
     boxaDestroy(&boxa1);
     boxa1 = boxaRead(DEMOPATH("boxa3.ba"));
     boxaSplitEvenOdd(boxa1, 0, &boxae, &boxao);
-    boxaPlotSides(boxae, "2-sides-even", diagspec, NULL, NULL, NULL, NULL, &pix1);
+    boxaPlotSides(boxae, "2-sides-even", rp->diag_spec, NULL, NULL, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
-    boxaPlotSides(boxao, "2-sides-odd", diagspec, NULL, NULL, NULL, NULL, &pix1);
+    boxaPlotSides(boxao, "2-sides-odd", rp->diag_spec, NULL, NULL, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
-    boxaPlotSizes(boxae, "2-sizes-even", diagspec, NULL, NULL, &pix1);
+    boxaPlotSizes(boxae, "2-sizes-even", rp->diag_spec, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
-    boxaPlotSizes(boxao, "2-sizes-odd", diagspec, NULL, NULL, &pix1);
+    boxaPlotSizes(boxao, "2-sizes-odd", rp->diag_spec, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
     boxaDestroy(&boxae);
     boxaDestroy(&boxao);

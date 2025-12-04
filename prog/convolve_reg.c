@@ -69,10 +69,10 @@ FPIX         *fpixv, *fpixrv;
 L_KERNEL     *kel1, *kel2, *kel3x, *kel3y;
 PIX          *pixs, *pixacc, *pixg, *pixt, *pixd;
 PIX          *pixb, *pixm, *pixms, *pixrv, *pix1, *pix2, *pix3, *pix4;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "convolve", FALSE, &rp))
+		return 1;
 
         /* Test pixBlockconvGray() on 8 bpp */
     pixs = pixRead(DEMOPATH("test8.jpg"));

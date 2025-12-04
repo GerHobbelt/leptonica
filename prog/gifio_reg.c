@@ -93,10 +93,10 @@ char          buf[64];
 l_int32       success;
 PIX          *pix;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "gif_io", FALSE, &rp))
+		return 1;
 
 #if !HAVE_LIBGIF && !HAVE_LIBUNGIF
     lept_stderr("gifio is not enabled\n"
@@ -122,7 +122,7 @@ L_REGPARAMS  *rp;
     pixa = (rp->display) ? pixaCreate(0) : NULL;
 
     lept_rmdir("lept/gif");
-    lept_mkdir("lept/gif");
+    //lept_mkdir("lept/gif");
 
     /* ------------ Part 1: Test lossless r/w to file ------------*/
     test_gif(FILE_1BPP, pixa, rp);

@@ -57,22 +57,23 @@ NUMA         *na;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixadb;
 PTA          *pta;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "baseline_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "baseline", FALSE, &rp))
+		return 1;
 
 	LDIAG_CTX diagspec = leptCopyDiagnoticsSpecInstance(rp->diag_spec);
 
-	lept_mkdir("lept/baseline");
+	//lept_mkdir("lept/baseline");
 
 	//leptDebugGetFileBasePath(diagspec);
-	leptDebugAppendFileBasepath(diagspec, "baseline");
+	//leptDebugAppendFileBasepath(diagspec, "baseline");
 
 	const char* sourcefilepath = DEMOPATH("keystone.png");
     pixs = pixRead(sourcefilepath);

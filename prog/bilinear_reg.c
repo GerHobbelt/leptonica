@@ -78,10 +78,10 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pixd;
 PIX          *pixb, *pixg, *pixc, *pixcs;
 PIXA         *pixa;
 PTA          *ptas, *ptad;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "bilinear", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
     pixg = pixScaleToGray(pixs, 0.2);

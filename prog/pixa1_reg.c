@@ -56,13 +56,15 @@ GPLOT        *gplot;
 NUMA         *nax, *nay1, *nay2;
 PIX          *pixs, *pix1, *pixd;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "pixa", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
-    lept_mkdir("lept/pixa");
+
+	//lept_mkdir("lept/pixa");
+
     pixa = pixaCreate(2);
 
     /* ----------------  Remove small components --------------- */

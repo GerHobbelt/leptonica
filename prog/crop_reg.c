@@ -64,12 +64,12 @@ BOX          *box1, *box2;
 NUMA         *na1, *nar, *naro, *narl, *nart, *nai, *naio, *nait;
 PIX          *pixs, *pixr, *pixg, *pixgi, *pixd, *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "crop", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/crop");
+    //lept_mkdir("lept/crop");
 
         /* Calculate projection profiles through images/drawings. */
     pixa1 = pixaCreate(2);

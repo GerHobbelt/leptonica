@@ -52,11 +52,12 @@ static void RunCCBordTest(const char *fname, L_REGPARAMS *rp);
 int main(int    argc,
          const char **argv)
 {
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
-    lept_mkdir("lept/ccbord");
+	if (regTestSetup(&argc, &argv, "ccbord", FALSE, &rp))
+		return 1;
+
+    //lept_mkdir("lept/ccbord");
 
     RunCCBordTest(DEMOPATH("feyn-fract.tif"), rp);
     RunCCBordTest(DEMOPATH("dreyfus1.png"), rp);

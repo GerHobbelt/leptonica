@@ -117,16 +117,28 @@ static char *getRootNameFromArgv0(const char *argv0);
  * </pre>
  */
 l_ok
-regTestSetup(l_int32        argc,
-	         const char   **argv,
-             L_REGPARAMS  **prp)
+regTestSetup(int            *argc_ref,
+	         const char   ***argv_ref,
+	         const char*     output_path_base,
+	         l_int32         accept_arbitrary_argv_set,
+             L_REGPARAMS   **prp)
 {
 char         *testname;
 const char   *vers;
 char          errormsg[64];
+int           argc;
+const char**  argv;
 L_REGPARAMS  *rp;
 
-    if (argc != 1 && argc != 2 && argc != 3) {
+	if (!argc_ref || !argv_ref || !prp)
+		return ERROR_INT("ptrs not all defined", __func__, 1);
+
+	argc = *argc_ref;
+	argv = *argv_ref;
+
+	// TODO: detect and consume a '-d' / '--debug' option...
+
+    if (argc != 1 && argc != 2 && argc != 3 && !accept_arbitrary_argv_set) {
         snprintf(errormsg, sizeof(errormsg),
             "Syntax: %s [ [compare] | generate | display ] ...", argv[0]);
         return ERROR_INT(errormsg, __func__, 1);
@@ -136,7 +148,13 @@ L_REGPARAMS  *rp;
         return ERROR_INT("invalid root", __func__, 1);
 
 	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/regout");
+	if (!accept_arbitrary_argv_set) {
+		leptDebugSetFileBasepath(diagspec, "lept/regout");
+	}
+	else {
+		leptDebugSetFileBasepath(diagspec, "lept");
+		leptDebugAppendFileBasepath(diagspec, output_path_base);
+	}
 	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
 	leptDebugSetProcessName(diagspec, testname);
 	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
@@ -153,13 +171,19 @@ L_REGPARAMS  *rp;
          * as a failure of the regression test. */
     rp->success = TRUE;
 
-        /* Make sure the lept/regout subdirectory exists */
-    lept_mkdir("lept/regout");
+#if 0
+	/* Make sure the lept/regout subdirectory exists */
+    lept_mkdir(leptDebugGetFileBasePath(diagspec));
+#endif
+
+	int consume_cgd_arg = 1;
 
         /* Only open a stream to a temp file for the 'compare' case */
     if (argc == 1 || !strcmp(argv[1], "compare")) {
         rp->mode = L_REG_COMPARE;
-        rp->tempfile = stringNew("/tmp/lept/regout/regtest_output.txt");
+		leptDebugSetFileBasepath(diagspec, "lept/regout");
+		leptDebugAppendFileBasepath(diagspec, output_path_base);
+		rp->tempfile = stringNew("/tmp/lept/regout/regtest_output.txt");
         rp->fp = fopenWriteStream(rp->tempfile, "wb");
         if (rp->fp == NULL) {
             rp->success = FALSE;
@@ -168,16 +192,36 @@ L_REGPARAMS  *rp;
         }
     } else if (!strcmp(argv[1], "generate")) {
         rp->mode = L_REG_GENERATE;
-        lept_mkdir("lept/golden");
+		leptDebugSetFileBasepath(diagspec, "lept/golden");
+		leptDebugAppendFileBasepath(diagspec, output_path_base);
+		lept_mkdir("lept/golden");
     } else if (!strcmp(argv[1], "display")) {
         rp->mode = L_REG_DISPLAY;
-        rp->display = TRUE;
-    } else {
+		leptDebugSetFileBasepath(diagspec, "lept/display");
+		leptDebugAppendFileBasepath(diagspec, output_path_base);
+		rp->display = TRUE;
+    } else if (!accept_arbitrary_argv_set) {
         LEPT_FREE(rp);
         snprintf(errormsg, sizeof(errormsg),
             "Syntax: %s [ [generate] | compare | display ]", argv[0]);
         return ERROR_INT(errormsg, __func__, 1);
     }
+	else {
+		consume_cgd_arg = 0;
+		rp->mode = L_REG_BASIC_EXEC;
+		leptDebugSetFileBasepath(diagspec, "lept/prog");
+		leptDebugAppendFileBasepath(diagspec, output_path_base);
+	}
+
+	if (consume_cgd_arg && argc > 1) {
+		memmove(&argv[1], &argv[2], sizeof(argv[1]) * (argc - 1));
+		argc--;
+		*argv_ref = argv;
+		*argc_ref = argc;
+	}
+
+	/* Make sure the lept/regout subdirectory exists */
+	lept_mkdir(leptDebugGetFileBasePath(diagspec));
 
         /* Print out test name and both the leptonica and
          * image library versions */

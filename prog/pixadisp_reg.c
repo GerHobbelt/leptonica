@@ -59,10 +59,10 @@ BOXA         *boxa;
 PIX          *pixs, *pix32, *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa, *pixa1, *pixa2, *pixa3;
 SARRAY       *sa1, *sa2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "pixa_display", FALSE, &rp))
+		return 1;
 
     pixa = pixaCreate(0);
     pix32 = pixRead(DEMOPATH("marge.jpg"));

@@ -54,12 +54,12 @@ BOX          *box;
 PIX          *pix0, *pix1, *pixd;
 PIXA         *pixa;
 SARRAY       *sa1, *sa2, *sa3, *sa4;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "pixa2", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/regout");
+	//lept_mkdir("lept/regout");
 
     /* ----------------  Find all the jpg and tif images --------------- */
     sa1 = getSortedPathnamesInDirectory(".", ".jpg", 0, 0);

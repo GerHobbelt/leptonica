@@ -65,10 +65,10 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIX          *pix6, *pix7, *pix8, *pix9, *pix10;
 PIXA         *pixa1;
 SEL          *sel1, *sel2, *sel3, *sel4;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "speckle", FALSE, &rp))
+		return 1;
 
         /*  Normalize for rapidly varying background */
     pixa1 = pixaCreate(0);

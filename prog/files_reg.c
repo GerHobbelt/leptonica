@@ -69,10 +69,10 @@ l_int32 main(int    argc,
              const char **argv)
 {
 l_int32       exists;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "files", FALSE, &rp))
+		return 1;
 
     lept_stderr(" ===================================================\n");
     lept_stderr(" =================== Test pathJoin() ===============\n");

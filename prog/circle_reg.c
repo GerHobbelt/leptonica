@@ -64,17 +64,18 @@ l_int32       i, k, count, n, maxloc, maxval, minval;
 NUMA         *na;
 PIX          *pixs, *pixsi, *pixc, *pixoc, *pix1, *pix2, *pix3;
 PIXA         *pixas, *pixa1, *pixa2;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "circle_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-        /* Read the images */
+	if (regTestSetup(&argc, &argv, "circle", FALSE, &rp))
+		return 1;
+
+	/* Read the images */
     pixas = pixaRead(DEMOPATH("circles.pa"));
     n = pixaGetCount(pixas);
 

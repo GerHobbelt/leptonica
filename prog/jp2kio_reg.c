@@ -71,8 +71,6 @@ void DoJp2kTest3(L_REGPARAMS *rp, const char *fname);
 int main(int    argc,
          const char **argv)
 {
-L_REGPARAMS  *rp;
-
 #if !HAVE_LIBJP2K
     lept_stderr("jp2kio is not enabled\n"
                 "libopenjp2 is required for jp2kio_reg\n"
@@ -87,10 +85,12 @@ L_REGPARAMS  *rp;
     return 0;
 #endif  /* abort */
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "jp2k_io", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
     DoJp2kTest1(rp, DEMOPATH("karen8.jpg"));
     DoJp2kTest1(rp, DEMOPATH("test24.jpg"));

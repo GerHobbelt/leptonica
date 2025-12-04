@@ -62,7 +62,6 @@ BOX         *box;
 BOXA        *boxa1, *boxa2;
 BOXAA       *baa;
 PIX         *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8, *pix9;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "pdfseg_reg");
@@ -77,11 +76,14 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    lept_rmdir("lept/pdfseg");
-    lept_mkdir("lept/pdfseg");
+	if (regTestSetup(&argc, &argv, "pdfseg", FALSE, &rp))
+		return 1;
+
+	lept_rmdir("lept/pdfseg");
+    //lept_mkdir("lept/pdfseg");
+
     baa = boxaaCreate(5);
 
         /* Image region input.  */

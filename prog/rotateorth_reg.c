@@ -54,10 +54,10 @@ int main(int    argc,
          const char **argv)
 {
 PIX          *pixs;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "rotate_ortho", FALSE, &rp))
+		return 1;
 
     lept_stderr("\nTest binary image:\n");
     pixs = pixRead(BINARY_IMAGE);

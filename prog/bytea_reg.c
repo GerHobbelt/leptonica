@@ -58,17 +58,18 @@ FILE         *fp;
 L_DNA        *da;
 SARRAY       *sa;
 L_BYTEA      *lba1, *lba2, *lba3, *lba4;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBJPEG)
     L_ERROR("This test requires libjpeg to run.\n", "bytea_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    lept_mkdir("lept/bytea");
+	if (regTestSetup(&argc, &argv, "bytea", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/bytea");
 
         /* Test basic init and join */
     lba1 = l_byteaInitFromFile(DEMOPATH("feyn.tif"));

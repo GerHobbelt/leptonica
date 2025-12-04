@@ -68,10 +68,10 @@ BOXA         *boxa1, *boxa2, *boxa3, *boxa4;
 FILE         *fp;
 PIX          *pix1, *pix2, *pix3;
 PIXA         *pixa1;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-	return 1;
+	if (regTestSetup(&argc, &argv, "overlap", FALSE, &rp))
+		return 1;
 
     /* -------------------------------------------------------- */
     /*     Show the result as a kind of percolation problem     */

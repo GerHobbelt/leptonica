@@ -63,17 +63,18 @@ L_BMF        *bmf;
 PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixa;
 PIXCMAP      *cmap;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "coloring_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "coloring", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
         /* Read in the bg colors */
     for (i = 0; i < 4; i++)

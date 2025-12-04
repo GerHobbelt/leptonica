@@ -76,10 +76,10 @@ l_uint32      val32, val1, val2;
 l_uint32     *data1, *line1, *data2, *line2;
 void        **lines1, **linet1, **linet2;
 PIX          *pixs, *pix1, *pix2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "low_access", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     pixGetDimensions(pixs, &w, &h, NULL);

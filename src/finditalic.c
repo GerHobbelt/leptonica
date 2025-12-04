@@ -133,13 +133,6 @@ SEL     *sel_ital1, *sel_ital2, *sel_ital3;
     if (boxaw && pixw)
         return ERROR_INT("both boxaw and pixw are defined", __func__, 1);
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/ital");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "finditalictest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
     sel_ital1 = selCreateFromString(str_ital1, 13, 6, NULL);
     sel_ital2 = selCreateFromString(str_ital2, 10, 6, NULL);
     sel_ital3 = selCreateFromString(str_ital3, 4, 2, NULL);

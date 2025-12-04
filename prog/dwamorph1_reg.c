@@ -64,10 +64,10 @@ char         *selname;
 PIX          *pixs, *pixt1, *pixt2, *pixt3;
 SEL          *sel;
 SELA         *sela;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "dwamorph", FALSE, &rp))
+		return 1;
 
     if ((pixs = pixRead(DEMOPATH("feyn-fract.tif"))) == NULL) {
         rp->success = FALSE;

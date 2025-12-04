@@ -57,10 +57,10 @@ l_int32       orient, rotation;
 l_float32     upconf, leftconf, conf;
 PIX          *pix, *pixs, *pix1, *pix2;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "flipdetect", FALSE, &rp))
+		return 1;
 
     pix = pixRead(DEMOPATH("feyn.tif"));
     pixs = pixScale(pix, 0.5, 0.5);

@@ -70,10 +70,10 @@ l_int32       w, h, wd, hd;
 l_float32     deg2rad, angle, conf;
 PIX          *pixs, *pixb1, *pixb2, *pixr, *pixf, *pixd, *pixc;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "skew", FALSE, &rp))
+		return 1;
 
     deg2rad = 3.1415926535 / 180.;
 

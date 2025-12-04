@@ -74,10 +74,10 @@ l_int32       w, h, x, y, i, n;
 l_float32    *vc;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixas, *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "multitype", FALSE, &rp))
+		return 1;
 
     pixas = pixaCreate(11);
     for (i = 0; i < 10; i++) {  /* this preserves any alpha */

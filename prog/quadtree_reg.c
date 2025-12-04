@@ -56,17 +56,18 @@ size_t        size;
 PIX          *pixs, *pixg, *pix1, *pix2, *pix3, *pix4, *pix5;
 FPIXA        *fpixam, *fpixav, *fpixarv;
 BOXAA        *baa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "quadtree_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    lept_mkdir("lept/quad");
+	if (regTestSetup(&argc, &argv, "quadtree", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/quad");
 
         /* Test generation of quadtree regions. */
     baa = boxaaQuadtreeRegions(1000, 500, 3);

@@ -80,10 +80,10 @@ l_int32       i;
 PIX          *pixs, *pixsc, *pixb, *pixg, *pixc, *pixcs, *pix1, *pix2, *pixd;
 PIXA         *pixa;
 PTA          *ptas, *ptad;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "projective", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
     pixsc = pixScale(pixs, 0.3, 0.3);

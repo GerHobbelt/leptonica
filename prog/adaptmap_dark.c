@@ -78,11 +78,14 @@ l_int32  index;
 L_BMF   *bmf;
 PIXA    *pixa1, *pixa2, *pixa3, *pixa4;
 PIXAC   *pixac1, *pixac2, *pixac3;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
+	if (regTestSetup(&argc, &argv, "adapt", FALSE, &rp))
+		return 1;
+
     bmf = bmfCreate(NULL, 10);
     index = 0;
-    lept_mkdir("lept/adapt");
+    //lept_mkdir("lept/adapt");
 
         /* Using a variety of different thresholds */
     GenCleans(DEMOPATH("cavalerie.29.jpg"), &index, 80, bmf);

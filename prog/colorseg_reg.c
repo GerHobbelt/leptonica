@@ -69,10 +69,10 @@ l_int32       nc, rval, gval, bval;
 PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa;
 PIXCMAP      *cmap, *cmapr;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "colorseg", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("tetons.jpg"));
     for (k = 0; k < 3; k++) {

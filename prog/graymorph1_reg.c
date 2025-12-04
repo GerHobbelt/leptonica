@@ -75,10 +75,10 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixa;
 PIXACC       *pacc;
 PIXCMAP      *cmap;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "graymorph", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("aneurisms8.jpg"));
     pixa = pixaCreate(0);

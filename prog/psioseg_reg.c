@@ -68,7 +68,6 @@ l_int32       w, h, wc, hc, ret;
 l_float32     scalefactor;
 PIX          *pixs, *pixc, *pixht, *pixtxt, *pixmfull;
 PIX          *pix4c, *pix8c, *pix8g, *pix32, *pixcs, *pixcs2;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "psioseg_reg");
@@ -83,10 +82,12 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "ps_io_seg", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
 #if !USE_PSIO
     lept_stderr("psio writing is not enabled\n"

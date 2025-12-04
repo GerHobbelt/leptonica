@@ -57,10 +57,10 @@ PIX         *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 PIXA        *pixa;
 PIXCMAP     *cmap;
 SARRAY      *sa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "conversion", FALSE, &rp))
+		return 1;
 
     pixs1 = pixRead(DEMOPATH("test1.png"));
     pixs2 = pixRead(DEMOPATH("dreyfus2.png"));

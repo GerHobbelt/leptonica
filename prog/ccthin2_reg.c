@@ -55,7 +55,6 @@ BOX          *box;
 PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa1, *pixa2, *pixa3, *pixa4, *pixa5;
 PIXAA        *paa;
-L_REGPARAMS  *rp;
 SELA         *sela;
 
 #if !defined(HAVE_LIBPNG)
@@ -63,10 +62,12 @@ SELA         *sela;
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-        /* Clip to foreground to see if there are any boundary
+	if (regTestSetup(&argc, &argv, "ccthin", FALSE, &rp))
+		return 1;
+
+	/* Clip to foreground to see if there are any boundary
          * artifacts from thinning and thickening.  (There are not.) */
     pix1 = pixRead(DEMOPATH("feyn.tif"));
     box = boxCreate(683, 799, 970, 479);

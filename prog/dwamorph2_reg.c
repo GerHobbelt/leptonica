@@ -64,18 +64,13 @@ PIX       *pixs, *pixt;
 PIXA      *pixa;
 SEL       *sel;
 SELA      *selalinear;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "dwamorph", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax: dwamorph2_reg", __func__, 1);
-
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/morph");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "dwamorph2test");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
-	setLeptDebugOK(1);
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     pixt = pixCreateTemplate(pixs);
@@ -129,7 +124,7 @@ SELA      *selalinear;
     nac2 = numaWindowedMean(na2, HALFWIDTH);
     nac3 = numaWindowedMean(na3, HALFWIDTH);
     nac4 = numaWindowedMean(na4, HALFWIDTH);
-    gplot = gplotCreate(diagspec, "/tmp/lept/morph/dilate", GPLOT_PNG,
+    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/morph/dilate", GPLOT_PNG,
                         "Dilation time vs sel size", "size", "time (ms)");
     gplotAddPlot(gplot, nax, nac1, GPLOT_LINES, "linear rasterop");
     gplotAddPlot(gplot, nax, nac2, GPLOT_LINES, "composite rasterop");
@@ -184,7 +179,7 @@ SELA      *selalinear;
     nac2 = numaWindowedMean(na2, HALFWIDTH);
     nac3 = numaWindowedMean(na3, HALFWIDTH);
     nac4 = numaWindowedMean(na4, HALFWIDTH);
-    gplot = gplotCreate(diagspec, "/tmp/lept/morph/erode", GPLOT_PNG,
+    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/morph/erode", GPLOT_PNG,
                         "Erosion time vs sel size", "size", "time (ms)");
     gplotAddPlot(gplot, nax, nac1, GPLOT_LINES, "linear rasterop");
     gplotAddPlot(gplot, nax, nac2, GPLOT_LINES, "composite rasterop");
@@ -239,7 +234,7 @@ SELA      *selalinear;
     nac2 = numaWindowedMean(na2, HALFWIDTH);
     nac3 = numaWindowedMean(na3, HALFWIDTH);
     nac4 = numaWindowedMean(na4, HALFWIDTH);
-    gplot = gplotCreate(diagspec, "/tmp/lept/morph/open", GPLOT_PNG,
+    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/morph/open", GPLOT_PNG,
                         "Opening time vs sel size", "size", "time (ms)");
     gplotAddPlot(gplot, nax, nac1, GPLOT_LINES, "linear rasterop");
     gplotAddPlot(gplot, nax, nac2, GPLOT_LINES, "composite rasterop");
@@ -294,7 +289,7 @@ SELA      *selalinear;
     nac2 = numaWindowedMean(na2, HALFWIDTH);
     nac3 = numaWindowedMean(na3, HALFWIDTH);
     nac4 = numaWindowedMean(na4, HALFWIDTH);
-    gplot = gplotCreate(diagspec, "/tmp/lept/morph/close", GPLOT_PNG,
+    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/morph/close", GPLOT_PNG,
                         "Closing time vs sel size", "size", "time (ms)");
     gplotAddPlot(gplot, nax, nac1, GPLOT_LINES, "linear rasterop");
     gplotAddPlot(gplot, nax, nac2, GPLOT_LINES, "composite rasterop");

@@ -79,6 +79,10 @@ JBCLASSER  *classer;
 NUMA       *natl;
 PIX        *pix;
 PIXA       *pixa, *pixadb;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "jb_words", TRUE, &rp))
+		return 1;
 
     if (argc != 6 && argc != 8)
         return ERROR_INT(" Syntax: jbwords dirin reduction thresh "
@@ -95,7 +99,6 @@ PIXA       *pixa, *pixadb;
         firstpage = atoi(argv[6]);
         npages = atoi(argv[7]);
     }
-    setLeptDebugOK(1);
 
     classer = jbWordsInTextlines(dirin, reduction, MAX_WORD_WIDTH,
                                  MAX_WORD_HEIGHT, thresh, weight,
@@ -122,7 +125,7 @@ PIXA       *pixa, *pixadb;
 
 #if  RENDER_DEBUG
         /* Use debugflag == TRUE to see outlines of each component. */
-    pixadb = jbDataRender(data, diagspec);
+    pixadb = jbDataRender(data, rp->diag_spec);
         /* Write the debug pages out */
     npages = pixaGetCount(pixadb);
     for (i = 0; i < npages; i++) {

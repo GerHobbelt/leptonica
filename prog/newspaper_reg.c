@@ -57,12 +57,12 @@ PIX          *pixs, *pixt, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIX          *pix6, *pix7, *pix8, *pix9, *pix10, *pix11;
 PIXA         *pixa1, *pixa2;
 PIXCMAP      *cmap;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "newspaper", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/regout");
+	//lept_mkdir("lept/regout");
 
     pixs = pixRead(DEMOPATH("scots-frag.tif"));
     pixa1 = pixaCreate(12);

@@ -59,17 +59,18 @@ BOXA         *boxa1, *boxa2, *boxa3;
 NUMA         *naindex, *na1, *na2, *na3, *na4;
 PIX          *pixs, *pix1, *pix2, *pix3;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "rankbin_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-        /* Generate arrays of word widths and heights */
+	if (regTestSetup(&argc, &argv, "rankbin", FALSE, &rp))
+		return 1;
+
+	/* Generate arrays of word widths and heights */
     pixs = pixRead(DEMOPATH("feyn.tif"));
     pix1 = pixReduceRankBinaryCascade(pixs, 1, 0, 0, 0);
     pixGetWordBoxesInTextlines(pix1, 6, 6, 500, 50, &boxa1, &naindex);

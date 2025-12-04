@@ -60,14 +60,18 @@ l_int32   same;
 PIX      *pix1, *pix2, *pix3;
 PIXA     *pixa1, *pixa2, *pixa3;
 L_RECOG  *recog1, *recog2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog_digits", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         lept_stderr(" Syntax: recogtest7\n");
         return 1;
     }
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/digits");
+    //lept_mkdir("lept/digits");
+
     recog1 = NULL;
     recog2 = NULL;
 
@@ -101,7 +105,7 @@ L_RECOG  *recog1, *recog2;
 
 #if 1
     lept_stderr("\nShow averaged samples\n");
-    recogAverageSamples(recog1, diagspec);
+    recogAverageSamples(recog1, rp->diag_spec);
     recogShowAverageTemplates(recog1);
     pix1 = pixaGetPix(recog1->pixadb_ave, 0, L_CLONE);
     pixWrite("/tmp/lept/digits/unscaled_ave.png", pix1, IFF_PNG);

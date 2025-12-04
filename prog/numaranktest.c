@@ -56,21 +56,17 @@ l_float32  rank, rval;
 l_uint32   val;
 NUMA      *na, *nah, *nar, *nav;
 PIX       *pix;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "numa_rank", TRUE, &rp))
+		return 1;
 
     if (argc != 3)
         return ERROR_INT(" Syntax:  numaranktest filein sampling", __func__, 1);
     filein = argv[1];
     sampling = atoi(argv[2]);
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/numa");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "numaranktest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
-    setLeptDebugOK(1);
-    lept_mkdir("lept/numa");
+    //lept_mkdir("lept/numa");
 
     if ((pix = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);
@@ -92,7 +88,7 @@ PIX       *pix;
         numaHistogramGetRankFromVal(nah, rval, &rank);
         numaAddNumber(nar, rank);
     }
-    gplotSimple1(diagspec, nar, GPLOT_PNG, "/tmp/lept/numa/rank", "rank vs val");
+    gplotSimple1(rp->diag_spec, nar, GPLOT_PNG, "/tmp/lept/numa/rank", "rank vs val");
     l_fileDisplay("/tmp/lept/numa/rank.png", 0, 0, 1.0);
 
     nav = numaCreate(0);
@@ -100,7 +96,7 @@ PIX       *pix;
         numaHistogramGetValFromRank(nah, rank, &rval);
         numaAddNumber(nav, rval);
     }
-    gplotSimple1(diagspec, nav, GPLOT_PNG, "/tmp/lept/numa/val", "val vs rank");
+    gplotSimple1(rp->diag_spec, nav, GPLOT_PNG, "/tmp/lept/numa/val", "val vs rank");
     l_fileDisplay("/tmp/lept/numa/val.png", 750, 0, 1.0);
 
     pixDestroy(&pix);

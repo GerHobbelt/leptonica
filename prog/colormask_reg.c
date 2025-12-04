@@ -58,17 +58,18 @@ PIX          *pixs, *pixhsv, *pixh, *pixg, *pixf, *pixd, *pixr;
 PIX          *pix1, *pix2, *pix3;
 PIXA         *pixa, *pixapk;
 PTA          *ptapk;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "colormask_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "colormask", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
         /* Make a graded frame color */
     pixs = pixCreate(650, 900, 32);

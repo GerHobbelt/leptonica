@@ -82,14 +82,17 @@ l_int32    i, n, ival, same;
 PIX       *pix1, *pix2;
 PIXA      *pixa1, *pixa2, *pixa3, *pixa4;
 L_RECOG   *recog1, *recog2, *recog3;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         lept_stderr(" Syntax: recogtest3\n");
         return 1;
     }
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/recog");
+    //lept_mkdir("lept/recog");
 
         /* Read templates and split them into two sets.  Use one to
          * make a BAR recog that needs padding; use the other with a

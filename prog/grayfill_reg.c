@@ -56,10 +56,10 @@ PIX          *pixm, *pixmi, *pixs1, *pixs1_8, *pix1;
 PIX          *pixs2, *pixs2_8, *pixs3, *pixs3_8;
 PIX          *pixb1, *pixb2, *pixb3, *pixmin;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "grayfill", FALSE, &rp))
+		return 1;
 
         /* Mask */
     pixm = pixCreate(200, 200, 8);

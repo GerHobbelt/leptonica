@@ -57,17 +57,18 @@ l_int32       ncolors, w, h;
 l_float32     fcolor;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8;
 PIXA         *pixa1;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "colorcontent_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-        /* Find the most populated colors */
+	if (regTestSetup(&argc, &argv, "colorcontent", FALSE, &rp))
+		return 1;
+
+	/* Find the most populated colors */
     pix1 = pixRead(DEMOPATH("fish24.jpg"));
     pixGetMostPopulatedColors(pix1, 2, 3, 10, &colors, NULL);
     pix2 = pixDisplayColorArray(colors, 10, 200, 5, 6);

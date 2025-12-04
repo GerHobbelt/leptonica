@@ -65,7 +65,6 @@ L_PDF_DATA   *lpd;
 PIX          *pix1, *pix2, *pix3;
 PIX          *pixs, *pixt, *pixg, *pixgc, *pixc;
 PIXCMAP      *cmap;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "pdfio1_reg");
@@ -80,11 +79,14 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    l_pdfSetDateAndVersion(0);
-    lept_mkdir("lept/pdf1");
+	if (regTestSetup(&argc, &argv, "pdf_io", FALSE, &rp))
+		return 1;
+
+	l_pdfSetDateAndVersion(0);
+
+	//lept_mkdir("lept/pdf1");
 
 #if 1
     /* ---------------  Single image tests  ------------------- */

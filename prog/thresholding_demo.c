@@ -1077,13 +1077,14 @@ static const char* mk_dst_filename(const char* name)
 int main(int    argc,
          const char **argv)
 {
-L_REGPARAMS  *rp;
 PIX* pix[50] = { NULL };
 l_ok ret = 0;
 const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "thresholding", TRUE, &rp))
+		return 1;
 
 	if (argc >= 3)
 	{

@@ -61,10 +61,10 @@ int main(int    argc,
 l_int32       niters, duration;
 PIX          *pix1, *pix2;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "webp_anim_io", FALSE, &rp))
+		return 1;
 
 #if !HAVE_LIBJPEG
     lept_stderr("libjpeg is required for webpanimio_reg\n\n");

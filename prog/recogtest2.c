@@ -74,14 +74,17 @@ PIX      *pix1, *pix2, *pix3;
 PIXA     *pixa1, *pixa2, *pixa3;
 L_RECOG  *recogboot, *recog1;
 SARRAY   *sa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         lept_stderr(" Syntax: recogtest2\n");
         return 1;
     }
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/recog");
+    //lept_mkdir("lept/recog");
 
         /* Files with 'unlabeled' templates from book */
     sa = sarrayCreate(2);
@@ -110,7 +113,7 @@ SARRAY   *sa;
         pixaSetText(pixa2, NULL, NULL);
 
             /* Train a new recognizer from the boot and unlabeled samples */
-        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, diagspec);
+        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, rp->diag_spec);
         recog1 = recogCreateFromPixa(pixa3, 0, 40, linew, 128, 1);
         recogShowContent(stderr, recog1, 2, 1);
         if (i == 0)
@@ -129,7 +132,7 @@ SARRAY   *sa;
 
         /* Generate the boot recog, and show the unscaled and scaled
          * versions of the templates */
-    recogboot = recogMakeBootDigitRecog(0, 40, linew, 1, diagspec);
+    recogboot = recogMakeBootDigitRecog(0, 40, linew, 1, rp->diag_spec);
     recogWrite("/tmp/lept/recog/boot2.rec", recogboot);
     recogShowContent(stderr, recogboot, 3, 1);
 
@@ -141,7 +144,7 @@ SARRAY   *sa;
         pixaSetText(pixa2, NULL, NULL);
 
             /* Train a new recognizer from the boot and unlabeled samples */
-        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, diagspec);
+        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, rp->diag_spec);
         recog1 = recogCreateFromPixa(pixa3, 0, 40, linew, 128, 1);
         recogShowContent(stderr, recog1, 4, 1);
         if (i == 0)

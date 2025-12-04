@@ -96,21 +96,25 @@ int main(int    argc,
 {
 const char    dirout[] = "/tmp/lept/pngio/";
 l_int32       success, failure;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "pngio_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
-    failure = FALSE;
+	L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "png_io", FALSE, &rp))
+		return 1;
+
+	failure = FALSE;
 
     /* ------------ Part 1: Test lossless r/w to file ------------ */
     success = TRUE;
+
     lept_rmdir("lept/pngio");  /* remove previous output files */
-    lept_mkdir("lept/pngio");
+    //lept_mkdir("lept/pngio");
+
     lept_stderr("Test bmp 1 bpp file:\n");
     if (test_file_png(FILE_1BPP, dirout)) success = FALSE;
     lept_stderr("Test 2 bpp file:\n");

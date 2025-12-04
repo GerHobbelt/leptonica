@@ -712,16 +712,14 @@ static int usage(void)
 
 int main(int argc, const char **argv)
 {
-	L_REGPARAMS  *rp;
+	L_REGPARAMS* rp;
 
-	if (regTestSetup(MIN(argc, 1), argv, &rp))
+	if (regTestSetup(&argc, &argv, "api_demo", FALSE, &rp))
 		return 1;
-	rp->mode = L_REG_DISPLAY;
-	rp->display = TRUE;
 
 	l_chooseDisplayProg(L_DISPLAY_WITH_OPEN);
 
-	lept_mkdir("lept/demo_pix");
+	//lept_mkdir("lept/demo_pix");
 
 	CLI_ARGV_SET* args_info = cliPreParse(argc - 1, argv + 1);
 	if (!args_info) {

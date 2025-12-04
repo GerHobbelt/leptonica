@@ -72,12 +72,12 @@ int main(int    argc,
 BOX          *box;
 PIX          *pixs, *pixs8, *pixm, *pixt1, *pixt2, *pixd;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "paintmask", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/regout");
+	//lept_mkdir("lept/regout");
 
     pixa = pixaCreate(0);
 

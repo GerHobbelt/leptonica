@@ -84,6 +84,10 @@ JBCLASSER  *classer;
 SARRAY     *safiles;
 PIX        *pix;
 PIXA       *pixa, *pixadb;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "jb_correlation", TRUE, &rp))
+		return 1;
 
     if (argc != 4 && argc != 6)
         return ERROR_INT(
@@ -102,9 +106,8 @@ PIXA       *pixa, *pixadb;
         npages = atoi(argv[5]);
     }
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/jb_correl");
-	lept_mkdir("lept/jb");
+    //lept_mkdir("lept/jb_correl");
+	//lept_mkdir("lept/jb");
 
 #if 0  /* Choose library function or detailed steps */
 
@@ -199,7 +202,7 @@ PIXA       *pixa, *pixadb;
 
   #if  RENDER_DEBUG
         /* Use debugflag == TRUE to see outlines of each component. */
-    pixadb = jbDataRender(data, diagspec);
+    pixadb = jbDataRender(data, rp->diag_spec);
         /* Write the debug pages out */
     npages = pixaGetCount(pixadb);
     for (i = 0; i < npages; i++) {

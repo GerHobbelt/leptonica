@@ -67,12 +67,12 @@ l_int32       w, h;
 PIX          *pixs, *pixg, *pixim, *pixgm, *pixmi, *pix1, *pix2;
 PIX          *pixmr, *pixmg, *pixmb, *pixmri, *pixmgi, *pixmbi;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "adapt", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/adapt");
+    //lept_mkdir("lept/adapt");
 
     pixs = pixRead(DEMOPATH("wet-day.jpg"));
     pixa = pixaCreate(0);

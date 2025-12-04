@@ -71,10 +71,10 @@ BOX          *box1, *box2;
 BOXA         *boxa;
 PIX          *pixs, *pixm, *pixd;
 PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "texture_fill", FALSE, &rp))
+		return 1;
 
         /* Find a mask for repainting pixels */
     pixs = pixRead(DEMOPATH("amoris.2.150.jpg"));
@@ -87,7 +87,7 @@ L_REGPARAMS  *rp;
      *                Show the individual steps               *
      *--------------------------------------------------------*/
         /* Locate a good tile to use */
-    pixFindRepCloseTile(pixs, box1, L_VERT, 20, 30, 7, &box2, diagspec);
+    pixFindRepCloseTile(pixs, box1, L_VERT, 20, 30, 7, &box2, rp->diag_spec);
     pix0 = pixCopy(NULL, pix1);
     pixRenderBox(pix0, box2, 2, L_SET_PIXELS);
 
@@ -113,7 +113,7 @@ L_REGPARAMS  *rp;
 
         /* Blend two patches and then overlay.  Use the previous
          * tile found vertically and a new one found horizontally. */
-    pixFindRepCloseTile(pixs, box1, L_HORIZ, 20, 30, 7, &box2, diagspec);
+    pixFindRepCloseTile(pixs, box1, L_HORIZ, 20, 30, 7, &box2, rp->diag_spec);
     pixRenderBox(pix0, box2, 2, L_SET_PIXELS);
     regTestWritePixAndCheck(rp, pix0, IFF_TIFF_G4);  /* 3 */
     pixDisplayWithTitle(pix0, 100, 100, NULL, rp->display);

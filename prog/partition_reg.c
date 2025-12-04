@@ -59,7 +59,6 @@ int main(int    argc,
 {
 PIX          *pix1;
 PIXA         *pixad;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBTIFF)
     L_ERROR("This test requires libtiff to run.\n", __func__);
@@ -70,11 +69,14 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    l_pdfSetDateAndVersion(0);
-    lept_mkdir("lept/part");
+	if (regTestSetup(&argc, &argv, "partition", FALSE, &rp))
+		return 1;
+
+	l_pdfSetDateAndVersion(0);
+
+	//lept_mkdir("lept/part");
 
     pixad = pixaCreate(4);  /* only for display */
     TestPartition(rp, DEMOPATH("test8.jpg"), L_SORT_BY_HEIGHT, 20, 0.0f, "test0.pdf",

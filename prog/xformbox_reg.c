@@ -74,10 +74,10 @@ BOX          *box, *boxt;
 BOXA         *boxa, *boxat, *boxa1, *boxa2, *boxa3, *boxa4, *boxa5;
 PIX          *pix, *pixs, *pixc, *pixt, *pix1, *pix2, *pix3;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "xformbox", FALSE, &rp))
+		return 1;
 
     /* ----------------------------------------------------------- *
      *                Test hash rendering in 3 modes               *

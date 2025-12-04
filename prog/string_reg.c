@@ -66,12 +66,12 @@ char          fname[128], smallbuf[8], medbuf[32];
 l_uint8      *data1, *data2;
 L_DNA        *da;
 SARRAY       *sa1, *sa2, *sa3, *sa4, *sa5;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "string", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/string");
+    //lept_mkdir("lept/string");
 
         /* Finding all substrings */
     da = stringFindEachSubstr(strs, substr1);

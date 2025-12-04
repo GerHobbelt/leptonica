@@ -49,16 +49,17 @@
 int main(int    argc,
          const char **argv)
 {
-L_REGPARAMS  *rp;
 PIX* pix[20] = { NULL };
 l_ok ret = 0;
 l_int32 same;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "bmp-test-issue-675", FALSE, &rp))
+		return 1;
 
 	lept_rmdir("lept/bmp-test");
-	lept_mkdir("lept/bmp-test");
+	//lept_mkdir("lept/bmp-test");
 
 	pix[1] = pixRead(DEMOPATH("bmp_format2.png"));
 	ret = pixWrite("/tmp/lept/bmp-test/target-png.bmp", pix[1], IFF_BMP);

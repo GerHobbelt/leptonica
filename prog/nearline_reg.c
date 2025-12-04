@@ -54,17 +54,18 @@ l_float32     minave, minave2, maxave, fract;
 NUMA         *na1, *na2, *na3, *na4, *na5, *na6;
 NUMAA        *naa;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "nearline_reg");
     exit(77);
 #endif
 
-   if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-   lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "nearline", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
     pix1 = pixScaleToGray6(pixs);

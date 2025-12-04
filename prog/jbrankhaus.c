@@ -63,10 +63,10 @@
 #define   BUF_SIZE         512
 
     /* select additional debug output */
-#define   DEBUG_TEST_DATA_IO        0
+#define   DEBUG_TEST_DATA_IO        1
 #define   RENDER_DEBUG              1
 #define   DISPLAY_DIFFERENCE        1
-#define   DISPLAY_ALL_INSTANCES     0
+#define   DISPLAY_ALL_INSTANCES     1
 
 static const char  rootname[] = "/tmp/lept/jb_rankhaus/result";
 
@@ -87,6 +87,10 @@ JBCLASSER  *classer;
 SARRAY     *safiles;
 PIX        *pix;
 PIXA       *pixa, *pixadb;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "jb_rankhaus", TRUE, &rp))
+		return 1;
 
     if (argc != 4 && argc != 6)
         return ERROR_INT(
@@ -104,9 +108,8 @@ PIXA       *pixa, *pixadb;
         npages = atoi(argv[5]);
     }
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/jb_rankhaus");
-	lept_mkdir("lept/jb");
+    //lept_mkdir("lept/jb_rankhaus");
+	//lept_mkdir("lept/jb");
 
 #if 0   /* Choose library function or detailed steps */
 

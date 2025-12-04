@@ -58,7 +58,6 @@ size_t        nbytes;
 BOXA         *boxa1, *boxa2;
 L_BYTEA      *ba;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "pdfio2_reg");
@@ -73,11 +72,14 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    l_pdfSetDateAndVersion(0);
-    lept_mkdir("lept/pdf2");
+	if (regTestSetup(&argc, &argv, "pdf_io", FALSE, &rp))
+		return 1;
+
+	l_pdfSetDateAndVersion(0);
+
+	//lept_mkdir("lept/pdf2");
 
     /* ---------- pdf convert segmented with image regions ---------- */
     lept_stderr("\n*** Writing segmented images with image regions\n");

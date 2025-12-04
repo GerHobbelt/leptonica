@@ -50,10 +50,10 @@ static void TestHardlight(const char *file1, const char *file2,
 int main(int    argc,
          const char **argv)
 {
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "hardlight", FALSE, &rp))
+		return 1;
 
     TestHardlight(DEMOPATH("hardlight1_1.jpg"), DEMOPATH("hardlight1_2.jpg"), rp);
     TestHardlight(DEMOPATH("hardlight2_1.jpg"), DEMOPATH("hardlight2_2.jpg"), rp);

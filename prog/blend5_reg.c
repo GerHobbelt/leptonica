@@ -56,10 +56,10 @@ int main(int    argc,
 l_uint32      val32;
 PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "blend", FALSE, &rp))
+		return 1;
 
     pixa = pixaCreate(0);
 

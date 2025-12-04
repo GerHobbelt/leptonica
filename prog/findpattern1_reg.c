@@ -75,10 +75,10 @@ int main(int    argc,
          const char **argv)
 {
 l_int32      patno, red;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "findpattern", FALSE, &rp))
+		return 1;
 
     for (patno = 0; patno < 2; patno++) {
         for (red = 4; red <= 16; red *= 2) {

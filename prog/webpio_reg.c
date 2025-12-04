@@ -63,10 +63,10 @@ static void DoWebpTest2(L_REGPARAMS *rp, const char *fname, l_int32 quality,
 int main(int    argc,
          const char **argv)
 {
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "webp_io", FALSE, &rp))
+		return 1;
 
 #if !HAVE_LIBJPEG
     lept_stderr("libjpeg is required for webpio_reg\n\n");

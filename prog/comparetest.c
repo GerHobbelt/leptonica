@@ -76,6 +76,10 @@ const char      *filein1, *filein2, *fileout;
 GPLOT     *gplot;
 NUMA      *na1, *na2;
 PIX       *pixs1, *pixs2, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "comp", TRUE, &rp))
+		return 1;
 
     if (argc != 5)
         return ERROR_INT(" Syntax:  comparetest filein1 filein2 type fileout",
@@ -86,15 +90,7 @@ PIX       *pixs1, *pixs2, *pixd;
     pixd = NULL;
     fileout = argv[4];
 
-	// if (regTestSetup(argc, argv, &rp))	return 1;
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	leptDebugSetFileBasepath(diagspec, "lept/comp");
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, "comparetest");
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
-
-	setLeptDebugOK(1);
-	lept_mkdir("lept/comp");
+	//lept_mkdir("lept/comp");
 
         /* If comparing image files with 16 bps and spp > 1,
          * comment this line out to strip 16 --> 8 spp */
@@ -156,7 +152,7 @@ PIX       *pixs1, *pixs2, *pixd;
                 lept_stderr("Nonzero diff range: first = %d, last = %d\n",
                              first, last);
                 na2 = numaClipToInterval(na1, first, last);
-                gplot = gplotCreate(diagspec, "/tmp/lept/comp/rank", GPLOT_PNG,
+                gplot = gplotCreate(rp->diag_spec, "/tmp/lept/comp/rank", GPLOT_PNG,
                                     "Pixel Rank Difference",
                                     "pixel val difference", "rank");
                 gplotAddPlot(gplot, NULL, na2, GPLOT_LINES, "rank");

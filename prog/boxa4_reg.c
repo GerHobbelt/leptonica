@@ -57,17 +57,18 @@ BOXA         *boxa3, *boxa3e, *boxa3o;
 BOXAA        *baa1, *baa2, *baa3;
 PIX          *pix1, *pix2, *pix3;
 PIXA         *pixa1, *pixa2;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "boxa4_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    lept_mkdir("lept/boxa");
+	if (regTestSetup(&argc, &argv, "boxa", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/boxa");
 
         /* Input is a fairly clean boxa */
     boxa1 = boxaRead(DEMOPATH("boxa1.ba"));

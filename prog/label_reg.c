@@ -57,10 +57,10 @@ l_int32 main(int    argc,
 l_float32     dist, distr, distg, distb;
 NUMA         *na1, *na2;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "label", FALSE, &rp))
+		return 1;
 
         /* Test earthmover distance: extreme example */
     lept_stderr("Test earthmover distance\n");

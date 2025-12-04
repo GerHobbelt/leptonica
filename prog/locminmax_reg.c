@@ -55,10 +55,10 @@ int main(int    argc,
 l_int32       i, j;
 l_float32     f;
 PIX          *pix1, *pix2, *pix3;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "locminmax", FALSE, &rp))
+		return 1;
 
     pix1 = pixCreate(500, 500, 8);
     for (i = 0; i < 500; i++) {

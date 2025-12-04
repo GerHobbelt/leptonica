@@ -84,17 +84,18 @@ PIX          *pixs, *pixs2, *pixs3, *pixd, *pixg, *pixb, *pixn;
 PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 PIXA         *pixa;
 PTA          *ptas, *ptad;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "fpix1_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-	lept_mkdir("lept/regout");
+	if (regTestSetup(&argc, &argv, "fpix", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/regout");
 
         /* Gaussian kernel */
     pixa = pixaCreate(0);

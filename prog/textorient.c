@@ -76,6 +76,10 @@ const char  *filein, *fileout;
 l_int32      pixformat;
 l_float32    minupconf, minratio;
 PIX         *pixs, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "text_orient", TRUE, &rp))
+		return 1;
 
     if (argc != 5) {
         return ERROR_INT(
@@ -86,10 +90,9 @@ PIX         *pixs, *pixd;
     minupconf = atof(argv[2]);
     minratio = atof(argv[3]);
     fileout = argv[4];
-    setLeptDebugOK(1);
 
     pixs = pixRead(filein);
-    pixd = pixOrientCorrect(pixs, minupconf, minratio, NULL, NULL, NULL, diagspec);
+    pixd = pixOrientCorrect(pixs, minupconf, minratio, NULL, NULL, NULL, rp->diag_spec);
 
     pixformat = pixChooseOutputFormat(pixd);
     snprintf(buf, BUF_SIZE, "%s.%s", fileout,

@@ -72,12 +72,12 @@ l_uint8      *data;
 l_uint32     *data32, *data32r;
 BOX          *box;
 PIX          *pixs, *pixt, *pixt2, *pixd;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "pixserial", FALSE, &rp))
+		return 1;
 
-	lept_mkdir("lept/regout");
+	//lept_mkdir("lept/regout");
 
             /* Test basic serialization/deserialization */
     data32 = NULL;

@@ -66,12 +66,12 @@ l_int32       i, cx, cy;
 PIX          *pixs, *pixt, *pixsel, *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1;
 SEL          *sel_ast, *sel1, *sel2;
-L_REGPARAMS  *rp;
+L_REGPARAMS* rp;
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	if (regTestSetup(&argc, &argv, "pattern", FALSE, &rp))
+		return 1;
 
-    lept_mkdir("lept/pattern");
+    //lept_mkdir("lept/pattern");
 
     pixs = pixRead("asterisk.png");
     pixt = pixRead("one-asterisk.png");

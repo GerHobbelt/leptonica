@@ -65,17 +65,18 @@ L_KERNEL     *kel, *kelx, *kely;
 PIX          *pixs, *pixg, *pixt, *pixd;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8;
 PIXA         *pixa;
-L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "subpixel_reg");
     exit(77);
 #endif
 
-    if (regTestSetup(argc, argv, &rp))
-        return 1;
+	L_REGPARAMS* rp;
 
-    /* ----------------- Test on 8 bpp grayscale ---------------------*/
+	if (regTestSetup(&argc, &argv, "subpixel", FALSE, &rp))
+		return 1;
+
+	/* ----------------- Test on 8 bpp grayscale ---------------------*/
     pixa = pixaCreate(5);
     bmf = bmfCreate(DEMOPATH("fonts"), 6);
     bmftop = bmfCreate(DEMOPATH("fonts"), 10);
