@@ -174,7 +174,7 @@ SARRAY       *sa;
     pixaAddPix(pixa, pix1, L_COPY);
     pixWrite("/tmp/lept/regout/ker5.png", pix1, IFF_PNG);
     regTestCheckFile(rp, "/tmp/lept/regout/ker5.png");  /* 8 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         pixCompareGray(pixd, pix1, L_COMPARE_ABS_DIFF, GPLOT_PNG, NULL,
                        NULL, NULL, NULL);
     pix2 = pixBlockconvTiled(pixg, 5, 5, 3, 6);
@@ -233,7 +233,7 @@ SARRAY       *sa;
     pixWrite("/tmp/lept/regout/conv2.png", pix2, IFF_PNG);  /* ditto */
     regTestCheckFile(rp, "/tmp/lept/regout/conv2.png");  /* 11 */
 
-    plottype = (rp->display) ? GPLOT_PNG : 0;
+    plottype = leptIsInDisplayMode(rp->diag_spec) ? GPLOT_PNG : GPLOT_NONE;
     pixCompareGray(pix1, pix2, L_COMPARE_ABS_DIFF, plottype, NULL,
                    &avediff, &rmsdiff, NULL);
     pixaaAddPixa(paa, pixa, L_INSERT);
@@ -354,7 +354,7 @@ SARRAY       *sa;
     kernelDestroy(&kel1);
 
     pixd = pixaaDisplayByPixa(paa, 10, 1.0, 20, 20, 0);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixWrite("/tmp/lept/regout/kernel.jpg", pixd, IFF_JFIF_JPEG);
     pixDestroy(&pixd);
     pixaaDestroy(&paa);

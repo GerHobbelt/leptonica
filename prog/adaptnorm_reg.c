@@ -99,7 +99,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix6, IFF_PNG);  /* 6 */
 
     pix7 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 30, 2);
-    pixDisplayWithTitle(pix7, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix7, 0, 0, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix7, IFF_JFIF_JPEG);  /* 7 */
     pixDestroy(&pix7);
     pixaDestroy(&pixa1);
@@ -153,7 +153,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix11, IFF_JFIF_JPEG);  /* 16 */
 
     pix2 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 30, 2);
-    pixDisplayWithTitle(pix2, 0, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 0, 700, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 17 */
     pixDestroy(&pix2);
     pixaDestroy(&pixa1);

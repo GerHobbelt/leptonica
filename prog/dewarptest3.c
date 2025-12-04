@@ -80,23 +80,23 @@ L_REGPARAMS* rp;
 
         /* Get the textline centers */
     pixa = pixaCreate(6);
-    ptaa1 = dewarpGetTextlineCenters(pixb, 0);
+    ptaa1 = dewarpGetTextlineCenters(pixb, rp->diag_spec);
     pixt1 = pixCreateTemplate(pixs);
     pixSetAll(pixt1);
     pixt2 = pixDisplayPtaa(pixt1, ptaa1);
     pixWrite("/tmp/lept/dewarp/textline1.png", pixt2, IFF_PNG);
-    pixDisplayWithTitle(pixt2, 0, 100, "textline centers 1", 1);
+    pixDisplayWithTitle(pixt2, 0, 100, "textline centers 1", rp->diag_spec);
     pixaAddPix(pixa, pixt2, L_INSERT);
     pixDestroy(&pixt1);
 
         /* Remove short lines */
     lept_stderr("Num all lines = %d\n", ptaaGetCount(ptaa1));
-    ptaa2 = dewarpRemoveShortLines(pixb, ptaa1, 0.8, 0);
+    ptaa2 = dewarpRemoveShortLines(pixb, ptaa1, 0.8, rp->diag_spec);
     pixt1 = pixCreateTemplate(pixs);
     pixSetAll(pixt1);
     pixt2 = pixDisplayPtaa(pixt1, ptaa2);
     pixWrite("/tmp/lept/dewarp/textline2.png", pixt2, IFF_PNG);
-    pixDisplayWithTitle(pixt2, 300, 100, "textline centers 2", 1);
+    pixDisplayWithTitle(pixt2, 300, 100, "textline centers 2", rp->diag_spec);
     pixaAddPix(pixa, pixt2, L_INSERT);
     pixDestroy(&pixt1);
     n = ptaaGetCount(ptaa2);
@@ -108,7 +108,7 @@ L_REGPARAMS* rp;
     pixt1 = pixCopy(NULL, pixs);
     pixt2 = pixDisplayPtaa(pixt1, ptaa2);
     pixWrite("/tmp/lept/dewarp/textline3.png", pixt2, IFF_PNG);
-    pixDisplayWithTitle(pixt2, 600, 100, "textline centers 3", 1);
+    pixDisplayWithTitle(pixt2, 600, 100, "textline centers 3", rp->diag_spec);
     pixaAddPix(pixa, pixt2, L_INSERT);
     pixDestroy(&pixt1);
 
@@ -127,7 +127,7 @@ L_REGPARAMS* rp;
         numaDestroy(&nafit);
     }
     pixWrite("/tmp/lept/dewarp/textline4.png", pixt1, IFF_PNG);
-    pixDisplayWithTitle(pixt1, 900, 100, "textline centers 4", 1);
+    pixDisplayWithTitle(pixt1, 900, 100, "textline centers 4", rp->diag_spec);
     pixaAddPix(pixa, pixt1, L_INSERT);
 
         /* Cubic fit to curve */
@@ -146,7 +146,7 @@ L_REGPARAMS* rp;
         numaDestroy(&nafit);
     }
     pixWrite("/tmp/lept/dewarp/textline5.png", pixt1, IFF_PNG);
-    pixDisplayWithTitle(pixt1, 1200, 100, "textline centers 5", 1);
+    pixDisplayWithTitle(pixt1, 1200, 100, "textline centers 5", rp->diag_spec);
     pixaAddPix(pixa, pixt1, L_INSERT);
 
         /* Quartic fit to curve */
@@ -166,7 +166,7 @@ L_REGPARAMS* rp;
         numaDestroy(&nafit);
     }
     pixWrite("/tmp/lept/dewarp/textline6.png", pixt1, IFF_PNG);
-    pixDisplayWithTitle(pixt1, 1500, 100, "textline centers 6", 1);
+    pixDisplayWithTitle(pixt1, 1500, 100, "textline centers 6", rp->diag_spec);
     pixaAddPix(pixa, pixt1, L_INSERT);
 
     pixaConvertToPdf(pixa, 300, 0.5, L_JPEG_ENCODE, 75,

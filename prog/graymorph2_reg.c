@@ -79,7 +79,7 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix2);  /* 2 */
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
-    pixDisplayWithTitle(pixd, 0, 100, "Dilation", rp->display);
+    pixDisplayWithTitle(pixd, 0, 100, "Dilation", rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
@@ -104,7 +104,7 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix2);  /* 5 */
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
-    pixDisplayWithTitle(pixd, 250, 100, "Erosion", rp->display);
+    pixDisplayWithTitle(pixd, 250, 100, "Erosion", rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
@@ -129,7 +129,7 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix2);  /* 8 */
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
-    pixDisplayWithTitle(pixd, 500, 100, "Opening", rp->display);
+    pixDisplayWithTitle(pixd, 500, 100, "Opening", rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
@@ -154,7 +154,7 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix2);  /* 11 */
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
-    pixDisplayWithTitle(pixd, 750, 100, "Closing", rp->display);
+    pixDisplayWithTitle(pixd, 750, 100, "Closing", rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
     pixDestroy(&pixs);

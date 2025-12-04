@@ -130,7 +130,7 @@ L_REGPARAMS* rp;
         /* Remove the elements, one at a time */
     for (i = 0; lheapGetCount(lh) > 0; i++) {
         item = (HEAPEL *)lheapRemove(lh);
-        if (rp->display)
+        if (leptIsInDisplayMode(rp->diag_spec))
            lept_stderr("item %d: %f\n", i, item->distance);
         lept_free(item);
     }

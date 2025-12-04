@@ -151,7 +151,7 @@ L_REGPARAMS* rp;
 
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1500, 0.5, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
 

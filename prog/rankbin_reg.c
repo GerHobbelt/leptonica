@@ -112,9 +112,9 @@ PIXA         *pixa;
     pixaAddPix(pixa, pix2, L_INSERT);
 
         /* Display results for debugging */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 25, 0);
-        pixDisplayWithTitle(pix3, 0, 0, NULL, 1);
+        pixDisplayWithTitle(pix3, 0, 0, NULL, rp->diag_spec);
         pixDestroy(&pix3);
     }
     pixaDestroy(&pixa);
@@ -140,7 +140,7 @@ PIXA         *pixa;
     pixDestroy(&pix2);
     pix2 = pixaDisplayTiledInRows(pixa, 32, 800, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix2, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixaDestroy(&pixa);
@@ -205,7 +205,7 @@ PIXA         *pixa;
     pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 30, 2);
-    pixDisplayWithTitle(pix3, 800, 20, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 800, 20, NULL, rp->diag_spec);
     pixDestroy(&pix3);
     pixaDestroy(&pixa);
     lept_free(carray);

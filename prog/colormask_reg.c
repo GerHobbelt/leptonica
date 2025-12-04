@@ -89,7 +89,7 @@ PTA          *ptapk;
     pixRasterop(pixs, 100, 100, 2000, 2000, PIX_SRC, pix2, 0, 0);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
-    pixDisplayWithTitle(pixs, 400, 0, "Input image", rp->display);
+    pixDisplayWithTitle(pixs, 400, 0, "Input image", rp->diag_spec);
     pixa = pixaCreate(0);
     pixhsv = pixConvertRGBToHSV(NULL, pixs);
 
@@ -98,22 +98,22 @@ PTA          *ptapk;
     pixg = pixMaxDynamicRange(pixh, L_LOG_SCALE);
     pixf = pixConvertGrayToFalseColor(pixg, 1.0);
     regTestWritePixAndCheck(rp, pixf, IFF_PNG);   /* 0 */
-    pixDisplayWithTitle(pixf, 100, 0, "False color HS histo", rp->display);
+    pixDisplayWithTitle(pixf, 100, 0, "False color HS histo", rp->diag_spec);
     pixaAddPix(pixa, pixs, L_COPY);
     pixaAddPix(pixa, pixhsv, L_INSERT);
     pixaAddPix(pixa, pixg, L_INSERT);
     pixaAddPix(pixa, pixf, L_INSERT);
     pix3 = gplotSimplePix1(rp->diag_spec, nahue, "lept/regout/junkhue", "Histogram of hue values");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix3, 100, 300, "Histo of hue", rp->display);
+    pixDisplayWithTitle(pix3, 100, 300, "Histo of hue", rp->diag_spec);
     pixaAddPix(pixa, pix3, L_INSERT);
 	pix3 = gplotSimplePix1(rp->diag_spec, nasat, "lept/regout/junksat", "Histogram of saturation values");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix3, 100, 800, "Histo of saturation", rp->display);
+    pixDisplayWithTitle(pix3, 100, 800, "Histo of saturation", rp->diag_spec);
     pixaAddPix(pixa, pix3, L_INSERT);
     pixd = pixaDisplayTiledAndScaled(pixa, 32, 270, 7, 0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pixd, 0, 400, "Hue and Saturation Mosaic", rp->display);
+    pixDisplayWithTitle(pixd, 0, 400, "Hue and Saturation Mosaic", rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
     numaDestroy(&nahue);
@@ -126,7 +126,7 @@ PTA          *ptapk;
     ptaWriteStream(stderr, ptapk, 1);
     pixd = pixaDisplayTiledInRows(pixapk, 32, 1400, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pixd, 0, 550, "Peaks in HS", rp->display);
+    pixDisplayWithTitle(pixd, 0, 550, "Peaks in HS", rp->diag_spec);
     pixDestroy(&pixh);
     pixDestroy(&pixd);
     pixaDestroy(&pixapk);
@@ -154,7 +154,7 @@ PTA          *ptapk;
     }
     pixd = pixaDisplayTiledAndScaled(pixa, 32, 225, 3, 0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 8 */
-    pixDisplayWithTitle(pixd, 600, 0, "Masks over peaks", rp->display);
+    pixDisplayWithTitle(pixd, 600, 0, "Masks over peaks", rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pixr);
     pixDestroy(&pixd);

@@ -66,20 +66,20 @@ L_REGPARAMS* rp;
     pix3 = fpixConvertToPix(fpix2, 8, L_CLIP_TO_ZERO, 0);
     pix4 = pixRotateOrth(pix2, 1);
     regTestComparePix(rp, pix3, pix4);  /* 0 */
-    pixDisplayWithTitle(pix3, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 100, 100, NULL, rp->diag_spec);
 
     fpix3 = fpixRotateOrth(fpix1, 2);
     pix5 = fpixConvertToPix(fpix3, 8, L_CLIP_TO_ZERO, 0);
     pix6 = pixRotateOrth(pix2, 2);
     regTestComparePix(rp, pix5, pix6);  /* 1 */
-    pixDisplayWithTitle(pix5, 560, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix5, 560, 100, NULL, rp->diag_spec);
 
     fpix4 = fpixRotateOrth(fpix1, 3);
     pix7 = fpixConvertToPix(fpix4, 8, L_CLIP_TO_ZERO, 0);
     pix8 = pixRotateOrth(pix2, 3);
     regTestComparePix(rp, pix7, pix8);  /* 2 */
-    pixDisplayWithTitle(pix7, 1170, 100, NULL, rp->display);
-    pixDisplayWithTitle(pix2, 560, 580, NULL, rp->display);
+    pixDisplayWithTitle(pix7, 1170, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 560, 580, NULL, rp->diag_spec);
 
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -103,13 +103,13 @@ L_REGPARAMS* rp;
     pix3 = fpixConvertToPix(fpix2, 8, L_CLIP_TO_ZERO, 0);
     pix4 = pixAddMirroredBorder(pix2, 21, 21, 25, 25);
     regTestComparePix(rp, pix3, pix4);  /* 3 */
-    pixDisplayWithTitle(pix3, 100, 1000, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 100, 1000, NULL, rp->diag_spec);
 
     fpix3 = fpixAddContinuedBorder(fpix1, 21, 21, 25, 25);
     pix5 = fpixConvertToPix(fpix3, 8, L_CLIP_TO_ZERO, 0);
     pix6 = pixAddContinuedBorder(pix2, 21, 21, 25, 25);
     regTestComparePix(rp, pix5, pix6);  /* 4 */
-    pixDisplayWithTitle(pix5, 750, 1000, NULL, rp->display);
+    pixDisplayWithTitle(pix5, 750, 1000, NULL, rp->diag_spec);
 
     pixDestroy(&pix1);
     pixDestroy(&pix2);

@@ -86,7 +86,7 @@ L_REGPARAMS* rp;
         pixaAddPix(pixa, pix16f, L_INSERT);
     }
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
             /* Use na to display them in column major order with 4 rows */
         na = numaCreate(8);
         for (i = 0; i < 8; i++)

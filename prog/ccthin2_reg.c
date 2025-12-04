@@ -149,9 +149,9 @@ SELA         *sela;
         /* Display the thinning results */
     pix1 = pixaDisplayTiledAndScaled(pixa1, 8, 500, 1, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         //lept_mkdir("lept/thin");
-        pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
+        pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
         lept_stderr("Writing to: /tmp/lept/thin/ccthin2-1.pdf");
         pixaConvertToPdf(pixa1, 0, 1.0, 0, 0, "Thin 2 Results",
                          "/tmp/lept/thin/ccthin2-1.pdf");
@@ -185,8 +185,8 @@ SELA         *sela;
     }
     pix1 = pixaDisplayTiledInColumns(pixa5, 2, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18 */
-    if (rp->display) {
-        pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
+    if (leptIsInDisplayMode(rp->diag_spec)) {
+        pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
         lept_stderr("Writing to: /tmp/lept/thin/ccthin2-2.pdf");
         pixaConvertToPdf(pixa5, 0, 1.0, 0, 0, "Thin strokes",
                          "/tmp/lept/thin/ccthin2-2.pdf");

@@ -93,9 +93,9 @@ L_REGPARAMS* rp;
         /* Blend with a white background */
     pix1 = pixRead(DEMOPATH("books_logo.png"));
 	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
-	pixDisplayWithTitle(pix1, 100, 0, NULL, rp->display);
+	pixDisplayWithTitle(pix1, 100, 0, NULL, rp->diag_spec);
     pix2 = pixAlphaBlendUniform(pix1, 0xffffff00);
-    pixDisplayWithTitle(pix2, 100, 150, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 100, 150, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
 
@@ -107,12 +107,12 @@ L_REGPARAMS* rp;
     regTestCheckFile(rp, "/tmp/lept/regout/alphaops.2.png");   /* 2 */
     pixSetSpp(pix3, 4);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 3, with alpha */
-    pixDisplayWithTitle(pix3, 100, 300, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 100, 300, NULL, rp->diag_spec);
 
         /* Render on a light yellow background */
     pix4 = pixAlphaBlendUniform(pix3, 0xffffe000);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix4, 100, 450, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 100, 450, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -132,7 +132,7 @@ L_REGPARAMS* rp;
     pixg = pixConvert1To8(NULL, pixs, 0, 255);
     pixg2 = pixBlockconvGray(pixg, NULL, 1, 1);
     regTestWritePixAndCheck(rp, pixg2, IFF_JFIF_JPEG);  /* 5 */
-    pixDisplayWithTitle(pixg2, 0, 0, "alpha", rp->display);
+    pixDisplayWithTitle(pixg2, 0, 0, "alpha", rp->diag_spec);
 
         /* Make the viewable image.
          * pixc is the image that we see where the alpha layer is
@@ -145,11 +145,11 @@ L_REGPARAMS* rp;
 	pixSetDiagnosticsSpec(pixc, rp->diag_spec);
 	pixcs1 = pixScaleToSize(pixc, w, h);
     regTestWritePixAndCheck(rp, pixcs1, IFF_JFIF_JPEG);  /* 6 */
-    pixDisplayWithTitle(pixcs1, 300, 0, "viewable", rp->display);
+    pixDisplayWithTitle(pixcs1, 300, 0, "viewable", rp->diag_spec);
     pixb = pixCreateTemplate(pixcs1);  /* black */
     pixd1 = pixBlendWithGrayMask(pixb, pixcs1, pixg2, 0, 0);
     regTestWritePixAndCheck(rp, pixd1, IFF_JFIF_JPEG);  /* 7 */
-    pixDisplayWithTitle(pixd1, 600, 0, "alpha-blended 1", rp->display);
+    pixDisplayWithTitle(pixd1, 600, 0, "alpha-blended 1", rp->diag_spec);
 
         /* Embed the alpha layer pixg2 into the color image pixc.
          * Write it out as is.  Then clean pixcs1 (to 0) under the fully
@@ -165,7 +165,7 @@ L_REGPARAMS* rp;
          * look identical to the blended result pixd1 before cleaning. */
     pixd2 = pixBlendWithGrayMask(pixb, pixcs2, pixg2, 0, 0);
     regTestWritePixAndCheck(rp, pixd2, IFF_JFIF_JPEG);  /* 8 */
-    pixDisplayWithTitle(pixd2, 0, 400, "alpha blended 2", rp->display);
+    pixDisplayWithTitle(pixd2, 0, 400, "alpha blended 2", rp->diag_spec);
 
         /* Read the two images back, ignoring the transparency layer.
          * The uncleaned image will come back identical to pixcs1.
@@ -182,8 +182,8 @@ L_REGPARAMS* rp;
     lept_stderr(" Original: %d bytes\n Cleaned: %d bytes\n", n1, n2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 9 */
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 10 */
-    pixDisplayWithTitle(pix1, 300, 400, "without alpha", rp->display);
-    pixDisplayWithTitle(pix2, 600, 400, "cleaned under transparent", rp->display);
+    pixDisplayWithTitle(pix1, 300, 400, "without alpha", rp->diag_spec);
+    pixDisplayWithTitle(pix2, 600, 400, "cleaned under transparent", rp->diag_spec);
 
     pixa = pixaCreate(0);
     pixaAddPix(pixa, pixg2, L_INSERT);
@@ -194,7 +194,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix2, L_INSERT);
     pixd = pixaDisplayTiledInColumns(pixa, 1, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 11 */
-    pixDisplayWithTitle(pixd, 200, 200, "composite", rp->display);
+    pixDisplayWithTitle(pixd, 200, 200, "composite", rp->diag_spec);
     pixWrite("/tmp/lept/alpha/composite.png", pixd, IFF_JFIF_JPEG);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
@@ -237,11 +237,11 @@ L_REGPARAMS* rp;
         pix1 = pixaGetPix(pixa, i, L_CLONE);
         pix2 = DoBlendTest(pix1, box, color, gamma, minval, maxval, 1);
         regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 12, 14, ... 22 */
-        pixDisplayWithTitle(pix2, 150 * i, 0, NULL, rp->display);
+        pixDisplayWithTitle(pix2, 150 * i, 0, NULL, rp->diag_spec);
         pixaAddPix(pixa2, pix2, L_INSERT);
         pix2 = DoBlendTest(pix1, box, color, gamma, minval, maxval, 2);
         regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 13, 15, ... 23 */
-        pixDisplayWithTitle(pix2, 150 * i, 200, NULL, rp->display);
+        pixDisplayWithTitle(pix2, 150 * i, 200, NULL, rp->diag_spec);
         pixaAddPix(pixa3, pix2, L_INSERT);
         pixDestroy(&pix1);
     }
@@ -266,7 +266,7 @@ L_REGPARAMS* rp;
     pix4 = pixConvertTo8(pix3, 0);
     pixSetRGBComponent(pix1, pix4, L_ALPHA_CHANNEL);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 24 */
-    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->diag_spec);
 
         /* Set the alpha value in a colormap to bval */
     pix5 = pixOctreeColorQuant(pix1, 128, 0);
@@ -301,7 +301,7 @@ L_REGPARAMS* rp;
     pixcmapDestroy(&cmap2);
 
         /* Test r/w for cmapped pix with non-opaque alpha */
-    pixDisplayWithTitle(pix5, 900, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix5, 900, 0, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 27 */
     pixWrite("/tmp/lept/alpha/fourcomp.png", pix5, IFF_PNG);
     pix6 = pixRead("/tmp/lept/alpha/fourcomp.png");

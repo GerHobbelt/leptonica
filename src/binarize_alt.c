@@ -327,7 +327,7 @@ struct BG_THRES_PT_INFO {
 						numaZeroValues(na, 0, median_pos);
 						numaSetValue(na, median_pos, sum);
 
-						numaSplitDistribution(na, scorefract, &tile_thresh, &avebg, &avefg, &numbg, &numfg, nascore_ref);
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avebg, &avefg, &numbg, &numfg, diagspec, nascore_ref);
 
 						if (!(fabsf(avefg - avebg) >= 1) && numfg > 0.0 && numbg > 0.0) {
 							L_WARNING("klunt! !black_is_fg ... fabsf(avefg(%f) - avebg(%f)) >= 1) && numfg(%f) > 0.0 && numbg(%f) > 0.0\n", __func__, avefg, avebg, numfg, numbg);
@@ -374,7 +374,7 @@ struct BG_THRES_PT_INFO {
 						numaZeroValues(na, median_pos, -1);
 						numaSetValue(na, median_pos, sum);
 
-						numaSplitDistribution(na, scorefract, &tile_thresh, &avefg, &avebg, &numfg, &numbg, nascore_ref);
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avefg, &avebg, &numfg, &numbg, diagspec, nascore_ref);
 
 						if (!(fabsf(avefg - avebg) >= 1) && numbg > 0.0 && numfg > 0.0) {
 							L_WARNING("klunt! ... fabsf(avefg(%f) - avebg(%f)) >= 1) && numfg(%f) > 0.0 && numbg(%f) > 0.0\n", __func__, avefg, avebg, numfg, numbg);

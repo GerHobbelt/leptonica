@@ -106,13 +106,13 @@ PIXCMAP      *cmap;
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 3 */
     pixaAddPix(pixa, pix3, L_COPY);
     cmap = pixGetColormap(pix3);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     pixcmapConvertRGBToHSV(cmap);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 4 */
     pixaAddPix(pixa, pix3, L_COPY);
     pixcmapConvertHSVToRGB(cmap);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 5 */
     pixaAddPix(pixa, pix3, L_INSERT);
 
@@ -195,7 +195,7 @@ PIXCMAP      *cmap;
     pix1 = pixaDisplayTiledAndScaled(pixat, 32, 250, 4, 0, 10, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 9 */
     pixaAddPix(pixa, pix1, L_INSERT);
-    pixDisplayWithTitle(pix1, 0, 100, "Color magnitude", rp->display);
+    pixDisplayWithTitle(pix1, 0, 100, "Color magnitude", rp->diag_spec);
     pixaDestroy(&pixat);
     numaDestroy(&naseq);
     numaaDestroy(&naa1);
@@ -205,7 +205,7 @@ PIXCMAP      *cmap;
     regTestCheckFile(rp, "/tmp/lept/regout/colorspace.10.png");  /* 10 */
     regTestCheckFile(rp, "/tmp/lept/regout/colorspace.11.png");  /* 11 */
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix3 = pixRead("/tmp/lept/regout/colorspace.10.png");
         pixaAddPix(pixa, pix3, L_INSERT);
         pix3 = pixRead("/tmp/lept/regout/colorspace.11.png");

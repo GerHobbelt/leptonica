@@ -131,7 +131,7 @@ SEL     *selhm;
     pixd = pixaDisplayTiledAndScaled(pixa, 32, width, 2, 0, 30, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);
     pixDisplayWithTitle(pixd, 100, 100 + 100 * (3 * patno + red / 4),
-                        NULL, rp->display);
+                        NULL, rp->diag_spec);
     pixaDestroy(&pixa);
     pixDestroy(&pixd);
 
@@ -154,7 +154,7 @@ SEL     *selhm;
     pixc1 = pixDisplayMatchedPattern(pixr, pixp, pixhmt,
                                      cx, cy, 0x0000ff00, 1.0, 5);
     regTestWritePixAndCheck(rp, pixc1, IFF_PNG);
-    pixDisplayWithTitle(pixc1, 500, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixc1, 500, 100, NULL, rp->diag_spec);
 
         /* Color each instance at 0.5 scale */
     pixc2 = pixDisplayMatchedPattern(pixr, pixp, pixhmt,

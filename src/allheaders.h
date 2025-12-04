@@ -34,6 +34,18 @@
 
 #include "alltypes.h"
 
+#include <stdarg.h>
+#if defined(_MSC_VER)
+#include <sal.h>
+#ifndef __attribute__
+#define __attribute__(x) /**/
+#define __lept_attribute__defined__ 1
+#endif
+#else
+#define _In_z_
+#define _Printf_format_string_
+#endif
+
 #ifndef NO_PROTOS
 
 /*
@@ -679,16 +691,16 @@ LEPT_DLL extern L_DEWARPA * dewarpaReadMem ( const l_uint8 *data, size_t size );
 LEPT_DLL extern l_ok dewarpaWrite ( const char *filename, L_DEWARPA *dewa );
 LEPT_DLL extern l_ok dewarpaWriteStream ( FILE *fp, L_DEWARPA *dewa );
 LEPT_DLL extern l_ok dewarpaWriteMem ( l_uint8 **pdata, size_t *psize, L_DEWARPA *dewa );
-LEPT_DLL extern l_ok dewarpBuildPageModel ( L_DEWARP *dew, const char *debugfile );
+LEPT_DLL extern l_ok dewarpBuildPageModel ( L_DEWARP *dew, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok dewarpFindVertDisparity ( L_DEWARP *dew, PTAA *ptaa, l_int32 rotflag );
 LEPT_DLL extern l_ok dewarpFindHorizDisparity ( L_DEWARP *dew, PTAA *ptaa );
 LEPT_DLL extern PTAA * dewarpGetTextlineCenters ( PIX *pixs, LDIAG_CTX diagspec );
 LEPT_DLL extern PTAA * dewarpRemoveShortLines ( PIX *pixs, PTAA *ptaas, l_float32 fract, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok dewarpFindHorizSlopeDisparity ( L_DEWARP *dew, PIX *pixb, l_float32 fractthresh, l_int32 parity );
-LEPT_DLL extern l_ok dewarpBuildLineModel ( L_DEWARP *dew, l_int32 opensize, const char *debugfile );
+LEPT_DLL extern l_ok dewarpBuildLineModel ( L_DEWARP *dew, l_int32 opensize, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok dewarpaModelStatus ( L_DEWARPA *dewa, l_int32 pageno, l_int32 *pvsuccess, l_int32 *phsuccess );
-LEPT_DLL extern l_ok dewarpaApplyDisparity ( L_DEWARPA *dewa, l_int32 pageno, PIX *pixs, l_int32 grayin, l_int32 x, l_int32 y, PIX **ppixd, const char *debugfile );
-LEPT_DLL extern l_ok dewarpaApplyDisparityBoxa ( L_DEWARPA *dewa, l_int32 pageno, PIX *pixs, BOXA *boxas, l_int32 mapdir, l_int32 x, l_int32 y, BOXA **pboxad, const char *debugfile );
+LEPT_DLL extern l_ok dewarpaApplyDisparity ( L_DEWARPA *dewa, l_int32 pageno, PIX *pixs, l_int32 grayin, l_int32 x, l_int32 y, PIX **ppixd, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok dewarpaApplyDisparityBoxa ( L_DEWARPA *dewa, l_int32 pageno, PIX *pixs, BOXA *boxas, l_int32 mapdir, l_int32 x, l_int32 y, BOXA **pboxad, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok dewarpMinimize ( L_DEWARP *dew );
 LEPT_DLL extern l_ok dewarpPopulateFullRes ( L_DEWARP *dew, PIX *pix, l_int32 x, l_int32 y );
 LEPT_DLL extern l_ok dewarpSinglePage ( PIX *pixs, l_int32 thresh, l_int32 adaptive, l_int32 useboth, l_int32 check_columns, PIX **ppixd, L_DEWARPA **pdewa, LDIAG_CTX diagspec );
@@ -777,8 +789,8 @@ LEPT_DLL extern PIX * pixFMorphopGen_2 ( PIX *pixd, PIX *pixs, l_int32 operation
 LEPT_DLL extern l_int32 fmorphopgen_low_2 ( l_uint32 *datad, l_int32 w, l_int32 h, l_int32 wpld, l_uint32 *datas, l_int32 wpls, l_int32 index );
 LEPT_DLL extern PIX * pixSobelEdgeFilter ( PIX *pixs, l_int32 orientflag );
 LEPT_DLL extern PIX * pixTwoSidedEdgeFilter ( PIX *pixs, l_int32 orientflag );
-LEPT_DLL extern l_ok pixMeasureEdgeSmoothness ( PIX *pixs, l_int32 side, l_int32 minjump, l_int32 minreversal, l_float32 *pjpl, l_float32 *pjspl, l_float32 *prpl, const char *debugfile );
-LEPT_DLL extern NUMA * pixGetEdgeProfile ( PIX *pixs, l_int32 side, const char *debugfile );
+LEPT_DLL extern l_ok pixMeasureEdgeSmoothness ( PIX *pixs, l_int32 side, l_int32 minjump, l_int32 minreversal, l_float32 *pjpl, l_float32 *pjspl, l_float32 *prpl, LDIAG_CTX diagspec );
+LEPT_DLL extern NUMA * pixGetEdgeProfile ( PIX *pixs, l_int32 side, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok pixGetLastOffPixelInRun ( PIX *pixs, l_int32 x, l_int32 y, l_int32 direction, l_int32 *ploc );
 LEPT_DLL extern l_int32 pixGetLastOnPixelInRun ( PIX *pixs, l_int32 x, l_int32 y, l_int32 direction, l_int32 *ploc );
 LEPT_DLL extern char * encodeBase64 ( const l_uint8 *inarray, l_int32 insize, l_int32 *poutsize );
@@ -1363,7 +1375,7 @@ LEPT_DLL extern l_ok numaDiscretizeSortedInBins ( NUMA *na, l_int32 nbins, NUMA 
 LEPT_DLL extern l_ok numaDiscretizeHistoInBins ( NUMA *na, l_int32 nbins, NUMA **pnabinval, NUMA **pnarank );
 LEPT_DLL extern l_ok numaGetRankBinValues ( NUMA *na, l_int32 nbins, NUMA **pnam );
 LEPT_DLL extern NUMA * numaGetUniformBinSizes ( l_int32 ntotal, l_int32 nbins );
-LEPT_DLL extern l_ok numaSplitDistribution ( NUMA *na, l_float32 scorefract, l_int32 *psplitindex, l_float32 *pave1, l_float32 *pave2, l_float32 *pnum1, l_float32 *pnum2, NUMA **pnascore );
+LEPT_DLL extern l_ok numaSplitDistribution ( NUMA *na, l_float32 scorefract, l_int32 *psplitindex, l_float32 *pave1, l_float32 *pave2, l_float32 *pnum1, l_float32 *pnum2, LDIAG_CTX diagspec, NUMA **pnascore );
 LEPT_DLL extern l_ok grayHistogramsToEMD ( NUMAA *naa1, NUMAA *naa2, NUMA **pnad );
 LEPT_DLL extern l_ok numaEarthMoverDistance ( NUMA *na1, NUMA *na2, l_float32 *pdist );
 LEPT_DLL extern l_ok grayInterHistogramStats ( NUMAA *naa, l_int32 wc, NUMA **pnam, NUMA **pnams, NUMA **pnav, NUMA **pnarv );
@@ -1382,7 +1394,7 @@ LEPT_DLL extern PIX * pixGenHalftoneMask ( PIX *pixs, PIX **ppixtext, l_int32 *p
 LEPT_DLL extern PIX * pixGenerateHalftoneMask ( PIX *pixs, PIX **ppixtext, l_int32 *phtfound, PIXA *pixadb );
 LEPT_DLL extern PIX * pixGenTextlineMask ( PIX *pixs, PIX **ppixvws, l_int32 *ptlfound, PIXA *pixadb );
 LEPT_DLL extern PIX * pixGenTextblockMask ( PIX *pixs, PIX *pixvws, PIXA *pixadb );
-LEPT_DLL extern PIX * pixCropImage ( PIX *pixs, l_int32 lr_clear, l_int32 tb_clear, l_int32 edgeclean, l_int32 lr_border, l_int32 tb_border, l_float32 maxwiden, l_int32 printwiden, const char *debugfile, BOX **pcropbox );
+LEPT_DLL extern PIX * pixCropImage ( PIX *pixs, l_int32 lr_clear, l_int32 tb_clear, l_int32 edgeclean, l_int32 lr_border, l_int32 tb_border, l_float32 maxwiden, l_int32 printwiden, LDIAG_CTX diagspec, BOX **pcropbox );
 LEPT_DLL extern PIX * pixCleanImage ( PIX *pixs, l_int32 contrast, l_int32 rotation, l_int32 scale, l_int32 opensize );
 LEPT_DLL extern BOX * pixFindPageForeground ( PIX *pixs, l_int32 threshold, l_int32 mindist, l_int32 erasedist, l_int32 showmorph, PIXAC *pixac );
 LEPT_DLL extern l_ok pixSplitIntoCharacters ( PIX *pixs, l_int32 minw, l_int32 minh, BOXA **pboxa, PIXA **ppixa, PIX **ppixdebug );
@@ -1407,8 +1419,8 @@ LEPT_DLL extern l_ok addColorizedGrayToCmap ( PIXCMAP *cmap, l_int32 type, l_int
 LEPT_DLL extern l_ok pixSetSelectMaskedCmap ( PIX *pixs, PIX *pixm, l_int32 x, l_int32 y, l_int32 sindex, l_int32 rval, l_int32 gval, l_int32 bval );
 LEPT_DLL extern l_ok pixSetMaskedCmap ( PIX *pixs, PIX *pixm, l_int32 x, l_int32 y, l_int32 rval, l_int32 gval, l_int32 bval );
 LEPT_DLL extern char * parseForProtos ( const char *filein, const char *prestring );
-LEPT_DLL extern l_ok partifyFiles ( const char *dirname, const char *substr, l_int32 nparts, const char *outroot, const char *debugfile );
-LEPT_DLL extern l_ok partifyPixac ( PIXAC *pixac, l_int32 nparts, const char *outroot, PIXA *pixadb );
+LEPT_DLL extern l_ok partifyFiles ( const char *dirname, const char *substr, l_int32 nparts, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok partifyPixac ( PIXAC *pixac, l_int32 nparts, PIXA *pixadb );
 LEPT_DLL extern BOXA * boxaGetWhiteblocks ( BOXA *boxas, BOX *box, l_int32 sortflag, l_int32 maxboxes, l_float32 maxoverlap, l_int32 maxperim, l_float32 fract, l_int32 maxpops );
 LEPT_DLL extern BOXA * boxaPruneSortedOnOverlap ( BOXA *boxas, l_float32 maxoverlap );
 LEPT_DLL extern l_ok compressFilesToPdf ( SARRAY *sa, l_int32 onebit, l_int32 savecolor, l_float32 scalefactor, l_int32 quality, const char *title, const char *fileout );
@@ -2854,6 +2866,12 @@ LEPT_DLL extern l_ok boxaCloneDiagnosticsSpec(BOXA* boxad, const BOXA* boxas);
 
 LEPT_DLL extern void leptDebugSetFileBasepath ( LDIAG_CTX spec, const char * directory );
 LEPT_DLL extern void leptDebugAppendFileBasepath ( LDIAG_CTX spec, const char * directory );
+LEPT_DLL extern void leptDebugAppendFilePathPart ( LDIAG_CTX spec, const char * directory );
+LEPT_DLL extern void leptDebugReplaceEntireFilePathPart ( LDIAG_CTX spec, const char * directory );
+LEPT_DLL extern void leptDebugReplaceOneFilePathPart ( LDIAG_CTX spec, const char * directory );
+LEPT_DLL extern void leptDebugEraseFilePathPart ( LDIAG_CTX spec );
+LEPT_DLL extern void leptDebugEraseOneFilePathPart ( LDIAG_CTX spec );
+LEPT_DLL extern const char * leptDebugGetFilePathPart ( LDIAG_CTX spec );
 LEPT_DLL extern const char * leptDebugGetFileBasePath ( LDIAG_CTX spec );
 LEPT_DLL extern void leptDebugSetFilenameForPrefix ( LDIAG_CTX spec, const char * source_filename, l_ok strip_off_extension );
 LEPT_DLL extern const char * leptDebugGetFilenameForPrefix ( LDIAG_CTX spec );
@@ -2879,6 +2897,12 @@ LEPT_DLL extern const char * leptDebugGenFilenameEx ( const char * directory, LD
 LEPT_DLL extern const char * leptDebugGenFilepathEx ( const char * directory, LDIAG_CTX spec, const char * path_fmt_str, ... );
 LEPT_DLL extern const char * leptDebugGetLastGenFilepath ( LDIAG_CTX spec );
 
+LEPT_DLL extern l_ok leptIsInDisplayMode ( LDIAG_CTX spec );
+LEPT_DLL extern void leptSetInDisplayMode ( LDIAG_CTX spec, l_ok activate );
+
+LEPT_DLL extern const char* string_asprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 1, 2)));
+LEPT_DLL extern const char* string_vasprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, va_list args );
+
 /* defined in morph.c */
 LEPT_DLL extern l_int32 MORPH_BC;
 
@@ -2896,6 +2920,12 @@ static inline int leptIsSeparator(char c)
 {
 	return (c == '/' || c == '\\');
 }
+
+#if defined(_MSC_VER)
+#ifdef __lept_attribute__defined__
+#undef __attribute__
+#endif
+#endif
 
 #endif /* LEPTONICA_ALLHEADERS_H */
 

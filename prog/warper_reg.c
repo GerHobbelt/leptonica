@@ -82,7 +82,7 @@ L_REGPARAMS* rp;
         }
         pixd = pixaDisplayTiledInColumns(pixac, 10, 1.0, 20, 0);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);
-        pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+        pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
         pixaDestroy(&pixac);
         pixDestroy(&pixd);
     }
@@ -98,7 +98,7 @@ L_REGPARAMS* rp;
         }
         pixd = pixaDisplayTiledInColumns(pixac, 10, 1.0, 20, 0);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);
-        pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+        pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
         pixaDestroy(&pixac);
         pixDestroy(&pixd);
     }

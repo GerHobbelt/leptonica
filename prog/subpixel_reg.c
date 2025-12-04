@@ -98,7 +98,7 @@ PIXA         *pixa;
                                  "Regression test for subpixel scaling: gray",
                                  0xff00ff00, L_ADD_ABOVE, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 0 */
-    pixDisplayWithTitle(pixd, 50, 50, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 50, 50, NULL, rp->diag_spec);
     pixaDestroy(&pixa);
     pixDestroy(&pixs);
     pixDestroy(&pixg);
@@ -130,7 +130,7 @@ PIXA         *pixa;
                                  "Regression test for subpixel scaling: color",
                                  0xff00ff00, L_ADD_ABOVE, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 1 */
-    pixDisplayWithTitle(pixd, 50, 350, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 50, 350, NULL, rp->diag_spec);
     pixaDestroy(&pixa);
     pixDestroy(&pixs);
     pixDestroy(&pixt);

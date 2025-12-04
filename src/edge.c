@@ -312,7 +312,7 @@ pixMeasureEdgeSmoothness(PIX         *pixs,
                          l_float32   *pjpl,
                          l_float32   *pjspl,
                          l_float32   *prpl,
-                         const char  *debugfile)
+                         LDIAG_CTX    diagspec)
 {
 l_int32  i, n, val, nval, diff, njumps, jumpsum, nreversal;
 NUMA    *na, *nae;
@@ -320,7 +320,7 @@ NUMA    *na, *nae;
     if (pjpl) *pjpl = 0.0;
     if (pjspl) *pjspl = 0.0;
     if (prpl) *prpl = 0.0;
-    if (!pjpl && !pjspl && !prpl && !debugfile)
+    if (!pjpl && !pjspl && !prpl && !diagspec)
         return ERROR_INT("no output requested", __func__, 1);
     if (!pixs || pixGetDepth(pixs) != 1)
         return ERROR_INT("pixs not defined or not 1 bpp", __func__, 1);
@@ -332,7 +332,7 @@ NUMA    *na, *nae;
     if (minreversal < 1)
         return ERROR_INT("invalid minreversal; must be >= 1", __func__, 1);
 
-    if ((na = pixGetEdgeProfile(pixs, side, debugfile)) == NULL)
+    if ((na = pixGetEdgeProfile(pixs, side, diagspec)) == NULL)
         return ERROR_INT("edge profile not made", __func__, 1);
     if ((n = numaGetCount(na)) < 2) {
         numaDestroy(&na);
@@ -382,7 +382,7 @@ NUMA    *na, *nae;
 NUMA *
 pixGetEdgeProfile(PIX         *pixs,
                   l_int32      side,
-                  const char  *debugfile)
+                  LDIAG_CTX    diagspec)
 {
 l_int32   x, y, w, h, loc, index, ival;
 l_uint32  val;
@@ -462,7 +462,7 @@ PIXCMAP  *cmap;
         }
     }
 
-    if (debugfile) {
+    if (diagspec) {
         pixt = pixConvertTo8(pixs, TRUE);
         cmap = pixGetColormap(pixt);
         pixcmapAddColor(cmap, 255, 0, 0);

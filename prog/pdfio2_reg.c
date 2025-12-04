@@ -156,7 +156,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     pix1 = pixRead(DEMOPATH("candelabrum.011.jpg"));
     pix2 = pixScale(pix1, 3.0, 3.0);
     pixWrite("/tmp/lept/pdf2/candelabrum3.jpg", pix2, IFF_JFIF_JPEG);
-    GetImageMask(pix2, 200, &boxa1, rp, "/tmp/lept/pdf2/seg1.jpg");
+    GetImageMask(pix2, 200, &boxa1, rp, "seg1");
     convertToPdfSegmented("/tmp/lept/pdf2/candelabrum3.jpg", 200, L_G4_ENCODE,
                           100, boxa1, 0, 0.25, NULL,
                           "/tmp/lept/pdf2/file12.pdf");
@@ -356,15 +356,18 @@ PIXA  *pixa;
     pix2 = pixGenerateHalftoneMask(pix1, NULL, NULL, NULL);
     pix3 = pixMorphSequence(pix2, "c20.1 + c1.20", 0);
     *pboxa = pixConnComp(pix3, NULL, 8);
-    if (debugfile) {
+    if (debugfile && rp->diag_spec) {
+		leptDebugSetFilenameForPrefix(rp->diag_spec, debugfile, TRUE);
         pixa = pixaCreate(0);
         pixaAddPix(pixa, pixs, L_COPY);
         pixaAddPix(pixa, pix1, L_INSERT);
         pixaAddPix(pixa, pix2, L_INSERT);
         pixaAddPix(pixa, pix3, L_INSERT);
         pix4 = pixaDisplayTiledInRows(pixa, 32, 1800, 0.25, 0, 25, 2);
+		const char* pixfilepath = leptDebugGenFilepath(rp->diag_spec, "%s.%s", __func__, ".jpg");
         pixWrite(debugfile, pix4, IFF_JFIF_JPEG);
-        pixDisplayWithTitle(pix4, 100, 100, NULL, rp->display);
+		stringDestroy(&pixfilepath);
+        pixDisplayWithTitle(pix4, 100, 100, NULL, rp->diag_spec);
         pixDestroy(&pix4);
         pixaDestroy(&pixa);
     } else {

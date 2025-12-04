@@ -622,7 +622,7 @@ part6:
     pix4 = pixRead("/tmp/lept/regout/alpha2.bmp");
     pixEqual(pix4, pix1, &same);
     regTestCompareValues(rp, 1.0, same, 0.0);  /* 3 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         writeImageFileInfo("/tmp/lept/regout/alpha2.bmp", stderr, 0);
         pixDisplay(pix1, 300, 100);
     }
@@ -661,7 +661,7 @@ part6:
     regTestCompareValues(rp, 1.0, same, 0.0);  /* 8 */
     pix6 = pixDisplayDiff(pix1, pix4, 1, 1, 0xff000000);
     regTestWritePixAndCheck(rp, pix6, IFF_PNG);  /* 9 */
-    if (rp->display) pixDisplay(pix6, 800, 100);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixDisplay(pix6, 800, 100);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);

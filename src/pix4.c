@@ -3471,11 +3471,11 @@ PIX       *pixg;
     na = pixGetGrayHistogram(pixg, 1);
     if (ppixdb) {
         numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
-                              &numfg, &numbg, &nascore);
+                              &numfg, &numbg, diagspec, &nascore);
         numaDestroy(&nascore);
     } else {
         numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
-                              &numfg, &numbg, NULL);
+                              &numfg, &numbg, diagspec, NULL);
     }
 
     if (pthresh) *pthresh = thresh;

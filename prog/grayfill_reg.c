@@ -102,7 +102,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pixs1, IFF_PNG);  /* 5 */
     pix1 = pixaDisplayTiledInColumns(pixa, 6, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix1, 100, 0, "inverse gray fill", rp->display);
+    pixDisplayWithTitle(pix1, 100, 0, "inverse gray fill", rp->diag_spec);
     pixDestroy(&pixs1);
     pixDestroy(&pixs1_8);
     pixDestroy(&pixb1);
@@ -126,7 +126,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pixb2, L_INSERT);
     pix1 = pixaDisplayTiledInColumns(pixa, 5, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix1, 100, 200, "standard gray fill", rp->display);
+    pixDisplayWithTitle(pix1, 100, 200, "standard gray fill", rp->diag_spec);
     pixDestroy(&pixs2);
     pixDestroy(&pixs2_8);
     pixDestroy(&pix1);
@@ -150,7 +150,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pixb3, L_INSERT);
     pix1 = pixaDisplayTiledInColumns(pixa, 5, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18 */
-    pixDisplayWithTitle(pix1, 100, 400, "gray fill form seed", rp->display);
+    pixDisplayWithTitle(pix1, 100, 400, "gray fill form seed", rp->diag_spec);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 

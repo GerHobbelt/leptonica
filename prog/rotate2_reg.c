@@ -147,7 +147,7 @@ PIXA     *pixa;
     pixaAddPix(pixa, pix2, L_INSERT);
     pixd = pixaDisplayTiledInColumns(pixa, 2, scale, 20, 0);
     regTestWritePixAndCheck(rp, pixd, outformat);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
@@ -176,7 +176,7 @@ PIXA     *pixa;
     pixDestroy(&pix1);
     pixd = pixaDisplayTiledInColumns(pixa, 2, scale, 20, 0);
     regTestWritePixAndCheck(rp, pixd, outformat);
-    pixDisplayWithTitle(pixd, 600, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 600, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 

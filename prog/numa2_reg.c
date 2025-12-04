@@ -102,9 +102,9 @@ PIXA        *pixa1;
     pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix4, L_INSERT);
     pixaAddPix(pixa1, pix5, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 0, 0, NULL, 1);
+        pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -134,7 +134,7 @@ PIXA        *pixa1;
     }
     pixg = pixConvertTo8(pixs, 0);  /* and a grayscale version */
     regTestWritePixAndCheck(rp, pixg, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pixg, 0, 300, NULL, rp->display);
+    pixDisplayWithTitle(pixg, 0, 300, NULL, rp->diag_spec);
 
     na1 = pixExtractOnLine(pixg, 20, 20, 180, 20, 1);
     na2 = pixExtractOnLine(pixg, 40, 30, 40, 170, 1);
@@ -155,9 +155,9 @@ PIXA        *pixa1;
     pixaAddPix(pixa1, pix2, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix4, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 300, 0, NULL, 1);
+        pixDisplayWithTitle(pixd, 300, 0, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -205,7 +205,7 @@ PIXA        *pixa1;
                              0x00ff0000);
     pixRenderPlotFromNuma(&pix1, na3, L_PLOT_AT_RIGHT, 3, 80, 0x00ff0000);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     boxDestroy(&box1);
     boxDestroy(&box2);
@@ -226,7 +226,7 @@ PIXA        *pixa1;
     regTestCompareValues(rp, 189.59, ave1, 0.01);  /* 13 */
     regTestCompareValues(rp, 207.89, ave2, 0.01);  /* 14 */
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("ave1 = %8.4f\n", sum1 / h);
         lept_stderr("ave2 = %8.4f\n", 2.0 * sum2 / w);
     }
@@ -273,9 +273,9 @@ PIXA        *pixa1;
     pixa1 = pixaCreate(2);
     pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix2, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 400, 600, NULL, 1);
+        pixDisplayWithTitle(pixd, 400, 600, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -312,9 +312,9 @@ PIXA        *pixa1;
     pixa1 = pixaCreate(2);
     pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix5, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 800, 600, NULL, 1);
+        pixDisplayWithTitle(pixd, 800, 600, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -352,9 +352,9 @@ PIXA        *pixa1;
     pixa1 = pixaCreate(2);
     pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 1200, 600, NULL, 1);
+        pixDisplayWithTitle(pixd, 1200, 600, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -372,56 +372,56 @@ PIXA        *pixa1;
         /* No mask, no box, different subsampling */
     pixAverageInRect(pix3, NULL, NULL, 0, 255, 1, &ave1);  /* no mask */
     regTestCompareValues(rp, 176.97, ave1, 0.1);  /* 25 */
-    if (rp->display) lept_stderr("ave1 = %6.2f\n", ave1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave1 = %6.2f\n", ave1);
     pixAverageInRect(pix3, NULL, NULL, 0, 255, 2, &ave2);  /* no mask */
     regTestCompareValues(rp, ave1, ave2, 0.1);  /* 26 */
-    if (rp->display) lept_stderr("ave2 = %6.2f\n", ave2);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave2 = %6.2f\n", ave2);
         /* Mask allows bg, no box */
     pix4 = pixThresholdToBinary(pix3, 80);  /* use light pixels */
     pixAverageInRect(pix3, pix4, NULL, 0, 255, 1, &ave1);  /* mask bg */
     regTestCompareValues(rp, 187.58, ave1, 0.1);  /* 27 */
-    if (rp->display) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
         /* Mask allows fg, no box */
     pixInvert(pix4, pix4);  /* use dark pixels */
     pixAverageInRect(pix3, pix4, NULL, 0, 255, 1, &ave1);  /* mask fg */
     regTestCompareValues(rp, 46.37, ave1, 0.1);  /* 28 */
-    if (rp->display) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
         /* Mask allows fg, no box, restricted range with samples */
     pixAverageInRect(pix3, pix4, NULL, 50, 60, 1, &ave1);  /* mask fg */
     regTestCompareValues(rp, 55.18, ave1, 0.1);  /* 29 */
-    if (rp->display) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
         /* Mask allows fg, no box, restricted range without samples */
     pixAverageInRect(pix3, pix4, NULL, 100, 255, 1, &ave1);
     regTestCompareValues(rp, 0.0, ave1, 0.0);  /* 30 */  /* mask fg */
-    if (rp->display) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
         /* No mask, use box */
     box2 = boxCreate(100, 100, 200, 150);
     pixAverageInRect(pix3, NULL, box2, 0, 255, 1, &ave1);  /* no mask */
     regTestCompareValues(rp, 165.63, ave1, 0.1);  /* 31 */
-    if (rp->display) lept_stderr("ave1 = %6.2f\n", ave1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave1 = %6.2f\n", ave1);
         /* No mask, pix cropped to box */
     pixInvert(pix4, pix4);  /* use light pixels */
     pix5 = pixClipRectangle(pix3, box2, NULL);
     pixAverageInRect(pix5, NULL, NULL, 0, 255, 1, &ave2);  /* no mask */
     regTestCompareValues(rp, ave1, ave2, 0.1);  /* 32 */
-    if (rp->display) lept_stderr("ave2 = %6.2f\n", ave2);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave2 = %6.2f\n", ave2);
         /* Mask allows bg, use box */
     pixAverageInRect(pix3, pix4, box2, 0, 255, 1, &ave1);  /* mask bg */
     regTestCompareValues(rp, 175.65, ave1, 0.1);  /* 33 */
-    if (rp->display) lept_stderr("ave1 = %6.2f\n", ave1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave1 = %6.2f\n", ave1);
         /* Cropped mask allows bg, pix cropped to box */
     pix6 = pixThresholdToBinary(pix5, 80);  /* use light pixels */
     pixAverageInRect(pix5, pix6, NULL, 0, 255, 1, &ave2);
     regTestCompareValues(rp, ave1, ave2, 0.1);  /* 34 */
-    if (rp->display) lept_stderr("ave2 = %6.2f\n", ave2);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave2 = %6.2f\n", ave2);
         /* Mask allows bg, use box, restricted range */
     pixAverageInRect(pix3, pix4, box2, 100, 125, 1, &ave1);
     regTestCompareValues(rp, 112.20, ave1, 0.1);  /* 35 */
-    if (rp->display) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
         /* Cropped mask allows bg, pix cropped to box, restricted range */
     pixAverageInRect(pix5, pix6, NULL, 100, 125, 1, &ave2);
     regTestCompareValues(rp, ave1, ave2, 0.1);  /* 36 */
-    if (rp->display) lept_stderr("ave = %6.2f\n", ave2);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave2);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -466,7 +466,7 @@ PIXA        *pixa1;
     pixAverageInRectRGB(pix2, pix3, box3, 1, &avergb);
     regTestCompareValues(rp, 0xfdfddd00, avergb, 0);  /* 42 */
     SaveColorSquare(pixa1, avergb);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix4 = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
         pixDisplay(pix4, 0, 800);
         pixDestroy(&pix4);

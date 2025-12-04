@@ -99,7 +99,7 @@ L_REGPARAMS* rp;
     median_h_diff = L_ABS(medhe - medho);
     regTestCompareValues(rp, 210, median_w_diff, 0.0);  /* 0 */
     regTestCompareValues(rp, 15, median_h_diff, 0.0);  /* 1 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("diff of e/o median widths = %d\n", median_w_diff);
         lept_stderr("diff of e/o median heights = %d\n", median_h_diff);
     }
@@ -141,7 +141,7 @@ L_REGPARAMS* rp;
     numaGetCountRelativeToZero(naih, L_GREATER_THAN_ZERO, &nouth);
     regTestCompareValues(rp, 24, noutw, 0.0);  /* 2 */
     regTestCompareValues(rp, 0, nouth, 0.0);  /* 3 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("num width outliers = %d, num height outliers = %d\n",
                     noutw, nouth);
     numaDestroy(&nadiffw);
@@ -181,7 +181,7 @@ L_REGPARAMS* rp;
     numaDestroy(&narbho);
     regTestCompareValues(rp, 409, w_diff, 0.0);  /* 4 */
     regTestCompareValues(rp, 54, h_diff, 0.0);  /* 5 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("Binned rank results: w_diff = %d, h_diff = %d\n",
                     w_diff, h_diff);
 
@@ -195,7 +195,7 @@ L_REGPARAMS* rp;
         pixaAddPix(pixa1, pix1, L_INSERT);
         pix1 = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 30, 2);
         regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
-        pixDisplayWithTitle(pix1, 100, 100, NULL, rp->display);
+        pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
         pixDestroy(&pix1);
         pixaDestroy(&pixa1);
     }

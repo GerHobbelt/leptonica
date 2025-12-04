@@ -103,9 +103,9 @@ PIXA         *pixa;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 900, 0, NULL, 1);
+        pixDisplayWithTitle(pixd, 900, 0, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);
@@ -142,9 +142,9 @@ PIXA         *pixa;
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 4 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 5 */
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 6 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 1200, 0, NULL, 1);
+        pixDisplayWithTitle(pixd, 1200, 0, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);
@@ -200,7 +200,7 @@ PIXA         *pixa;
     pixaAddPix(pixa, pix5, L_INSERT);
     pixd = pixaDisplayTiledInColumns(pixa, 1,1.0, 25, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pixd, 0, 500, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 0, 500, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pixd);
@@ -219,7 +219,7 @@ PIXA         *pixa;
         genRandomIntOnInterval(0, 200, 0, &ival);
         numaAddSorted(na1, ival);
     }
-    if (rp->display) numaWriteStderr(na1);
+    if (leptIsInDisplayMode(rp->diag_spec)) numaWriteStderr(na1);
     na2 = numaSort(NULL, na1, L_SORT_INCREASING);
     numaReverse(na2, na2);
     numaSimilar(na1, na2, 0.0, &same);
@@ -235,7 +235,7 @@ PIXA         *pixa;
         genRandomIntOnInterval(0, 200, 0, &ival);
         numaAddSorted(na1, ival);
     }
-    if (rp->display) numaWriteStderr(na1);
+    if (leptIsInDisplayMode(rp->diag_spec)) numaWriteStderr(na1);
     na2 = numaSort(NULL, na1, L_SORT_DECREASING);
     numaReverse(na2, na2);
     numaSimilar(na1, na2, 0.0, &same);

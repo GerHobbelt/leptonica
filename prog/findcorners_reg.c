@@ -57,7 +57,7 @@
 #include "monolithic_examples.h"
 
 
-static BOXA *LocateBarcodes(PIX *pixs, PIX **ppixd, l_int32 flag);
+static BOXA *LocateBarcodes(PIX *pixs, PIX **ppixd, l_ok dispflag);
 static SELA *GetCornerSela(L_REGPARAMS *rp);
 
 static const char *sel_cross = "     xxx     "
@@ -82,7 +82,8 @@ static const char *sel_cross = "     xxx     "
 l_int32 main(int    argc,
              const char **argv)
 {
-l_int32       i, n, flag;
+l_int32       i, n;
+l_ok          flag;
 l_float32     angle, conf, deg2rad;
 BOX          *box1, *box2, *box3, *box4;
 BOXA         *boxa, *boxa2;
@@ -98,10 +99,10 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/regout");
 
     pixs = pixRead(DEMOPATH("tickets.tif"));
-    flag = (rp->display) ? -1 : 0;
+    flag = leptIsInDisplayMode(rp->diag_spec);
     boxa = LocateBarcodes(pixs, &pixd, flag);
     regTestWritePixAndCheck(rp, pixd, IFF_TIFF_G4);  /* 0 */
-    if (rp->display) boxaWriteStderr(boxa);
+    if (leptIsInDisplayMode(rp->diag_spec)) boxaWriteStderr(boxa);
     n = boxaGetCount(boxa);
     deg2rad = 3.14159265 / 180.;
     pixa = pixaCreate(9);
@@ -121,7 +122,7 @@ L_REGPARAMS* rp;
         box4 = boxAdjustSides(NULL, box3, -141, 221, -1535, 157);
         pix3 = pixClipRectangle(pix2, box4, NULL);
         regTestWritePixAndCheck(rp, pix3, IFF_TIFF_G4);  /* 1 - 9 */
-        if (rp->display)
+        if (leptIsInDisplayMode(rp->diag_spec))
             pixaAddPix(pixa, pix3, L_INSERT);
         else
             pixDestroy(&pix3);
@@ -133,7 +134,7 @@ L_REGPARAMS* rp;
         pixDestroy(&pix1);
         pixDestroy(&pix2);
     }
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "tickets",
                          "/tmp/lept/regout/tickets.pdf");
         L_INFO("Output pdf: /tmp/lept/regout/tickets.pdf\n", rp->testname);
@@ -143,7 +144,7 @@ L_REGPARAMS* rp;
         /* Downscale by 2x and locate corners */
     pix1 = pixScale(pixd, 0.5, 0.5);
     regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 10 */
-    pixDisplayWithTitle(pix1, 100, 200, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 200, NULL, rp->diag_spec);
         /* Find corners and blit a cross onto each (4 to each barcode) */
     sela = GetCornerSela(rp);
     pix2 = pixUnionOfMorphOps(pix1, sela, L_MORPH_HMT);
@@ -151,7 +152,7 @@ L_REGPARAMS* rp;
     pix3 = pixDilate(NULL, pix2, sel);
     pixXor(pix3, pix3, pix1);
     regTestWritePixAndCheck(rp, pix3, IFF_TIFF_G4);  /* 11 */
-    pixDisplayWithTitle(pix3, 800, 200, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 800, 200, NULL, rp->diag_spec);
 
     boxaDestroy(&boxa);
     pixDestroy(&pixs);
@@ -168,13 +169,13 @@ L_REGPARAMS* rp;
 static BOXA *
 LocateBarcodes(PIX     *pixs,
                PIX    **ppixd,
-               l_int32  flag)
+               l_ok     dispflag)
 {
 BOXA    *boxa1, *boxa2, *boxad;
 PIX     *pix1, *pix2, *pix3;
 
     pix1 = pixScale(pixs, 0.5, 0.5);
-    pix2 = pixMorphSequence(pix1, "o1.5 + c15.1 + o10.15 + c20.20", flag);
+    pix2 = pixMorphSequence(pix1, "o1.5 + c15.1 + o10.15 + c20.20", dispflag);
     boxa1 = pixConnComp(pix2, NULL, 8);
     boxa2 = boxaSelectBySize(boxa1, 300, 0, L_SELECT_WIDTH,
                                    L_SELECT_IF_GT, NULL);
@@ -212,7 +213,7 @@ SELA  *sela1, *sela2;
     selaFindSelByName(sela1, "sel_lrc", NULL, &sel);
     selaAddSel(sela2, sel, NULL, 1);
     selaDestroy(&sela1);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix = selaDisplayInPix(sela2, 21, 3, 10, 4);
         pixDisplay(pix, 0, 0);
         pixDestroy(&pix);

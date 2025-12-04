@@ -83,7 +83,7 @@ L_REGPARAMS* rp;
     pix1 = DisplayBoxa(boxa1);
 	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
     boxaCompareRegions(boxa1, boxa1, 100, &same, &diffarea, &diffxor, NULL);

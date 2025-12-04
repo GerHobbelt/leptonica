@@ -81,8 +81,8 @@ PIXA         *pixa;
     t1 = stopTimer();
     lept_stderr("pixRankFilterGray: %7.3f MPix/sec\n", 0.000001 * w * h / t1);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixs, 0, 0, NULL, rp->display);
-    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->display);
+    pixDisplayWithTitle(pixs, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
     /* ---------- Compare grayscale morph with rank operator ---------- */
@@ -142,7 +142,7 @@ PIXA         *pixa;
     gplotMakeOutput(gplot);
     gplotDestroy(&gplot);
     pix1 = pixRead("/tmp/lept/rank/plots.png");
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix0);
     numaDestroy(&nax);
@@ -151,7 +151,7 @@ PIXA         *pixa;
 
         /* Display tiled */
     pix1 = pixaDisplayTiledAndScaled(pixa, 8, 250, 5, 0, 25, 2);
-    pixDisplayWithTitle(pix1, 100, 600, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 600, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
     pixDestroy(&pixs);
@@ -165,7 +165,7 @@ PIXA         *pixa;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 8, 1500, 1.0, 0, 20, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 5 */
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
@@ -182,7 +182,7 @@ PIXA         *pixa;
     }
     pix4 = pixaDisplayTiledInRows(pixa, 8, 1500, 0.7, 0, 20, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_JFIF_JPEG);  /* 6 */
-    pixDisplayWithTitle(pix4, 100, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 100, 700, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -213,7 +213,7 @@ PIXA         *pixa;
     pixDestroy(&pix4);
 
     /* Show color results for different rank values */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixa = pixaCreate(10);
         pix1 = pixColorMorph(pix0, L_MORPH_ERODE, 13, 13);
         pixaAddPix(pixa, pix1, L_INSERT);
@@ -224,7 +224,7 @@ PIXA         *pixa;
         pix1 = pixColorMorph(pix0, L_MORPH_DILATE, 13, 13);
         pixaAddPix(pixa, pix1, L_INSERT);
         pix1 = pixaDisplayTiledAndScaled(pixa, 32, 400, 3, 0, 25, 2);
-        pixDisplayWithTitle(pix1, 500, 0, NULL, 1);
+        pixDisplayWithTitle(pix1, 500, 0, NULL, rp->diag_spec);
         pixaDestroy(&pixa);
         pixDestroy(&pix1);
     }

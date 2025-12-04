@@ -103,7 +103,7 @@ PIXA     *pixa;
     pixaAddPix(pixa, pixd, L_INSERT);
     pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix3, 300, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 300, 0, NULL, rp->diag_spec);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

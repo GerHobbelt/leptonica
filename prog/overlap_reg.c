@@ -100,7 +100,7 @@ L_REGPARAMS* rp;
         pixaAddPix(pixa1, pix2, L_INSERT);
 
         pix3 = pixaDisplayTiledInRows(pixa1, 1, 1500, 1.0, 0, 50, 2);
-        pixDisplayWithTitle(pix3, 100, 100 + 100 * k, NULL, rp->display);
+        pixDisplayWithTitle(pix3, 100, 100 + 100 * k, NULL, rp->diag_spec);
         regTestWritePixAndCheck(rp, pix3, IFF_PNG);   /* 0 - 6 */
         lept_stderr("Test %d, maxsize = %d: n_init = %d, n_final = %d\n",
                     k + 1, (l_int32)maxsize[k] + 1,
@@ -135,7 +135,7 @@ L_REGPARAMS* rp;
 
     pix1 = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 50, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 8 */
-    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->diag_spec);
     pixaDestroy(&pixa1);
     pixDestroy(&pix1);
 
@@ -173,7 +173,7 @@ L_REGPARAMS* rp;
     boxaCombineOverlapsInPair(boxa1, boxa2, &boxa3, &boxa4, pixa1);
     pix1 = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 50, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 11 */
-    pixDisplayWithTitle(pix1, 1200, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 1200, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixaDestroy(&pixa1);
     boxaDestroy(&boxa1);

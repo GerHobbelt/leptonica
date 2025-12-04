@@ -184,7 +184,7 @@ struct L_Dewarp
     l_int32            hvalid;       /*!< sets to 1 if valid horiz disparity */
     l_int32            skip_horiz;   /*!< if 1, skip horiz disparity         */
                                      /*!< correction                         */
-    l_int32            debug;        /*!< set to 1 if debug output requested */
+	LDIAG_CTX          diag_spec;    /*!< set if debug output requested      */
 };
 typedef struct L_Dewarp L_DEWARP;
 

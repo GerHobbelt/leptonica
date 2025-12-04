@@ -79,7 +79,7 @@ PIXA         *pixa1, *pixa2;
     boxa3 = boxaTransform(boxa2, 0, 0, scalefact, scalefact);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 1500, 2, 1.0, 0, 3, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
@@ -94,7 +94,7 @@ PIXA         *pixa1, *pixa2;
     boxa3 = boxaTransform(boxa2, 0, 0, scalefact, scalefact);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 1500, 2, 1.0, 0, 3, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 800, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 800, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
@@ -110,9 +110,9 @@ PIXA         *pixa1, *pixa2;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 1300, 0, NULL, rp->display);
-    pixDisplayWithTitle(pix2, 1300, 500, NULL, rp->display);
-    pixDisplayWithTitle(pix3, 1300, 1000, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 1300, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1300, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 1300, 1000, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -129,7 +129,7 @@ PIXA         *pixa1, *pixa2;
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 5 */
     pix1 = pixRead("/tmp/lept/boxa/recon_sides.png");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
     lept_free(data);
     pixaDestroy(&pixa1);
     boxaDestroy(&boxa2);
@@ -143,7 +143,7 @@ PIXA         *pixa1, *pixa2;
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 7 */
     pix1 = pixRead("/tmp/lept/boxa/recon_sides.png");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 8 */
-    pixDisplayWithTitle(pix1, 0, 300, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 300, NULL, rp->diag_spec);
     lept_free(data);
     pixaDestroy(&pixa1);
     boxaDestroy(&boxa1);
@@ -165,7 +165,7 @@ PIXA         *pixa1, *pixa2;
     boxa3 = boxaMergeEvenOdd(boxa3e, boxa3o, 0);
     boxaWriteMem(&data, &size, boxa3);
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 9 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixaDisplayTiledInRows(pixa1, 32, 1800, 0.5, 0, 30, 2);
         pixDisplay(pix1, 800, 500);
         pixDestroy(&pix1);
@@ -190,7 +190,7 @@ PIXA         *pixa1, *pixa2;
     boxa3 = boxaTransform(boxa2, 0, 0, scalefact, scalefact);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 1500, 2, 1.0, 0, 3, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix1, 1000, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 1000, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
@@ -217,7 +217,7 @@ PIXA         *pixa1, *pixa2;
     pixa2 = pixaDisplayBoxaa(pixa1, baa2, L_DRAW_RGB, 2);
     pix1 = pixaDisplayTiledInRows(pixa2, 32, 1400, 1.0, 0, 10, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 12 */
-    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->diag_spec);
     lept_stderr("Writing to: /tmp/lept/boxa/show.pdf\n");
     l_pdfSetDateAndVersion(FALSE);
     pixaConvertToPdf(pixa2, 75, 0.6, 0, 0, NULL, "/tmp/lept/boxa/show.pdf");

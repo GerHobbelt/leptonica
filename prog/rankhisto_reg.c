@@ -79,14 +79,14 @@ PIXA         *pixa;
         return ERROR_INT("\n\n\nFAILURE!\n\n\n", rp->testname, 1);
     pix1 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 1000, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 1000, 100, NULL, rp->diag_spec);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
     for (i = 0; i < nbins; i++)
         lept_stderr("%d: %x\n", i, array[i]);
     pix1 = pixDisplayColorArray(array, nbins, 200, 5, 6);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 0, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 100, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
         /* Modify the rank bin colors by mapping them such
@@ -97,7 +97,7 @@ PIXA         *pixa;
                                     0xffffff00, &marray[i]);
     pix1 = pixDisplayColorArray(marray, nbins, 200, 5, 6);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     lept_free(marray);
 
@@ -105,7 +105,7 @@ PIXA         *pixa;
     pix1 = pixLinearMapToTargetColor(NULL, pixs, array[nbins - 1], 0xffffff00);
     pix2 = pixGammaTRC(NULL, pix1, 1.0, 0, 240);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix2, 1000, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 1000, 100, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
 
@@ -134,7 +134,7 @@ PIXA         *pixa;
     }
     pix1 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 1000, 800, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 1000, 800, NULL, rp->diag_spec);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
 

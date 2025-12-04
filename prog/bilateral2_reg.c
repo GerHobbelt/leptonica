@@ -105,7 +105,7 @@ PIXA  *pixa;
     regTestWritePixAndCheck(rp, pix, IFF_JFIF_JPEG);
     pixaAddPix(pixa, pix, L_INSERT);
     pixd = pixaDisplayTiledInRows(pixa, 32, 2500, 1.0, 0, 30, 2);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
     return;

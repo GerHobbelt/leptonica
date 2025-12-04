@@ -143,7 +143,7 @@ PIXAA  *paa;
 
     pixd = pixaaDisplayByPixa(paa, 4, 1.0, 20, 20, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 8, 17 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixaaDestroy(&paa);
 }

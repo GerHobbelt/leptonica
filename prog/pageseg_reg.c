@@ -103,7 +103,7 @@ SARRAY       *sa;
     }
 
         /* Display intermediate images and final segmentation */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixaDisplayTiledAndScaled(pixadb, 32, 400, 4, 0, 20, 3);
         pixDisplay(pix1, 0, 0);
         pixDestroy(&pix1);
@@ -151,7 +151,7 @@ SARRAY       *sa;
     pix1 = pixScale(pixs, 0.5, 0.5);
     pixFindLargeRectangles(pix1, 0, 20, &boxa, &pixdb);
     regTestWritePixAndCheck(rp, pixdb, IFF_PNG);  /* 22 */
-    pixDisplayWithTitle(pixdb, 0, 700, NULL, rp->display);
+    pixDisplayWithTitle(pixdb, 0, 700, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pixdb);
@@ -165,7 +165,7 @@ SARRAY       *sa;
     regTestCompareValues(rp, 1.0, istable, 0.0);  /* 23 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 2000, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 24 */
-    pixDisplayWithTitle(pix2, 620, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 620, 700, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
@@ -177,7 +177,7 @@ SARRAY       *sa;
     regTestCompareValues(rp, 1.0, istable, 0.0);  /* 25 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 2000, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 26 */
-    pixDisplayWithTitle(pix2, 1000, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 1000, 700, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
@@ -189,7 +189,7 @@ SARRAY       *sa;
     regTestCompareValues(rp, 1.0, istable, 0.0);  /* 27 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 2000, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 28 */
-    pixDisplayWithTitle(pix2, 1300, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 1300, 700, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
@@ -201,7 +201,7 @@ SARRAY       *sa;
     regTestCompareValues(rp, 0.0, istable, 0.0);  /* 29 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 2000, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 30 */
-    pixDisplayWithTitle(pix2, 1600, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 1600, 700, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
@@ -222,7 +222,7 @@ SARRAY       *sa;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 31 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 32 */
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 33 */
-    pixDisplayWithTitle(pix5, 1750, 200, NULL, rp->display);
+    pixDisplayWithTitle(pix5, 1750, 200, NULL, rp->diag_spec);
     pixaDestroy(&pixadb);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -238,7 +238,7 @@ SARRAY       *sa;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 34 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 35 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 36 */
-    pixDisplayWithTitle(pix4, 1750, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 1750, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);

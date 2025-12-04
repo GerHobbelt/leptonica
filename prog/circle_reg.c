@@ -96,14 +96,14 @@ PIXA         *pixas, *pixa1, *pixa2;
         pixaAddPix(pixa1, pix1, L_INSERT);
         pixCountConnComp(pix1, 8, &count);
         numaAddNumber(na, count);
-        if (rp->display) lept_stderr("count[0] = %d\n", count);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("count[0] = %d\n", count);
         for (i = 1; i < num_erodes; i++) {
             pixErodeBrick(pixc, pixc, 3, 3);
             pix1 = pixAnd(NULL, pixs, pixc);
             pixaAddPix(pixa1, pix1, L_INSERT);
             pixCountConnComp(pix1, 8, &count);
             numaAddNumber(na, count);
-            if (rp->display) lept_stderr("count[%d] = %d\n", i, count);
+            if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("count[%d] = %d\n", i, count);
         }
 
             /* Find the max value, not including the original image, which
@@ -142,7 +142,7 @@ PIXA         *pixas, *pixa1, *pixa2;
 
     pix1 = pixaDisplayTiledInColumns(pixa2, 1, 1.0, 10, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
     pixaDestroy(&pixas);
     pixaDestroy(&pixa2);
     pixDestroy(&pix1);

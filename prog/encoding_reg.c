@@ -68,7 +68,7 @@ L_REGPARAMS* rp;
     bina2 = decodeAscii85(a85a, nbytes1, &nbytes2);
     regTestCompareValues(rp, fbytes, nbytes2, 0.0);  /* 0 */
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("file bytes = %zu, a85 bytes = %zu, bina2 bytes = %zu\n",
                     fbytes, nbytes1, nbytes2);
     }
@@ -78,7 +78,7 @@ L_REGPARAMS* rp;
         /* Test the reconstructed image */
     pix1 = pixReadMem(bina2, nbytes2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 1 */
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
         /* Test with compression, starting with ascii data */
@@ -105,7 +105,7 @@ L_REGPARAMS* rp;
     pix1 = pixRead(DEMOPATH("rabi.png"));
     pixSetTextCompNew(pix1, bina, nbytes1);
     bina2 = pixGetTextCompNew(pix1, &nbytes2);
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("nbytes1 = %zu, nbytes2 = %zu\n", nbytes1, nbytes2);
     regTestCompareStrings(rp, bina, nbytes1, bina2, nbytes2);  /* 4 */
     pixDestroy(&pix1);

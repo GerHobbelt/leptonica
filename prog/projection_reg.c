@@ -146,7 +146,7 @@ PIXA    *pixa;
 
     pix1 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18, 37 */
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 

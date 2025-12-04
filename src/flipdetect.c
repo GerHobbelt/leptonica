@@ -666,7 +666,7 @@ SEL       *sel1, *sel2, *sel3, *sel4;
     if (nmax > mincount)
         *pconf = 2. * ((nup - ndown) / sqrt(nup + ndown));
 
-    if (debug) {
+    if (diagspec) {
         if (pixm)
 			pixWriteDebug("/tmp/lept/orient/pixm1.png", pixm, IFF_PNG);
         lept_stderr("nup = %7.3f, ndown = %7.3f, conf = %7.3f\n",
@@ -749,7 +749,7 @@ SEL       *sel1, *sel2;
     if (mincount == 0)
         mincount = DefaultMinMirrorFlipCount;
 
-    if (debug) {
+    if (diagspec) {
         //lept_mkdir("lept/orient");
     }
 
@@ -791,7 +791,7 @@ SEL       *sel1, *sel2;
     if (nmax > mincount)
         *pconf = 2. * ((nright - nleft) / sqrt(nright + nleft));
 
-    if (debug) {
+    if (diagspec) {
         lept_stderr("nright = %f, nleft = %f\n", nright, nleft);
         if (*pconf > DefaultMinMirrorFlipConf)
             lept_stderr("Text is not mirror reversed\n");

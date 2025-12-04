@@ -119,7 +119,11 @@ L_REGPARAMS* rp;
 #endif  /* 5.1.2 */
 
         /* Set up for display output */
-    pixa = (rp->display) ? pixaCreate(0) : NULL;
+    pixa = NULL;
+	if (leptIsInDisplayMode(rp->diag_spec)) {
+		pixa = pixaCreate(0);
+		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	}
 
     lept_rmdir("lept/gif");
     //lept_mkdir("lept/gif");
@@ -138,7 +142,7 @@ L_REGPARAMS* rp;
     else
         lept_stderr("\n  ***** Failure on at least one r/w to file ****\n\n");
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix = pixaDisplayTiledAndScaled(pixa, 32, 450, 3, 0, 20, 2);
         pixWrite("/tmp/lept/gif/giftest.jpg", pix, IFF_JFIF_JPEG);
         pixDisplay(pix, 100, 100);
@@ -192,7 +196,7 @@ PIX     *pixs, *pix1, *pix2;
         lept_stderr("Error for %s\n", fname);
         rp->success = FALSE;
     }
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr(" depth: pixs = %d, pix1 = %d\n", pixGetDepth(pixs),
                     pixGetDepth(pix1));
         pixaAddPix(pixa, pix2, L_CLONE);

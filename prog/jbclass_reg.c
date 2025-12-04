@@ -104,7 +104,7 @@ L_REGPARAMS* rp;
 
     pix1 = pixRead("/tmp/lept/class/corr.templates.png");
     regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
         /* Render the pages from the classifier data.
@@ -144,7 +144,7 @@ L_REGPARAMS* rp;
 
     pix1 = pixRead("/tmp/lept/class2/haus.templates.png");
     regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 4 */
-    pixDisplayWithTitle(pix1, 200, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 200, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
         /* Render the pages from the classifier data.

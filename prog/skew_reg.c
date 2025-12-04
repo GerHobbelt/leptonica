@@ -82,7 +82,7 @@ L_REGPARAMS* rp;
     pixSetOrClearBorder(pixs, 100, 250, 100, 0, PIX_CLR);
     pixb1 = pixReduceRankBinaryCascade(pixs, 2, 2, 0, 0);
     regTestWritePixAndCheck(rp, pixb1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixb1, 0, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixb1, 0, 100, NULL, rp->diag_spec);
 
         /* Add a border and locate and deskew a 40 degree rotation */
     pixb2 = pixAddBorder(pixb1, BORDER, 0);
@@ -130,7 +130,7 @@ L_REGPARAMS* rp;
 
     pixd = pixaDisplayTiledInColumns(pixa, 3, 0.5, 20, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
 
     pixDestroy(&pixs);

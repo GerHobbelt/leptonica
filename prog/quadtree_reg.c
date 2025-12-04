@@ -73,7 +73,7 @@ BOXAA        *baa;
     baa = boxaaQuadtreeRegions(1000, 500, 3);
     boxaaWriteMem(&data, &size, baa);
     regTestWriteDataAndCheck(rp, data, size, "baa");  /* 0 */
-    if (rp->display) boxaaWriteStream(stderr, baa);
+    if (leptIsInDisplayMode(rp->diag_spec)) boxaaWriteStream(stderr, baa);
     boxaaDestroy(&baa);
     lept_free(data);
     baa = boxaaQuadtreeRegions(1001, 501, 3);
@@ -89,14 +89,14 @@ BOXAA        *baa;
     pixQuadtreeMean(pixg, 8, NULL, &fpixam);
     pix1 = fpixaDisplayQuadtree(fpixam, 2, 10);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 100, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 0, NULL, rp->diag_spec);
     pixQuadtreeVariance(pixg, 8, NULL, NULL, &fpixav, &fpixarv);
     pix2 = fpixaDisplayQuadtree(fpixav, 2, 10);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix2, 100, 200, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 100, 200, NULL, rp->diag_spec);
     pix3 = fpixaDisplayQuadtree(fpixarv, 2, 10);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix3, 100, 400, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 100, 400, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -108,13 +108,13 @@ BOXAA        *baa;
     pix4 = pixGetAverageTiled(pixg, 5, 6, L_MEAN_ABSVAL);
     pix5 = pixExpandReplicate(pix4, 4);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix5, 800, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix5, 800, 0, NULL, rp->diag_spec);
     pixDestroy(&pix4);
     pixDestroy(&pix5);
     pix4 = pixGetAverageTiled(pixg, 5, 6, L_STANDARD_DEVIATION);
     pix5 = pixExpandReplicate(pix4, 4);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix5, 800, 400, NULL, rp->display);
+    pixDisplayWithTitle(pix5, 800, 400, NULL, rp->diag_spec);
     pixDestroy(&pix4);
     pixDestroy(&pix5);
     pixDestroy(&pixg);

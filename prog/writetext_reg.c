@@ -119,7 +119,7 @@ SARRAY       *sa;
         pixd = pixAddSingleTextblock(pixt, bmftop, topstr[i],
                                      0xff00ff00, L_ADD_ABOVE, NULL);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /*  0 - 4 */
-        pixDisplayWithTitle(pixd, 50 * i, 50, NULL, rp->display);
+        pixDisplayWithTitle(pixd, 50 * i, 50, NULL, rp->diag_spec);
         pixDestroy(&pixt);
         pixDestroy(&pixd);
         pixaDestroy(&pixa);
@@ -145,7 +145,7 @@ SARRAY       *sa;
     pix3 = pixQuantFromCmap(pix2, pixGetColormap(pixs), 4, 5,
                             L_EUCLIDEAN_DISTANCE);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix3, 0, 500, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 0, 500, NULL, rp->diag_spec);
     bmf = bmfCreate(DEMOPATH("fonts"), 10);
     sa = sarrayCreate(6);
     for (i = 0; i < 6; i++) {
@@ -157,7 +157,7 @@ SARRAY       *sa;
                        colors[i], 50, 120 + 60 * i, NULL, NULL);
     }
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix3, 600, 500, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 600, 500, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

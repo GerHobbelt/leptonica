@@ -113,7 +113,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix8, IFF_PNG);  /* 9 */
     pixaAddPix(pixa, pix8, L_INSERT);
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_rmdir("lept/lines");
         //lept_mkdir("lept/lines");
 

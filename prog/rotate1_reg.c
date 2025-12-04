@@ -197,7 +197,7 @@ PIXA     *pixa;
     pixDestroy(&pixd);
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, scale, 20, 0);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
     return;

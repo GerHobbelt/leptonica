@@ -97,7 +97,7 @@ L_REGPARAMS* rp;
     pixb2 = pixBlendWithGrayMask(pixb1, pixs2, NULL, 300, 130);
     pixb3 = pixBlendWithGrayMask(pixb2, pixs3, NULL, 600, 160);
     regTestWritePixAndCheck(rp, pixb3, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixb3, 900, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixb3, 900, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixDestroy(&pixs2);
     pixDestroy(&pixs3);
@@ -113,7 +113,7 @@ L_REGPARAMS* rp;
     pixb3 = pixBlendWithGrayMask(pixd, pixr3, NULL, 100, 100);
     pixb2 = pixBlendWithGrayMask(pixb3, pixr2, NULL, 400, 100);
     regTestWritePixAndCheck(rp, pixb2, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixb2, 500, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixb2, 500, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixDestroy(&pixr3);
     pixDestroy(&pixr2);
@@ -137,7 +137,7 @@ L_REGPARAMS* rp;
     pixb2 = pixBlendWithGrayMask(pixb1, pixt2, NULL, -150, -250);
     pixb3 = pixBlendWithGrayMask(pixb2, pixt3, NULL, -100, 220);
     regTestWritePixAndCheck(rp, pixb3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pixb3, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixb3, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixDestroy(&pixb1);
     pixDestroy(&pixb2);
@@ -165,7 +165,7 @@ L_REGPARAMS* rp;
     pixb2 = pixBlendWithGrayMask(pixb1, pixt2, NULL, -50, -250);
     pixb3 = pixBlendWithGrayMask(pixb2, pixt3, NULL, -100, 220);
     regTestWritePixAndCheck(rp, pixb3, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pixb3, 300, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixb3, 300, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixDestroy(&pixb1);
     pixDestroy(&pixb2);
@@ -193,7 +193,7 @@ L_REGPARAMS* rp;
     pixb2 = pixBlendWithGrayMask(pixb1, pixt2, NULL, -50, -250);
     pixb3 = pixBlendWithGrayMask(pixb2, pixt3, NULL, -100, 220);
     regTestWritePixAndCheck(rp, pixb3, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pixb3, 500, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixb3, 500, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixDestroy(&pixb1);
     pixDestroy(&pixb2);

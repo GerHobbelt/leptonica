@@ -64,7 +64,7 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(0);
     pix1 = pixRead(DEMOPATH("zier.jpg"));
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 100, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
 
         /* Embed the image in a varying gray background */
@@ -82,31 +82,31 @@ L_REGPARAMS* rp;
     pixRasterop(pix2, 70, 90, 270, 400, PIX_SRC, pix1, 0, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     pixaAddPix(pixa, pix2, L_COPY);
-    pixDisplayWithTitle(pix2, 300, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 300, 100, NULL, rp->diag_spec);
 
         /* Darken the gray pixels, leaving most of the
          * the others unaffected.  */
     pix3 = pixDarkenGray(NULL, pix2, 220, 10);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
     pixaAddPix(pixa, pix3, L_COPY);
-    pixDisplayWithTitle(pix3, 700, 100, "gray pixels are black", rp->display);
+    pixDisplayWithTitle(pix3, 700, 100, "gray pixels are black", rp->diag_spec);
 
         /* We can also generate a mask over the gray pixels,
          * eliminating noise from very dark pixels morphologically. */
     pix4 = pixMaskOverGrayPixels(pix2, 220, 10);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 3 */
     pixaAddPix(pixa, pix4, L_INSERT);
-    pixDisplayWithTitle(pix4, 1100, 100, "mask over gray pixels", rp->display);
+    pixDisplayWithTitle(pix4, 1100, 100, "mask over gray pixels", rp->diag_spec);
     pix5 = pixMorphSequence(pix4, "o20.20", 0);  /* remove noise */
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 4 */
     pixaAddPix(pixa, pix5, L_COPY);
-    pixDisplayWithTitle(pix5, 1500, 100, "clean mask over gray", rp->display);
+    pixDisplayWithTitle(pix5, 1500, 100, "clean mask over gray", rp->diag_spec);
     pixInvert(pix5, pix5);
     pix6 = pixConvertTo32(pix5);
     pix7 = pixAddRGB(pix2, pix6);
     regTestWritePixAndCheck(rp, pix7, IFF_PNG);  /* 5 */
     pixaAddPix(pixa, pix7, L_INSERT);
-    pixDisplayWithTitle(pix7, 1900, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix7, 1900, 100, NULL, rp->diag_spec);
 
     pixDestroy(&pix2);
     pixDestroy(&pix3);

@@ -118,7 +118,7 @@ PIX     *pix0, *pix1, *pix2, *pix3;
     name = regTestGenLocalFilename(rp, -1, IFF_JP2);
     pix2 = pixRead(name);
     regTestWritePixAndCheck(rp, pix2, IFF_JP2);  /* 1, 6 */
-    pixDisplayWithTitle(pix2, 0, 100, "1", rp->display);
+    pixDisplayWithTitle(pix2, 0, 100, "1", rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
 
@@ -131,10 +131,10 @@ PIX     *pix0, *pix1, *pix2, *pix3;
     regTestCheckFile(rp, buf);  /* 2, 7 */
     pix2 = pixRead(buf);  /* read the cropped image */
     regTestWritePixAndCheck(rp, pix2, IFF_JP2);  /* 3, 8 */
-    pixDisplayWithTitle(pix2, 500, 100, "2", rp->display);
+    pixDisplayWithTitle(pix2, 500, 100, "2", rp->diag_spec);
     pix3 = pixReadJp2k(buf, 2, NULL, 0, 0);  /* read cropped image at 2x red */
     regTestWritePixAndCheck(rp, pix3, IFF_JP2);  /* 4, 9 */
-    pixDisplayWithTitle(pix3, 1000, 100, "3", rp->display);
+    pixDisplayWithTitle(pix3, 1000, 100, "3", rp->diag_spec);
     pixDestroy(&pix0);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -166,7 +166,7 @@ PIX      *pix0, *pix1, *pix2, *pix3;
     data = l_binaryRead(name, &nbytes);
     pix3 = pixReadMemJp2k(data, nbytes, 1, NULL, 0, 0);
     regTestWritePixAndCheck(rp, pix3, IFF_JP2);  /* 12 */
-    pixDisplayWithTitle(pix3, 0, 100, "1", rp->display);
+    pixDisplayWithTitle(pix3, 0, 100, "1", rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -182,10 +182,10 @@ PIX      *pix0, *pix1, *pix2, *pix3;
     data = l_binaryRead(buf, &nbytes);
     pix2 = pixReadMemJp2k(data, nbytes, 1, NULL, 0, 0);  /* read it again */
     regTestWritePixAndCheck(rp, pix2, IFF_JP2);  /* 14 */
-    pixDisplayWithTitle(pix2, 500, 100, "2", rp->display);
+    pixDisplayWithTitle(pix2, 500, 100, "2", rp->diag_spec);
     pix3 = pixReadMemJp2k(data, nbytes, 2, NULL, 0, 0);  /* read at 2x red */
     regTestWritePixAndCheck(rp, pix3, IFF_JP2);  /* 15 */
-    pixDisplayWithTitle(pix3, 1000, 100, "3", rp->display);
+    pixDisplayWithTitle(pix3, 1000, 100, "3", rp->diag_spec);
     boxDestroy(&box);
     pixDestroy(&pix0);
     pixDestroy(&pix1);
@@ -213,7 +213,7 @@ PIX   *pix0, *pix1;
     }
     pix1 = pixRead("/tmp/lept/jp2k/wyom.j2k");
     regTestCompareSimilarPix(rp, pix0, pix1, 20, 0.01, 0);  /* 16 */
-    pixDisplayWithTitle(pix1, 500, 500, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 500, 500, NULL, rp->diag_spec);
     pixDestroy(&pix0);
     pixDestroy(&pix1);
 }

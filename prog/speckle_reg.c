@@ -113,7 +113,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix9, IFF_PNG);  /* 7 */
 
     pix10 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 30, 2);
-    pixDisplayWithTitle(pix10, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix10, 0, 0, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix10, IFF_JFIF_JPEG);  /* 8 */
     selDestroy(&sel1);
     selDestroy(&sel2);

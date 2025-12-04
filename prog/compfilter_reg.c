@@ -293,7 +293,7 @@ L_REGPARAMS* rp;
     numaDestroy(&na4);
     numaDestroy(&na5);
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixaDisplayTiledInColumns(pixa3, 2, 0.25, 25, 2);
         pixDisplay(pix1, 100, 100);
         pixWrite("/tmp/lept/filter/result.png", pix1, IFF_PNG);

@@ -79,21 +79,21 @@ PIXA         *pixa;
     pixs = pixRead(DEMOPATH("breviar.38.150.jpg"));
     pixaAddPix(pixa, pixs, L_CLONE);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 0 */
-    pixDisplayWithTitle(pixs, 0, 0, "Input image", rp->display);
+    pixDisplayWithTitle(pixs, 0, 0, "Input image", rp->diag_spec);
 
         /* Extract the blue component, which is small in all the text
          * regions, including in the highlight color region */
     pix1 = pixGetRGBComponent(pixs, COLOR_BLUE);
     pixaAddPix(pixa, pix1, L_CLONE);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 1 */
-    pixDisplayWithTitle(pix1, 200, 0, "Blue component", rp->display);
+    pixDisplayWithTitle(pix1, 200, 0, "Blue component", rp->diag_spec);
 
         /* Do a background normalization, with the background set to
          * approximately 200 */
     pix2 = pixBackgroundNormSimple(pix1, NULL, NULL);
     pixaAddPix(pixa, pix2, L_COPY);
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 2 */
-    pixDisplayWithTitle(pix2, 400, 0, "BG normalized to 200", rp->display);
+    pixDisplayWithTitle(pix2, 400, 0, "BG normalized to 200", rp->diag_spec);
 
         /* Do a linear transform on the gray pixels, with 50 going to
          * black and 160 going to white.  50 is sufficiently low to
@@ -104,8 +104,7 @@ PIXA         *pixa;
     pix3 = pixThresholdOn8bpp(pix2, 7, 1);
     pixaAddPix(pixa, pix3, L_CLONE);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 3 */
-    pixDisplayWithTitle(pix3, 600, 0, "Basic quantized with white bg",
-                        rp->display);
+    pixDisplayWithTitle(pix3, 600, 0, "Basic quantized with white bg", rp->diag_spec);
 
         /* Identify the regions of red text.  First, make a mask
          * consisting of all pixels such that (R-B)/B is larger
@@ -116,7 +115,7 @@ PIXA         *pixa;
     pixInvert(pix4, pix4);  /* red plus some dark text */
     pixaAddPix(pixa, pix4, L_CLONE);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix4, 800, 0, "Red plus dark pixels", rp->display);
+    pixDisplayWithTitle(pix4, 800, 0, "Red plus dark pixels", rp->diag_spec);
 
         /* Make a mask consisting of all the red and background pixels */
     pix5 = pixGetRGBComponent(pixs, COLOR_RED);
@@ -128,29 +127,26 @@ PIXA         *pixa;
     pix7 = pixAnd(NULL, pix4, pix6);  /* red only (seed) */
     pixaAddPix(pixa, pix7, L_COPY);
     regTestWritePixAndCheck(rp, pix7, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix7, 0, 600, "Seed for red color", rp->display);
+    pixDisplayWithTitle(pix7, 0, 600, "Seed for red color", rp->diag_spec);
 
         /* Make the clipping mask by thresholding the image with
          * the background cleaned to white. */
     pix8 =  pixThresholdToBinary(pix2, 230);  /* mask */
     pixaAddPix(pixa, pix8, L_CLONE);
     regTestWritePixAndCheck(rp, pix8, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix8, 200, 600, "Clipping mask for red components",
-                        rp->display);
+    pixDisplayWithTitle(pix8, 200, 600, "Clipping mask for red components", rp->diag_spec);
 
         /* Fill into the mask from the seed */
     pixSeedfillBinary(pix7, pix7, pix8, 8);  /* filled: red plus touching */
     regTestWritePixAndCheck(rp, pix7, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix7, 400, 600, "Red component mask filled",
-                        rp->display);
+    pixDisplayWithTitle(pix7, 400, 600, "Red component mask filled", rp->diag_spec);
 
         /* Small closing on regions to be colored  */
     pix9 = pixMorphSequence(pix7, "c5.1", 0);
     pixaAddPix(pixa, pix9, L_CLONE);
     regTestWritePixAndCheck(rp, pix9, IFF_PNG);  /* 8 */
     pixDisplayWithTitle(pix9, 600, 600,
-                        "Components defining regions allowing coloring",
-                        rp->display);
+                        "Components defining regions allowing coloring", rp->diag_spec);
 
         /* Sanity check on amount to be colored.  Only accept images
          * with less than 10% of all the pixels with highlight color */
@@ -180,14 +176,14 @@ PIXA         *pixa;
                                 irval, igval, ibval);
     pixaAddPix(pixa, pix10, L_CLONE);
     regTestWritePixAndCheck(rp, pix10, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pix10, 800, 600, "Colorize mask gray", rp->display);
+    pixDisplayWithTitle(pix10, 800, 600, "Colorize mask gray", rp->diag_spec);
     pixaAddPix(pixa, pixs, L_CLONE);
 
     pix11 = pixColorGrayMasked(pix3, pix9, L_PAINT_DARK, 225,
                                irval, igval, ibval);
     pixaAddPix(pixa, pix11, L_CLONE);
     regTestWritePixAndCheck(rp, pix11, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix11, 900, 600, "Colorize mask cmapped", rp->display);
+    pixDisplayWithTitle(pix11, 900, 600, "Colorize mask cmapped", rp->diag_spec);
 
         /* Get the bounding boxes of the mask components to be colored */
     boxa = pixConnCompBB(pix9, 8);
@@ -196,25 +192,25 @@ PIXA         *pixa;
     pix12 = pixColorGrayRegions(pix2, boxa, L_PAINT_DARK, 220, 0, 255, 0);
     pixaAddPix(pixa, pix12, L_CLONE);
     regTestWritePixAndCheck(rp, pix12, IFF_PNG);  /* 11 */
-    pixDisplayWithTitle(pix12, 900, 600, "Colorize boxa gray", rp->display);
+    pixDisplayWithTitle(pix12, 900, 600, "Colorize boxa gray", rp->diag_spec);
 
     box = boxCreate(200, 200, 250, 350);
     pix13 = pixCopy(NULL, pix2);
     pixColorGray(pix13, box, L_PAINT_DARK, 220, 0, 0, 255);
     pixaAddPix(pixa, pix13, L_CLONE);
     regTestWritePixAndCheck(rp, pix13, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix13, 1000, 600, "Colorize box gray", rp->display);
+    pixDisplayWithTitle(pix13, 1000, 600, "Colorize box gray", rp->diag_spec);
 
     pix14 = pixThresholdTo4bpp(pix2, 6, 1);
     pix15 = pixColorGrayRegions(pix14, boxa, L_PAINT_DARK, 220, 0, 0, 255);
     pixaAddPix(pixa, pix15, L_CLONE);
     regTestWritePixAndCheck(rp, pix15, IFF_PNG);  /* 13 */
-    pixDisplayWithTitle(pix15, 1100, 600, "Colorize boxa cmap", rp->display);
+    pixDisplayWithTitle(pix15, 1100, 600, "Colorize boxa cmap", rp->diag_spec);
 
     pixColorGrayCmap(pix14, box, L_PAINT_DARK, 0, 255, 255);
     pixaAddPix(pixa, pix14, L_CLONE);
     regTestWritePixAndCheck(rp, pix14, IFF_PNG);  /* 14 */
-    pixDisplayWithTitle(pix14, 1200, 600, "Colorize box cmap", rp->display);
+    pixDisplayWithTitle(pix14, 1200, 600, "Colorize box cmap", rp->diag_spec);
     boxDestroy(&box);
 
         /* Generate a pdf of the intermediate results */

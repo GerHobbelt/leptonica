@@ -98,7 +98,7 @@ PIX          *pix1;
     lept_free(data);
 
     regTestCheckFile(rp, "/tmp/lept/extrema/plot.png");  /* 1 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixRead("/tmp/lept/extrema/plot.png");
         pixDisplay(pix1, 100, 100);
         pixDestroy(&pix1);

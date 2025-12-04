@@ -1978,6 +1978,7 @@ numaSplitDistribution(NUMA       *na,
                       l_float32  *pave2,
                       l_float32  *pnum1,
                       l_float32  *pnum2,
+	                  LDIAG_CTX   diagspec,
                       NUMA      **pnascore)
 {
 l_int32    i, n, bestsplit, minrange, maxrange, maxindex, left, right;
@@ -2228,11 +2229,11 @@ l_ok      rv = 0;
 
 		// re-try all the above, now with a 'faked/tweaked' 2 hump histo:
 		l_int32 th;
-		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2, pnascore);
+		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2, diagspec, pnascore);
 		if (th != bestsplit) {
 			L_WARNING("ehhhhhhh!!!\n", __func__);
 		}
-		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2, pnascore);
+		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2, diagspec, pnascore);
 		// correct for our faked second hump: it'll otherwise show up in the output statistics
 		// and that is Not Good(tm) as those partial sums are used to check for black bg (yes/no)
 		// and single-hump histogram inputs, which should be treated as "don't care" zones in

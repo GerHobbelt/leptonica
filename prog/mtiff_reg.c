@@ -89,15 +89,15 @@ SARRAY       *sa;
     pixa = pixaReadMultipageTiff("/tmp/lept/tiff/weasel8.tif");
     pix1 = pixaDisplayTiledInRows(pixa, 1, 1200, 0.5, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pix1 = pixaDisplayTiledInRows(pixa, 8, 1200, 0.8, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 0, 200, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 200, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.2, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix1, 0, 400, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 400, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 
@@ -110,14 +110,14 @@ SARRAY       *sa;
         pix1 = pixReadFromMultipageTiff("/tmp/lept/tiff/weasel8.tif", &offset);
         if (!pix1) continue;
         pixaAddPix(pixa, pix1, L_INSERT);
-        if (rp->display)
+        if (leptIsInDisplayMode(rp->diag_spec))
              lept_stderr("offset = %ld\n", (unsigned long)offset);
         n++;
     } while (offset != 0);
-    if (rp->display) lept_stderr("Num images = %d\n", n);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Num images = %d\n", n);
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.2, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 
@@ -131,14 +131,14 @@ SARRAY       *sa;
         pix1 = pixReadMemFromMultipageTiff(data, size, &offset);
         if (!pix1) continue;
         pixaAddPix(pixa, pix1, L_INSERT);
-        if (rp->display)
+        if (leptIsInDisplayMode(rp->diag_spec))
             lept_stderr("offset = %ld\n", (unsigned long)offset);
         n++;
     } while (offset != 0);
-    if (rp->display) lept_stderr("Num images = %d\n", n);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Num images = %d\n", n);
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.2, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix1, 0, 800, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 800, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
     lept_free(data);
@@ -160,7 +160,7 @@ SARRAY       *sa;
     }
     regTestCheckFile(rp, "/tmp/lept/tiff/junkm.tif");  /* 8 */
     pixDestroy(&pix1);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("\n1000 image file: /tmp/lept/tiff/junkm.tif\n");
         lept_stderr("Time to write 1000 images: %7.3f sec\n", stopTimer());
     }
@@ -171,13 +171,13 @@ SARRAY       *sa;
     do {
         pix1 = pixReadFromMultipageTiff("/tmp/lept/tiff/junkm.tif", &offset);
         if (!pix1) continue;
-        if (rp->display && (n % 100 == 0))
+        if (leptIsInDisplayMode(rp->diag_spec) && (n % 100 == 0))
             lept_stderr("offset = %ld\n", (unsigned long)offset);
         pixDestroy(&pix1);
         n++;
     } while (offset != 0);
     regTestCompareValues(rp, 1000, n, 0);  /* 9 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("Time to read %d images: %6.3f sec\n", n, stopTimer());
 
     startTimer();
@@ -213,7 +213,7 @@ SARRAY       *sa;
         n++;
     } while (offset != 0);
     regTestCompareValues(rp, 10, n, 0);  /* 12 */
-    if (rp->display) lept_stderr("\nRead %d images\n", n);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("\nRead %d images\n", n);
     lept_free(data);
     pixaWriteMemMultipageTiff(&data, &size, pixa2);  /* (4) */
     pixa3 = pixaReadMemMultipageTiff(data, size);  /* (5) */
@@ -221,7 +221,7 @@ SARRAY       *sa;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 13 */
     pixDestroy(&pix1);
     n = pixaGetCount(pixa3);
-    if (rp->display) lept_stderr("Write/read %d images\n", n);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Write/read %d images\n", n);
     success = TRUE;
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
@@ -241,9 +241,9 @@ SARRAY       *sa;
         /* Read the files and generate a multipage tiff file of G4 images.
          * Then convert that to a G4 compressed and ascii85 encoded PS file. */
     sa = getSortedPathnamesInDirectory(".", "weasel4.", 0, 4);
-    if (rp->display) sarrayWriteStderr(sa);
+    if (leptIsInDisplayMode(rp->diag_spec)) sarrayWriteStderr(sa);
     sarraySort(sa, sa, L_SORT_INCREASING);
-    if (rp->display) sarrayWriteStderr(sa);
+    if (leptIsInDisplayMode(rp->diag_spec)) sarrayWriteStderr(sa);
     npages = sarrayGetCount(sa);
     for (i = 0; i < npages; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);

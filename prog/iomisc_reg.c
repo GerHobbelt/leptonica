@@ -101,21 +101,21 @@ L_REGPARAMS* rp;
     pixs = pixRead(DEMOPATH("marge.jpg"));
     pixWrite("/tmp/lept/io/chromatest1.jpg", pixs, IFF_JFIF_JPEG);
     regTestCheckFile(rp, "/tmp/lept/io/chromatest1.jpg");  /* 3 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         size = nbytesInFile("/tmp/lept/io/chromatest1.jpg");
         lept_stderr("chroma default: file size = %ld\n", (unsigned long)size);
     }
     pixSetChromaSampling(pixs, 0);
     pixWrite("/tmp/lept/io/chromatest2.jpg", pixs, IFF_JFIF_JPEG);
     regTestCheckFile(rp, "/tmp/lept/io/chromatest2.jpg");  /* 4 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         size = nbytesInFile("/tmp/lept/io/chromatest2.jpg");
         lept_stderr("no ch. sampling: file size = %ld\n", (unsigned long)size);
     }
     pixSetChromaSampling(pixs, 1);
     pixWrite("/tmp/lept/io/chromatest3.jpg", pixs, IFF_JFIF_JPEG);
     regTestCheckFile(rp, "/tmp/lept/io/chromatest3.jpg");  /* 5 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         size = nbytesInFile("/tmp/lept/io/chromatest3.jpg");
         lept_stderr("chroma default: file size = %ld\n", (unsigned long)size);
     }
@@ -123,26 +123,26 @@ L_REGPARAMS* rp;
 
         /* Test read/write of alpha with png */
     pixs = pixRead(DEMOPATH("books_logo.png"));
-    pixDisplayWithTitle(pixs, 0, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixs, 0, 100, NULL, rp->diag_spec);
     pixg = pixGetRGBComponent(pixs, L_ALPHA_CHANNEL);
     regTestWritePixAndCheck(rp, pixg, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pixg, 300, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixg, 300, 100, NULL, rp->diag_spec);
     pixDestroy(&pixg);
     pix1 = pixAlphaBlendUniform(pixs, 0xffffff00);  /* render rgb over white */
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix1, 0, 250, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 250, NULL, rp->diag_spec);
     pix2 = pixSetAlphaOverWhite(pix1);  /* regenerate alpha from white */
     pixWrite("/tmp/lept/io/logo2.png", pix2, IFF_PNG);
     regTestCheckFile(rp, "/tmp/lept/io/logo2.png");  /* 8 */
-    pixDisplayWithTitle(pix2, 0, 400, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 0, 400, NULL, rp->diag_spec);
     pixg = pixGetRGBComponent(pix2, L_ALPHA_CHANNEL);
     regTestWritePixAndCheck(rp, pixg, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pixg, 300, 400, NULL, rp->display);
+    pixDisplayWithTitle(pixg, 300, 400, NULL, rp->diag_spec);
     pixDestroy(&pixg);
     pix3 = pixRead("/tmp/lept/io/logo2.png");
     pix4 = pixAlphaBlendUniform(pix3, 0x00ffff00);  /* render rgb over cyan */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix3, 0, 550, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 0, 550, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -155,14 +155,14 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pixs, L_CLONE);
     pixGetDimensions(pixs, &w, &h, &d);
     wpl = pixGetWpl(pixs);
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("w = %d, h = %d, d = %d, wpl = %d\n", w, h, d, wpl);
     pixGetResolution(pixs, &xres, &yres);
-    if (rp->display && xres != 0 && yres != 0)
+    if (leptIsInDisplayMode(rp->diag_spec) && xres != 0 && yres != 0)
         lept_stderr("xres = %d, yres = %d\n", xres, yres);
     cmap = pixGetColormap(pixs);
         /* Write and read back the colormap */
-    if (rp->display) pixcmapWriteStream(stderr, pixGetColormap(pixs));
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, pixGetColormap(pixs));
     fp = lept_fopen("/tmp/lept/io/cmap1", "wb");
     pixcmapWriteStream(fp, pixGetColormap(pixs));
     lept_fclose(fp);
@@ -199,26 +199,26 @@ L_REGPARAMS* rp;
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pix3 = pixaDisplayTiled(pixa, 400, 0, 20);
-    pixDisplayWithTitle(pix3, 0, 750, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 0, 750, NULL, rp->diag_spec);
     pixDestroy(&pix3);
     pixaDestroy(&pixa);
 
         /* Other fields in the pix */
     format = pixGetInputFormat(pixs);
     regTestCompareValues(rp, format, IFF_PNG, 0.0);  /* 17 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("Input format extension: %s\n",
 			        getFormatExtension(format));
     pixSetText(pixs, "reconstituted 4-bit weasel");
     text = pixGetText(pixs);
-    if (rp->display && text && strlen(text) != 0)
+    if (leptIsInDisplayMode(rp->diag_spec) && text && strlen(text) != 0)
         lept_stderr("Text: %s\n", text);
     pixDestroy(&pixs);
 
         /* Some tiff compression and headers */
     readHeaderTiff(DEMOPATH("feyn-fract.tif"), 0, &w, &h, &bps, &spp,
                    &res, &iscmap, &format);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("w = %d, h = %d, bps = %d, spp = %d, res = %d, cmap = %d\n",
                     w, h, bps, spp, res, iscmap);
         lept_stderr("Input format extension: %s\n",
@@ -229,37 +229,37 @@ L_REGPARAMS* rp;
     regTestCheckFile(rp, "/tmp/lept/io/fract1.tif");  /* 18 */
     size = nbytesInFile("/tmp/lept/io/fract1.tif");
     regTestCompareValues(rp, tiffsize[0], size, 0.0);  /* 19 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("uncompressed: %ld\n", (unsigned long)size);
     pixWrite("/tmp/lept/io/fract2.tif", pixs, IFF_TIFF_PACKBITS);
     regTestCheckFile(rp, "/tmp/lept/io/fract2.tif");  /* 20 */
     size = nbytesInFile("/tmp/lept/io/fract2.tif");
     regTestCompareValues(rp, tiffsize[1], size, 0.0);  /* 21 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("packbits: %ld\n", (unsigned long)size);
     pixWrite("/tmp/lept/io/fract3.tif", pixs, IFF_TIFF_RLE);
     regTestCheckFile(rp, "/tmp/lept/io/fract3.tif");  /* 22 */
     size = nbytesInFile("/tmp/lept/io/fract3.tif");
     regTestCompareValues(rp, tiffsize[2], size, 0.0);  /* 23 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("rle: %ld\n", (unsigned long)size);
     pixWrite("/tmp/lept/io/fract4.tif", pixs, IFF_TIFF_G3);
     regTestCheckFile(rp, "/tmp/lept/io/fract4.tif");  /* 24 */
     size = nbytesInFile("/tmp/lept/io/fract4.tif");
     regTestCompareValues(rp, tiffsize[3], size, 0.0);  /* 25 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("g3: %ld\n", (unsigned long)size);
     pixWrite("/tmp/lept/io/fract5.tif", pixs, IFF_TIFF_G4);
     regTestCheckFile(rp, "/tmp/lept/io/fract5.tif");  /* 26 */
     size = nbytesInFile("/tmp/lept/io/fract5.tif");
     regTestCompareValues(rp, tiffsize[4], size, 0.0);  /* 27 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("g4: %ld\n", (unsigned long)size);
     pixWrite("/tmp/lept/io/fract6.tif", pixs, IFF_TIFF_LZW);
     regTestCheckFile(rp, "/tmp/lept/io/fract6.tif");  /* 28 */
     size = nbytesInFile("/tmp/lept/io/fract6.tif");
     regTestCompareValues(rp, tiffsize[5], size, 0.0);  /* 29 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("lzw: %ld\n", (unsigned long)size);
     pixDestroy(&pixs);
 
@@ -269,7 +269,7 @@ L_REGPARAMS* rp;
     regTestCheckFile(rp, "/tmp/lept/io/alpha1.pnm");  /* 30 */
     pix1 = pixRead("/tmp/lept/io/alpha1.pnm");
     regTestComparePix(rp, pixs, pix1);  /* 31 */
-    pixDisplayWithTitle(pix1, 600, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 600, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
 

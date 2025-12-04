@@ -118,11 +118,11 @@ char      buf[256];
 
     boxaEqual(boxa1, boxa2, 0, NULL, &same);
     regTestCompareValues(rp, 1, same, 0.0);  /* 4 */
-    if (rp->display && same)
+    if (leptIsInDisplayMode(rp->diag_spec) && same)
         lept_stderr("boxa1 and boxa2 are identical\n");
     boxaEqual(boxa1, boxa2, 2, &naindex, &same);
     regTestCompareValues(rp, 1, same, 0.0);  /* 5 */
-    if (rp->display && same)
+    if (leptIsInDisplayMode(rp->diag_spec) && same)
         lept_stderr("boxa1 and boxa2 are same at maxdiff = 2\n");
     snprintf(buf, sizeof(buf), "/tmp/lept/ptra/naindex.%d.na", index);
     numaWrite(buf, naindex);
@@ -139,7 +139,7 @@ char      buf[256];
     paa = ptraaCreate(w);
     paindex = ptraCreate(w);
     n = boxaGetCount(boxa);
-    if (rp->display) lept_stderr("n = %d\n", n);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("n = %d\n", n);
     for (i = 0; i < n; i++) {
         box = boxaGetBox(boxa, i, L_CLONE);
         boxGetGeometry(box, &x, NULL, NULL, NULL);
@@ -155,7 +155,7 @@ char      buf[256];
         numaAddNumber(na, i);
     }
     ptraGetActualCount(paindex, &count);
-    if (rp->display) lept_stderr("count = %d\n", count);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("count = %d\n", count);
 
         /* Flatten the ptraa to a ptra containing all the boxes
          * in sorted order, and put them in a boxa */
@@ -175,7 +175,7 @@ char      buf[256];
          * a single Numa */
     ptraGetMaxIndex(paindex, &imax);
     nad3 = numaCreate(0);
-    if (rp->display) lept_stderr("imax = %d\n\n", imax);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("imax = %d\n\n", imax);
     for (i = 0; i <= imax; i++) {
         na = (NUMA *)ptraRemove(paindex, i, L_NO_COMPACTION);
         numaJoin(nad3, na, 0, -1);
@@ -242,23 +242,23 @@ char     buf[256];
 
     boxaEqual(boxa1, boxa2, 0, &naindex, &same);
     regTestCompareValues(rp, 1, same, 0.0);  /* 6 */
-    if (rp->display && same)
+    if (leptIsInDisplayMode(rp->diag_spec) && same)
         lept_stderr("boxa1 and boxa2 are identical\n");
     numaDestroy(&naindex);
     boxaEqual(boxa1, boxa2, 3, &naindex, &same);
     regTestCompareValues(rp, 1, same, 0.0);  /* 7 */
-    if (rp->display && same)
+    if (leptIsInDisplayMode(rp->diag_spec) && same)
         lept_stderr("boxa1 and boxa2 are same at maxdiff = 2\n");
     numaDestroy(&naindex);
 
     pixaEqual(pixa1, pixa2, 0, &naindex, &same);
     regTestCompareValues(rp, 1, same, 0.0);  /* 8 */
-    if (rp->display && same)
+    if (leptIsInDisplayMode(rp->diag_spec) && same)
         lept_stderr("pixa1 and pixa2 are identical\n");
     numaDestroy(&naindex);
     pixaEqual(pixa1, pixa2, 3, &naindex, &same);
     regTestCompareValues(rp, 1, same, 0.0);  /* 9 */
-    if (rp->display && same)
+    if (leptIsInDisplayMode(rp->diag_spec) && same)
         lept_stderr("pixa1 and pixa2 are same at maxdiff = 2\n\n");
     numaDestroy(&naindex);
 

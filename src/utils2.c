@@ -184,6 +184,10 @@
 #include <config_auto.h>
 #endif  /* HAVE_CONFIG_H */
 
+#if defined(__GNUC__) && ! defined(_GNU_SOURCE)
+#define _GNU_SOURCE /* needed for (v)asprintf, affects '#include <stdio.h>' */
+#endif
+
 #ifdef _MSC_VER
 #ifndef _CRTDBG_MAP_ALLOC
 #define _CRTDBG_MAP_ALLOC
@@ -220,11 +224,21 @@
 #include <errno.h>     /* for errno */
 #include <string.h>
 #include <stddef.h>
+#include <stdio.h>  
+#include <stdlib.h> 
+#include <stdarg.h>
+
 #include "allheaders.h"
 
 #if defined(__APPLE__) || defined(_WIN32)
 /* Rewrite paths starting with /tmp for macOS, iOS and Windows. */
 #define REWRITE_TMP
+#endif
+
+#if defined(_MSC_VER)
+#ifndef __attribute__
+#define __attribute__(x) /**/
+#endif
 #endif
 
 /*--------------------------------------------------------------------*
@@ -3589,3 +3603,54 @@ l_int32  len, nret, num;
         return -1;  /* not found */
 }
 
+
+const char*
+string_asprintf(_Printf_format_string_ const char* filename_fmt_str, ...) __attribute__((__format__(__printf__, 1, 2)))
+{
+	va_list args;
+	va_start(args, filename_fmt_str);
+	const char* result = string_vasprintf(filename_fmt_str, args);
+	va_end(args);
+	return result;
+}
+
+
+// ripped from https://stackoverflow.com/questions/40159892/using-asprintf-on-windows
+// and refitted for our needs.
+
+/*
+ * vscprintf:
+ * MSVC implements this as _vscprintf, thus we just 'symlink' it here
+ * GNU-C-compatible compilers do not implement this, thus we implement it here
+ */
+#ifdef _MSC_VER
+#define vscprintf _vscprintf
+#else //#ifdef __GNUC__
+// corroborated by https://stackoverflow.com/questions/4785381/replacement-for-ms-vscprintf-on-macos-linux :
+static int
+vscprintf(const char* format, va_list ap)
+{
+	va_list ap_copy;
+	va_copy(ap_copy, ap);
+	int retval = vsnprintf(NULL, 0, format, ap_copy);
+	va_end(ap_copy);
+	return retval;
+}
+#endif
+
+
+const char*
+string_vasprintf(_In_z_ _Printf_format_string_ const char* filename_fmt_str, va_list args)
+{
+	int len = vscprintf(filename_fmt_str, args);
+	if (len == -1) {
+		return NULL;
+	}
+	char* buf = (char *)LEPT_CALLOC(len + 1, sizeof(char));
+	int l = vsnprintf(buf, len + 1, filename_fmt_str, args);
+	if (l != len) {
+		LEPT_FREE(buf);
+		return NULL;
+	}
+	return buf;
+}

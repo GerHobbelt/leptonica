@@ -94,13 +94,13 @@ PIXA         *pixa;
         pixaSaveFont("fonts", "/tmp/lept/filefonts", sizes[i]);
         pathname = pathJoin("/tmp/lept/filefonts", outputfonts[i]);
         pixa = pixaRead(pathname);
-        if (rp->display) {
+        if (leptIsInDisplayMode(rp->diag_spec)) {
             lept_stderr("Found %d chars in font size %d\n",
                         pixaGetCount(pixa), sizes[i]);
         }
         pixd = pixaDisplayTiled(pixa, 1500, 0, 15);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0 - 8 */
-        if (i == 2) pixDisplayWithTitle(pixd, 100, 0, NULL, rp->display);
+        if (i == 2) pixDisplayWithTitle(pixd, 100, 0, NULL, rp->diag_spec);
         pixDestroy(&pixd);
         pixaDestroy(&pixa);
         lept_free(pathname);
@@ -115,13 +115,13 @@ PIXA         *pixa;
         pixaSaveFont(NULL, "/tmp/lept/strfonts", sizes[i]);
         pathname = pathJoin("/tmp/lept/strfonts", outputfonts[i]);
         pixa = pixaRead(pathname);
-        if (rp->display) {
+        if (leptIsInDisplayMode(rp->diag_spec)) {
             lept_stderr("Found %d chars in font size %d\n",
                         pixaGetCount(pixa), sizes[i]);
         }
         pixd = pixaDisplayTiled(pixa, 1500, 0, 15);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 9 - 17 */
-        if (i == 2) pixDisplayWithTitle(pixd, 100, 150, NULL, rp->display);
+        if (i == 2) pixDisplayWithTitle(pixd, 100, 150, NULL, rp->diag_spec);
         pixDestroy(&pixd);
         pixaDestroy(&pixa);
         lept_free(pathname);
@@ -138,7 +138,7 @@ PIXA         *pixa;
         pixaWrite(buf, pixa);
         if (i == 2) {
             pixd = pixaDisplayTiled(pixa, 1500, 0, 15);
-            pixDisplayWithTitle(pixd, 100, 300, NULL, rp->display);
+            pixDisplayWithTitle(pixd, 100, 300, NULL, rp->diag_spec);
             pixDestroy(&pixd);
         }
         pixaDestroy(&pixa);
@@ -154,7 +154,7 @@ PIXA         *pixa;
         pathname = pathJoin(DEMOPATH("fonts"), inputfonts[i]);
         data1 = l_binaryRead(pathname, &nbytes);
         datastr = encodeBase64(data1, nbytes, &sbytes);
-        if (rp->display)
+        if (leptIsInDisplayMode(rp->diag_spec))
             lept_stderr("nbytes = %lu, sbytes = %d\n",
                         (unsigned long)nbytes, sbytes);
         formstr = reformatPacked64(datastr, sbytes, 4, 72, 1, &formbytes);

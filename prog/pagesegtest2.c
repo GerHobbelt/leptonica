@@ -65,8 +65,6 @@ static const char *seed_sequence = "r1143 + o5.5+ x4";
     /* Simple dilation */
 static const char *dilation_sequence = "d3.3";
 
-#define  DFLAG     1
-
 
 #if defined(BUILD_MONOLITHIC)
 #define main   lept_pagesegtest2_main
@@ -116,10 +114,10 @@ L_REGPARAMS* rp;
         /* Extract non-image parts (e.g., text) at full resolution */
     pixSubtract(pixb, pixb, pixd);
 
-    pixDisplayWithTitle(pixseed4, 400, 100, "halftone seed", DFLAG);
-    pixDisplayWithTitle(pixmask4, 100, 100, "halftone seed mask", DFLAG);
-    pixDisplayWithTitle(pixd4, 700, 100, "halftone mask", DFLAG);
-    pixDisplayWithTitle(pixb, 1000, 100, "non-halftone", DFLAG);
+    pixDisplayWithTitle(pixseed4, 400, 100, "halftone seed", rp->diag_spec);
+    pixDisplayWithTitle(pixmask4, 100, 100, "halftone seed mask", rp->diag_spec);
+    pixDisplayWithTitle(pixd4, 700, 100, "halftone mask", rp->diag_spec);
+    pixDisplayWithTitle(pixb, 1000, 100, "non-halftone", rp->diag_spec);
 
 #if 1
     //lept_mkdir("lept/pageseg");

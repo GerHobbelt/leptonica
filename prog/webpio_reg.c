@@ -120,7 +120,7 @@ PIX  *pixs, *pix1, *pix2;
     lept_stderr("Time to read webp: %7.3f\n", stopTimer());
     pix2 = pixConvertTo32(pixs);
     regTestCompareSimilarPix(rp, pix1, pix2, 20, 0.1, 0);
-    pixDisplayWithTitle(pix1, 100, 100, "pix1", rp->display);
+    pixDisplayWithTitle(pix1, 100, 100, "pix1", rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

@@ -155,6 +155,7 @@
 
 struct l_diag_predef_parts {
 	const char* basepath;            //!< the base path within where every generated file must land.
+	unsigned int basepath_minlength; //!< minimum length of the basepath, i.e. append/remove/replace APIs are prohibited from editing the leading part of basepath that is shorter than this length.
 	size_t batch_unique_id;          // 0 if unused?
 	size_t step_id;                  //!< will be RESET every time the %batch_unique_id is incremented/changed.
 	size_t item_id;                  //!< will be RESET every time the %batch_unique_id or %step_id is incremented/changed (unless %item_id_is_forever_increasing is set).
@@ -170,6 +171,8 @@ struct l_diag_predef_parts {
 	unsigned int must_bump_step_id : 1;		//!< set when %step_id should be incremented before next use.
 	unsigned int must_bump_item_id : 1;		//!< set when %item_id should be incremented before next use.
 	unsigned int item_id_is_forever_increasing : 1;
+
+	unsigned int display : 1;               /*!< 1 if in display mode; 0 otherwise                */
 };
 
 
@@ -993,9 +996,13 @@ boxaCloneDiagnosticsSpec(BOXA* boxad, const BOXA* boxas)
 void
 leptDebugSetFileBasepath(LDIAG_CTX spec, const char* directory)
 {
+	if (!directory) {
+		directory = "";
+	}
+
 	if (spec->basepath)
 		stringDestroy(&spec->basepath);
-	if (!directory) {
+	if (!directory[0]) {
 		spec->basepath = NULL;
 	}
 	else {
@@ -1011,9 +1018,11 @@ leptDebugSetFileBasepath(LDIAG_CTX spec, const char* directory)
 			// 
 			// Current affairs assume this path is set by (safe) application code,
 			// rather than (unsafe) arbitrary end user input...
-			spec->basepath = pathJoin("/tmp/lept/debug", directory);
+			spec->basepath = pathJoin(leptDebugGetFileBasePath(spec), directory);
 		}
 	}
+
+	spec->basepath_minlength = strlen(spec->basepath);
 
 	spec->must_regenerate = 1;
 }
@@ -1039,7 +1048,52 @@ leptDebugAppendFileBasepath(LDIAG_CTX spec, const char* directory)
 		directory = "";
 	}
 
-	if (spec->basepath) {
+	if (directory[0]) {
+		if (spec->basepath) {
+			const char* base = spec->basepath;
+			// TODO:
+			// do we allow '../' elements in a relative directory spec?
+			// 
+			// Current affairs assume this path is set by (safe) application code,
+			// rather than (unsafe) arbitrary end user input...
+			spec->basepath = pathJoin(base, directory);
+			stringDestroy(&base);
+		}
+		else {
+			// TODO:
+			// do we allow '../' elements in a relative directory spec?
+			// 
+			// Current affairs assume this path is set by (safe) application code,
+			// rather than (unsafe) arbitrary end user input...
+			spec->basepath = pathJoin(leptDebugGetFileBasePath(spec), directory);
+		}
+	}
+	else if (!spec->basepath) {
+		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
+	}
+
+	// ALWAYS recalculate the minlength as AppendFileBasepath() MAY immediately follow a FilePathPart() API call,
+	// thus including that previously-non-mandatory part in the basepath now, which implies the basebath HAS
+	// changed anyhow, even when %directory == "".
+	spec->basepath_minlength = strlen(spec->basepath);
+
+	spec->must_regenerate = 1;
+}
+
+
+void
+leptDebugAppendFilePathPart(LDIAG_CTX spec, const char* directory)
+{
+	if (!directory) {
+		directory = "";
+	}
+
+	if (!spec->basepath) {
+		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
+		spec->basepath_minlength = strlen(spec->basepath);
+	}
+
+	if (directory[0]) {
 		const char* base = spec->basepath;
 		// TODO:
 		// do we allow '../' elements in a relative directory spec?
@@ -1049,16 +1103,118 @@ leptDebugAppendFileBasepath(LDIAG_CTX spec, const char* directory)
 		spec->basepath = pathJoin(base, directory);
 		stringDestroy(&base);
 	}
+
+	spec->must_regenerate = 1;
+}
+
+void
+leptDebugReplaceEntireFilePathPart(LDIAG_CTX spec, const char* directory)
+{
+	if (!directory) {
+		directory = "";
+	}
+
+	if (!spec->basepath) {
+		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
+		spec->basepath_minlength = strlen(spec->basepath);
+	}
+
+	const char* base = spec->basepath;
+	spec->basepath = stringCopySegment(base, 0, spec->basepath_minlength);
+	stringDestroy(&base);
+
+	if (directory[0]) {
+		leptDebugAppendFilePathPart(spec, directory);
+	}
+	spec->must_regenerate = 1;
+}
+
+
+void
+leptDebugReplaceOneFilePathPart(LDIAG_CTX spec, const char* directory)
+{
+	if (!directory) {
+		directory = "";
+	}
+
+	if (!spec->basepath) {
+		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
+		spec->basepath_minlength = strlen(spec->basepath);
+	}
+
+	const char* base = spec->basepath;
+	char* dir;
+	splitPathAtDirectory(base, &dir, NULL);
+
+	size_t baselen = strlen(dir);
+	if (baselen >= spec->basepath_minlength) {
+		if (directory[0]) {
+			spec->basepath = pathJoin(dir, directory);
+			LEPT_FREE(dir); // stringDestroy(&dir);
+		}
+		else {
+			spec->basepath = dir;
+		}
+		stringDestroy(&base);
+	}
 	else {
-		// TODO:
-		// do we allow '../' elements in a relative directory spec?
-		// 
-		// Current affairs assume this path is set by (safe) application code,
-		// rather than (unsafe) arbitrary end user input...
-		spec->basepath = pathJoin("/tmp/lept/debug", directory);
+		L_WARNING("Attempting to replace forbidden base path part! (base: \"%s\", replace: \"%s\")\n", __func__, base, directory);
+		LEPT_FREE(dir); // stringDestroy(&dir);
 	}
 
 	spec->must_regenerate = 1;
+}
+
+
+void
+leptDebugEraseFilePathPart(LDIAG_CTX spec)
+{
+	if (!spec->basepath) {
+		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
+		spec->basepath_minlength = strlen(spec->basepath);
+	}
+	else {
+		const char* base = spec->basepath;
+		spec->basepath = stringCopySegment(base, 0, spec->basepath_minlength);
+		stringDestroy(&base);
+	}
+
+	spec->must_regenerate = 1;
+}
+
+
+void leptDebugEraseOneFilePathPart(LDIAG_CTX spec)
+{
+	if (!spec->basepath) {
+		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
+		spec->basepath_minlength = strlen(spec->basepath);
+	}
+
+	const char* base = spec->basepath;
+	char* dir;
+	splitPathAtDirectory(base, &dir, NULL);
+
+	size_t baselen = strlen(dir);
+	if (baselen >= spec->basepath_minlength) {
+		spec->basepath = dir;
+		stringDestroy(&base);
+	}
+	else {
+		L_WARNING("Attempting to erase part of the restricted base path! (base: \"%s\")\n", __func__, base);
+		LEPT_FREE(dir); // stringDestroy(&dir);
+	}
+
+	spec->must_regenerate = 1;
+}
+
+
+const char*
+leptDebugGetFilePathPart(LDIAG_CTX spec)
+{
+	const char* rv = spec->basepath + spec->basepath_minlength;
+	if (strchr("\\/", *rv))
+		rv++;
+	return rv;
 }
 
 
@@ -1070,7 +1226,7 @@ leptDebugAppendFileBasepath(LDIAG_CTX spec, const char* directory)
 const char*
 leptDebugGetFileBasePath(LDIAG_CTX spec)
 {
-	if (!spec->basepath) {
+	if (!spec || !spec->basepath) {
 		return "/tmp/lept/debug";
 	}
 	return spec->basepath;
@@ -1521,7 +1677,15 @@ leptDebugGetFilepathDefaultFormat(LDIAG_CTX spec)
 const char*
 leptDebugGenFilename(LDIAG_CTX spec, const char* filename_fmt_str, ...)
 {
-	return NULL;
+	va_list va;
+	va_start(va, filename_fmt_str);
+	const char* fn = string_vasprintf(filename_fmt_str, va);
+	va_end(va);
+	const char* path = leptDebugGetFileBasePath(spec);
+	const char* f = pathJoin(path, fn);
+	stringDestroy(&fn);
+	stringDestroy(&path);
+	return f;
 }
 
 
@@ -1539,21 +1703,45 @@ leptDebugGenFilename(LDIAG_CTX spec, const char* filename_fmt_str, ...)
 const char*
 leptDebugGenFilepath(LDIAG_CTX spec, const char* path_fmt_str, ...)
 {
-	return NULL;
+	va_list va;
+	va_start(va, path_fmt_str);
+	const char *fn = string_vasprintf(path_fmt_str, va);
+	va_end(va);
+	const char* path = leptDebugGetFileBasePath(spec);
+	const char* f = pathJoin(path, fn);
+	stringDestroy(&fn);
+	stringDestroy(&path);
+	return f;
 }
 
 
 const char*
 leptDebugGenFilenameEx(const char* directory, LDIAG_CTX spec, const char* filename_fmt_str, ...)
 {
-	return NULL;
+	va_list va;
+	va_start(va, filename_fmt_str);
+	const char* fn = string_vasprintf(filename_fmt_str, va);
+	va_end(va);
+	const char* path = leptDebugGetFileBasePath(spec);
+	const char* f = pathJoin(path, fn);
+	stringDestroy(&fn);
+	stringDestroy(&path);
+	return f;
 }
 
 
 const char*
 leptDebugGenFilepathEx(const char* directory, LDIAG_CTX spec, const char* path_fmt_str, ...)
 {
-	return NULL;
+	va_list va;
+	va_start(va, path_fmt_str);
+	const char* fn = string_vasprintf(path_fmt_str, va);
+	va_end(va);
+	const char* path = leptDebugGetFileBasePath(spec);
+	const char* f = pathJoin(path, fn);
+	stringDestroy(&fn);
+	stringDestroy(&path);
+	return f;
 }
 
 
@@ -1565,7 +1753,27 @@ leptDebugGenFilepathEx(const char* directory, LDIAG_CTX spec, const char* path_f
 const char*
 leptDebugGetLastGenFilepath(LDIAG_CTX spec)
 {
-	return NULL;
+	return spec->active_filename;
+}
+
+
+l_ok
+leptIsInDisplayMode(LDIAG_CTX spec)
+{
+	if (!spec)
+		return ERROR_INT("spec not defined", __func__, 0);
+	return spec->display;
+}
+
+
+void
+leptSetInDisplayMode(LDIAG_CTX spec, l_ok activate)
+{
+	if (!spec) {
+		L_ERROR("spec not defined", __func__);
+		return;
+	}
+	spec->display = !!activate;
 }
 
 

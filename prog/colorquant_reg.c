@@ -228,7 +228,7 @@ PIXA      *pixa;
     pixDestroy(&pixt);
 
     pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 25, 2);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     snprintf(buf, sizeof(buf), "/tmp/lept/regout/disp.%d.jpg", i);
     pixWrite(buf, pixd, IFF_JFIF_JPEG);
 

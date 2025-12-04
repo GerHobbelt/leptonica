@@ -251,7 +251,7 @@ L_DEWARP    *dew;
     dew = dewarpCreate(pixb, 0);
     dewarpaInsertDewarp(dewa, dew);
     debugfile = (diagspec) ? "/tmp/lept/dewarp/singlepage_model.pdf" : NULL;
-    dewarpBuildPageModel(dew, debugfile);
+    dewarpBuildPageModel(dew, diagspec);
     dewarpaModelStatus(dewa, 0, &vsuccess, NULL);
     if (vsuccess == 0) {
         L_ERROR("failure to build model for vertical disparity\n", __func__);
@@ -261,7 +261,7 @@ L_DEWARP    *dew;
 
         /* Apply the page model */
     debugfile = (diagspec) ? "/tmp/lept/dewarp/singlepage_apply.pdf" : NULL;
-    ret = dewarpaApplyDisparity(dewa, 0, pixs, 255, 0, 0, ppixd, debugfile);
+    ret = dewarpaApplyDisparity(dewa, 0, pixs, 255, 0, 0, ppixd, diagspec);
     if (ret)
         L_ERROR("invalid model; failure to apply disparity\n", __func__);
     return 0;

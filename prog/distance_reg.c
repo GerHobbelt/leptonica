@@ -89,7 +89,7 @@ L_REGPARAMS* rp;
                 pixaAddPix(pixa, pixs, L_COPY);
                 TestDistance(pixa, pixs, conn, depth, bc, rp);
                 pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 20, 2);
-                pixDisplayWithTitle(pixd, 0, 0, NULL, rp->display);
+                pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
                 pixaDestroy(&pixa);
                 pixDestroy(&pixd);
             }

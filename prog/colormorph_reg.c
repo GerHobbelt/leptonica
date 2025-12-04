@@ -94,7 +94,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     pixDestroy(&pix2);
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         //lept_mkdir("lept/cmorph");
         lept_stderr("Writing to: /tmp/lept/cmorph/colormorph.pdf\n");
         pixaConvertToPdf(pixa, 0, 1.0, L_FLATE_ENCODE, 0, "colormorph-test",

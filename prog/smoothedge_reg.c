@@ -44,7 +44,7 @@ static l_int32 MIN_JUMP = 2;
 static l_int32 MIN_REVERSAL = 3;
 
 void PixAddEdgeData(PIXA *pixa, PIX *pixs, l_int32 side, l_int32 minjump,
-                    l_int32 minreversal);
+                    l_int32 minreversal, L_REGPARAMS* rp);
 
 
 
@@ -66,19 +66,19 @@ L_REGPARAMS* rp;
     pixs = pixRead(DEMOPATH("raggededge.png"));
     w = pixGetWidth(pixs);
     pixa = pixaCreate(0);
-    PixAddEdgeData(pixa, pixs, L_FROM_RIGHT, MIN_JUMP, MIN_REVERSAL);
-    PixAddEdgeData(pixa, pixs, L_FROM_LEFT, MIN_JUMP, MIN_REVERSAL);
+    PixAddEdgeData(pixa, pixs, L_FROM_RIGHT, MIN_JUMP, MIN_REVERSAL, rp);
+    PixAddEdgeData(pixa, pixs, L_FROM_LEFT, MIN_JUMP, MIN_REVERSAL, rp);
     pixt = pixRotateOrth(pixs, 1);
-    PixAddEdgeData(pixa, pixt, L_FROM_BOT, MIN_JUMP, MIN_REVERSAL);
-    PixAddEdgeData(pixa, pixt, L_FROM_TOP, MIN_JUMP, MIN_REVERSAL);
+    PixAddEdgeData(pixa, pixt, L_FROM_BOT, MIN_JUMP, MIN_REVERSAL, rp);
+    PixAddEdgeData(pixa, pixt, L_FROM_TOP, MIN_JUMP, MIN_REVERSAL, rp);
     pixDestroy(&pixt);
     pixt = pixRotateOrth(pixs, 2);
-    PixAddEdgeData(pixa, pixt, L_FROM_LEFT, MIN_JUMP, MIN_REVERSAL);
-    PixAddEdgeData(pixa, pixt, L_FROM_RIGHT, MIN_JUMP, MIN_REVERSAL);
+    PixAddEdgeData(pixa, pixt, L_FROM_LEFT, MIN_JUMP, MIN_REVERSAL, rp);
+    PixAddEdgeData(pixa, pixt, L_FROM_RIGHT, MIN_JUMP, MIN_REVERSAL, rp);
     pixDestroy(&pixt);
     pixt = pixRotateOrth(pixs, 3);
-    PixAddEdgeData(pixa, pixt, L_FROM_TOP, MIN_JUMP, MIN_REVERSAL);
-    PixAddEdgeData(pixa, pixt, L_FROM_BOT, MIN_JUMP, MIN_REVERSAL);
+    PixAddEdgeData(pixa, pixt, L_FROM_TOP, MIN_JUMP, MIN_REVERSAL, rp);
+    PixAddEdgeData(pixa, pixt, L_FROM_BOT, MIN_JUMP, MIN_REVERSAL, rp);
     pixDestroy(&pixt);
     pixDestroy(&pixs);
 
@@ -95,16 +95,22 @@ void PixAddEdgeData(PIXA    *pixa,
                     PIX     *pixs,
                     l_int32  side,
                     l_int32  minjump,
-                    l_int32  minreversal)
+                    l_int32  minreversal,
+	                L_REGPARAMS* rp)
 {
 l_float32  jpl, jspl, rpl;
 PIX       *pixt1, *pixt2;
 
+	leptDebugSetFilenameForPrefix(rp->diag_spec, "junkedge.png", TRUE);
     pixMeasureEdgeSmoothness(pixs, side, minjump, minreversal, &jpl,
-                             &jspl, &rpl, "/tmp/junkedge.png");
+                             &jspl, &rpl, rp->diag_spec);
     lept_stderr("side = %d: jpl = %6.3f, jspl = %6.3f, rpl = %6.3f\n",
                 side, jpl, jspl, rpl);
+	const char* pixpath = leptDebugGetLastGenFilepath(rp->diag_spec);
+
+	// TODO: get rid of the ridiculous round trip through the filesystem.
     pixt1 = pixRead("/tmp/junkedge.png");
+
     pixt2 = pixAddBorder(pixt1, 10, 0);  /* 10 pixel white border */
     pixaAddPix(pixa, pixt2, L_INSERT);
     pixDestroy(&pixt1);

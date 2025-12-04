@@ -121,7 +121,7 @@ PIX      *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
     pixWrite(buf, pixs, IFF_JFIF_JPEG);
     pix1 = pixRead(buf);
     regTestCompareSimilarPix(rp, pixs, pix1, 6, 0.01, 0);
-    pixDisplayWithTitle(pix1, 500, 100, "pix1", rp->display);
+    pixDisplayWithTitle(pix1, 500, 100, "pix1", rp->diag_spec);
 
         /* Test memory read/write (general functions) */
     pixWriteMemJpeg(&data, &size, pixs, 75, 0);
@@ -171,7 +171,7 @@ PIX      *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     else
         pix2 = pixConvertTo8(pixs, 0);
     regTestCompareSimilarPix(rp, pix1, pix2, 20, 0.2, 0);
-    pixDisplayWithTitle(pix1, 500, 100, "pix1", rp->display);
+    pixDisplayWithTitle(pix1, 500, 100, "pix1", rp->diag_spec);
 
         /* Test memory read/write (general functions) */
     pixWriteMemJpeg(&data, &size, pixs, 75, 0);

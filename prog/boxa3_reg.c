@@ -100,13 +100,13 @@ PIX       *pix1;
     lept_free(data);
     pix1 = boxaDisplayTiled(boxa2, NULL, 0, -1, 2200, 2, 1.0, 0, 3, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 1, 14, 27 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
         /* Find the median sizes */
     boxaMedianDimensions(boxa2, &medw, &medh, NULL, NULL, NULL, NULL,
                          NULL, NULL);
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("median width = %d, median height = %d\n", medw, medh);
 
         /* Check for deviations from median by pairs */
@@ -115,7 +115,7 @@ PIX       *pix1;
     regTestCompareValues(rp, varp[index], fvarp, 0.003);  /* 2, 15, 28 */
     regTestCompareValues(rp, varm[index], fvarm, 0.003);  /* 3, 16, 29 */
     regTestCompareValues(rp, same[index], isame, 0);  /* 4, 17, 30 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("fvarp = %7.4f, fvarm = %7.4f, same = %d\n",
                     fvarp, fvarm, isame);
 
@@ -127,8 +127,8 @@ PIX       *pix1;
     lept_free(data);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 2200, 2, 1.0, 0, 3, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 6, 19, 32 */
-    pixDisplayWithTitle(pix1, 500, 0, NULL, rp->display);
-    if (rp->display)
+    pixDisplayWithTitle(pix1, 500, 0, NULL, rp->diag_spec);
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("ratio median width/height = %6.3f\n", ratiowh);
     boxaDestroy(&boxa3);
     pixDestroy(&pix1);
@@ -141,7 +141,7 @@ PIX       *pix1;
     lept_free(data);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 2200, 2, 1.0, 0, 3, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 8, 21, 34 */
-    pixDisplayWithTitle(pix1, 1000, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 1000, 0, NULL, rp->diag_spec);
     boxaDestroy(&boxa3);
     pixDestroy(&pix1);
 
@@ -153,7 +153,7 @@ PIX       *pix1;
     lept_free(data);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 2200, 2, 1.0, 0, 3, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 10, 23, 36 */
-    pixDisplayWithTitle(pix1, 1500, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 1500, 0, NULL, rp->diag_spec);
     boxaDestroy(&boxa3);
     pixDestroy(&pix1);
     boxaDestroy(&boxa1);
@@ -181,7 +181,7 @@ PIXA  *pixa;
     pixaAddPix(pixa, pix2, L_INSERT);
     pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 39, 41, 43 */
-    pixDisplayWithTitle(pix3, 0 + 800 * index, 500, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 0 + 800 * index, 500, NULL, rp->diag_spec);
     pixDestroy(&pix3);
     pixaDestroy(&pixa);
 
@@ -196,7 +196,7 @@ PIXA  *pixa;
     pixaAddPix(pixa, pix2, L_INSERT);
     pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 40, 42, 44 */
-    pixDisplayWithTitle(pix3, 0 + 800 * index, 920, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 0 + 800 * index, 920, NULL, rp->diag_spec);
     pixDestroy(&pix3);
     pixaDestroy(&pixa);
     boxaDestroy(&boxa1);

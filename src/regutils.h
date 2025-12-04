@@ -102,7 +102,7 @@
  *       regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  // 6
  *
  *       // Display if reg test was called in 'display' mode
- *       pixDisplayWithTitle(pix1, 100, 100, NULL, rp->display);
+ *       pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
  *
  *       // Clean up and output result
  *       regTestCleanup(rp);
@@ -122,7 +122,7 @@ struct L_RegParams
     l_int32  mode;      /*!< generate, compare or display                     */
     l_atomic index;     /*!< index into saved files for this test; 0-based    */
     l_int32  success;   /*!< overall result of the test                       */
-    l_int32  display;   /*!< 1 if in display mode; 0 otherwise                */
+    //l_int32  display;   --> moved inside the diag_spec
     L_TIMER  tstart;    /*!< marks beginning of the reg test                  */
 	LDIAG_CTX diag_spec; /*!< image diagnostics helper spec associated with pix & plots; used to help display/diagnose behaviour in the more complex algorithms */
 };

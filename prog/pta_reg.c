@@ -154,7 +154,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixb);
 
     pixd = pixaDisplayTiledInColumns(pixa, 1, 1.0, 30, 2);
-    pixDisplayWithTitle(pixd, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
     ptaaDestroy(&ptaafg);
     ptaaDestroy(&ptaabg);
     pixDestroy(&pixs);
@@ -178,7 +178,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix3, L_INSERT);
     pix4 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 13 */
-    pixDisplayWithTitle(pix4, 450, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 450, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix4);
@@ -223,7 +223,7 @@ L_REGPARAMS* rp;
     regTestCompareValues(rp, 1, convex1, 0.0);  /* 16 */
     regTestCompareValues(rp, 0, convex2, 0.0);  /* 17 */
     regTestCompareValues(rp, 0, convex3, 0.0);  /* 18 */
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("convex1 = %s, convex2 = %s, convex3 = %s\n",
                     (convex1 == 0) ? "no" : "yes",
                     (convex2 == 0) ? "no" : "yes",
@@ -240,7 +240,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixaDisplayTiledInColumns(pixa, 3, 5.0, 30, 3);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 19 */
-    pixDisplayWithTitle(pix2, 450, 800, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 450, 800, NULL, rp->diag_spec);
     pixDestroy(&pix2);
     pixaDestroy(&pixa);
     ptaDestroy(&pta1);

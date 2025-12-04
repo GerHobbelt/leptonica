@@ -202,35 +202,35 @@ L_REGPARAMS* rp;
     pixColorGrayCmap(pix2, box1, L_PAINT_LIGHT, 130, 207, 43);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 13 */
     pixaAddPix(pixa, pix2, L_COPY);
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         pixPrintStreamInfo(stderr, pix2, "One box added");
 
     box2 = boxCreate(255, 404, 197, 25);
     pixColorGrayCmap(pix2, box2, L_PAINT_LIGHT, 230, 67, 119);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 14 */
     pixaAddPix(pixa, pix2, L_COPY);
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         pixPrintStreamInfo(stderr, pix2, "Two boxes added");
 
     box3 = boxCreate(122, 756, 224, 22);
     pixColorGrayCmap(pix2, box3, L_PAINT_DARK, 230, 67, 119);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 15 */
     pixaAddPix(pixa, pix2, L_COPY);
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         pixPrintStreamInfo(stderr, pix2, "Three boxes added");
 
     box4 = boxCreate(11, 780, 147, 22);
     pixColorGrayCmap(pix2, box4, L_PAINT_LIGHT, 70, 137, 229);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 16 */
     pixaAddPix(pixa, pix2, L_COPY);
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         pixPrintStreamInfo(stderr, pix2, "Four boxes added");
 
     box5 = boxCreate(163, 605, 78, 22);
     pixColorGrayCmap(pix2, box5, L_PAINT_LIGHT, 70, 137, 229);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 17 */
     pixaAddPix(pixa, pix2, L_INSERT);
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         pixPrintStreamInfo(stderr, pix2, "Five boxes added");
     pixDestroy(&pix1);
     boxDestroy(&box1);
@@ -256,7 +256,7 @@ L_REGPARAMS* rp;
     pix4 = pixColorGrayRegions(pix2, boxa, L_PAINT_DARK, 230, 255, 0, 0);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 18 */
     pixaAddPix(pixa, pix4, L_INSERT);
-    pixDisplayWithTitle(pix4, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 0, 0, NULL, rp->diag_spec);
 
         /* Threshold to 10 levels of gray */
     pix3 = pixThresholdOn8bpp(pix2, 10, 1);
@@ -267,7 +267,7 @@ L_REGPARAMS* rp;
     pix4 = pixColorGrayRegions(pix3, boxa, L_PAINT_DARK, 230, 255, 0, 0);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 20 */
     pixaAddPix(pixa, pix4, L_INSERT);
-    pixDisplayWithTitle(pix4, 0, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 0, 100, NULL, rp->diag_spec);
     boxaDestroy(&boxa);
 
         /* Color the entire gray image (not component-wise) */
@@ -303,7 +303,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pixd, L_INSERT);
 
         /* If in testing mode, make a pdf */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixaConvertToPdf(pixa, 100, 1.0, L_FLATE_ENCODE, 0,
                          "Colorize and paint", "/tmp/lept/regout/paint.pdf");
         L_INFO("Output pdf: /tmp/lept/regout/paint.pdf\n", rp->testname);

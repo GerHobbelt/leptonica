@@ -71,7 +71,7 @@ L_REGPARAMS* rp;
     sarrayDestroy(&sa1);
     sarrayDestroy(&sa2);
     sarrayDestroy(&sa4);
-    if (rp->display) sarrayWriteStderr(sa3);
+    if (leptIsInDisplayMode(rp->diag_spec)) sarrayWriteStderr(sa3);
 
     /* ---------------- Use replace to fill up a pixa -------------------*/
     pixa = pixaCreate(1);
@@ -82,7 +82,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix0);
     pixaInitFull(pixa, pix1, NULL);  /* fill it up */
     pixd = pixaDisplayTiledInRows(pixa, 32, 1000, 1.0, 0, 25, 2);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixWrite("/tmp/lept/regout/pixa2-1.jpg", pixd, IFF_JFIF_JPEG);
     pixDestroy(&pix1);
     pixDestroy(&pixd);
@@ -101,7 +101,7 @@ L_REGPARAMS* rp;
         pixDestroy(&pix0);
     }
     pixd = pixaDisplayTiledInRows(pixa, 32, 1000, 1.0, 0, 25, 2);
-    pixDisplayWithTitle(pixd, 400, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 400, 100, NULL, rp->diag_spec);
     pixWrite("/tmp/lept/regout/pixa2-2.jpg", pixd, IFF_JFIF_JPEG);
     pixDestroy(&pixd);
 
@@ -122,7 +122,7 @@ L_REGPARAMS* rp;
         pixDestroy(&pix0);
     }
     pixd = pixaDisplayTiledInRows(pixa, 32, 1000, 1.0, 0, 25, 2);
-    pixDisplayWithTitle(pixd, 700, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 700, 100, NULL, rp->diag_spec);
     pixWrite("/tmp/lept/regout/pixa2-3.jpg", pixd, IFF_JFIF_JPEG);
     pixDestroy(&pixd);
     sarrayDestroy(&sa3);

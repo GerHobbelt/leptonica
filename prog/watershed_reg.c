@@ -148,7 +148,7 @@ PTA       *pta;
 
     pix9 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pix9, IFF_PNG);  /* 11 */
-    pixDisplayWithTitle(pix9, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix9, 100, 100, NULL, rp->diag_spec);
 
     lept_free(data);
     pixDestroy(&pix1);

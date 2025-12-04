@@ -97,7 +97,7 @@ L_REGPARAMS* rp;
     set = l_asetCreateFromSarray(sa2);
     s1 = l_asetSize(set);
     regTestCompareValues(rp, string_set, s1, 0);  /* 0 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("String operations\n  c1 = %d, c2 = %d\n", c1, c2);
         lept_stderr("  aset: size of set without dups: %d\n", s1);
     }
@@ -106,40 +106,40 @@ L_REGPARAMS* rp;
     c1 = sarrayGetCount(sa3);
     sarrayDestroy(&sa3);
     regTestCompareValues(rp, string_set, c1, 0);  /* 1 */
-    if (rp->display) lept_stderr("  aset: size without dups = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  aset: size without dups = %d\n", c1);
     sarrayIntersectionByAset(sa1, sa2, &sa3);
     c1 = sarrayGetCount(sa3);
     sarrayDestroy(&sa3);
     regTestCompareValues(rp, string_intersection, c1, 1);  /* 2 */
-    if (rp->display) lept_stderr("  aset: intersection size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  aset: intersection size = %d\n", c1);
     sarrayUnionByAset(sa1, sa2, &sa3);
     c1 = sarrayGetCount(sa3);
     sarrayDestroy(&sa3);
     regTestCompareValues(rp, string_union, c1, 0);  /* 3 */
-    if (rp->display) lept_stderr("  aset: union size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  aset: union size = %d\n", c1);
 
         /* Test string hashing with hashmap */
     hmap = l_hmapCreateFromSarray(sa1);
     c1 = hmap->nitems;
     regTestCompareValues(rp, string_set, c1, 0);  /* 4 */
-    if (rp->display) lept_stderr("  hmap: set size without dups: %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: set size without dups: %d\n", c1);
     l_hmapDestroy(&hmap);
 
     sarrayRemoveDupsByHmap(sa2, &sa3, NULL);
     c1 = sarrayGetCount(sa3);
     sarrayDestroy(&sa3);
     regTestCompareValues(rp, string_set, c1, 0);  /* 5 */
-    if (rp->display) lept_stderr("  hmap: size without dups = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: size without dups = %d\n", c1);
     sarrayIntersectionByHmap(sa1, sa2, &sa3);
     c1 = sarrayGetCount(sa3);
     sarrayDestroy(&sa3);
     regTestCompareValues(rp, string_intersection, c1, 1);  /* 6 */
-    if (rp->display) lept_stderr("  hmap: intersection size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: intersection size = %d\n", c1);
     sarrayUnionByHmap(sa1, sa2, &sa3);
     c1 = sarrayGetCount(sa3);
     sarrayDestroy(&sa3);
     regTestCompareValues(rp, string_union, c1, 0);  /* 7 */
-    if (rp->display) lept_stderr("  hmap: union size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: union size = %d\n", c1);
     sarrayDestroy(&sa3);
     sarrayDestroy(&sa0);
     sarrayDestroy(&sa1);
@@ -158,7 +158,7 @@ L_REGPARAMS* rp;
     s1 = l_asetSize(set);
     l_asetDestroy(&set);
     regTestCompareValues(rp, pta_set, s1, 0);  /* 8 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("Pt array operations\n  c1 = %d, c2 = %d\n", c1, c2);
         lept_stderr("  aset: size of set without dups: %d\n", s1);
     }
@@ -166,39 +166,39 @@ L_REGPARAMS* rp;
     c1 = ptaGetCount(pta3);
     ptaDestroy(&pta3);
     regTestCompareValues(rp, pta_set, c1, 0);  /* 9 */
-    if (rp->display) lept_stderr("  aset: size without dups = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  aset: size without dups = %d\n", c1);
     ptaIntersectionByAset(pta1, pta2, &pta3);
     c1 = ptaGetCount(pta3);
     ptaDestroy(&pta3);
     regTestCompareValues(rp, pta_intersection, c1, 1);  /* 10 */
-    if (rp->display) lept_stderr("  aset: intersection size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  aset: intersection size = %d\n", c1);
     ptaUnionByAset(pta1, pta2, &pta3);
     c1 = ptaGetCount(pta3);
     ptaDestroy(&pta3);
     regTestCompareValues(rp, pta_union, c1, 0);  /* 11 */
-    if (rp->display) lept_stderr("  aset: union size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  aset: union size = %d\n", c1);
 
         /* Test point hashing with hashmap */
     hmap = l_hmapCreateFromPta(pta2);
     c1 = hmap->nitems;
     regTestCompareValues(rp, pta_set, c1, 0);  /* 12 */
-    if (rp->display) lept_stderr("  hmap: set size without dups: %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: set size without dups: %d\n", c1);
     l_hmapDestroy(&hmap);
     ptaRemoveDupsByHmap(pta2, &pta3, NULL);
     c1 = ptaGetCount(pta3);
     ptaDestroy(&pta3);
     regTestCompareValues(rp, pta_set, c1, 0);  /* 13 */
-    if (rp->display) lept_stderr("  hmap: size without dups = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: size without dups = %d\n", c1);
     ptaIntersectionByHmap(pta1, pta2, &pta3);
     c1 = ptaGetCount(pta3);
     ptaDestroy(&pta3);
     regTestCompareValues(rp, pta_intersection, c1, 1);  /* 14 */
-    if (rp->display) lept_stderr("  hmap: intersection size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: intersection size = %d\n", c1);
     ptaUnionByHmap(pta1, pta2, &pta3);
     c1 = ptaGetCount(pta3);
     ptaDestroy(&pta3);
     regTestCompareValues(rp, pta_union, c1, 0);  /* 15 */
-    if (rp->display) lept_stderr("  hmap: union size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: union size = %d\n", c1);
     ptaDestroy(&pta0);
     ptaDestroy(&pta1);
     ptaDestroy(&pta2);
@@ -218,7 +218,7 @@ L_REGPARAMS* rp;
     s1 = l_asetSize(set);
     l_asetDestroy(&set);
     regTestCompareValues(rp, da_set, s1, 0);  /* 16 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("Double array operations\n  c1 = %d, c2 = %d\n", c1, c2);
         lept_stderr("  aset: size of set without dups: %d\n", s1);
     }
@@ -226,39 +226,39 @@ L_REGPARAMS* rp;
     c1 = l_dnaGetCount(da3);
     l_dnaDestroy(&da3);
     regTestCompareValues(rp, da_set, c1, 0);  /* 17 */
-    if (rp->display) lept_stderr("  aset: size without dups = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  aset: size without dups = %d\n", c1);
     l_dnaIntersectionByAset(da1, da2, &da3);
     c1 = l_dnaGetCount(da3);
     l_dnaDestroy(&da3);
     regTestCompareValues(rp, da_intersection, c1, 1);  /* 18 */
-    if (rp->display) lept_stderr("  aset: intersection size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  aset: intersection size = %d\n", c1);
     l_dnaUnionByAset(da1, da2, &da3);
     c1 = l_dnaGetCount(da3);
     l_dnaDestroy(&da3);
     regTestCompareValues(rp, da_union, c1, 0);  /* 19 */
-    if (rp->display) lept_stderr("  aset: union size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  aset: union size = %d\n", c1);
 
         /* Test dna hashing with hashmap */
     hmap = l_hmapCreateFromDna(da2);
     c1 = hmap->nitems;
     regTestCompareValues(rp, da_set, c1, 0);  /* 20 */
-    if (rp->display) lept_stderr("  hmap: set size without dups: %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: set size without dups: %d\n", c1);
     l_hmapDestroy(&hmap);
     l_dnaRemoveDupsByHmap(da2, &da3, NULL);
     c1 = l_dnaGetCount(da3);
     l_dnaDestroy(&da3);
     regTestCompareValues(rp, da_set, c1, 0);  /* 21 */
-    if (rp->display) lept_stderr("  hmap: size without dups = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: size without dups = %d\n", c1);
     l_dnaIntersectionByHmap(da1, da2, &da3);
     c1 = l_dnaGetCount(da3);
     l_dnaDestroy(&da3);
     regTestCompareValues(rp, da_intersection, c1, 1);  /* 22 */
-    if (rp->display) lept_stderr("  hmap: intersection size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: intersection size = %d\n", c1);
     l_dnaUnionByHmap(da1, da2, &da3);
     c1 = l_dnaGetCount(da3);
     l_dnaDestroy(&da3);
     regTestCompareValues(rp, da_union, c1, 0);  /* 23 */
-    if (rp->display) lept_stderr("  hmap: union size = %d\n", c1);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  hmap: union size = %d\n", c1);
     l_dnaDestroy(&da0);
     l_dnaDestroy(&da1);
     l_dnaDestroy(&da2);
@@ -286,7 +286,7 @@ L_REGPARAMS* rp;
     l_dnaIntersectionByHmap(da3, da4, &da5);
     c5 = l_dnaGetCount(da5);
     regTestCompareValues(rp, c4, c5, 0);  /* 25 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("\nc1 = %d, c2 = %d\n", c1, c2);
         lept_stderr("c3 = %d, c4 = %d, c5 = %d\n", c3, c4, c5);
         l_dnaWriteMem(&data1, &size1, da4);
@@ -306,7 +306,7 @@ L_REGPARAMS* rp;
     pixCountRGBColors(pix1, 1, &c2);
     regTestCompareValues(rp, 42427, c1, 0);  /* 26 */
     regTestCompareValues(rp, 42427, c2, 0);  /* 27 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("Color count using hashmap: %d\n", c1);
         lept_stderr("Color count using aset: %d\n", c2);
     }

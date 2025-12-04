@@ -107,7 +107,7 @@ L_REGPARAMS* rp;
             /* Analyze profiles for left/right edges  */
         GetLeftCut(narl, nart, nait, w, &left);
         GetRightCut(narl, nart, nait, w, &right);
-        if (rp->display)
+        if (leptIsInDisplayMode(rp->diag_spec))
             lept_stderr("left = %d, right = %d\n", left, right);
 
             /* Output visuals */
@@ -118,8 +118,8 @@ L_REGPARAMS* rp;
         pixd = pixaDisplayTiledInColumns(pixa2, 2, 1.0, 25, 0);
         pixaDestroy(&pixa2);
         pixaAddPix(pixa1, pixd, L_INSERT);
-        pixDisplayWithTitle(pixd, 800 * i, 100, NULL, rp->display);
-        if (rp->display) {
+        pixDisplayWithTitle(pixd, 800 * i, 100, NULL, rp->diag_spec);
+        if (leptIsInDisplayMode(rp->diag_spec)) {
             lept_stderr("narl:");
             numaWriteStderr(narl);
             lept_stderr("nart:");
@@ -160,7 +160,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa1, pix2, L_INSERT);
     pixd = pixaDisplayTiledInRows(pixa1, 32, 1000, 1.0, 0, 30, 2);
     pixWrite("/tmp/lept/crop/profiles.png", pixd, IFF_PNG);
-    pixDisplayWithTitle(pixd, 0, 700, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 0, 700, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
     pixaDestroy(&pixa1);
@@ -177,7 +177,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa1, pix3, L_INSERT);
     pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix4, 325, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 325, 700, NULL, rp->diag_spec);
     boxDestroy(&box1);
     boxDestroy(&box2);
     pixDestroy(&pix4);
@@ -193,7 +193,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa1, pix3, L_INSERT);
     pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix4, 975, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 975, 700, NULL, rp->diag_spec);
     boxDestroy(&box1);
     boxDestroy(&box2);
     pixDestroy(&pix4);
@@ -209,7 +209,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa1, pix3, L_INSERT);
     pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 8 */
-    pixDisplayWithTitle(pix4, 1600, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 1600, 700, NULL, rp->diag_spec);
     boxDestroy(&box1);
     boxDestroy(&box2);
     pixDestroy(&pix4);

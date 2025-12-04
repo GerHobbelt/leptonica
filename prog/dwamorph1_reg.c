@@ -88,7 +88,7 @@ L_REGPARAMS* rp;
         pixEqual(pixt1, pixt2, &same);
 
 	if (same == 1) {
-            if (rp->display)
+            if (leptIsInDisplayMode(rp->diag_spec))
                 lept_stderr("dilations are identical for sel %d (%s)\n",
                             i, selname);
 	} else {
@@ -105,14 +105,14 @@ L_REGPARAMS* rp;
 	    /*  ---------  erosion with asymmetric b.c  ----------*/
 
         resetMorphBoundaryCondition(ASYMMETRIC_MORPH_BC);
-        if (rp->display) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
 
 	pixt1 = pixErode(NULL, pixs, sel);
         pixt2 = pixMorphDwa_3(NULL, pixs, L_MORPH_ERODE, selname);
         pixEqual(pixt1, pixt2, &same);
 
 	if (same == 1) {
-            if (rp->display)
+            if (leptIsInDisplayMode(rp->diag_spec))
                 lept_stderr("erosions are identical for sel %d (%s)\n",
                             i, selname);
 	} else {
@@ -129,14 +129,14 @@ L_REGPARAMS* rp;
 	    /*  ---------  erosion with symmetric b.c  ----------*/
 
         resetMorphBoundaryCondition(SYMMETRIC_MORPH_BC);
-        if (rp->display) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
 
 	pixt1 = pixErode(NULL, pixs, sel);
         pixt2 = pixMorphDwa_3(NULL, pixs, L_MORPH_ERODE, selname);
         pixEqual(pixt1, pixt2, &same);
 
 	if (same == 1) {
-            if (rp->display)
+            if (leptIsInDisplayMode(rp->diag_spec))
                 lept_stderr("erosions are identical for sel %d (%s)\n",
                             i, selname);
 	} else {
@@ -153,14 +153,14 @@ L_REGPARAMS* rp;
 	    /*  ---------  opening with asymmetric b.c  ----------*/
 
         resetMorphBoundaryCondition(ASYMMETRIC_MORPH_BC);
-        if (rp->display) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
 
 	pixt1 = pixOpen(NULL, pixs, sel);
         pixt2 = pixMorphDwa_3(NULL, pixs, L_MORPH_OPEN, selname);
         pixEqual(pixt1, pixt2, &same);
 
 	if (same == 1) {
-            if (rp->display)
+            if (leptIsInDisplayMode(rp->diag_spec))
                 lept_stderr("openings are identical for sel %d (%s)\n",
                             i, selname);
 	} else {
@@ -177,14 +177,14 @@ L_REGPARAMS* rp;
 	    /*  ---------  opening with symmetric b.c  ----------*/
 
         resetMorphBoundaryCondition(SYMMETRIC_MORPH_BC);
-        if (rp->display) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
 
 	pixt1 = pixOpen(NULL, pixs, sel);
         pixt2 = pixMorphDwa_3(NULL, pixs, L_MORPH_OPEN, selname);
         pixEqual(pixt1, pixt2, &same);
 
 	if (same == 1) {
-            if (rp->display)
+            if (leptIsInDisplayMode(rp->diag_spec))
                 lept_stderr("openings are identical for sel %d (%s)\n",
                             i, selname);
 	} else {
@@ -201,14 +201,14 @@ L_REGPARAMS* rp;
 	    /*  ---------  safe closing with asymmetric b.c  ----------*/
 
         resetMorphBoundaryCondition(ASYMMETRIC_MORPH_BC);
-        if (rp->display) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
 
 	pixt1 = pixCloseSafe(NULL, pixs, sel);  /* must use safe version */
         pixt2 = pixMorphDwa_3(NULL, pixs, L_MORPH_CLOSE, selname);
         pixEqual(pixt1, pixt2, &same);
 
 	if (same == 1) {
-            if (rp->display)
+            if (leptIsInDisplayMode(rp->diag_spec))
                 lept_stderr("closings are identical for sel %d (%s)\n",
                             i, selname);
 	} else {
@@ -225,14 +225,14 @@ L_REGPARAMS* rp;
 	    /*  ---------  safe closing with symmetric b.c  ----------*/
 
         resetMorphBoundaryCondition(SYMMETRIC_MORPH_BC);
-        if (rp->display) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("MORPH_BC = %d ... ", MORPH_BC);
 
 	pixt1 = pixClose(NULL, pixs, sel);  /* safe version not required */
         pixt2 = pixMorphDwa_3(NULL, pixs, L_MORPH_CLOSE, selname);
         pixEqual(pixt1, pixt2, &same);
 
 	if (same == 1) {
-            if (rp->display)
+            if (leptIsInDisplayMode(rp->diag_spec))
                 lept_stderr("closings are identical for sel %d (%s)\n",
                 i, selname);
 	} else {

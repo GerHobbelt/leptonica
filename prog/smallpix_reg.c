@@ -234,7 +234,7 @@ PIX  *pix1;
 
     pix1 = pixaDisplayTiledInColumns(*ppixa, 12, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);
-    pixDisplayWithTitle(pix1, x, y, NULL, rp->display);
+    pixDisplayWithTitle(pix1, x, y, NULL, rp->diag_spec);
     pixaDestroy(ppixa);
     pixDestroy(&pix1);
 }

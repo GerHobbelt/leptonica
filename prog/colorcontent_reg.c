@@ -72,14 +72,14 @@ PIXA         *pixa1;
     pix1 = pixRead(DEMOPATH("fish24.jpg"));
     pixGetMostPopulatedColors(pix1, 2, 3, 10, &colors, NULL);
     pix2 = pixDisplayColorArray(colors, 10, 200, 5, 6);
-    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
     lept_free(colors);
     pixDestroy(&pix2);
 
         /* Do a simple color quantization with sigbits = 2 */
     pix2 = pixSimpleColorQuantize(pix1, 2, 3, 10);
-    pixDisplayWithTitle(pix2, 0, 400, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 0, 400, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     pix3 = pixRemoveColormap(pix2, REMOVE_CMAP_TO_FULL_COLOR);
     regTestComparePix(rp, pix2, pix3);  /* 2 */
@@ -96,7 +96,7 @@ PIXA         *pixa1;
     pixNumColors(pix1, 1, &ncolors);  /* >255, so should give 0 */
     regTestCompareValues(rp, ncolors, 132165, 10000.0);  /* 4 */
     pix2 = pixSimpleColorQuantize(pix1, 3, 3, 20);
-    pixDisplayWithTitle(pix2, 1000, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 1000, 0, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 5 */
     ncolors = pixcmapGetCount(pixGetColormap(pix2));
     regTestCompareValues(rp, ncolors, 20, 0.0);  /* 6 */
@@ -119,7 +119,7 @@ PIXA         *pixa1;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 8 */
     pix3 = pixaDisplayTiledInColumns(pixa1, 5, 0.3, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pix3, 1000, 500, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 1000, 500, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -135,7 +135,7 @@ PIXA         *pixa1;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 11 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix3, 0, 1300, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 0, 1300, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -173,7 +173,7 @@ PIXA         *pixa1;
     pixaConvertToPdf(pixa1, 0, 0.5, L_FLATE_ENCODE, 0, NULL, fname);
     regTestCheckFile(rp, fname);  /* 18 */
     lept_stderr("Wrote %s\n", fname);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix8 = pixaDisplayTiledInColumns(pixa1, 2, 0.5, 15, 2);
         pixDisplay(pix8, 800, 1300);
         pixDestroy(&pix8);

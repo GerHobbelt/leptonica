@@ -745,7 +745,7 @@ int main(int argc, const char **argv)
 		lept_stderr("IMAGE: pixs: %s\n", pix_info.filepath);
 
 		PIX* pixs = pixClone(pix_info.image);
-		pixDisplayWithTitle(pixs, 50, 0, "pixs", rp->display);
+		pixDisplayWithTitle(pixs, 50, 0, "pixs", rp->diag_spec);
 		pixDestroy(&pixs);
 	}
 
@@ -880,7 +880,7 @@ case IFF_TIFF_JPEG:
 	pixd = pixaDisplayTiledInColumns(pixa2, 2, 1.0, 25, 0);
 	pixaDestroy(&pixa2);
 	pixaAddPix(pixa1, pixd, L_INSERT);
-	pixDisplayWithTitle(pixd, 800 * i, 100, NULL, rp->display);
+	pixDisplayWithTitle(pixd, 800 * i, 100, NULL, rp->diag_spec);
 	pixDestroy(&pixs);
 	pixDestroy(&pixg);
 	pixDestroy(&pixgi);
@@ -906,7 +906,7 @@ pixaAddPix(pixa1, pix2, L_INSERT);
 pixaAddPix(pixa1, pix3, L_INSERT);
 pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
 regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 6 */
-pixDisplayWithTitle(pix4, 325, 700, NULL, rp->display);
+pixDisplayWithTitle(pix4, 325, 700, NULL, rp->diag_spec);
 boxDestroy(&box1);
 boxDestroy(&box2);
 pixDestroy(&pix4);
@@ -922,7 +922,7 @@ pixaAddPix(pixa1, pix2, L_INSERT);
 pixaAddPix(pixa1, pix3, L_INSERT);
 pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
 regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 7 */
-pixDisplayWithTitle(pix4, 975, 700, NULL, rp->display);
+pixDisplayWithTitle(pix4, 975, 700, NULL, rp->diag_spec);
 boxDestroy(&box1);
 boxDestroy(&box2);
 pixDestroy(&pix4);
@@ -938,7 +938,7 @@ pixaAddPix(pixa1, pix2, L_INSERT);
 pixaAddPix(pixa1, pix3, L_INSERT);
 pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
 regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 8 */
-pixDisplayWithTitle(pix4, 1600, 700, NULL, rp->display);
+pixDisplayWithTitle(pix4, 1600, 700, NULL, rp->diag_spec);
 boxDestroy(&box1);
 boxDestroy(&box2);
 pixDestroy(&pix4);
@@ -2625,7 +2625,6 @@ PIX*            pix
 PIX*            pix2
 PIX*            pixs
 char*           debugdir
-char*           debugfile
 char*           dirout
 char*           edgevals
 char*           fileout

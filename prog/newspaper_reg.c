@@ -81,21 +81,21 @@ L_REGPARAMS* rp;
     pixt = pixScale(pix2, 0.5, 0.5);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_TIFF_G4);  /* 1 */
-    pixDisplayWithTitle(pixt, 0, 0, "open vertical lines", rp->display);
+    pixDisplayWithTitle(pixt, 0, 0, "open vertical lines", rp->diag_spec);
 
         /* Seedfill back to get those lines in their entirety */
     pix3 = pixSeedfillBinary(NULL, pix2, pix1, 8);
     pixt = pixScale(pix3, 0.5, 0.5);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_TIFF_G4);  /* 2 */
-    pixDisplayWithTitle(pixt, 300, 0, "seedfill vertical", rp->display);
+    pixDisplayWithTitle(pixt, 300, 0, "seedfill vertical", rp->diag_spec);
 
         /* Remove the vertical lines (and some of the images) */
     pixXor(pix2, pix1, pix3);
     pixt = pixScale(pix2, 0.5, 0.5);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_TIFF_G4);  /* 3 */
-    pixDisplayWithTitle(pixt, 600, 0, "remove vertical lines", rp->display);
+    pixDisplayWithTitle(pixt, 600, 0, "remove vertical lines", rp->diag_spec);
 
         /* Open out the horizontal lines */
     pix4 = pixMorphSequence(pix2, "o50.1", 0);
@@ -107,14 +107,14 @@ L_REGPARAMS* rp;
     pixt = pixScale(pix5, 0.5, 0.5);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_TIFF_G4);  /* 4 */
-    pixDisplayWithTitle(pixt, 900, 0, "seedfill horizontal", rp->display);
+    pixDisplayWithTitle(pixt, 900, 0, "seedfill horizontal", rp->diag_spec);
 
         /* Remove the horizontal lines */
     pixXor(pix4, pix2, pix5);
     pixt = pixScale(pix4, 0.5, 0.5);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_TIFF_G4);  /* 5 */
-    pixDisplayWithTitle(pixt, 1200, 0, "remove horiz lines", rp->display);
+    pixDisplayWithTitle(pixt, 1200, 0, "remove horiz lines", rp->diag_spec);
 
         /* Invert and identify vertical gutters between text columns */
     pix6 = pixReduceRankBinaryCascade(pix4, 1, 1, 0, 0);
@@ -122,12 +122,12 @@ L_REGPARAMS* rp;
     pixt = pixScale(pix6, 2.0, 2.0);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_TIFF_G4);  /* 6 */
-    pixDisplayWithTitle(pixt, 1500, 0, NULL, rp->display);
+    pixDisplayWithTitle(pixt, 1500, 0, NULL, rp->diag_spec);
     pix7 = pixMorphSequence(pix6, "o1.50", 0);
     pixt = pixScale(pix7, 2.0, 2.0);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_TIFF_G4);  /* 7 */
-    pixDisplayWithTitle(pixt, 0, 300, "vertical gutters", rp->display);
+    pixDisplayWithTitle(pixt, 0, 300, "vertical gutters", rp->diag_spec);
     pix8 = pixExpandBinaryPower2(pix7, 4);  /* gutter mask */
     regTestWritePixAndCheck(rp, pix8, IFF_TIFF_G4);  /* 8 */
 
@@ -138,7 +138,7 @@ L_REGPARAMS* rp;
     pixt = pixScale(pix10, 0.5, 0.5);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_TIFF_G4);  /* 9 */
-    pixDisplayWithTitle(pixt, 300, 300, "solidify text", rp->display);
+    pixDisplayWithTitle(pixt, 300, 300, "solidify text", rp->diag_spec);
 
         /* Show stuff under this mask */
     pixGetDimensions(pix10, &w, &h, NULL);
@@ -148,7 +148,7 @@ L_REGPARAMS* rp;
     pixt = pixScale(pix11, 0.5, 0.5);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pixt, 600, 300, "stuff under mask1", rp->display);
+    pixDisplayWithTitle(pixt, 600, 300, "stuff under mask1", rp->diag_spec);
     boxaDestroy(&boxa);
     pixaDestroy(&pixa2);
 
@@ -159,7 +159,7 @@ L_REGPARAMS* rp;
     pixt = pixScale(pix11, 0.5, 0.5);
     pixaAddPix(pixa1, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pixt, 900, 300, "stuff under mask2", rp->display);
+    pixDisplayWithTitle(pixt, 900, 300, "stuff under mask2", rp->diag_spec);
     pixaConvertToPdf(pixa1, 75, 1.0, 0, 0, "Segmentation: newspaper_reg",
                      "/tmp/lept/regout/newspaper.pdf");
     L_INFO("Output pdf: /tmp/lept/regout/newspaper.pdf\n", rp->testname);

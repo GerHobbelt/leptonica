@@ -92,7 +92,7 @@ L_REGPARAMS* rp;
     TranslateAndSave1(pixa, 32, pix3, 20, 35);
     pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixd, 0, 0, "trans0", rp->display);
+    pixDisplayWithTitle(pixd, 0, 0, "trans0", rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
@@ -101,7 +101,7 @@ L_REGPARAMS* rp;
     TranslateAndSave1(pixa, 8, pix4, 35, 20);
     pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixd, 250, 0, "trans1", rp->display);
+    pixDisplayWithTitle(pixd, 250, 0, "trans1", rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
@@ -116,7 +116,7 @@ L_REGPARAMS* rp;
     TranslateAndSave2(pixa, pix7, 25, 25);
     pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pixd, 500, 0, "trans2", rp->display);
+    pixDisplayWithTitle(pixd, 500, 0, "trans2", rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 

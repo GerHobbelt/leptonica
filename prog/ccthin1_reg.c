@@ -65,7 +65,7 @@ L_REGPARAMS* rp;
     sela4 = sela4ccThin(NULL);
     pix1 = selaDisplayInPix(sela4, 35, 3, 15, 3);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 400, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 400, 0, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela4);
 
@@ -73,7 +73,7 @@ L_REGPARAMS* rp;
     sela8 = sela8ccThin(NULL);
     pix1 = selaDisplayInPix(sela8, 35, 3, 15, 3);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 850, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 850, 0, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela8);
 
@@ -81,7 +81,7 @@ L_REGPARAMS* rp;
     sela48 = sela4and8ccThin(NULL);
     pix1 = selaDisplayInPix(sela48, 35, 3, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 1300, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 1300, 0, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela48);
 
@@ -114,7 +114,7 @@ L_REGPARAMS* rp;
     selaAddSel(sela4, sel3, "sel_4_3_270", L_INSERT);
     pix1 = selaDisplayInPix(sela4, 35, 3, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix1, 400, 500, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 400, 500, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela);
     selaDestroy(&sela4);
@@ -156,13 +156,13 @@ L_REGPARAMS* rp;
     selaAddSel(sela8, sel3, "sel_8_6_270", L_INSERT);
     pix1 = selaDisplayInPix(sela8, 35, 3, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 1000, 500, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 1000, 500, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela);
     selaDestroy(&sela8);
 
         /* Optional display */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         //lept_mkdir("/lept/thin");
         lept_stderr("Writing to: /tmp/lept/thin/ccthin1-1.pdf");
         pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "Thin 1 Sels",
@@ -198,9 +198,9 @@ L_REGPARAMS* rp;
         /* Display tiled */
     pix1 = pixaDisplayTiledAndScaled(pixa, 8, 500, 1, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("Writing to: /tmp/lept/thin/ccthin1-2.pdf");
         pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "Thin 1 Results",
                          "/tmp/lept/thin/ccthin1-2.pdf");

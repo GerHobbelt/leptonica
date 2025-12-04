@@ -85,7 +85,7 @@ L_REGPARAMS* rp;
         pix5 = pixBlendWithGrayMask(pix1, pix4, NULL, 0, 0);
         pixaAddPix(pixa, pix5, L_INSERT);
         regTestWritePixAndCheck(rp, pix5, IFF_JFIF_JPEG);  /* 0 - 2 */
-        pixDisplayWithTitle(pix5, 200 * i, 0, NULL, rp->display);
+        pixDisplayWithTitle(pix5, 200 * i, 0, NULL, rp->diag_spec);
         pixDestroy(&pix2);
         pixDestroy(&pix3);
         pixDestroy(&pix4);
@@ -105,7 +105,7 @@ L_REGPARAMS* rp;
         pix5 = pixBlendWithGrayMask(pix1, pix4, NULL, 0, 0);
         pixaAddPix(pixa, pix5, L_INSERT);
         regTestWritePixAndCheck(rp, pix5, IFF_JFIF_JPEG);  /* 3 - 4 */
-        pixDisplayWithTitle(pix5, 600 + 200 * i, 0, NULL, rp->display);
+        pixDisplayWithTitle(pix5, 600 + 200 * i, 0, NULL, rp->diag_spec);
         pixDestroy(&pix2);
         pixDestroy(&pix3);
         pixDestroy(&pix4);
@@ -122,8 +122,8 @@ L_REGPARAMS* rp;
     pix5 = AlphaRectangle(w, h, 1.0);
     pix6 = pixBlendWithGrayMask(pix4, pix2, pix5, 0, 0);
     pix7 = pixBlendWithGrayMask(pix2, pix4, pix5, 0, 0);
-    pixDisplayWithTitle(pix6, 1000, 0, NULL, rp->display);
-    pixDisplayWithTitle(pix7, 1000, 500, NULL, rp->display);
+    pixDisplayWithTitle(pix6, 1000, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix7, 1000, 500, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix4, IFF_JFIF_JPEG);  /* 5 */
     regTestWritePixAndCheck(rp, pix5, IFF_JFIF_JPEG);  /* 6 */
     regTestWritePixAndCheck(rp, pix6, IFF_JFIF_JPEG);  /* 7 */

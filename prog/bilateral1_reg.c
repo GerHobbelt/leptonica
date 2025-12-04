@@ -137,7 +137,7 @@ PIXA  *pixa;
     pixaAddPix(pixa, pix, L_INSERT);
     pixd = pixaDisplayTiledInRows(pixa, 32, width, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
     return;

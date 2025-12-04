@@ -56,10 +56,13 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("lept/partify");
 
+	leptDebugSetFilenameForPrefix(rp->diag_spec, "debug", 0);
 #if 0
-    partifyFiles(".", "bois", 3, "/tmp/lept/partify/bois", "/tmp/lept/partify/debug.pdf");
+	leptDebugReplaceEntireFilePathPart(rp->diag_spec, "bois");
+	partifyFiles(".", "bois", 3, rp->diag_spec);
 #else
-    partifyFiles(".", "ortiz", 5, "/tmp/lept/partify/ortiz", "/tmp/lept/partify/debug.pdf");
+	leptDebugReplaceEntireFilePathPart(rp->diag_spec, "ortiz");
+	partifyFiles(".", "ortiz", 5, rp->diag_spec);
 #endif
     return 0;
 }

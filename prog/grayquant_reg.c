@@ -85,7 +85,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 2 */
     pixaAddPix(pixa, pix3, L_INSERT);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 3 */
-    if (rp->display) pixcmapWriteStream(stderr, pixGetColormap(pix3));
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, pixGetColormap(pix3));
     regTestComparePix(rp, pix1, pix3);      /* 4 */
 
         /* threshold to 2 bpp, with and without colormap */
@@ -98,7 +98,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 6 */
     pixaAddPix(pixa, pix3, L_INSERT);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 7 */
-    if (rp->display) pixcmapWriteStream(stderr, pixGetColormap(pix3));
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, pixGetColormap(pix3));
     regTestComparePix(rp, pix1, pix3);      /* 8 */
 
     pix1 = pixThresholdTo2bpp(pixs, 3, 1);
@@ -118,7 +118,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 12 */
     pixaAddPix(pixa, pix3, L_INSERT);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 13 */
-    if (rp->display) pixcmapWriteStream(stderr, pixGetColormap(pix3));
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, pixGetColormap(pix3));
 
         /* threshold on 8 bpp, with and without colormap */
     pix1 = pixThresholdOn8bpp(pixs, 9, 1);
@@ -130,11 +130,11 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 15 */
     pixaAddPix(pixa, pix3, L_INSERT);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 16 */
-    if (rp->display) pixcmapWriteStream(stderr, pixGetColormap(pix3));
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, pixGetColormap(pix3));
     regTestComparePix(rp, pix1, pix3);      /* 17 */
 
         /* Optional display */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         //lept_mkdir("lept/gquant");
         pix1 = pixaDisplayTiled(pixa, 2000, 0, 20);
         pixDisplay(pix1, 100, 100);
@@ -154,13 +154,13 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_COPY);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18 */
     cmap = pixGetColormap(pix1);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     box = boxCreate(278, 35, 122, 50);
     pixSetSelectCmap(pix1, box, 2, 255, 255, 100);
     boxDestroy(&box);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 19 */
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
 
         /* Test pixThreshold8() */
     pix1 = pixThreshold8(pixs, 1, 2, 1);  /* cmap */
@@ -177,7 +177,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 22 */
     cmap = pixGetColormap(pix1);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     boxDestroy(&box);
 
 
@@ -191,7 +191,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 24 */
     cmap = pixGetColormap(pix1);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     boxDestroy(&box);
 
     pix1 = pixThreshold8(pixs, 4, 6, 0);  /* no cmap */
@@ -214,10 +214,10 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 27 */
     boxDestroy(&box);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
 
         /* Optional display */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixaDisplayTiled(pixa, 2000, 0, 20);
         pixDisplay(pix1, 200, 100);
         pixWrite("/tmp/lept/gquant/mosaic2.png", pix1, IFF_PNG);
@@ -243,7 +243,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix3, L_INSERT);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 30 */
     cmap = pixGetColormap(pix3);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     boxDestroy(&box);
 
         /* Thresholding to 4 bpp (highlight); use pix1 from above */
@@ -260,7 +260,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix2, L_INSERT);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 31 */
     cmap = pixGetColormap(pix2);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     pix3 = pixReduceRankBinaryCascade(pixs, 2, 2, 0, 0);
     pixaAddPix(pixa, pix3, L_INSERT);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 32 */
@@ -315,7 +315,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 39 */
 
         /* Optional display */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixaDisplayTiled(pixa, 2000, 0, 20);
         pixDisplay(pix1, 300, 100);
         pixWrite("/tmp/lept/gquant/mosaic3.png", pix1, IFF_PNG);
@@ -339,7 +339,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 42 */
     cmap = pixGetColormap(pix1);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     pix1 = pixThresholdTo4bpp(pixs, 11, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 43 */
@@ -353,7 +353,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 45 */
     cmap = pixGetColormap(pix1);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     str = "38 60 75 90 110 130 155 185 208 239";
     pix1 = pixThresholdGrayArb(pixs, str, 8, 0, 0, 0);
     pixaAddPix(pixa, pix1, L_INSERT);
@@ -367,14 +367,14 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 48 */
     cmap = pixGetColormap(pix1);
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     str = "38 60 75 90 110 130 155 185 208 239";
     pix1 = pixThresholdGrayArb(pixs, str, 4, 1, 0, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 49 */
 
         /* Optional display */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixaDisplayTiled(pixa, 2000, 0, 20);
         pixDisplay(pix1, 400, 100);
         pixWrite("/tmp/lept/gquant/mosaic4.png", pix1, IFF_PNG);
@@ -382,7 +382,7 @@ L_REGPARAMS* rp;
     }
     pixaDestroy(&pixa);
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
             /* Upscale 2x and threshold to 1 bpp */
         pixs = pixRead(DEMOPATH("test8.jpg"));
         startTimer();

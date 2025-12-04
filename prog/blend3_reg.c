@@ -65,32 +65,32 @@ L_REGPARAMS* rp;
     pixt = BlendTest("marge.jpg", "feyn-word.tif", 0.5);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 0 */
-    pixDisplayWithTitle(pixt, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pixt, 0, 0, NULL, rp->diag_spec);
 
     pixt = BlendTest("marge.jpg", "weasel8.png", 0.3);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 1 */
-    pixDisplayWithTitle(pixt, 0, 200, NULL, rp->display);
+    pixDisplayWithTitle(pixt, 0, 200, NULL, rp->diag_spec);
 
     pixt = BlendTest("marge.jpg", "weasel8.240c.png", 0.3);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 2 */
-    pixDisplayWithTitle(pixt, 0, 400, NULL, rp->display);
+    pixDisplayWithTitle(pixt, 0, 400, NULL, rp->diag_spec);
 
     pixt = BlendTest("test8.jpg", "feyn-word.tif", 0.5);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 3 */
-    pixDisplayWithTitle(pixt, 0, 600, NULL, rp->display);
+    pixDisplayWithTitle(pixt, 0, 600, NULL, rp->diag_spec);
 
     pixt = BlendTest("test8.jpg", "weasel8.png", 0.5);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 4 */
-    pixDisplayWithTitle(pixt, 0, 800, NULL, rp->display);
+    pixDisplayWithTitle(pixt, 0, 800, NULL, rp->diag_spec);
 
     pixt = BlendTest("test8.jpg", "weasel8.240c.png", 0.6);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 5 */
-    pixDisplayWithTitle(pixt, 0, 1000, NULL, rp->display);
+    pixDisplayWithTitle(pixt, 0, 1000, NULL, rp->diag_spec);
 
     pixd = pixaDisplayTiledInRows(pixa, 32, 1800, 1.0, 0, 20, 2);
     pixWrite("/tmp/lept/regout/blendall.jpg", pixd, IFF_JFIF_JPEG);

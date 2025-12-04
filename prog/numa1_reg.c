@@ -126,9 +126,9 @@ PIXA         *pixa;
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaAddPix(pixa, pix3, L_INSERT);
     pixaAddPix(pixa, pix4, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 0, 0, NULL, 1);
+        pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);
@@ -146,7 +146,7 @@ PIXA         *pixa;
     regTestCompareValues(rp,  706.41, rmsdev,  0.1);    /* 8 */
     regTestCompareValues(rp,  808.15, rankval, 0.1);    /* 9 */
     regTestCompareValues(rp,  0.800,  rank,    0.01);   /* 10 */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("Sin histogram: \n"
                     "  min val  = %7.3f    -- should be -999.00\n"
                     "  max val  = %7.3f    -- should be  999.00\n"
@@ -246,7 +246,7 @@ PIXA         *pixa;
     pix7 = gplotMakeOutputPix(gplot);
     gplotDestroy(&gplot);
     numaFitMax(nay, &yval, nax, &xval);
-    if (rp->display) lept_stderr("max = %f at loc = %f\n", yval, xval);
+    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("max = %f at loc = %f\n", yval, xval);
     pixa = pixaCreate(7);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 12 */
@@ -262,9 +262,9 @@ PIXA         *pixa;
     pixaAddPix(pixa, pix5, L_INSERT);
     pixaAddPix(pixa, pix6, L_INSERT);
     pixaAddPix(pixa, pix7, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 300, 0, NULL, 1);
+        pixDisplayWithTitle(pixd, 300, 0, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);
@@ -314,9 +314,9 @@ PIXA         *pixa;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 19 */
     pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 600, 0, NULL, 1);
+        pixDisplayWithTitle(pixd, 600, 0, NULL, rp->diag_spec);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);

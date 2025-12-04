@@ -103,9 +103,9 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
-    pixDisplayWithTitle(pix2, 0, 300, NULL, rp->display);
-    pixDisplayWithTitle(pix3, 0, 570, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 300, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0, 570, NULL, rp->diag_spec);
     boxaDestroy(&boxa);
     boxDestroy(&box);
     pixDestroy(&pixs);
@@ -135,7 +135,7 @@ L_REGPARAMS* rp;
     }
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1200, 0.7, 0, 30, 3);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix3, 0, 800, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 0, 800, NULL, rp->diag_spec);
     boxDestroy(&box);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -224,7 +224,7 @@ L_REGPARAMS* rp;
 
     pixt = pixaDisplayTiledInColumns(pixa, 1, 0.5, 20, 0);
     regTestWritePixAndCheck(rp, pixt, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pixt, 1000, 0, NULL, rp->display);
+    pixDisplayWithTitle(pixt, 1000, 0, NULL, rp->diag_spec);
     pixDestroy(&pixt);
     pixDestroy(&pixs);
     boxaDestroy(&boxa);
@@ -301,7 +301,7 @@ L_REGPARAMS* rp;
 
     pixt = pixaDisplayTiledInColumns(pixa, 2, 0.5, 20, 0);
     regTestWritePixAndCheck(rp, pixt, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pixt, 1000, 300, NULL, rp->display);
+    pixDisplayWithTitle(pixt, 1000, 300, NULL, rp->diag_spec);
     pixDestroy(&pixt);
     pixDestroy(&pixs);
     boxaDestroy(&boxa);

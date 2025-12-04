@@ -71,7 +71,7 @@ L_REGPARAMS* rp;
     pix1 = pixRotateOrth(pixs, 3);
     pix2 = pixOrientCorrect(pix1, 0.0, 0.0, &upconf, &leftconf,
                             &rotation, 0);
-    if (rp->display)
+    if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("upconf = %7.3f, leftconf = %7.3f, rotation = %d\n",
                     upconf, leftconf, rotation);
     regTestCompareValues(rp, upconf, 2.543, 0.1);  /* 0 */
@@ -114,7 +114,7 @@ L_REGPARAMS* rp;
 
     pix2 = pixaDisplayTiledInColumns(pixa, 2, 0.25, 20, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix2, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pix2);
     pixaDestroy(&pixa);
 

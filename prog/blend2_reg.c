@@ -186,7 +186,7 @@ L_REGPARAMS* rp;
 
         /* Display results */
     pix1 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 40, 2);
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 19 */
     pixDestroy(&pix1);
     pixaDestroy(&pixa);

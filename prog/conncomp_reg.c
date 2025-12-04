@@ -142,7 +142,7 @@ L_REGPARAMS* rp;
     cmap = pixGetColormap(pix1);
     pixcmapResetColor(cmap, 0, 255, 255, 255);  /* reset background to white */
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
-    if (rp->display) pixDisplay(pix1, 100, 0);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixDisplay(pix1, 100, 0);
     boxaDestroy(&boxa1);
     pixDestroy(&pix1);
     pixaDestroy(&pixa1);
@@ -163,7 +163,7 @@ L_REGPARAMS* rp;
     }
     pix3 = pixaDisplayTiledInRows(pixa1, 1, 2500, 1.0, 0, 30, 0);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 18 */
-    pixDisplayWithTitle(pix3, 100, 900, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 100, 900, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix3);
     pixaDestroy(&pixa1);

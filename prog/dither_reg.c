@@ -60,18 +60,18 @@ L_REGPARAMS* rp;
         /* Dither to 1 bpp */
     pix1 = pixDitherToBinary(pixs);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
          /* Dither to 2 bpp, with colormap */
     pix1 = pixDitherTo2bpp(pixs, 1);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 400, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 400, 0, NULL, rp->diag_spec);
 
          /* Dither to 2 bpp, without colormap */
     pix2 = pixDitherTo2bpp(pixs, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix2, 800, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 800, 0, NULL, rp->diag_spec);
     regTestComparePix(rp, pix1, pix2);   /* 3 */
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -79,13 +79,13 @@ L_REGPARAMS* rp;
         /* Dither 2x upscale to 1 bpp */
     pix1 = pixScaleGray2xLIDither(pixs);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 0, 400, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 0, 400, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
         /* Dither 4x upscale to 1 bpp */
     pix1 = pixScaleGray4xLIDither(pixs);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix1, 700, 400, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 700, 400, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
     pixDestroy(&pix);

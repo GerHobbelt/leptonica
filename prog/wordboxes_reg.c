@@ -133,8 +133,8 @@ L_REGPARAMS* rp;
     pix4 = pixRead("/tmp/lept/testboxes/chars.png");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 16 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 17 */
-    pixDisplayWithTitle(pix3, 200, 1000, NULL, rp->display);
-    pixDisplayWithTitle(pix4, 200, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 200, 1000, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 200, 100, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -170,14 +170,14 @@ PIXA  *pixa1;
         pix4 = pixConvertTo32(pixs);
         pixRenderBoxaArb(pix4, boxa2, 2, 255, 0, 0);
         pix5 = pixaDisplayTiledInColumns(pixa1, 1, 1.0, 25, 2);
-        pixDisplayWithTitle(pix5, 200 * index, 0, NULL, rp->display);
+        pixDisplayWithTitle(pix5, 200 * index, 0, NULL, rp->diag_spec);
         boxaDestroy(&boxa1);
         boxaDestroy(&boxa2);
         pixDestroy(&pix3);
         pixDestroy(&pix5);
     }
     regTestWritePixAndCheck(rp, pix4, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix4, 200 * index, 800, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 200 * index, 800, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix4);
@@ -216,7 +216,7 @@ PIXA    *pixa;
     pix3 = pixConvertTo32(pixs);
     pixRenderBoxaArb(pix3, boxa2, 2, 255, 0, 0);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix3, 900, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 900, 0, NULL, rp->diag_spec);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
 
@@ -228,7 +228,7 @@ PIXA    *pixa;
     pixRenderBoxaArb(pix4, boxa2, 2, 255, 0, 0);
     if (regTestComparePix(rp, pix3, pix4)) {
         L_ERROR("pix not the same", "MakeWordBoxes2");
-        pixDisplayWithTitle(pix4, 1200, 0, NULL, rp->display);
+        pixDisplayWithTitle(pix4, 1200, 0, NULL, rp->diag_spec);
     }
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -258,7 +258,7 @@ NUMAA   *naai, *naad;
     pix2 = pixConvertTo32(pixs);
     pixRenderBoxaArb(pix2, boxa1, 2, 255, 0, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix2, 600, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 600, 700, NULL, rp->diag_spec);
     pixDestroy(&pix1);
 
         /* Find the adjacent boxes and their distances */
@@ -287,7 +287,7 @@ NUMAA   *naai, *naad;
         boxaDestroy(&boxa2);
     }
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix3, 1100, 700, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 1100, 700, NULL, rp->diag_spec);
 
     pixDestroy(&pix0);
     pixDestroy(&pix2);

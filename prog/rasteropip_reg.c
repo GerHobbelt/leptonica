@@ -64,7 +64,7 @@ L_REGPARAMS* rp;
            side to the left side. */
     for (j = 0; j < 200; j++)
         pixRasterop(pixs, 20 + j, 20, 1, 250, PIX_SRC, pixs, 250 + j, 20);
-    pixDisplayWithTitle(pixs, 50, 50, "in-place copy", rp->display);
+    pixDisplayWithTitle(pixs, 50, 50, "in-place copy", rp->diag_spec);
 
         /* Copy, in-place and one ROW at a time, from the right
            side to the left side. */
@@ -82,7 +82,7 @@ L_REGPARAMS* rp;
     pixt = pixRemoveBorder(pixs, 40);
     pixd = pixAddMirroredBorder(pixt, 40, 40, 40, 40);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixd, 650, 50, "mirrored border", rp->display);
+    pixDisplayWithTitle(pixd, 650, 50, "mirrored border", rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pixt);
     pixDestroy(&pixd);

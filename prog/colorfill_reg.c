@@ -63,14 +63,14 @@ L_REGPARAMS* rp;
     pix1 = makeSmallTestPix(0x3070A000, 0xA0703000);
     pix2 = pixExpandReplicate(pix1, 15);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->diag_spec);
     pixDestroy(&pix2);
     cf = l_colorfillCreate(pix1, 1, 1);
     pixColorContentByLocation(cf, 0, 0, 0, 70, 15, 3, 1, rp->diag_spec);
     pix2 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     pix3 = pixExpandReplicate(pix2, 10);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix3, 300, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 300, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -102,7 +102,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 6 */
     pixaAddPix(pixa2, pix3, L_INSERT);
     pixaAddPix(pixa2, pix4, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixaDisplayTiledInColumns(pixa2, 5, 1.0, 15, 2);
         pixDisplay(pix1, 0, 400);
         pixDestroy(&pix1);
@@ -126,7 +126,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa2, pix2, L_COPY);
     pixaAddPix(pixa2, pix3, L_INSERT);
     pixaAddPix(pixa2, pix4, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixaDisplayTiledInColumns(pixa2, 3, 0.8, 15, 2);
         pixDisplay(pix1, 0, 650);
         pixDestroy(&pix1);
@@ -143,7 +143,7 @@ L_REGPARAMS* rp;
     pixa2 = pixaCreate(2);
     pixaAddPix(pixa2, pix3, L_INSERT);
     pixaAddPix(pixa2, pix4, L_INSERT);
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pix1 = pixaDisplayTiledInColumns(pixa2, 2, 0.8, 15, 2);
         pixDisplay(pix1, 0, 1000);
         pixDestroy(&pix1);

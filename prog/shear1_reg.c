@@ -74,7 +74,7 @@ L_REGPARAMS* rp;
     pixs = pixRead(BINARY_IMAGE);
     pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
 
@@ -88,7 +88,7 @@ L_REGPARAMS* rp;
     pixcmapResetColor(cmap, index, 100, 0, 0);
     pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
 
@@ -96,7 +96,7 @@ L_REGPARAMS* rp;
     pixs = pixRead(FOUR_BPP_IMAGE1);
     pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
 
@@ -104,7 +104,7 @@ L_REGPARAMS* rp;
     pixs = pixRead(FOUR_BPP_IMAGE2);
     pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
 
@@ -113,7 +113,7 @@ L_REGPARAMS* rp;
     pix1 = pixScale(pixs, 0.5, 0.5);
     pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 4 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pixd);
@@ -122,7 +122,7 @@ L_REGPARAMS* rp;
     pixs = pixRead(EIGHT_BPP_CMAP_IMAGE1);
     pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
 
@@ -132,7 +132,7 @@ L_REGPARAMS* rp;
     pixd = pixOctreeColorQuant(pix1, 200, 0);
     pixc = shearTest1(pixd, 1.0);
     regTestWritePixAndCheck(rp, pixc, IFF_JFIF_JPEG);  /* 6 */
-    pixDisplayWithTitle(pixc, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixc, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pixd);
@@ -143,7 +143,7 @@ L_REGPARAMS* rp;
     pix1 = pixScale(pixs, 0.3, 0.3);
     pixd = shearTest1(pix1, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 7 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pixd);
@@ -153,7 +153,7 @@ L_REGPARAMS* rp;
     pixs = pixRead(FOUR_BPP_IMAGE1);
     pixd = shearTest2(pixs, rp);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pixd, 800, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 800, 100, NULL, rp->diag_spec);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
 #endif

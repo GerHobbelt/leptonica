@@ -96,7 +96,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 100, "TRC Gamma", rp->display);
+    pixDisplayWithTitle(pix1, 0, 100, "TRC Gamma", rp->diag_spec);
     pixaDestroy(&pixa1);
 
         /* TRC: vary black point */
@@ -108,7 +108,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 300, 100, "TRC", rp->display);
+    pixDisplayWithTitle(pix1, 300, 100, "TRC", rp->diag_spec);
     pixaDestroy(&pixa1);
 
         /* Vary hue */
@@ -120,7 +120,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 600, 100, "Hue", rp->display);
+    pixDisplayWithTitle(pix1, 600, 100, "Hue", rp->diag_spec);
     pixaDestroy(&pixa1);
 
         /* Vary saturation */
@@ -137,7 +137,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     gplotSimple1(rp->diag_spec, na1, GPLOT_PNG, "/tmp/lept/regout/enhance.7",
                  "Average Saturation");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix1, 900, 100, "Saturation", rp->display);
+    pixDisplayWithTitle(pix1, 900, 100, "Saturation", rp->diag_spec);
     numaDestroy(&na1);
     pixaDestroy(&pixa1);
 
@@ -150,7 +150,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 0, 400, "Contrast", rp->display);
+    pixDisplayWithTitle(pix1, 0, 400, "Contrast", rp->diag_spec);
     pixaDestroy(&pixa1);
 
         /* Vary sharpening */
@@ -162,7 +162,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix1, 300, 400, "Sharp", rp->display);
+    pixDisplayWithTitle(pix1, 300, 400, "Sharp", rp->diag_spec);
     pixaDestroy(&pixa1);
 
         /* Hue constant mapping to lighter background */
@@ -187,7 +187,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     }
     pixd = pixaDisplayTiledInColumns(pixa2, 2, 0.5, 30, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 6 */
-    pixDisplayWithTitle(pixd, 600, 400, "Constant hue", rp->display);
+    pixDisplayWithTitle(pixd, 600, 400, "Constant hue", rp->diag_spec);
     pixaDestroy(&pixa2);
     bmfDestroy(&bmf10);
     pixDestroy(&pix0);
@@ -199,14 +199,14 @@ PIXA         *pixa1, *pixa2, *pixaf;
         /* Display results */
     pixd = pixaDisplayTiledInColumns(pixaf, 1, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 8 */
-    pixDisplayWithTitle(pixd, 100, 100, "All", rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, "All", rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixaf);
 
         /* Test color shifts */
     pixd = pixMosaicColorShiftRGB(pixs, -0.1, 0.0, 0.0, 0.0999, 1);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 9 */
-    pixDisplayWithTitle(pixd, 1000, 100, "Color shift", rp->display);
+    pixDisplayWithTitle(pixd, 1000, 100, "Color shift", rp->diag_spec);
     pixDestroy(&pixd);
     pixDestroy(&pixs);
 
@@ -266,7 +266,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
     pixd = pixaDisplayTiledInColumns(pixa1, 4, 1.0, 30, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 14 */
-    pixDisplayWithTitle(pixd, 100, 800, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 800, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa1);
 

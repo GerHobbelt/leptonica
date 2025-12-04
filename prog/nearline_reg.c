@@ -69,7 +69,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
     pix1 = pixScaleToGray6(pixs);
-    pixDisplayWithTitle(pix1, 100, 600, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 100, 600, NULL, rp->diag_spec);
 
         /* Find averages of min and max along about 120 horizontal lines */
     lept_stderr("******************************************************\n");
@@ -82,7 +82,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
         if (!ret) {
             numaAddNumber(na1, (l_int32)minave);
             numaAddNumber(na3, (l_int32)maxave);
-            if (rp->display)
+            if (leptIsInDisplayMode(rp->diag_spec))
                 lept_stderr("y = %d: minave = %d, maxave = %d\n",
                             y1, (l_int32)minave, (l_int32)maxave);
         }
@@ -93,7 +93,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
          * identical to the first set.  Also generate a single-sided
          * scan (L_SCAN_NEGATIVE) for comparison with the double-sided scans. */
     pix2 = pixRotateOrth(pix1, 3);
-    pixDisplayWithTitle(pix2, 600, 600, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 600, 600, NULL, rp->diag_spec);
     na2 = numaCreate(0);
     na4 = numaCreate(0);
     na5 = numaCreate(0);
@@ -106,7 +106,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
             numaAddNumber(na2, (l_int32)minave);
             numaAddNumber(na4, (l_int32)maxave);
             numaAddNumber(na5, (l_int32)minave2);
-            if (rp->display)
+            if (leptIsInDisplayMode(rp->diag_spec))
                 lept_stderr("x = %d: minave = %d, minave2 = %d, maxave = %d\n",
                         x1, (l_int32)minave, (l_int32)minave2, (l_int32)maxave);
         }
@@ -136,9 +136,9 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 	pix3 = gplotSimplePixN(rp->diag_spec, naa, "/tmp/lept/regout/nearline",
                  "Average minimums along lines");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix3, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 100, 100, NULL, rp->diag_spec);
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         n = numaGetCount(na3);
         for (i = 0; i < n; i++) {
             numaGetIValue(na1, i, &val1);
@@ -183,7 +183,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 	pix4 = gplotSimplePixN(rp->diag_spec, naa, "/tmp/lept/regout/nearline2",
                  "Min along line");
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pix4, 800, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix4, 800, 100, NULL, rp->diag_spec);
     numaaDestroy(&naa);
     numaDestroy(&na4);
     numaDestroy(&na5);

@@ -112,7 +112,7 @@ L_REGPARAMS* rp;
         /* Bundle it all up */
     pixd = pixaaDisplayByPixa(paa, 3, 1.0, 20, 40, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixaaDestroy(&paa);
     return regTestCleanup(rp);

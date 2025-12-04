@@ -131,7 +131,7 @@ int main(int argc, const char** argv)
 			pixaAddPix(pixad, pix2, L_INSERT);
 			snprintf(textstr, sizeof(textstr), "/tmp/lept/otsu2/%s.%03d.ScoreFrac-%03d.png", leptDebugGetFilenamePrefix(), argidx + 1, (int)i);
 			pixWrite(textstr, pix2, IFF_PNG);
-			pixDisplayWithTitle(pix2, 100, 100, "Split distribution in FG/BG", TRUE);
+			pixDisplayWithTitle(pix2, 100, 100, "Split distribution in FG/BG", rp->diag_spec);
 			pixDestroy(&pix1);
 			pixaDestroy(&pixa1);
 		}

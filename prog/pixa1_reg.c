@@ -75,7 +75,7 @@ L_REGPARAMS* rp;
     nay2 = numaCreate(51);
     boxaDestroy(&boxa);
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("\n Select Large if Both\n");
         lept_stderr("Iter 0: n = %d\n", n0);
     }
@@ -87,12 +87,12 @@ L_REGPARAMS* rp;
         boxa = pixConnComp(pixd, NULL, 8);
         n = boxaGetCount(boxa);
         numaAddNumber(nay1, n);
-        if (rp->display) lept_stderr("Iter %d: n = %d\n", i, n);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Iter %d: n = %d\n", i, n);
         boxaDestroy(&boxa);
         pixDestroy(&pixd);
     }
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("\n Select Large if Either\n");
         lept_stderr("Iter 0: n = %d\n", n0);
     }
@@ -104,7 +104,7 @@ L_REGPARAMS* rp;
         boxa = pixConnComp(pixd, NULL, 8);
         n = boxaGetCount(boxa);
         numaAddNumber(nay2, n);
-        if (rp->display) lept_stderr("Iter %d: n = %d\n", i, n);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Iter %d: n = %d\n", i, n);
         boxaDestroy(&boxa);
         pixDestroy(&pixd);
     }
@@ -123,7 +123,7 @@ L_REGPARAMS* rp;
     numaEmpty(nay1);
     numaEmpty(nay2);
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("\n Select Small if Both\n");
         lept_stderr("Iter 0: n = %d\n", 0);
     }
@@ -135,12 +135,12 @@ L_REGPARAMS* rp;
         boxa = pixConnComp(pixd, NULL, 8);
         n = boxaGetCount(boxa);
         numaAddNumber(nay1, n);
-        if (rp->display) lept_stderr("Iter %d: n = %d\n", i, n);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Iter %d: n = %d\n", i, n);
         boxaDestroy(&boxa);
         pixDestroy(&pixd);
     }
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("\n Select Small if Either\n");
         lept_stderr("Iter 0: n = %d\n", 0);
     }
@@ -152,7 +152,7 @@ L_REGPARAMS* rp;
         boxa = pixConnComp(pixd, NULL, 8);
         n = boxaGetCount(boxa);
         numaAddNumber(nay2, n);
-        if (rp->display) lept_stderr("Iter %d: n = %d\n", i, n);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Iter %d: n = %d\n", i, n);
         boxaDestroy(&boxa);
         pixDestroy(&pixd);
     }
@@ -168,7 +168,7 @@ L_REGPARAMS* rp;
     gplotDestroy(&gplot);
 
     pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-    pixDisplayWithTitle(pixd, 100, 0, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 0, NULL, rp->diag_spec);
     pixWrite("/tmp/lept/pixa/root.png", pixd, IFF_PNG);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);

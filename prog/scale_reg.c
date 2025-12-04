@@ -281,7 +281,7 @@ PIX  *pixd;
 
     pixd = pixaDisplayTiledInRows(pixa, 32, 3000, 1.0, 0, SPACE, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->display);
+    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 }
@@ -300,7 +300,7 @@ PIXA      *pixa;
     for (i = 0; i < 12; i++) {
         scale *= 0.7;
         upscale = 0.25 / scale;
-        if (rp->display) lept_stderr("scale = %5.3f\n", scale);
+        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("scale = %5.3f\n", scale);
         pix2 = pixScaleSmooth(pix1, scale, scale);
         pix3 = pixScale(pix2, upscale, upscale);
         pixaAddPix(pixa, pix3, L_INSERT);
@@ -308,7 +308,7 @@ PIXA      *pixa;
     }
     pix2 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 10, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);
-    pixDisplayWithTitle(pix2, 0, 300, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 0, 300, NULL, rp->diag_spec);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

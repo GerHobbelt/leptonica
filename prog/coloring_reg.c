@@ -157,7 +157,7 @@ PIXCMAP      *cmap;
     }
 
         /* If in testing mode, make a pdf */
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         pixaConvertToPdf(pixa, 100, 1.0, L_FLATE_ENCODE, 0,
                          "Colored background", "/tmp/lept/regout/coloring.pdf");
         L_INFO("Output pdf: /tmp/lept/regout/coloring.pdf\n", rp->testname);

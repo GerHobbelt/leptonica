@@ -75,8 +75,7 @@ l_ok
 partifyFiles(const char  *dirname,
              const char  *substr,
              l_int32      nparts,
-             const char  *outroot,
-             const char  *debugfile)
+             LDIAG_CTX    diagspec)
 {
 PIXA   *pixadb;
 PIXAC  *pixac;
@@ -85,13 +84,16 @@ PIXAC  *pixac;
         return ERROR_INT("dirname not defined", __func__, 1);
     if (nparts < 0 || nparts > 10)
         return ERROR_INT("nparts not in [1 ... 10]", __func__, 1);
-    if (!outroot || outroot[0] == '\n' || outroot[0] == '\0')
-        return ERROR_INT("outroot undefined or empty", __func__, 1);
 
-    pixadb = (debugfile) ? pixaCreate(0) : NULL;
-    pixac = pixacompCreateFromFiles(dirname, substr, IFF_PNG);
-    partifyPixac(pixac, nparts, outroot, pixadb);
+    pixadb = NULL;
+	if (diagspec) {
+		pixadb = pixaCreate(0);
+		pixaSetDiagnosticsSpec(pixadb, diagspec);
+	}
+	pixac = pixacompCreateFromFiles(dirname, substr, IFF_PNG);
+    partifyPixac(pixac, nparts, pixadb);
     if (pixadb) {
+		const char* debugfile = leptDebugGenFilepath(diagspec, "partify_debug.pdf");
         L_INFO("writing debug output to %s\n", __func__, debugfile);
         pixaConvertToPdf(pixadb, 300, 1.0, L_FLATE_ENCODE, 0,
                          "Partify Debug", debugfile);
@@ -120,7 +122,6 @@ PIXAC  *pixac;
 l_ok
 partifyPixac(PIXAC       *pixac,
              l_int32      nparts,
-             const char  *outroot,
              PIXA        *pixadb)
 {
 char       buf[512];
@@ -131,6 +132,7 @@ BOX       *box1, *box2;
 BOXA      *boxa1, *boxa2, *boxa3;
 PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXAC    **pixaca;
+LDIAG_CTX  diagspec = pixaGetDiagnosticsSpec(pixadb);
 
     if (!pixac)
         return ERROR_INT("pixac not defined", __func__, 1);
@@ -138,8 +140,6 @@ PIXAC    **pixaca;
         return ERROR_INT("pixac is empty", __func__, 1);
     if (nparts < 1 || nparts > 10)
         return ERROR_INT("nparts not in [1 ... 10]", __func__, 1);
-    if (!outroot || outroot[0] == '\n')
-        return ERROR_INT("outroot undefined or empty", __func__, 1);
 
         /* Initialize the output array for each of the nparts */
     pixaca = (PIXAC **)LEPT_CALLOC(nparts, sizeof(PIXAC *));
@@ -226,9 +226,9 @@ PIXAC    **pixaca;
 
         /* Output separate pdfs for each part */
     for (i = 0; i < nparts; i++) {
-        snprintf(buf, sizeof(buf), "%s-%d.pdf", outroot, i);
-        L_INFO("writing part %d: %s\n", __func__, i, buf);
-        pixacompConvertToPdf(pixaca[i], 300, 1.0, L_G4_ENCODE, 0, NULL, buf);
+		const char* debugfile = leptDebugGenFilepath(diagspec, "@PREFIX@-%d.pdf", i);
+        L_INFO("writing part %d: %s\n", __func__, i, debugfile);
+        pixacompConvertToPdf(pixaca[i], 300, 1.0, L_G4_ENCODE, 0, NULL, debugfile);
         pixacompDestroy(&pixaca[i]);
     }
     LEPT_FREE(pixaca);

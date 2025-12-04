@@ -189,7 +189,7 @@ pixNLNorm2(PIX* pixs, int* pthresh) {
 	//  background and foreground value
 	pixbox = boxCreate(w1 * 0.1, h1 * 0.1, w1 * 0.9, h1 * 0.9);
 	na = pixGetGrayHistogramInRect(pixg, pixbox, 1);
-	numaSplitDistribution(na, 0.1, &thresh, &avefg, &avebg, NULL, NULL, NULL);
+	numaSplitDistribution(na, 0.1, &thresh, &avefg, &avebg, NULL, NULL, NULL, NULL);
 	boxDestroy(&pixbox);
 	numaDestroy(&na);
 

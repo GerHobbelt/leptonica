@@ -383,7 +383,7 @@ PIXCMAP  *cmap;
         lept_stderr("1bpp_trans: success\n");
     else
         lept_stderr("1bpp_trans: bad output\n");
-    pixDisplayWithTitle(pix2, 700, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 700, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     fp = lept_fopen("/tmp/lept/regout/1bpp-trans.png", "rb");
@@ -393,7 +393,7 @@ PIXCMAP  *cmap;
         lept_stderr("1bpp_trans: correct -- transparency found\n");
     else
         lept_stderr("1bpp_trans: error -- no transparency found!\n");
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     pixcmapDestroy(&cmap);
     return same;
 }
@@ -418,7 +418,7 @@ PIXCMAP  *cmap;
         lept_stderr("1bpp_color: success\n");
     else
         lept_stderr("1bpp_color: bad output\n");
-    pixDisplayWithTitle(pix2, 700, 100, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 700, 100, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     fp = lept_fopen("/tmp/lept/regout/1bpp-color.png", "rb");
@@ -428,7 +428,7 @@ PIXCMAP  *cmap;
         lept_stderr("1bpp_color: error -- transparency found!\n");
     else
         lept_stderr("1bpp_color: correct -- no transparency found\n");
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     pixcmapDestroy(&cmap);
     return same;
 }
@@ -452,7 +452,7 @@ PIXCMAP  *cmap;
         lept_stderr("1bpp_gray: success\n");
     else
         lept_stderr("1bpp_gray: bad output\n");
-    pixDisplayWithTitle(pix2, 700, 200, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 700, 200, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     return same;
@@ -477,7 +477,7 @@ PIXCMAP  *cmap;
         lept_stderr("1bpp_bw1: success\n");
     else
         lept_stderr("1bpp_bw1: bad output\n");
-    pixDisplayWithTitle(pix2, 700, 300, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 700, 300, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     return same;
@@ -502,7 +502,7 @@ PIXCMAP  *cmap;
         lept_stderr("1bpp_bw2: success\n");
     else
         lept_stderr("1bpp_bw2: bad output\n");
-    pixDisplayWithTitle(pix2, 700, 400, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 700, 400, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     return same;
@@ -533,7 +533,7 @@ PIXCMAP  *cmap;
         lept_stderr("2bpp-cmap-trans: success\n");
     else
         lept_stderr("2bpp-cmap-trans: bad output\n");
-    pixDisplayWithTitle(pix2, 0, 800, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 0, 800, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     return same;
@@ -564,7 +564,7 @@ PIXCMAP  *cmap;
         lept_stderr("4bpp-cmap-trans: success\n");
     else
         lept_stderr("4bpp-cmap-trans: bad output\n");
-    pixDisplayWithTitle(pix2, 200, 800, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 200, 800, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     return same;
@@ -596,7 +596,7 @@ PIXCMAP  *cmap;
         lept_stderr("8bpp-cmap-trans: success\n");
     else
         lept_stderr("8bpp-cmap-trans: bad output\n");
-    pixDisplayWithTitle(pix2, 200, 800, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 200, 800, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     return same;
@@ -621,7 +621,7 @@ PIXCMAP  *cmap;
         lept_stderr("8bpp_trans: success\n");
     else
         lept_stderr("8bpp_trans: bad output\n");
-    pixDisplayWithTitle(pix3, 700, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 700, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -632,7 +632,7 @@ PIXCMAP  *cmap;
         lept_stderr("8bpp_trans: correct -- transparency found\n");
     else
         lept_stderr("8bpp_trans: error -- no transparency found!\n");
-    if (rp->display) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
     pixcmapDestroy(&cmap);
     return same;
 }

@@ -80,14 +80,14 @@ PTA     *pta1;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);    /* 0, 3 */
     pix3 = pixaDisplayTiledInColumns(pixa1, 1, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1, 4 */
-    pixDisplayWithTitle(pix3, 100 * (nsels - 2), 100, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 100 * (nsels - 2), 100, NULL, rp->diag_spec);
     pixGetDimensions(pix1, &w, &h, NULL);
     pix4 = pixGenerateFromPta(pta1, w, h);
     pixDilateBrick(pix4, pix4, 5, 5);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 2, 5 */
     pixDestroy(&pix1);
 
-    if (rp->display) {
+    if (leptIsInDisplayMode(rp->diag_spec)) {
         n = pixaGetCount(pixa1);
         for (i = 0; i < n; i++) {
             pix1 = pixaGetPix(pixa1, i, L_CLONE);
