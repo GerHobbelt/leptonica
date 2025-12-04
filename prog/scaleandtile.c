@@ -72,6 +72,10 @@ const char    *dirin, *substr, *fileout;
 l_int32  depth, width, ncols;
 PIX     *pixd;
 PIXA    *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "scale", FALSE, &rp))
+		return 1;
 
     if (argc != 7)
 	return ERROR_INT(
@@ -83,7 +87,6 @@ PIXA    *pixa;
     width = atoi(argv[4]);
     ncols = atoi(argv[5]);
     fileout = argv[6];
-    setLeptDebugOK(1);
 
         /* Avoid division by zero if ncols == 0 and require a positive value. */
     if (ncols <= 0)

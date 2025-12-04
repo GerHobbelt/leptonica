@@ -60,8 +60,11 @@ l_int32 main(int    argc,
 {
 L_ASET  *s;
 PIX     *pix;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
+	if (regTestSetup(&argc, &argv, "set", FALSE, &rp))
+		return 1;
+
     pix = pixRead(DEMOPATH("weasel8.240c.png"));
 
         /* Build the set from all the pixels. */

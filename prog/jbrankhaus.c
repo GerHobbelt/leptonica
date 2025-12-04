@@ -89,7 +89,7 @@ PIX        *pix;
 PIXA       *pixa, *pixadb;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "jb_rankhaus", TRUE, &rp))
+	if (regTestSetup(&argc, &argv, "rankhaus", TRUE, &rp))
 		return 1;
 
     if (argc != 4 && argc != 6)
@@ -203,7 +203,7 @@ L_REGPARAMS* rp;
 
   #if  RENDER_DEBUG
         /* Use debugflag == TRUE to see outlines of each component. */
-    pixadb = jbDataRender(data, diagspec);
+    pixadb = jbDataRender(data, rp->diag_spec);
         /* Write the debug pages out */
     npages = pixaGetCount(pixadb);
     for (i = 0; i < npages; i++) {

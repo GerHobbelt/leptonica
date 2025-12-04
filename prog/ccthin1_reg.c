@@ -163,7 +163,7 @@ L_REGPARAMS* rp;
 
         /* Optional display */
     if (rp->display) {
-        lept_mkdir("/lept/thin");
+        //lept_mkdir("/lept/thin");
         lept_stderr("Writing to: /tmp/lept/thin/ccthin1-1.pdf");
         pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "Thin 1 Sels",
                          "/tmp/lept/thin/ccthin1-1.pdf");

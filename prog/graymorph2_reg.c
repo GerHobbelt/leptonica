@@ -53,7 +53,7 @@ PIX          *pixs, *pix1, *pix2, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "graymorph", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "gray_morph", FALSE, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("test8.jpg"));

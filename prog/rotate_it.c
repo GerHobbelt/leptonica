@@ -69,6 +69,10 @@ l_int32    icolor, itype, format, quads;
 l_float32  angle, deg2rad, anglerad;
 const char      *filein, *fileout, *type = NULL, *incolor = NULL;
 PIX       *pixs, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "rotate", FALSE, &rp))
+		return 1;
 
     if (argc != 4 && argc != 6)
         return ERROR_INT(
@@ -82,7 +86,6 @@ PIX       *pixs, *pixd;
         incolor = argv[5];
     }
 
-    setLeptDebugOK(1);
     deg2rad = 3.1415926535 / 180.;
 
     if ((pixs = pixRead(filein)) == NULL)

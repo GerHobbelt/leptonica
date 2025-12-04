@@ -58,9 +58,12 @@ BOXA       *boxa1, *boxa2, *boxa3, *boxa4;
 L_DEWARP   *dew;
 L_DEWARPA  *dewa;
 PIX        *pixs, *pixn, *pixg, *pixb, *pix2, *pix3, *pix4, *pix5, *pix6;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/dewarp5");
+	if (regTestSetup(&argc, &argv, "dewarp5", FALSE, &rp))
+		return 1;
+
+    //lept_mkdir("lept/dewarp5");
 
     snprintf(buf, sizeof(buf), "cat.%03d.jpg", pageno);
     pixs = pixRead(buf);

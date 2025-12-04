@@ -149,7 +149,7 @@ PIX       *pixv, *pixh;
     if (debugfile) {
         pixDisplayWithTitle(pixv, 300, 0, "pixv", 1);
         lept_rmdir("lept/dewapply");  /* remove previous images */
-        lept_mkdir("lept/dewapply");
+        //lept_mkdir("lept/dewapply");
         pixWriteDebug("/tmp/lept/dewapply/001.png", pixs, IFF_PNG);
         pixWriteDebug("/tmp/lept/dewapply/002.png", pixv, IFF_PNG);
     }
@@ -568,7 +568,7 @@ PIX       *pixv, *pixh;
     if (debug_out) {
         PIX  *pix1;
         lept_rmdir("lept/dewboxa");  /* remove previous images */
-        lept_mkdir("lept/dewboxa");
+        //lept_mkdir("lept/dewboxa");
         pix1 = pixConvertTo32(pixs);
         pixRenderBoxaArb(pix1, boxas, 2, 255, 0, 0);
         pixWriteDebug("/tmp/lept/dewboxa/01.png", pix1, IFF_PNG);

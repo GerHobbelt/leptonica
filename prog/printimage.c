@@ -100,6 +100,10 @@ FILE      *fp;
 #endif
 PIX       *pixs, *pix1;
 SARRAY    *sa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "print", FALSE, &rp))
+		return 1;
 
     if (argc < 2)
         return ERROR_INT(
@@ -115,7 +119,6 @@ SARRAY    *sa;
          "      potential vulnerability with the 'system' call.\n"
          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n");
 
-    setLeptDebugOK(1);
     (void)lept_rm(NULL, "print_image.ps");
 
     if ((pixs = pixRead(filein)) == NULL)

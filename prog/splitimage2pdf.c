@@ -58,6 +58,10 @@ const char    *filein, *fileout;
 l_int32  nx, ny;
 PIX     *pixs;
 PIXA    *pixa;
+L_REGPARAMS* rp;
+
+if (regTestSetup(&argc, &argv, "split_image", FALSE, &rp))
+return 1;
 
     if (argc != 5)
         return ERROR_INT(" Syntax:  splitimage2pdf filein nx ny fileout",

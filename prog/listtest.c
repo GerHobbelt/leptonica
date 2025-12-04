@@ -57,11 +57,14 @@ BOX     *box, *boxc;
 BOXA    *boxa, *boxan;
 DLLIST  *head, *tail, *head2, *tail2, *elem, *nextelem;
 PIX     *pixs;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "list", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  listtest filein", __func__, 1);
     filein = argv[1];
-    setLeptDebugOK(1);
 
     boxa = boxan = NULL;
     if ((pixs = pixRead(filein)) == NULL)

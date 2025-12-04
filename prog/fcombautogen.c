@@ -65,12 +65,15 @@ int main(int    argc,
 const char    *filename;
 l_int32  index, ret;
 SELA    *sela;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "fcomb", FALSE, &rp))
+		return 1;
 
     if (argc != 2 && argc != 3)
         return ERROR_INT(" Syntax:  fcombautogen index <filename>",
                          __func__, 1);
 
-    setLeptDebugOK(1);
     index = atoi(argv[1]);
     sela = selaAddDwaCombs(NULL);
 

@@ -218,7 +218,7 @@ PIXA         *pixa;
     boxDestroy(&box);
 
         /* Generate a pdf of the intermediate results */
-    lept_mkdir("lept/color");
+    //lept_mkdir("lept/color");
     L_INFO("Writing to /tmp/lept/color/colorize.pdf\n", rp->testname);
     pixaConvertToPdf(pixa, 90, 1.0, 0, 0, "Colorizing highlighted text",
                      "/tmp/lept/color/colorize.pdf");

@@ -160,7 +160,7 @@ strcodeCreate(l_int32  fileno)
 {
 L_STRCODE  *strcode;
 
-    lept_mkdir("lept/auto");
+    //lept_mkdir("lept/auto");
 
     if ((strcode = (L_STRCODE *)LEPT_CALLOC(1, sizeof(L_STRCODE))) == NULL)
         return (L_STRCODE *)ERROR_PTR("strcode not made", __func__, NULL);
@@ -338,7 +338,7 @@ size_t      size;
 L_STRCODE  *strcode;
 SARRAY     *sa1, *sa2, *sa3;
 
-    lept_mkdir("lept/auto");
+    //lept_mkdir("lept/auto");
 
     if (!pstrcode || *pstrcode == NULL)
         return ERROR_INT("No input data", __func__, 1);

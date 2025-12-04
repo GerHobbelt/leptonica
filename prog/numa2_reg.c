@@ -76,10 +76,10 @@ PIXA        *pixa1;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "numa2", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "numa", FALSE, &rp))
 		return 1;
 
-	lept_mkdir("lept/numa2");
+	//lept_mkdir("lept/numa2");
 
     /* -------------------------------------------------------------------*
      *                         Numa-windowed stats                        *

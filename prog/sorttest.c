@@ -55,11 +55,16 @@ l_int32  i, n, ns;
 BOXA    *boxa;
 PIX     *pixs, *pixt;
 PIXA    *pixa, *pixas, *pixas2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "sort", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  sorttest filein", __func__, 1);
 
     filein = argv[1];
+
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
 

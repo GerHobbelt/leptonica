@@ -58,6 +58,10 @@ int main(int    argc,
 l_int32  w;
 PIX     *pixs, *pixt, *pixd;
 PIXA    *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "smooth", FALSE, &rp))
+		return 1;
 
     pixs = pixRead(DEMOPATH("raggededge.png"));
     w = pixGetWidth(pixs);

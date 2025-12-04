@@ -58,15 +58,18 @@ const char      *filein, *fileout;
 l_int32    d, fmt;
 l_float32  scalex, scaley;
 PIX       *pixs, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "scale", FALSE, &rp))
+		return 1;
 
     if (argc != 5)
-	return ERROR_INT(" Syntax:  scaletest1 filein scalex scaley fileout",
+		return ERROR_INT(" Syntax:  scaletest1 filein scalex scaley fileout",
 	                 __func__, 1);
     filein = argv[1];
     scalex = atof(argv[2]);
     scaley = atof(argv[3]);
     fileout = argv[4];
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
 	return ERROR_INT("pixs not made", __func__, 1);

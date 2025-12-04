@@ -55,9 +55,13 @@ l_int32   i, j, sindex, wb, hb, ws, hs, delx, dely, x, y, y0;
 PIX      *pixs, *pixb, *pix1, *pix2;
 PIXA     *pixa;
 PIXCMAP  *cmap;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/blend");
+	if (regTestSetup(&argc, &argv, "blend_cmap", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/blend");
+
     pixa = pixaCreate(0);
 
     pixs = pixRead(DEMOPATH("rabi.png"));  /* blendee */

@@ -2795,7 +2795,7 @@ LEPT_DLL extern l_ok isSupportedFormat (l_int32 format);
 LEPT_DLL extern l_ok pixWriteMem ( l_uint8 **pdata, size_t *psize, PIX *pix, l_int32 format );
 LEPT_DLL extern l_ok l_fileDisplay ( const char *fname, l_int32 x, l_int32 y, l_float32 scale );
 LEPT_DLL extern l_ok pixDisplay ( PIX *pixs, l_int32 x, l_int32 y );
-LEPT_DLL extern l_ok pixDisplayWithTitle ( PIX *pixs, l_int32 x, l_int32 y, const char *title, l_int32 dispflag );
+LEPT_DLL extern l_ok pixDisplayWithTitle ( PIX *pixs, l_int32 x, l_int32 y, const char *title, LDIAG_CTX diagspec );
 LEPT_DLL extern PIX * pixMakeColorSquare ( l_uint32 color, l_int32 size, l_int32 addlabel, l_int32 location, l_uint32 textcolor );
 LEPT_DLL extern void l_chooseDisplayProg ( l_int32 selection );
 LEPT_DLL extern void changeFormatForMissingLib ( l_int32 *pformat );

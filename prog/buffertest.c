@@ -56,12 +56,15 @@ l_int32     i, blocksize, same;
 size_t      nbytes, nout, nout2;
 L_BBUFFER  *bb, *bb2;
 FILE       *fp;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "buffer", FALSE, &rp))
+		return 1;
 
     if (argc != 3)
         return ERROR_INT(" Syntax:  buffertest filein fileout", __func__, 1);
     filein = argv[1];
     fileout = argv[2];
-    setLeptDebugOK(1);
 
     if ((array1 = l_binaryRead(filein, &nbytes)) == NULL)
         return ERROR_INT("array not made", __func__, 1);

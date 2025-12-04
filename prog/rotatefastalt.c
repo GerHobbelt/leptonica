@@ -70,6 +70,10 @@ int main(int    argc,
 const char      *filein, *fileout;
 l_float32  angle, deg2rad;
 PIX       *pixs, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "rotate", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT("Syntax:  rotatefastalt filein angle fileout",
@@ -78,7 +82,6 @@ PIX       *pixs, *pixd;
     angle = atof(argv[2]);
     fileout = argv[3];
 
-    setLeptDebugOK(1);
     deg2rad = 3.1415926535 / 180.;
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not read", __func__, 1);

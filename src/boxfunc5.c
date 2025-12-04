@@ -137,7 +137,7 @@ PIX     *pix1;
 
     boxaSplitEvenOdd(boxas, 0, &boxae, &boxao);
     if (diagspec) {
-        lept_mkdir("lept/smooth");
+        //lept_mkdir("lept/smooth");
         boxaWriteDebug("/tmp/lept/smooth/boxae.ba", boxae);
         boxaWriteDebug("/tmp/lept/smooth/boxao.ba", boxao);
     }
@@ -245,7 +245,7 @@ PIX     *pix1;
     }
 
     if (diagspec) {
-        lept_mkdir("lept/windowed");
+        //lept_mkdir("lept/windowed");
         boxaPlotSides(boxaf, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsides1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
@@ -741,7 +741,7 @@ PIX     *pix1;
          * on whether select1 and select2 are true (not skipping).
          * The top row is for even boxes; the bottom row is for odd boxes. */
     if (pixadb) {
-        lept_mkdir("lept/boxa");
+        //lept_mkdir("lept/boxa");
         pix1 = pixaDisplayTiledInColumns(pixadb, ncols, 1.0, 30, 2);
         pixWrite("/tmp/lept/boxa/recon_sides.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
@@ -1284,7 +1284,7 @@ NUMA           *nal, *nat, *nar, *nab;
     }
     boxaDestroy(&boxat);
 
-    lept_mkdir("lept/plots");
+    //lept_mkdir("lept/plots");
     if (plotname) {
         snprintf(buf, sizeof(buf), "/tmp/lept/plots/sides.%s", plotname);
         snprintf(titlebuf, sizeof(titlebuf), "%s: Box sides vs. box index",
@@ -1402,7 +1402,7 @@ NUMA           *naw, *nah;
     }
     boxaDestroy(&boxat);
 
-    lept_mkdir("lept/plots");
+    //lept_mkdir("lept/plots");
     if (plotname) {
         snprintf(buf, sizeof(buf), "/tmp/lept/plots/size.%s", plotname);
         snprintf(titlebuf, sizeof(titlebuf), "%s: Box size vs. box index",

@@ -68,6 +68,10 @@ BOXA     *boxa;
 PIX      *pixs, *pixd;
 PIXA     *pixa;
 PIXCMAP  *cmap;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "cctest", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  cctest1 filein", __func__, 1);

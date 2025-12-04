@@ -55,9 +55,12 @@ int main(int    argc,
 char   buf[256];
 PIX   *pix1, *pix2, *pix3;
 PIXA  *pixa1;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/misc");
+	if (regTestSetup(&argc, &argv, "misc", FALSE, &rp))
+		return 1;
+
+    //lept_mkdir("lept/misc");
 
         /* Page cropping with light filtering */
     pix1 = pixRead("tel_3.tif");
@@ -87,7 +90,9 @@ PIXA  *pixa1;
          * connected blocks.  So it is necessary to include a
          * horizontal close/open of size 3, and in the algorithm, the
          * vertical close/open needs to be at least 70 at 4x reduction. */
-    lept_mkdir("lept/2_column");
+
+	//lept_mkdir("lept/2_column");
+
     lept_cp("2_column_crop_input.pdf", "lept/2_column", "input.pdf", NULL);
     snprintf(buf, sizeof(buf),
         "croppdf /tmp/lept/2_column 50 50 -1 70 70 1.12 0"
@@ -101,7 +106,9 @@ PIXA  *pixa1;
          * edgeclean = -2.  The bad scan was encoded with jbig2.  It looks
          * OK when rendering with evince, but pdftoppm is tripped up by the
          * mediabox.  See the rendered images at the end of this file. */
-    lept_mkdir("lept/bad_mediabox");
+
+	//lept_mkdir("lept/bad_mediabox");
+
     lept_cp("bad_mediabox_input.pdf", "lept/bad_mediabox", "input.pdf", NULL);
     snprintf(buf, sizeof(buf),
         "croppdf /tmp/lept/bad_mediabox 50 50 -2 80 80 1.12 0"

@@ -56,8 +56,10 @@ l_int32    i;
 RB_TYPE    x, y;
 RB_TYPE   *pval;
 L_RBTREE  *t;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
+	if (regTestSetup(&argc, &argv, "rb-tree", FALSE, &rp))
+		return 1;
 
     t = l_rbtreeCreate(L_INT_TYPE);
     l_rbtreePrint(stderr, t);

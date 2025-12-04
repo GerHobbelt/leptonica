@@ -147,6 +147,10 @@ const char      *basedir, *title, *fileout;
 l_int32    imres, onebit, savecolor, quality;
 l_float32  scalefactor;
 SARRAY    *safiles;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "compress_pdf", FALSE, &rp))
+		return 1;
 
     if (argc != 9)
         return ERROR_INT(
@@ -160,6 +164,7 @@ SARRAY    *safiles;
     quality = atoi(argv[6]);  /* jpeg quality */
     title = argv[7];
     fileout = argv[8];
+
     if (imres <= 0) imres = 150;  /* default value */
     if (imres != 150 && imres != 300) {
         L_WARNING("imres = %d must be 150 or 300; setting to 150\n",
@@ -183,7 +188,6 @@ SARRAY    *safiles;
                   __func__, quality);
         quality = 95;
     }
-    setLeptDebugOK(1);
 
         /* Render all images from pdfs */
     if (l_pdfRenderFiles(basedir, NULL, imres, &safiles))

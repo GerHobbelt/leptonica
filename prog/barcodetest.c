@@ -57,13 +57,16 @@ int main(int    argc,
 	const char    *filein;
 PIX     *pixs;
 SARRAY  *saw1, *saw2, *sad1, *sad2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "barcode", FALSE, &rp))
+	return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  barcodetest filein", __func__, 1);
     filein = argv[1];
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/barc");
+    //lept_mkdir("lept/barc");
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);

@@ -1056,7 +1056,7 @@ static const char* mk_dst_filename(const char* name)
 {
 	static char dstpath[PATH_MAX];
 
-	lept_mkdir("lept/binarization");
+	//lept_mkdir("lept/binarization");
 
 	snprintf(dstpath, sizeof(dstpath), "/tmp/lept/binarization/%s/%03d-%s", dstdirname, index, name);
 	index++;
@@ -1101,6 +1101,7 @@ L_REGPARAMS* rp;
 		
 		lept_rmdir(dstpath);
 		lept_mkdir(dstpath);
+
 		index = 0;
 	}
 

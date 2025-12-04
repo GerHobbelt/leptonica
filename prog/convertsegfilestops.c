@@ -92,6 +92,10 @@ int main(int    argc,
 const char      *pagedir, *pagestr, *maskdir, *maskstr, *fileout;
 l_int32    threshold, page_numpre, mask_numpre, numpost, maxnum;
 l_float32  textscale, imagescale;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+		return 1;
 
     if (argc != 13) {
 	lept_stderr(
@@ -137,7 +141,6 @@ l_float32  textscale, imagescale;
     if (!strcmp(maskstr, "allfiles"))
         maskstr = NULL;
 
-    setLeptDebugOK(1);
     return convertSegmentedPagesToPS(pagedir, pagestr, page_numpre,
                                      maskdir, maskstr, mask_numpre,
                                      numpost, maxnum, textscale,

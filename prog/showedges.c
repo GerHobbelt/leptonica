@@ -56,12 +56,15 @@ int main(int    argc,
 const char    *infile, *outfile;
 l_int32  d;
 PIX     *pixs, *pixgr, *pixb;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "edges", FALSE, &rp))
+		return 1;
 
     if (argc != 3)
         return ERROR_INT(" Syntax: showedges infile outfile", __func__, 1);
     infile = argv[1];
     outfile = argv[2];
-    setLeptDebugOK(1);
 
     pixs = pixRead(infile);
     d = pixGetDepth(pixs);

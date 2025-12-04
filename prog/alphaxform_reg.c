@@ -81,7 +81,7 @@ PIX          *pixd, *pixt1, *pixt2, *pixt3;
 PTA          *ptas1, *ptas2, *ptas3, *ptad1, *ptad2, *ptad3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "alphaxform", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "alpha_xform", FALSE, &rp))
 		return 1;
 
     pixc1 = pixRead(DEMOPATH("test24.jpg"));

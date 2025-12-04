@@ -67,6 +67,10 @@ l_float32  scalefact;
 L_BMF     *bmf;
 PIX       *pix1, *pix2, *pix3, *pix4, *pixd;
 PIXA      *pixa, *pixad;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "display", FALSE, &rp))
+		return 1;
 
     if (argc != 4 && argc != 8) {
         lept_stderr("Syntax error in displaypixa:\n"
@@ -75,7 +79,6 @@ PIXA      *pixa, *pixad;
                     " lossless disp fileout showtext\n");
          return 1;
     }
-    setLeptDebugOK(1);
 
         /* Input file can be either pixa or pixacomp */
     pixa = pixaReadBoth(argv[1]);

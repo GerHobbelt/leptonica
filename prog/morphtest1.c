@@ -61,12 +61,15 @@ const char      *filein, *fileout;
 PIX       *pixs, *pixd;
 SEL       *sel;
 SELA      *sela;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "morph", FALSE, &rp))
+		return 1;
 
     if (argc != 3)
         return ERROR_INT(" Syntax:  morphtest1 filein fileout", __func__, 1);
     filein = argv[1];
     fileout = argv[2];
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);

@@ -150,7 +150,7 @@ PIX       *pixd;
     if (!pixd)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     if (diagspec) {
-        lept_mkdir("lept/segment");
+        //lept_mkdir("lept/segment");
         pixWriteDebug("/tmp/lept/segment/colorseg1.png", pixd, IFF_PNG);
     }
 

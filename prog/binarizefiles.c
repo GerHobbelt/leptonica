@@ -60,6 +60,10 @@ l_int32    thresh, i, n;
 l_float32  scalefactor;
 PIX       *pix1, *pix2, *pix3, *pix4;
 SARRAY    *sa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "binarize", FALSE, &rp))
+		return 1;
 
     if (argc != 6) {
         lept_stderr(
@@ -77,14 +81,13 @@ SARRAY    *sa;
     thresh = atoi(argv[3]);
     scalefactor = atof(argv[4]);
     subdirout = argv[5];
-    if (!strcmp(pattern, "allfiles"))
+
+	if (!strcmp(pattern, "allfiles"))
               pattern = NULL;
     if (scalefactor <= 0.0 || scalefactor > 4.0) {
         L_WARNING("invalid scalefactor: setting to 1.0\n", __func__);
         scalefactor = 1.0;
     }
-
-    setLeptDebugOK(1);
 
         /* Get the input filenames */
     sa = getSortedPathnamesInDirectory(dirin, pattern, 0, 0);
@@ -94,9 +97,11 @@ SARRAY    *sa;
         /* Write the output files */
     makeTempDirname(dirname, 256, subdirout);
     lept_stderr("dirname: %s\n", dirname);
-    lept_rmdir(subdirout);
-    lept_mkdir(subdirout);
-    for (i = 0; i < n; i++) {
+
+	lept_rmdir(subdirout);
+    //lept_mkdir(subdirout);
+
+	for (i = 0; i < n; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
         if ((pix1 = pixRead(fname)) == NULL) {
             L_ERROR("file %s not read as image", __func__, fname);

@@ -1287,7 +1287,7 @@ PIXCMAP   *cmap;
     }
     pixDestroy(&pix1);
 
-    lept_mkdir("lept/format");
+    //lept_mkdir("lept/format");
 
         /* Note that the reader automatically removes colormaps
          * from 1 bpp BMP images, but not from 8 bpp BMP images.

@@ -167,8 +167,8 @@ l_int32  i, nfiles, render_res;
 SARRAY  *sa;
 
     if (!LeptDebugOK) {
-        L_INFO("running pdftoppm is disabled; "
-               "use setLeptDebugOK(1) to enable\n", __func__);
+        L_WARNING("running pdftoppm is disabled; "
+                  "use setLeptDebugOK(1) to enable\n", __func__);
         return 0;
     }
 
@@ -195,7 +195,8 @@ SARRAY  *sa;
 
         /* Set up directory for rendered page images. */
     lept_rmdir("lept/renderpdf");
-    lept_mkdir("lept/renderpdf");
+    //lept_mkdir("lept/renderpdf");
+
     imagedir = genPathname("/tmp/lept/renderpdf", NULL);
 
         /* Figure out the resolution to use with the image renderer.

@@ -78,9 +78,9 @@
 static const l_float32  VertFractSep = 0.3f;
 
 #ifndef  NO_CONSOLE_IO
-#define  DEBUG_BASELINE     0
-#define  DEBUG_CHARS        0
-#define  DEBUG_FONT_GEN     0
+#define  DEBUG_BASELINE     1
+#define  DEBUG_CHARS        1
+#define  DEBUG_FONT_GEN     1
 #endif  /* ~NO_CONSOLE_IO */
 
 static PIXA *pixaGenerateFontFromFile(const char *dir, l_int32 fontsize,
@@ -597,10 +597,12 @@ NUMA     *na;
     }
 
         /* Grab the character images and baseline data */
+
 #if DEBUG_BASELINE
     lept_rmdir("baseline");
-    lept_mkdir("baseline");
+    //lept_mkdir("baseline");
 #endif  /* DEBUG_BASELINE */
+
     tab = makePixelSumTab8();
     pixa = pixaCreate(95);
     for (i = 0; i < nrows; i++) {

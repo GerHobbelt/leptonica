@@ -66,8 +66,10 @@ int main(int    argc,
 BOX     *box1, *box2;
 PIX     *pix1;
 l_int32  niters, op, selectop;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
+	if (regTestSetup(&argc, &argv, "raster_op", FALSE, &rp))
+		return 1;
 
     pix1 = pixRead(DEMOPATH("test24.jpg"));
     box1 = boxCreate(243, 127, 513, 359);

@@ -54,11 +54,15 @@
 int main(int    argc,
          const char **argv)
 {
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "tiff", FALSE, &rp))
+		return 1;
+
     if (argc != 3 && argc != 4)
         return ERROR_INT(" Syntax:  writemtiff dirin [pattern] fileout",
                          __func__, 1);
 
-    setLeptDebugOK(1);
     if (argc == 3)
         writeMultipageTiff(argv[1], NULL, argv[2]);
     else  /* argc == 4 */

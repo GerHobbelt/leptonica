@@ -169,7 +169,8 @@ PTAA    *ptaa1, *ptaa2;
     pixs = dew->pixs;
     if (debugfile) {
         lept_rmdir("lept/dewmod");  /* erase previous images */
-        lept_mkdir("lept/dewmod");
+        //lept_mkdir("lept/dewmod");
+
         pixDisplayWithTitle(pixs, 0, 0, "pixs", 1);
         pixWriteDebug("/tmp/lept/dewmod/0010.png", pixs, IFF_PNG);
     }
@@ -348,9 +349,10 @@ FPIX       *fpix;
         ptaDestroy(&pta);
     }
     if (dew->debug) {
-        lept_mkdir("lept/dewarp");
-        lept_mkdir("lept/dewdebug");
-        lept_mkdir("lept/dewmod");
+        //lept_mkdir("lept/dewarp");
+        //lept_mkdir("lept/dewdebug");
+        //lept_mkdir("lept/dewmod");
+
         ptaat = ptaaCreate(nlines);
         for (i = 0; i < nlines; i++) {
             pta = ptaaGetPta(ptaa, i, L_CLONE);
@@ -592,8 +594,9 @@ FPIX      *fpix;
         return 1;
     }
     if (dew->debug) {
-        lept_mkdir("lept/dewdebug");
-        lept_mkdir("lept/dewarp");
+        //lept_mkdir("lept/dewdebug");
+        //lept_mkdir("lept/dewarp");
+
         ptaWriteDebug("/tmp/lept/dewdebug/endpts_left1.pta", ptal1, 1);
         ptaWriteDebug("/tmp/lept/dewdebug/endpts_right1.pta", ptar1, 1);
     }
@@ -844,7 +847,7 @@ PTAA     *ptaa;
     pixXor(pix2, pix2, pix1);  /* remove tall */
 
     if (debugflag) {
-        lept_mkdir("lept/dewmod");
+        //lept_mkdir("lept/dewmod");
         pixWriteDebug("/tmp/lept/dewmod/0011.tif", pix1, IFF_TIFF_G4);
         pixDisplayWithTitle(pix1, 0, 600, "pix1", 1);
         pixWriteDebug("/tmp/lept/dewmod/0012.tif", pix2, IFF_TIFF_G4);
@@ -1526,7 +1529,7 @@ FPIX      *fpix;
         boxDestroy(&box);
     }
     if (dew->debug) {
-        lept_mkdir("lept/dew");
+        //lept_mkdir("lept/dew");
 		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixb);
 		gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/dew/0091", NULL);
         lept_mv("/tmp/lept/dew/0091.png", "lept/dewmod", NULL, NULL);
@@ -1735,10 +1738,11 @@ PTAA    *ptaa1, *ptaa2;
     pixs = dew->pixs;
     if (debugfile) {
         lept_rmdir("lept/dewline");  /* erase previous images */
-        lept_mkdir("lept/dewline");
+        //lept_mkdir("lept/dewline");
         lept_rmdir("lept/dewmod");  /* erase previous images */
-        lept_mkdir("lept/dewmod");
-        lept_mkdir("lept/dewarp");
+        //lept_mkdir("lept/dewmod");
+        //lept_mkdir("lept/dewarp");
+
         pixDisplayWithTitle(pixs, 0, 0, "pixs", 1);
         pixWriteDebug("/tmp/lept/dewline/001.png", pixs, IFF_PNG);
     }

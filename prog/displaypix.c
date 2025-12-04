@@ -55,6 +55,10 @@ int main(int    argc,
 {
 PIX   *pixs;
 const char  *filein;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "display", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax: displaypix filein", __func__, 1);
@@ -62,7 +66,6 @@ const char  *filein;
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
 
-    setLeptDebugOK(1);
     pixDisplay(pixs, 20, 20);
     pixDestroy(&pixs);
     return 0;

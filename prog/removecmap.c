@@ -59,6 +59,10 @@ const char     *filein, *fileout;
 l_int32   type, numcolors;
 PIX      *pixs, *pixd;
 PIXCMAP  *cmap;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "cmap", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT("Syntax:  removecmap filein type fileout",
@@ -66,7 +70,6 @@ PIXCMAP  *cmap;
     filein = argv[1];
     type = atoi(argv[2]);
     fileout = argv[3];
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);

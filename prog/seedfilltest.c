@@ -59,13 +59,16 @@ l_int32    i;
 l_uint32   val;
 l_float32  size;
 PIX       *pixs, *pixd, *pixm, *pixmi, *pixt1, *pixt2, *pixt3;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "seed_fill", FALSE, &rp))
+		return 1;
 
     if (argc != 3)
         return ERROR_INT(" Syntax:  seedfilltest filein fileout", __func__, 1);
     filein = argv[1];
     fileout = argv[2];
     pixd = NULL;
-    setLeptDebugOK(1);
 
     if ((pixm = pixRead(filein)) == NULL)
         return ERROR_INT("pixm not made", __func__, 1);

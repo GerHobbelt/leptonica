@@ -561,10 +561,10 @@ PIX       *pix1, *pix2, *pix3, *pix3a, *pix4, *pix5;
     pixGetWordBoxesInTextlines(pix3a, 1, 4, 150, 40, &boxa1a, NULL);
     boxa1 = boxaTransform(boxa1a, 0, 0, 1.0 / scalefact, 1.0 / scalefact);
     if (debugdir) {
-        loc = 0;
-        subdir = stringReplaceSubstr(debugdir, "/tmp/", "", &loc, NULL);
-        lept_mkdir(subdir);
-        LEPT_FREE(subdir);
+        //loc = 0;
+        //subdir = stringReplaceSubstr(debugdir, "/tmp/", "", &loc, NULL);
+        //lept_mkdir(subdir);
+        //LEPT_FREE(subdir);
         pix4 = pixConvertTo32(pix2);
         pixRenderBoxaArb(pix4, boxa1, 2, 255, 0, 0);
         debugfile = stringJoin(debugdir, "/words.png");

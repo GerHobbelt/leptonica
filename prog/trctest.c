@@ -52,6 +52,10 @@ PIX       *pixs, *pixd;
 l_int32    minval, maxval;
 l_float32  gamma;
 const char      *filein, *fileout;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "trc", FALSE, &rp))
+		return 1;
 
     if (argc != 6)
         return ERROR_INT(" Syntax:  trctest filein gamma minval maxval fileout",
@@ -61,7 +65,6 @@ const char      *filein, *fileout;
     minval = atoi(argv[3]);
     maxval = atoi(argv[4]);
     fileout = argv[5];
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);

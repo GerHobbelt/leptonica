@@ -74,7 +74,7 @@ l_int32   nfunc = 2;
         return NULL;
     }
 
-    lept_mkdir("lept/auto");
+    //lept_mkdir("lept/auto");
 
         /* Unencode the selected string, uncompress it, and read it */
     switch (index) {

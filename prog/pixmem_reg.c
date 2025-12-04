@@ -53,7 +53,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pixmem", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "pix_mem", FALSE, &rp))
 		return 1;
 
     pixa = pixaCreate(0);

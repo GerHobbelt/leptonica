@@ -61,7 +61,7 @@ PIXA         *pixa;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "grayquant", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "gray_quant", FALSE, &rp))
 		return 1;
 
     /* ------------------------------------------------------------- */
@@ -135,7 +135,7 @@ L_REGPARAMS* rp;
 
         /* Optional display */
     if (rp->display) {
-        lept_mkdir("lept/gquant");
+        //lept_mkdir("lept/gquant");
         pix1 = pixaDisplayTiled(pixa, 2000, 0, 20);
         pixDisplay(pix1, 100, 100);
         pixWrite("/tmp/lept/gquant/mosaic1.png", pix1, IFF_PNG);

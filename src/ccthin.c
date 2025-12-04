@@ -455,7 +455,7 @@ SELA  *sela1, *sela2, *sela3;
     if (debug) {
         PIX  *pix1;
         char  buf[32];
-        lept_mkdir("/lept/sels");
+        //lept_mkdir("/lept/sels");
         pix1 = selaDisplayInPix(sela2, 35, 3, 15, 4);
         snprintf(buf, sizeof(buf), "/tmp/lept/sels/set%d.png", index);
         pixWrite(buf, pix1, IFF_PNG);

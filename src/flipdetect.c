@@ -265,7 +265,7 @@ static const l_float32  DefaultMinMirrorFlipConf = 5.0;
 
     /* Static debug function */
 static void pixDebugFlipDetect(const char *filename, PIX *pixs,
-                               PIX *pixhm, l_int32 enable);
+                               PIX *pixhm, LDIAG_CTX diagspec);
 
 
 /*----------------------------------------------------------------*
@@ -312,15 +312,15 @@ PIX       *pix1;
         return (PIX *)ERROR_PTR("pixs undefined or not 1 bpp", __func__, NULL);
 
         /* Get confidences for orientation */
-    pixUpDownDetect(pixs, &upconf, 0, 0, debug);
+    pixUpDownDetect(pixs, &upconf, 0, 0, diagspec);
     pix1 = pixRotate90(pixs, 1);
-    pixUpDownDetect(pix1, &leftconf, 0, 0, debug);
+    pixUpDownDetect(pix1, &leftconf, 0, 0, diagspec);
     pixDestroy(&pix1);
     if (pupconf) *pupconf = upconf;
     if (pleftconf) *pleftconf = leftconf;
 
         /* Decide what to do */
-    makeOrientDecision(upconf,leftconf, minupconf, minratio, &orient, debug);
+    makeOrientDecision(upconf,leftconf, minupconf, minratio, &orient, diagspec);
 
         /* Do it */
     switch (orient)
@@ -425,7 +425,7 @@ pixOrientDetect(PIX        *pixs,
                 l_float32  *pupconf,
                 l_float32  *pleftconf,
                 l_int32     mincount,
-                l_int32     debug)
+                LDIAG_CTX   diagspec)
 {
 PIX  *pix1;
 
@@ -437,10 +437,10 @@ PIX  *pix1;
         mincount = DefaultMinUpDownCount;
 
     if (pupconf)
-        pixUpDownDetect(pixs, pupconf, mincount, 0, debug);
+        pixUpDownDetect(pixs, pupconf, mincount, 0, diagspec);
     if (pleftconf) {
         pix1 = pixRotate90(pixs, 1);
-        pixUpDownDetect(pix1, pleftconf, mincount, 0, debug);
+        pixUpDownDetect(pix1, pleftconf, mincount, 0, diagspec);
         pixDestroy(&pix1);
     }
 
@@ -575,7 +575,7 @@ pixUpDownDetect(PIX        *pixs,
                 l_float32  *pconf,
                 l_int32     mincount,
                 l_int32     npixels,
-                l_int32     debug)
+                LDIAG_CTX   diagspec)
 {
 l_int32    countup, countdown, nmax;
 l_float32  nup, ndown;
@@ -592,8 +592,8 @@ SEL       *sel1, *sel2, *sel3, *sel4;
     if (npixels < 0)
         npixels = 0;
 
-    if (debug) {
-        lept_mkdir("lept/orient");
+    if (diagspec) {
+        //lept_mkdir("lept/orient");
     }
 
     sel1 = selCreateFromString(textsel1, 5, 6, NULL);
@@ -640,7 +640,7 @@ SEL       *sel1, *sel2, *sel3, *sel4;
         pixAnd(pix1, pix1, pixm);
     pix3 = pixReduceRankBinaryCascade(pix1, 1, 1, 0, 0);
     pixCountPixels(pix3, &countup, NULL);
-    pixDebugFlipDetect("/tmp/lept/orient/up.png", pixs, pix1, debug);
+    pixDebugFlipDetect("/tmp/lept/orient/up.png", pixs, pix1, diagspec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -653,7 +653,7 @@ SEL       *sel1, *sel2, *sel3, *sel4;
         pixAnd(pix1, pix1, pixm);
     pix3 = pixReduceRankBinaryCascade(pix1, 1, 1, 0, 0);
     pixCountPixels(pix3, &countdown, NULL);
-    pixDebugFlipDetect("/tmp/lept/orient/down.png", pixs, pix1, debug);
+    pixDebugFlipDetect("/tmp/lept/orient/down.png", pixs, pix1, diagspec);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -734,7 +734,7 @@ l_ok
 pixMirrorDetect(PIX        *pixs,
                 l_float32  *pconf,
                 l_int32     mincount,
-                l_int32     debug)
+                LDIAG_CTX   diagspec)
 {
 l_int32    count1, count2, nmax;
 l_float32  nleft, nright;
@@ -750,7 +750,7 @@ SEL       *sel1, *sel2;
         mincount = DefaultMinMirrorFlipCount;
 
     if (debug) {
-        lept_mkdir("lept/orient");
+        //lept_mkdir("lept/orient");
     }
 
     sel1 = selCreateFromString(textsel1, 5, 6, NULL);
@@ -769,7 +769,7 @@ SEL       *sel1, *sel2;
     pix1 = pixHMT(NULL, pix0, sel1);
     pix3 = pixReduceRankBinaryCascade(pix1, 1, 1, 0, 0);
     pixCountPixels(pix3, &count1, NULL);
-    pixDebugFlipDetect("/tmp/lept/orient/right.png", pixs, pix1, debug);
+    pixDebugFlipDetect("/tmp/lept/orient/right.png", pixs, pix1, diagspec);
     pixDestroy(&pix1);
     pixDestroy(&pix3);
 
@@ -777,7 +777,7 @@ SEL       *sel1, *sel2;
     pix2 = pixHMT(NULL, pix0, sel2);
     pix3 = pixReduceRankBinaryCascade(pix2, 1, 1, 0, 0);
     pixCountPixels(pix3, &count2, NULL);
-    pixDebugFlipDetect("/tmp/lept/orient/left.png", pixs, pix2, debug);
+    pixDebugFlipDetect("/tmp/lept/orient/left.png", pixs, pix2, diagspec);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
 
@@ -819,11 +819,12 @@ static void
 pixDebugFlipDetect(const char *filename,
                    PIX        *pixs,
                    PIX        *pixhm,
-                   l_int32     enable)
+                   LDIAG_CTX   diagspec)
 {
 PIX  *pixt, *pixthm;
 
-   if (!enable) return;
+   if (!diagspec)
+	   return;
 
         /* Display with red dot at counted locations */
     pixt = pixConvert1To4Cmap(pixs);

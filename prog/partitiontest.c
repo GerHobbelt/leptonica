@@ -74,6 +74,10 @@ BOX       *box;
 BOXA      *boxa, *boxat, *boxad;
 PIX       *pix, *pixs, *pix0, *pix1, *pix2;
 PIXA      *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "partition", FALSE, &rp))
+		return 1;
 
     if (argc != 3 && argc != 5)
         return ERROR_INT("syntax: partitiontest <fname> type [maxboxes ovlap]",
@@ -111,7 +115,6 @@ PIXA      *pixa;
         ovlap = 0.2;
     }
 
-    setLeptDebugOK(1);
     pixa = pixaCreate(0);
     pix = pixRead(filename);
     pixaAddPix(pixa, pix, L_COPY);
@@ -173,7 +176,9 @@ PIXA      *pixa;
     pixDestroy(&pix1);
 
     lept_stderr("Writing to: /tmp/lept/part/partition.pdf\n");
-    lept_mkdir("lept/part");
+
+	//lept_mkdir("lept/part");
+
     pixaConvertToPdf(pixa, 300, 1.0, L_FLATE_ENCODE, 0, "Partition test",
                      "/tmp/lept/part/partition.pdf");
     pixaDestroy(&pixa);

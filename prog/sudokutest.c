@@ -61,11 +61,14 @@ int main(int    argc,
 l_int32    unique;
 l_int32   *array;
 L_SUDOKU  *sud;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "sudoku", FALSE, &rp))
+		return 1;
 
     if (argc != 1 && argc != 2)
-	return ERROR_INT(" Syntax: sudokutest [filein]", __func__, 1);
+		return ERROR_INT(" Syntax: sudokutest [filein]", __func__, 1);
 
-    setLeptDebugOK(1);
     if (argc == 1) {
             /* Generate a new sudoku by element elimination */
         array = sudokuReadString(startsol);

@@ -58,6 +58,10 @@ const char    *filein;
 l_int32  ncontours;
 FPIX    *fpix;
 PIX     *pix;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "fpix_contours", FALSE, &rp))
+		return 1;
 
     if (argc != 2 && argc != 3) {
         lept_stderr("Syntax: fpixcontours filein [ncontours]\n");
@@ -69,8 +73,7 @@ PIX     *pix;
     else  /* argc == 3 */
         ncontours = atoi(argv[2]);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/fpix");
+    //lept_mkdir("lept/fpix");
 
     if ((fpix = fpixRead(filein)) == NULL)
         return ERROR_INT(__func__, "fpix not read", 1);

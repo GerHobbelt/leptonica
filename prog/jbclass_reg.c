@@ -131,7 +131,7 @@ L_REGPARAMS* rp;
 
     /*--------------------------------------------------------------*/
 
-    lept_mkdir("lept/class2");
+    //lept_mkdir("lept/class2");
 
         /* Run the rank hausdorff-based classifier */
     classer = jbRankHausInit(COMPONENTS, 0, 0, 2, 0.97);

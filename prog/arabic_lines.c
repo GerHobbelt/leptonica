@@ -83,12 +83,16 @@ PIXA      *pixam;  /* mask with a single component over each column */
 PIXA      *pixa, *pixa1, *pixa2;
 PIXAA     *pixaa, *pixaa2;
 SEL       *selsplit;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "lineseg", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  arabic_lines", __func__, 1);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/lineseg");
+    //lept_mkdir("lept/lineseg");
+
     pixa = pixaCreate(0);
 
         /* Binarize input */

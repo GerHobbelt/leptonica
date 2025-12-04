@@ -243,8 +243,9 @@ L_DEWARP    *dew;
     if (!dewa)
         return ERROR_INT("dewa not defined", __func__, 1);
 
-    if (diagspec)
-        lept_mkdir("lept/dewarp");
+	if (diagspec) {
+		//lept_mkdir("lept/dewarp");
+	}
 
         /* Generate the page model */
     dew = dewarpCreate(pixb, 0);
@@ -915,7 +916,7 @@ PIXA      *pixa;
         return ERROR_INT("last < first", __func__, 1);
 
     lept_rmdir("lept/dewarp1");  /* temp directory for contour plots */
-    lept_mkdir("lept/dewarp1");
+    //lept_mkdir("lept/dewarp1");
     if ((bmf = bmfCreate(NULL, 8)) == NULL)
         L_ERROR("bmf not made; page info not displayed", __func__);
 
@@ -1032,7 +1033,7 @@ PIX     *pixv, *pixh;
     }
 
     dewarpPopulateFullRes(dew, NULL, 0, 0);
-    lept_mkdir(subdirs);
+    //lept_mkdir(subdirs);
     outdir = pathJoin("/tmp", subdirs);
     if (svd) {
         pixv = fpixRenderContours(dew->fullvdispar, 3.0f, 0.15f);
@@ -1098,7 +1099,7 @@ PIXA      *pixa;
         return ERROR_INT("invalid first/last page numbers", __func__, 1);
 
     lept_rmdir("lept/dewarp_pdfout");
-    lept_mkdir("lept/dewarp_pdfout");
+    //lept_mkdir("lept/dewarp_pdfout");
     bmf = bmfCreate(NULL, 6);
 
     lept_stderr("Dewarping and generating s/by/s view\n");

@@ -79,13 +79,16 @@ l_int32 main(int    argc,
 PIX          *pix1;
 PIXA         *pixa1, *pixa2, *pixa3;
 L_STRCODE    *strc;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog_digits", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         lept_stderr(" Syntax: recog_bootnum\n");
         return 1;
     }
 
-    setLeptDebugOK(1);
     lept_mkdir("lept/recog/digits");
 
     /* ----------------------- Bootnum 1 --------------------- */

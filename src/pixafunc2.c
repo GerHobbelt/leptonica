@@ -2521,7 +2521,7 @@ PIXA    *pixa1;
     if (!write_pixa && !write_pix && !write_pdf)
         return ERROR_INT("no output is requested", __func__, 1);
 
-    lept_mkdir("lept/split");
+    //lept_mkdir("lept/split");
     n = (nt + nsplit - 1) / nsplit;
     lept_stderr("nt = %d, n = %d, nsplit = %d\n", nt, n, nsplit);
     for (i = 0, index = 0; i < nsplit; i++) {
@@ -2616,6 +2616,7 @@ PIXA    *pixa;
 
     lept_rmdir(outdir);
     lept_mkdir(outdir);
+
     pixaGetRenderingDepth(pixa, &d);
     format = (d == 1) ? IFF_TIFF_G4 : IFF_JFIF_JPEG;
     makeTempDirname(rootpath, 256, outdir);

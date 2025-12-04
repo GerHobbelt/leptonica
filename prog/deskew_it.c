@@ -75,6 +75,10 @@ const char      *filein, *fileout;
 l_int32    threshold, tryboth, format;
 l_float32  sweeprange, angle, conf;
 PIX       *pixs, *pix1, *pix2, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "deskew", FALSE, &rp))
+		return 1;
 
     if (argc != 6)
         return ERROR_INT(
@@ -87,7 +91,6 @@ PIX       *pixs, *pix1, *pix2, *pixd;
     tryboth = atoi(argv[4]);
     fileout = argv[5];
 
-    setLeptDebugOK(1);
     pixd = NULL;
 
     if ((pixs = pixRead(filein)) == NULL)

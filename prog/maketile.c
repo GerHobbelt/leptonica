@@ -68,6 +68,10 @@ l_float32  scale;
 SARRAY    *safiles;
 PIX       *pix, *pixt, *pixd;
 PIXA      *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "tile", FALSE, &rp))
+		return 1;
 
     if (argc != 7)
         return ERROR_INT(
@@ -79,7 +83,6 @@ PIXA      *pixa;
     width = atoi(argv[4]);
     background = atoi(argv[5]);
     fileout = argv[6];
-    setLeptDebugOK(1);
 
         /* capture the filenames in the input directory; ignore directories */
     if ((safiles = getFilenamesInDirectory(dirin)) == NULL)

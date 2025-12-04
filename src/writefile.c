@@ -231,7 +231,8 @@ LEPT_DLL l_int32 LeptDebugOK = 0;  /* default value */
 void
 setLeptDebugOK(l_int32  allow)
 {
-    if (allow != 0) allow = 1;
+    if (allow != 0)
+		allow = 1;
     LeptDebugOK = allow;
 }
 
@@ -831,8 +832,8 @@ l_fileDisplay(const char  *fname,
 PIX  *pixs, *pixd;
 
     if (!LeptDebugOK) {
-        L_INFO("displaying files is disabled; "
-               "use setLeptDebugOK(1) to enable\n", __func__);
+        L_WARNING("displaying files is disabled; "
+                  "use setLeptDebugOK(1) to enable\n", __func__);
         return 0;
     }
     if (scale == 0.0)
@@ -949,8 +950,8 @@ size_t         fullpathsize;
 #endif  /* _WIN32 */
 
     if (!LeptDebugOK) {
-        L_INFO("displaying images is disabled;\n      "
-               "use setLeptDebugOK(1) to enable\n", __func__);
+        L_WARNING("displaying images is disabled;\n      "
+                  "use setLeptDebugOK(1) to enable\n", __func__);
         return 0;
     }
 
@@ -1028,17 +1029,17 @@ size_t         fullpathsize;
 
     if (index == 0) {  /* erase any existing images */
         lept_rmdir("lept/disp");
-        lept_mkdir("lept/disp");
+        //lept_mkdir("lept/disp");
     }
 
     index++;
-	const char* sani_filename = (title ? sanitizePathToIdentifier(sani_id, sizeof(sani_id), 0, title, "@#-") : "NoTitle");
+	//const char* sani_filename = (title ? sanitizePathToIdentifier(sani_id, sizeof(sani_id), 0, title, "@#-") : "NoTitle");
     if (pixGetDepth(pix2) < 8 || pixGetColormap(pix2) ||
         (w < MaxSizeForPng && h < MaxSizeForPng)) {
-        snprintf(buffer, Bufsize, "/tmp/lept/disp/%s_write.%05d.%s.png", leptDebugGetFilenamePrefix(), index, sani_filename);
+        snprintf(buffer, Bufsize, "/tmp/lept/disp/%s_write.%05d.%s.png", index);
         pixWrite(buffer, pix2, IFF_PNG);
     } else {
-        snprintf(buffer, Bufsize, "/tmp/lept/disp/%s_write.%05d.%s.jpg", leptDebugGetFilenamePrefix(), index, sani_filename);
+        snprintf(buffer, Bufsize, "/tmp/lept/disp/%s_write.%05d.%s.jpg", index);
         pixWrite(buffer, pix2, IFF_JFIF_JPEG);
     }
     tempname = genPathname(buffer, NULL);

@@ -233,7 +233,7 @@ PIX     *pixtb;    /* textblock mask */
         PIXCMAP  *cmap;
         PTAA     *ptaa;
         ptaa = pixGetOuterBordersPtaa(pixtb);
-        lept_mkdir("lept/pageseg");
+        //lept_mkdir("lept/pageseg");
         ptaaWriteDebug("/tmp/lept/pageseg/tb_outlines.ptaa", ptaa, 1);
         pix1 = pixRenderRandomCmapPtaa(pixtb, ptaa, 1, 16, 1);
         cmap = pixGetColormap(pix1);
@@ -1431,7 +1431,7 @@ PIX      *pix1, *pixdb;
 
 #if 0
     if (ppixdebug && nsplit > 0) {
-        lept_mkdir("lept/split");
+        //lept_mkdir("lept/split");
         gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/split/split", NULL);
     }
 #endif
@@ -1871,7 +1871,7 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
 
     if (pixadb) {
 		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-		lept_mkdir("lept/textcol");
+		//lept_mkdir("lept/textcol");
 		pix5 = gplotSimplePix1(diagspec, na1, "/tmp/lept/textcol/plot", "text column counts");
         pixaAddPix(pixadb, pix5, L_INSERT);
     }
@@ -2807,7 +2807,7 @@ PIXA    *pixadb;
     pixadb = (debug) ? pixaCreate(0) : NULL;
     pixdb1 = NULL;
     if (pixadb) {
-        lept_mkdir("lept/rect");
+        //lept_mkdir("lept/rect");
         pixaAddPix(pixadb, pix1, L_CLONE);
         pixdb1 = pixConvertTo32(pix2);
     }

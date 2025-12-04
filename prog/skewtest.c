@@ -79,14 +79,18 @@ l_int32    ret;
 l_float32  deg2rad;
 l_float32  angle, conf, score, endscore;
 PIX       *pix, *pixs, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "skew", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  skewtest filein", __func__, 1);
     filein = argv[1];
 
-    setLeptDebugOK(1);
     lept_rmdir("lept/deskew");
-    lept_mkdir("lept/deskew");
+    //lept_mkdir("lept/deskew");
+
     pixd = NULL;
     deg2rad = 3.1415926535 / 180.;
 

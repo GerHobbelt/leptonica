@@ -53,6 +53,10 @@ int main(int    argc,
 const char    *filein, *fileout;
 char     error_msg[] = " ps level = {1,2,3}; level 2 is default";
 l_int32  level;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+		return 1;
 
     if (argc != 3 && argc != 4) {
         lept_stderr("Syntax: converttops filein fileout [level]\n");
@@ -61,6 +65,7 @@ l_int32  level;
     }
     filein = argv[1];
     fileout = argv[2];
+
     level = 2;
     if (argc == 4) {
         level = atoi(argv[3]);
@@ -70,7 +75,6 @@ l_int32  level;
         }
     }
 
-    setLeptDebugOK(1);
     convertToPSEmbed(filein, fileout, level);
     return 0;
 }

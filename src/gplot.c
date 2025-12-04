@@ -469,8 +469,8 @@ char    *cmdname;
         return ERROR_INT("gplot not defined", __func__, 1);
 
     if (!LeptDebugOK) {
-        L_INFO("running gnuplot is disabled; "
-               "use setLeptDebugOK(1) to enable\n", __func__);
+        L_WARNING("running gnuplot is disabled; "
+                  "use setLeptDebugOK(1) to enable\n", __func__);
         return 0;
     }
 
@@ -771,7 +771,7 @@ PIX            *pix;
     if (!na)
         return (PIX *)ERROR_PTR("na not defined", __func__, NULL);
 
-    lept_mkdir("lept/gplot/pix");
+    //lept_mkdir("lept/gplot/pix");
     snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix1.%d", index++);
     gplot = gplotSimpleXY1(diagspec, NULL, na, GPLOT_LINES, GPLOT_PNG, buf, title);
     if (!gplot)
@@ -813,7 +813,7 @@ PIX            *pix;
     if (!na1 || !na2)
         return (PIX *)ERROR_PTR("both na1, na2 not defined", __func__, NULL);
 
-    lept_mkdir("lept/gplot/pix");
+    //lept_mkdir("lept/gplot/pix");
     snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix2.%d", index++);
     gplot = gplotSimpleXY2(diagspec, NULL, na1, na2, GPLOT_LINES, GPLOT_PNG, buf, title);
     if (!gplot)
@@ -854,7 +854,7 @@ PIX            *pix;
     if (!naa)
         return (PIX *)ERROR_PTR("naa not defined", __func__, NULL);
 
-    lept_mkdir("lept/gplot/pix");
+    //lept_mkdir("lept/gplot/pix");
     snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pixN.%d", index++);
     gplot = gplotSimpleXYN(diagspec, NULL, naa, GPLOT_LINES, GPLOT_PNG, buf, title);
     if (!gplot)

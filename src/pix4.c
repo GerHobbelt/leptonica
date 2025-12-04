@@ -2603,7 +2603,7 @@ PIXCMAP   *cmap;
         ret = 1;
     }
     if (array && pixadb) {
-		lept_mkdir("lept/regout");
+		//lept_mkdir("lept/regout");
 		pixd = pixDisplayColorArray(array, nbins, 200, 5, fontsize);
         pixWriteDebug("/tmp/lept/regout/rankhisto.png", pixd, IFF_PNG);
         pixDestroy(&pixd);
@@ -2777,7 +2777,7 @@ PIX        *pix1;
             numaAddNumber(nagreen, gval);
             numaAddNumber(nablue, bval);
         }
-        lept_mkdir("lept/regout");
+        //lept_mkdir("lept/regout");
 		pix1 = gplotSimplePix1(diagspec, nared, "lept/regout/red-bin", "Average red val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
         pix1 = gplotSimplePix1(diagspec, nagreen, "lept/regout/green-bin", "Average green val vs. rank bin");
@@ -3519,7 +3519,7 @@ PIX       *pixg;
 			lept_rmdir("lept/redout");
 		}
 		index++;
-		lept_mkdir("lept/redout");
+		//lept_mkdir("lept/redout");
 		snprintf(namebuf, sizeof(namebuf), "/tmp/lept/redout/histplot-%03d", index);
 			gplot = gplotCreate(diagspec, namebuf, GPLOT_PNG, "Histogram",
                             "Grayscale value", "Number of pixels");

@@ -73,11 +73,14 @@ L_DNA      *da0, *da1, *da2, *da3;
 L_HASHMAP  *hmap;
 PTA        *pta0, *pta1, *pta2, *pta3;
 SARRAY     *sa0, *sa1, *sa2, *sa3;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "hash", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  hashtest dnasize ptasize strsize",
                          __func__, 1);
-    setLeptDebugOK(1);
 
     dnasize = atoi(argv[1]);
     ptasize = atoi(argv[2]);

@@ -218,7 +218,7 @@ recogTrainLabeled(L_RECOG  *recog,
                   PIX      *pixs,
                   BOX      *box,
                   char     *text,
-                  l_int32   debug)
+                  LDIAG_CTX diagspec)
 {
 l_int32  ret;
 PIX     *pix;
@@ -238,7 +238,7 @@ PIX     *pix;
         return 1;
     }
 
-    recogAddSample(recog, pix, debug);
+    recogAddSample(recog, pix, diagspec);
     pixDestroy(&pix);
     return 0;
 }
@@ -1841,14 +1841,14 @@ recogMakeBootDigitRecog(l_int32  nsamp,
                         l_int32  scaleh,
                         l_int32  linew,
                         l_int32  maxyshift,
-                        l_int32  debug)
+                        LDIAG_CTX diagspec)
 
 {
 PIXA     *pixa;
 L_RECOG  *recog;
 
         /* Get the templates, extended by horizontal scaling */
-    pixa = recogMakeBootDigitTemplates(nsamp, debug);
+    pixa = recogMakeBootDigitTemplates(nsamp, diagspec);
 
         /* Make the boot recog; recogModifyTemplate() will scale the
          * templates and optionally turn them into strokes of fixed width. */
@@ -1982,7 +1982,7 @@ NUMA    *na;
     numaDestroy(&na);
 
     if (display) {
-        lept_mkdir("lept/recog");
+        //lept_mkdir("lept/recog");
         pix = pixaaDisplayByPixa(recog->pixaa_u, 50, 1.0, 20, 20, 0);
         snprintf(buf, sizeof(buf), "/tmp/lept/recog/templates_u.%d.png", index);
         pixWriteDebug(buf, pix, IFF_PNG);
@@ -2069,7 +2069,7 @@ PIXAA     *paa1, *paa2;
     recog->pixdb_ave = pixaaDisplayByPixa(paa2, 50, 1.0, 20, 20, 0);
 	// TODO: should we re-do the debug level checks?
 	if (diagspec) {
-        lept_mkdir("lept/recog");
+        //lept_mkdir("lept/recog");
         pixWriteDebug("/tmp/lept/recog/templ_match.png", recog->pixdb_ave,
                       IFF_PNG);
         pixDisplay(recog->pixdb_ave, 100, 100);

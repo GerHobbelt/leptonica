@@ -62,6 +62,10 @@ BOX     *box1, *box2;
 BOXA    *boxa1, *boxa2;
 PIX     *pixs, *pixt1, *pixd;
 SARRAY  *safiles;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "crop", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT("Syntax: croptext dirin border dirout", __func__, 1);
@@ -69,7 +73,6 @@ SARRAY  *safiles;
     border = atoi(argv[2]);
     dirout = argv[3];
 
-    setLeptDebugOK(1);
     safiles = getSortedPathnamesInDirectory(dirin, NULL, 0, 0);
     nfiles = sarrayGetCount(safiles);
 

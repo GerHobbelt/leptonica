@@ -131,7 +131,7 @@ L_REGPARAMS* rp;
     recogShowContent(stderr, recog1, 1, 1);
 
         /* Use the BAR/BSR to label the left-over templates from the book */
-    pixa4 = recogTrainFromBoot(recog1, pixa3, 0.75, 128, diagspec);
+    pixa4 = recogTrainFromBoot(recog1, pixa3, 0.75, 128, rp->diag_spec);
 
         /* Join the two sets */
     pixaJoin(pixa1, pixa4, 0, 0);

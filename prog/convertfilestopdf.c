@@ -71,6 +71,10 @@ int main(int    argc,
 const char      *dirin, *substr, *title, *fileout;
 l_int32    ret, res, type, quality;
 l_float32  scalefactor;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+		return 1;
 
     if (argc != 9) {
         lept_stderr(
@@ -102,6 +106,7 @@ l_float32  scalefactor;
     quality = atoi(argv[6]);
     title = argv[7];
     fileout = argv[8];
+
     if (!strcmp(substr, "allfiles"))
         substr = NULL;
     if (scalefactor <= 0.0 || scalefactor > 2.0) {
@@ -111,7 +116,6 @@ l_float32  scalefactor;
     if (!strcmp(title, "none"))
         title = NULL;
 
-    setLeptDebugOK(1);
     ret = convertFilesToPdf(dirin, substr, res, scalefactor, type,
                             quality, title, fileout);
     return ret;

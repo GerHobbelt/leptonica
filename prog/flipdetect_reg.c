@@ -59,7 +59,7 @@ PIX          *pix, *pixs, *pix1, *pix2;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "flipdetect", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "flip", FALSE, &rp))
 		return 1;
 
     pix = pixRead(DEMOPATH("feyn.tif"));
@@ -119,7 +119,7 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa);
 
     lept_stderr("\nTest mirror reverse detection\n");
-    pixMirrorDetect(pixs, &conf, 0, rp->display);
+    pixMirrorDetect(pixs, &conf, 0, rp->diag_spec);
     lept_stderr("conf = %5.3f; not mirror reversed\n", conf);
     regTestCompareValues(rp, conf, 4.128, 0.1);  /* 13 */
 

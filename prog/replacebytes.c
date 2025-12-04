@@ -65,6 +65,10 @@ int main(int    argc,
 {
 l_int32  start, nbytes;
 const char    *filein, *fileout, *newstr = NULL;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "replace", FALSE, &rp))
+		return 1;
 
     if (argc != 5 && argc != 6)
         return ERROR_INT(

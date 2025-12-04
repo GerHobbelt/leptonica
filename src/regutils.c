@@ -194,7 +194,7 @@ L_REGPARAMS  *rp;
         rp->mode = L_REG_GENERATE;
 		leptDebugSetFileBasepath(diagspec, "lept/golden");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
-		lept_mkdir("lept/golden");
+		//lept_mkdir("lept/golden");
     } else if (!strcmp(argv[1], "display")) {
         rp->mode = L_REG_DISPLAY;
 		leptDebugSetFileBasepath(diagspec, "lept/display");

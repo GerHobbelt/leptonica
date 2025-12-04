@@ -204,7 +204,7 @@ PTA       *pta;
 
 	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 	if (pixadb) {  /* show the difference signal */
-		lept_mkdir("lept/baseline");
+		//lept_mkdir("lept/baseline");
         pix2 = gplotSimplePix1(diagspec, nadiff, "lept/baseline/diffsig", "Diff Sig");
         pixaAddPix(pixadb, pix2, L_INSERT);
     }
@@ -642,7 +642,7 @@ PTA       *pta;
 
     if (debug) {
 		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-		lept_mkdir("lept/baseline");
+		//lept_mkdir("lept/baseline");
         ptaGetArrays(pta, &nax, &nay);
         gplot = gplotCreate(diagspec, "/tmp/lept/baseline/skew", GPLOT_PNG,
                             "skew as fctn of y", "y (in raster lines from top)",

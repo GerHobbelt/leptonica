@@ -49,8 +49,11 @@ int main(int    argc,
 l_int32  i;
 PIX     *pixs, *pix1, *pix2, *pix3;
 PIXA    *pixa;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
+	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+		return 1;
+
     pixs = pixRead(DEMOPATH("pageseg2.tif"));
 
     startTimer();
@@ -72,7 +75,9 @@ PIXA    *pixa;
     pixaAddPix(pixa, pix3, L_INSERT);
 
         /* Generate the output image */
-    lept_mkdir("lept/livre");
+
+	//lept_mkdir("lept/livre");
+
     lept_stderr("Writing to: /tmp/lept/livre/seedgen.png\n");
     pix1 = pixaDisplayTiledAndScaled(pixa, 8, 350, 4, 0, 25, 2);
     pixWrite("/tmp/lept/livre/seedgen.png", pix1, IFF_PNG);

@@ -78,6 +78,10 @@ int main(int    argc,
 const char    *fileout;
 l_int32  nx, ny, tw, spacing, border, fontsize;
 PIXA    *pixa1, *pixa2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "compare", FALSE, &rp))
+		return 1;
 
     if (argc != 10) {
         lept_stderr("Syntax error in comparepixa:\n"
@@ -85,7 +89,6 @@ PIXA    *pixa1, *pixa2;
            " fontsize fileout\n");
         return 1;
     }
-    setLeptDebugOK(1);
 
         /* Input files can be either pixa or pixacomp */
     if ((pixa1 = pixaReadBoth(argv[1])) == NULL)

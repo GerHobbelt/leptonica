@@ -85,6 +85,10 @@ const char        *filein, *fileout, *base, *ext;
 const char  *formatstr;
 l_int32      format, d, change;
 PIX         *pixs, *pix1;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+		return 1;
 
     if (argc != 3 && argc != 4) {
         lept_stderr("Syntax: convertformat filein fileout [format]\n"
@@ -150,7 +154,6 @@ PIX         *pixs, *pix1;
         }
     }
 
-    setLeptDebugOK(1);
     if ((pixs = pixRead(filein)) == NULL) {
         L_ERROR("read fail for %s\n", __func__, filein);
         return 1;

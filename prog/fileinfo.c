@@ -49,12 +49,15 @@ int main(int    argc,
          const char **argv)
 {
 const char  *filein;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "file", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  fileinfo filein", __func__, 1);
     filein = argv[1];
 
-    setLeptDebugOK(1);
     writeImageFileInfo(filein, stderr, 0);
     return 0;
 }

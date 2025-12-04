@@ -82,6 +82,10 @@ int main(int    argc,
 {
 const char    *dirin, *dirout, *rootname;
 l_int32  thumbwidth, viewwidth;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "html", FALSE, &rp))
+		return 1;
 
     if (argc != 6)
         return ERROR_INT(
@@ -92,7 +96,6 @@ l_int32  thumbwidth, viewwidth;
     rootname = argv[3];
     thumbwidth = atoi(argv[4]);
     viewwidth = atoi(argv[5]);
-    setLeptDebugOK(1);
 
     pixHtmlViewer(dirin, dirout, rootname, thumbwidth, viewwidth);
     return 0;

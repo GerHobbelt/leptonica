@@ -57,11 +57,14 @@ PIX      *pixdb, *pix1, *pix2, *pix3, *pix4;
 PIXA     *pixa1, *pixa2, *pixa3, *pixat;
 L_RECOG  *recog;
 SARRAY   *sa1;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog", FALSE, &rp))
+		return 1;
 
     /* ----- Example identifying samples using training data ----- */
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/recog");
+    //lept_mkdir("lept/recog");
 
         /* Read the training data */
     pixat = pixaRead("recog/sets/train06.pa");

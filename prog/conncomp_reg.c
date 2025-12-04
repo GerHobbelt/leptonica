@@ -64,7 +64,7 @@ PIXA         *pixa1;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "conncomp", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "conn_comp", FALSE, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
@@ -112,7 +112,9 @@ L_REGPARAMS* rp;
     /* --------------------------------------------------------------- *
      *                        Test boxa I/O                            *
      * --------------------------------------------------------------- */
-    lept_mkdir("lept/conn");
+
+	//lept_mkdir("lept/conn");
+
     boxa1 = pixConnComp(pixs, NULL, 4);
     fp = lept_fopen("/tmp/lept/conn/boxa1.ba", "wb+");
     boxaWriteStream(fp, boxa1);

@@ -137,7 +137,9 @@ PIX          *pix4c, *pix8c, *pix8g, *pix32, *pixcs, *pixcs2;
     regTestWritePixAndCheck(rp, pix4c, IFF_PNG);  /* 4 */
 
          /* Write out the files to be imaged */
-    lept_mkdir("lept/psio");
+
+	//lept_mkdir("lept/psio");
+
     pixWrite("/tmp/lept/psio/image_001.tif", pixs, IFF_TIFF_G4);
     pixWrite("/tmp/lept/psio/image_002.tif", pixht, IFF_TIFF_G4);
     pixWrite("/tmp/lept/psio/image_003.tif", pixtxt, IFF_TIFF_G4);

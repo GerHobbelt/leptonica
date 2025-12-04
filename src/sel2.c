@@ -510,7 +510,7 @@ SEL       *sel;
 
     if (debugflag) {
         l_int32  w;
-        lept_mkdir("lept/sel");
+        //lept_mkdir("lept/sel");
         pixaGetPixDimensions(pixa, 0, &w, NULL, NULL);
         pixt = pixaDisplayTiledAndScaled(pixa, 32, w, 1, 0, 10, 2);
         pixWriteDebug("/tmp/lept/sel/xsel1.png", pixt, IFF_PNG);
@@ -640,7 +640,7 @@ SEL       *sel;
 
     if (debugflag) {
         l_int32  w;
-        lept_mkdir("lept/sel");
+        //lept_mkdir("lept/sel");
         pixaGetPixDimensions(pixa, 0, &w, NULL, NULL);
         pixt = pixaDisplayTiledAndScaled(pixa, 32, w, 4, 0, 10, 2);
         pixWriteDebug("/tmp/lept/sel/tsel1.png", pixt, IFF_PNG);

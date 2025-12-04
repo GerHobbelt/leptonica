@@ -213,7 +213,9 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
          *     file2.jpg:  dct (8 bpp, 256 colors because of the jpeg encoding)
          *     file3.tif:  g4 (1 bpp)
          *     file4.jpg:  dct (32 bpp)    */
-    lept_mkdir("lept/image");
+
+	//lept_mkdir("lept/image");
+
     pix1 = pixRead(DEMOPATH("feyn.tif"));
     pix2 = pixRead(DEMOPATH("rabi.png"));
     pix3 = pixScaleToGray3(pix1);
@@ -274,16 +276,20 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     /* ----------- Test corruption recovery by concatenation ------------ */
         /* Put two good pdf files in a directory */
     startTimer();
+
     lept_rmdir("lept/good");
-    lept_mkdir("lept/good");
+    //lept_mkdir("lept/good");
+
     lept_cp("testfile1.pdf", "lept/good", NULL, NULL);
     lept_cp("testfile2.pdf", "lept/good", NULL, NULL);
     concatenatePdf("/tmp/lept/good", "file", "/tmp/lept/pdf2/good.pdf");
 
         /* Make a bad version with the pdf id removed, so that it is not
          * recognized as a pdf */
-    lept_rmdir("lept/bad");
-    lept_mkdir("lept/bad");
+
+	lept_rmdir("lept/bad");
+    //lept_mkdir("lept/bad");
+
     ba = l_byteaInitFromFile("testfile2.pdf");
     data = l_byteaGetData(ba, &nbytes);
     l_binaryWrite("/tmp/lept/bad/testfile0.notpdf.pdf", "w",

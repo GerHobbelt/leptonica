@@ -76,6 +76,10 @@ BOXA     *boxa1, *boxa2;
 PIX      *pixs, *pixp, *pixpe, *pix1, *pix2, *pix3, *pix4, *pixhmt;
 PIXCMAP  *cmap;
 SEL      *sel_2h, *sel;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "pattern", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  findpattern1 filein patternfile fileout",
@@ -84,8 +88,7 @@ SEL      *sel_2h, *sel;
     patternfile = argv[2];
     fileout = argv[3];
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/hmt");
+    //lept_mkdir("lept/hmt");
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);

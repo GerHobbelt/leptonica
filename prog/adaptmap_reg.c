@@ -69,7 +69,7 @@ PIX          *pixmr, *pixmg, *pixmb, *pixmri, *pixmgi, *pixmbi;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "adapt", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "adaptmap", FALSE, &rp))
 		return 1;
 
     //lept_mkdir("lept/adapt");
@@ -171,7 +171,7 @@ L_REGPARAMS* rp;
         /* Display results */
     pix1 = pixaDisplayTiledAndScaled(pixa, 32, 400, 4, 0, 20, 2);
     pixWrite("/tmp/lept/adapt/results.jpg", pix1, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix1, 50, 0, NULL, rp->display);
+    pixDisplayWithTitle(pix1, 50, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 
@@ -192,7 +192,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 20, 1);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 14 */
-    pixDisplayWithTitle(pix2, 50, 850, NULL, rp->display);
+    pixDisplayWithTitle(pix2, 50, 850, NULL, rp->diag_spec);
     pixaDestroy(&pixa);
     pixDestroy(&pix2);
 

@@ -201,7 +201,8 @@ L_REGPARAMS* rp;
     sarrayDestroy(&sa2);
 
     if (rp->display) {
-        lept_mkdir("lept/padisp");
+        //lept_mkdir("lept/padisp");
+
         lept_stderr("Writing to: /tmp/lept/padisp/pixadisp.pdf\n");
         pixaConvertToPdf(pixa, 0, 1.0, L_FLATE_ENCODE, 0, "pixadisp-test",
                          "/tmp/lept/padisp/pixadisp.pdf");

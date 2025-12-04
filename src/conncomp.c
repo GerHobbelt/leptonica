@@ -127,7 +127,7 @@ static void popFillseg(L_STACK *stack, l_int32 *pxleft, l_int32 *pxright,
 
 #ifndef  NO_CONSOLE_IO
 #undef DEBUG
-#define   DEBUG    0
+#define   DEBUG    1
 #endif  /* ~NO_CONSOLE_IO */
 
 
@@ -270,7 +270,7 @@ L_STACK  *stack, *auxstack;
 #if  DEBUG
     pixCountPixels(pix1, &iszero, NULL);
     lept_stderr("Number of remaining pixels = %d\n", iszero);
-    lept_mkdir("lept/cc");
+    //lept_mkdir("lept/cc");
     pixWriteDebug("/tmp/lept/cc/remain.png", pix1, IFF_PNG);
 #endif  /* DEBUG */
 
@@ -360,7 +360,7 @@ L_STACK  *stack, *auxstack;
 #if  DEBUG
     pixCountPixels(pix1, &iszero, NULL);
     lept_stderr("Number of remaining pixels = %d\n", iszero);
-    lept_mkdir("lept/cc");
+    //lept_mkdir("lept/cc");
     pixWriteDebug("/tmp/lept/cc/remain.png", pix1, IFF_PNG);
 #endif  /* DEBUG */
 

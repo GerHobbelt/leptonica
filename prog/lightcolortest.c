@@ -56,11 +56,14 @@ l_uint32  *rau32, *gau32, *bau32, *carray, *darray;
 PIX       *pixs, *pix1, *pix2, *pix3, *pix4;
 PIXA      *pixa, *pixa1;
 SARRAY    *sa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "light_color", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  lightcolortest", __func__, 1);
 
-    setLeptDebugOK(1);
     sa = getSortedPathnamesInDirectory( ".", "comap.", 0, 0);
     sarrayWriteStderr(sa);
     n = sarrayGetCount(sa);
@@ -125,7 +128,8 @@ SARRAY    *sa;
         lept_free(darray);
     }
 
-    lept_mkdir("lept/color");
+    //lept_mkdir("lept/color");
+
     pixaConvertToPdf(pixa, 100, 1.0, L_FLATE_ENCODE, 0, "lightcolortest",
                      "/tmp/lept/color/lightcolortest.pdf");
     L_INFO("Generated pdf file: /tmp/lept/color/lightcolortest.pdf",

@@ -62,11 +62,14 @@ int main(int    argc,
 const char    *filename;
 l_int32  index;
 SELA    *sela;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "fhmt_auto", FALSE, &rp))
+		return 1;
 
     if (argc != 2 && argc != 3)
         return ERROR_INT(" Syntax:  fhmtautogen index <filename>", __func__, 1);
 
-    setLeptDebugOK(1);
     index = atoi(argv[1]);
     filename = NULL;
     if (argc == 3)

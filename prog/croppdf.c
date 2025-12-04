@@ -120,6 +120,10 @@ l_int32    lrclear, tbclear, edgeclean, lrborder, tbborder;
 l_int32    printwiden;
 l_float32  maxwiden;
 SARRAY    *safiles;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "crop", FALSE, &rp))
+		return 1;
 
     if (argc != 11)
         return ERROR_INT(
@@ -135,8 +139,6 @@ SARRAY    *safiles;
     printwiden = atoi(argv[8]);
     title = argv[9];
     fileout = argv[10];
-
-    setLeptDebugOK(1);
 
        /* Render all images from pdfs */
     if (l_pdfRenderFiles(basedir, NULL, 300, &safiles))

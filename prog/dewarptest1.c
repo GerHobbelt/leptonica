@@ -92,7 +92,8 @@ L_REGPARAMS* rp;
 
          /* Write out some of the files to be imaged */
     lept_rmdir("lept/dewtest");
-    lept_mkdir("lept/dewtest");
+    //lept_mkdir("lept/dewtest");
+
     pixWrite("/tmp/lept/dewtest/001.jpg", pixs, IFF_JFIF_JPEG);
     pixWrite("/tmp/lept/dewtest/002.jpg", pixn, IFF_JFIF_JPEG);
     pixWrite("/tmp/lept/dewtest/003.jpg", pixg, IFF_JFIF_JPEG);

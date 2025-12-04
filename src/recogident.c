@@ -263,7 +263,7 @@ BOXAA   *baa;
 PIX     *pix, *pix1, *pix2, *pix3;
 PIXA    *pixa;
 
-    lept_mkdir("lept/recog");
+    //lept_mkdir("lept/recog");
 
     if (pboxa) *pboxa = NULL;
     if (ppixa) *ppixa = NULL;
@@ -830,7 +830,7 @@ PIX        *pixt, *pixt1, *pixt2;
 
     if (fpix != NULL) {
         char  buf[128];
-        lept_mkdir("lept/recog");
+        //lept_mkdir("lept/recog");
         pixt1 = fpixDisplayMaxDynamicRange(fpix);
         pixt2 = pixExpandReplicate(pixt1, 5);
         snprintf(buf, sizeof(buf), "/tmp/lept/recog/junkbs_%d.png", debugflag);

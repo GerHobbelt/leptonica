@@ -64,12 +64,15 @@ BOX  *box;
 PIX  *pixs, *pixc, *pixp, *pixsel, *pixhmt;
 PIX  *pixd1, *pixd2, *pixd3;
 SEL  *selhm;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "pattern", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  findpattern3", __func__, 1);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/hmt");
+    //lept_mkdir("lept/hmt");
 
         /* -------------------------------------------- *
          * Extract the pattern for a single character   *

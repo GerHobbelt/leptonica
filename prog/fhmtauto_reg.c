@@ -61,7 +61,7 @@ SEL          *sel;
 SELA         *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "fhmtauto", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "fhmt_auto", FALSE, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));

@@ -74,13 +74,16 @@ l_int32  width, type, display;
 BOXAA   *baa;
 PIX     *pix1;
 PIXA    *pixa1, *pixa2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "display", FALSE, &rp))
+		return 1;
 
     if (argc != 7) {
         lept_stderr("Syntax error:"
            " displaybaa_on_pixa pixain boxaain type width pixaout display\n");
         return 1;
     }
-    setLeptDebugOK(1);
 
         /* Input file can be either pixa or pixacomp */
     pixa1 = pixaReadBoth(argv[1]);

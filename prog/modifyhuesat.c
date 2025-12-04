@@ -60,6 +60,10 @@ l_int32    i, j, w, d, nhue, nsat, tilewidth;
 l_float32  scale, dhue, dsat, delhue, delsat;
 PIX       *pixs, *pixt1, *pixt2, *pixd;
 PIXA      *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "hue_sat", FALSE, &rp))
+		return 1;
 
     if (argc != 7)
         return ERROR_INT(
@@ -71,6 +75,7 @@ PIXA      *pixa;
     nsat = atoi(argv[4]);
     dsat = atof(argv[5]);
     fileout = argv[6];
+
     if (nhue % 2 == 0) {
         nhue++;
         lept_stderr("nhue must be odd; raised to %d\n", nhue);
@@ -80,7 +85,6 @@ PIXA      *pixa;
         lept_stderr("nsat must be odd; raised to %d\n", nsat);
     }
 
-    setLeptDebugOK(1);
     if ((pixt1 = pixRead(filein)) == NULL)
         return ERROR_INT("pixt1 not read", __func__, 1);
     pixGetDimensions(pixt1, &w, NULL, NULL);

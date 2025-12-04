@@ -83,7 +83,7 @@ PIXCMAP      *cmap, *cmap2;
 RGBA_QUAD    *cta;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "alpha", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "alpha_ops", FALSE, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");
@@ -119,7 +119,9 @@ L_REGPARAMS* rp;
     pixDestroy(&pix4);
 
     /* ------------------------ (2) ----------------------------*/
-    lept_mkdir("lept/alpha");
+
+	//lept_mkdir("lept/alpha");
+
         /* Make the transparency (alpha) layer.
          * pixs is the mask.  We turn it into a transparency (alpha)
          * layer by converting to 8 bpp.  A small convolution fuzzes
@@ -181,8 +183,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 9 */
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 10 */
     pixDisplayWithTitle(pix1, 300, 400, "without alpha", rp->display);
-    pixDisplayWithTitle(pix2, 600, 400, "cleaned under transparent",
-                        rp->display);
+    pixDisplayWithTitle(pix2, 600, 400, "cleaned under transparent", rp->display);
 
     pixa = pixaCreate(0);
     pixaAddPix(pixa, pixg2, L_INSERT);
@@ -244,7 +245,7 @@ L_REGPARAMS* rp;
         pixaAddPix(pixa3, pix2, L_INSERT);
         pixDestroy(&pix1);
     }
-    if (rp->display) {
+    if (rp->diag_spec) {
         pixaConvertToPdf(pixa2, 0, 0.75, L_FLATE_ENCODE, 0, "blend 1 test",
                          "/tmp/lept/alpha/blend1.pdf");
         pixaConvertToPdf(pixa3, 0, 0.75, L_FLATE_ENCODE, 0, "blend 2 test",

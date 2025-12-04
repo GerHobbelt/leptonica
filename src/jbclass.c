@@ -1519,7 +1519,7 @@ PIX      *pix1, *pix2;
 		if (!diagspec) {
 			diagspec = pixGetDiagnosticsSpecFromAny(pixs, (ppixm ? *ppixm : NULL), NULL);
 		}
-        lept_mkdir("lept/jb");
+        //lept_mkdir("lept/jb");
         {NUMA  *naseq;
          PIX   *pix3, *pix4;
             L_INFO("Best dilation: %d\n", __func__, L_MAX(3, ibest + 1));

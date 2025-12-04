@@ -56,9 +56,12 @@ int main(int    argc,
 l_int32  i;
 PIX     *pixs, *pixg, *pixg2, *pixb, *pixm, *pixsd, *pixsdd, *pixt, *pixd;
 PIXA    *pixa;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/underline");
+	if (regTestSetup(&argc, &argv, "underline", FALSE, &rp))
+		return 1;
+
+    //lept_mkdir("lept/underline");
 
     pixa = pixaCreate(0);
     for (i = 0; i < 7; i++) {

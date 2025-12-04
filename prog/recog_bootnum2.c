@@ -57,8 +57,13 @@ void PixaDisplayNumbered(PIXA *pixa, const char *rootname);
 l_int32 main(int    argc,
              const char **argv)
 {
-    setLeptDebugOK(1);
-    lept_mkdir("lept/digit");
+	L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog_digits", FALSE, &rp))
+		return 1;
+
+	//lept_mkdir("lept/digit");
+
     ProcessDigits(5);
     return 0;
 }

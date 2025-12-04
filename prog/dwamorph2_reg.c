@@ -66,7 +66,7 @@ SEL       *sel;
 SELA      *selalinear;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dwamorph", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "dwa_morph", FALSE, &rp))
 		return 1;
 
     if (argc != 1)
@@ -83,7 +83,7 @@ L_REGPARAMS* rp;
     na3 = numaCreate(64);
     na4 = numaCreate(64);
 
-    lept_mkdir("lept/morph");
+    //lept_mkdir("lept/morph");
 
         /*  ---------  dilation  ----------*/
 

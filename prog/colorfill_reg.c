@@ -56,7 +56,7 @@ PIX          *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "colorfill", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "color_fill", FALSE, &rp))
 		return 1;
 
         /* Test on a small image */

@@ -56,13 +56,16 @@ l_int32  x, y, n, i;
 PIX     *pixs;
 PTA     *pta;
 PTAA    *ptaa, *ptaa2, *ptaa3;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "corner", FALSE, &rp))
+		return 1;
 
     if (argc != 3)
         return ERROR_INT(" Syntax:  cornertest filein fileout", __func__, 1);
     filein = argv[1];
     fileout = argv[2];
 
-    setLeptDebugOK(1);
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
 

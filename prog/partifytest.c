@@ -46,11 +46,16 @@
 int main(int    argc,
          const char **argv)
 {
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "partify", FALSE, &rp))
+		return 1;
+
     if (argc != 1)
         return ERROR_INT("syntax: partifytest", __func__, 1);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/partify");
+    //lept_mkdir("lept/partify");
+
 #if 0
     partifyFiles(".", "bois", 3, "/tmp/lept/partify/bois", "/tmp/lept/partify/debug.pdf");
 #else

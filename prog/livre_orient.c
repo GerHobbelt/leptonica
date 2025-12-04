@@ -77,8 +77,11 @@ int main(int    argc,
 PIX   *pix1;
 SEL   *sel1, *sel2, *sel3, *sel4;
 SELA  *sela;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
+	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+		return 1;
+
     lept_mkdir("lept/livre");
 
     sel1 = selCreateFromString(textsel1, 5, 6, NULL);

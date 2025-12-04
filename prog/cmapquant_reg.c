@@ -61,7 +61,7 @@ PIX          *pix8, *pix9;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "cmapquant", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "cmap_quant", FALSE, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("lucasta-frag.jpg"));

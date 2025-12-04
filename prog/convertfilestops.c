@@ -66,6 +66,10 @@ int main(int    argc,
 {
 const char    *dirin, *substr, *fileout;
 l_int32  res;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+		return 1;
 
     if (argc != 5) {
         lept_stderr(
@@ -84,7 +88,6 @@ l_int32  res;
     res = atoi(argv[3]);
     fileout = argv[4];
 
-    setLeptDebugOK(1);
     if (!strcmp(substr, "allfiles"))
         substr = NULL;
     if (res != 0)

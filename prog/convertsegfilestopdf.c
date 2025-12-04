@@ -93,6 +93,10 @@ const char      *title, *fileout, *boxaafile, *boxaapath;
 l_int32    ret, res, type, thresh;
 l_float32  scalefactor;
 BOXAA     *baa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+		return 1;
 
     if (argc != 12) {
         lept_stderr(
@@ -152,7 +156,6 @@ BOXAA     *baa;
     if (!strcmp(title, "none"))
         title = NULL;
 
-    setLeptDebugOK(1);
     if (maskdir)  /* use this; ignore any input boxaafile */
         baa = convertNumberedMasksToBoxaa(maskdir, masksubstr, 0, 0);
     else if (strcmp(boxaafile, "skip") != 0) {  /* use the boxaafile */

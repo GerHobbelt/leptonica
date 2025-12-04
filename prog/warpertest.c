@@ -68,12 +68,16 @@ BOX       *box;
 L_BMF     *bmf;
 PIX       *pixs, *pix1, *pix2, *pixd;
 PIXA      *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "warp", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT("syntax: warpertest", __func__, 1);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/warp");
+    //lept_mkdir("lept/warp");
+
     bmf = bmfCreate(NULL, 6);
 
     /* --------   Stereoscopic warping --------------*/

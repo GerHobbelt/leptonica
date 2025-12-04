@@ -69,6 +69,10 @@ l_int32    w, h, index, level;
 l_float32  scale;
 FILE      *fp;
 PIX       *pixs, *pix1;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(

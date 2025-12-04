@@ -59,11 +59,14 @@ int main(int    argc,
 char     buffer1[256], buffer2[256];
 l_int32  i, same, same2, factor1, factor2, diff, success;
 PIX     *pixs, *pixsd, *pixt1, *pixt2, *pixt3;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "binmorph", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  binmorph2_reg", __func__, 1);
 
-    setLeptDebugOK(1);
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
     pixsd = pixMorphCompSequence(pixs, "d5.5", 0);
     success = TRUE;

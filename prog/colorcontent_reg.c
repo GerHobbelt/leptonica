@@ -65,7 +65,7 @@ PIXA         *pixa1;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "colorcontent", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "color_content", FALSE, &rp))
 		return 1;
 
 	/* Find the most populated colors */
@@ -166,7 +166,9 @@ PIXA         *pixa1;
     pixaAddPix(pixa1, pix5, L_INSERT);
     pixaAddPix(pixa1, pix6, L_INSERT);
     pixaAddPix(pixa1, pix7, L_INSERT);
-    lept_mkdir("lept/colorcontent");
+
+	//lept_mkdir("lept/colorcontent");
+
     l_pdfSetDateAndVersion(FALSE);
     pixaConvertToPdf(pixa1, 0, 0.5, L_FLATE_ENCODE, 0, NULL, fname);
     regTestCheckFile(rp, fname);  /* 18 */

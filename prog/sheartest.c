@@ -56,12 +56,14 @@ const char      *filein, *fileout;
 l_int32    i, w, h, liney = 0, linex = 0, same;
 l_float32  angle, deg2rad;
 PIX       *pixt1, *pixt2, *pixs, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "shear", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  sheartest filein angle fileout",
                          __func__, 1);
-
-    setLeptDebugOK(1);
 
         /* Compare in-place H shear with H shear to a new pix */
     pixt1 = pixRead(DEMOPATH("marge.jpg"));

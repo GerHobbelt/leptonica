@@ -71,9 +71,12 @@ l_int32 main(int    argc,
 {
 l_int32     i;
 L_STRCODE  *strc;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
-	lept_mkdir("lept/auto");
+	if (regTestSetup(&argc, &argv, "autogen", FALSE, &rp))
+	return 1;
+
+	//lept_mkdir("lept/auto");
 
         /* Method 1: generate autogen.137.c and autogen.137.h  */
     strc = strcodeCreate(137);

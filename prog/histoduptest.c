@@ -72,7 +72,7 @@ PIXA        *pixa1, *pixa2, *pixa3;
 PIXAC       *pac;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "histodup", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "histo", FALSE, &rp))
 		return 1;
 
     if (argc != 1) {
@@ -81,7 +81,7 @@ L_REGPARAMS* rp;
     }
 
         /* Set to 1 for more output from tests 1 and 2 */
-    debug = 0;
+    //debug = 0;
 
     //lept_mkdir("lept/comp");
 

@@ -57,7 +57,7 @@ NUMAA   *naa1, *naa2;
 PIX     *pixs, *pixt, *pixb1, *pixb2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "comp", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "compare", FALSE, &rp))
 		return 1;
 
     //lept_mkdir("lept/comp");

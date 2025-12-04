@@ -79,6 +79,10 @@ const char    *filein, *fileout;
 l_int32  thresh;
 PIX     *pixs, *pixg, *pixb;
 PIX     *pixmask4, *pixseed4, *pixsf4, *pixd4, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "page_seg", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  pagesegtest2 filein thresh fileout",
@@ -86,7 +90,6 @@ PIX     *pixmask4, *pixseed4, *pixsf4, *pixd4, *pixd;
     filein = argv[1];
     thresh = atoi(argv[2]);
     fileout = argv[3];
-    setLeptDebugOK(1);
 
         /* Get a 1 bpp version of the page */
     if ((pixs = pixRead(filein)) == NULL)
@@ -119,7 +122,8 @@ PIX     *pixmask4, *pixseed4, *pixsf4, *pixd4, *pixd;
     pixDisplayWithTitle(pixb, 1000, 100, "non-halftone", DFLAG);
 
 #if 1
-    lept_mkdir("lept/pageseg");
+    //lept_mkdir("lept/pageseg");
+
     pixWrite("/tmp/lept/pageseg/seed2", pixseed4, IFF_TIFF_G4);
     pixWrite("/tmp/lept/pageseg/mask2", pixmask4, IFF_TIFF_G4);
     pixWrite("/tmp/lept/pageseg/fill2", pixd4, IFF_TIFF_G4);

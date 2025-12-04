@@ -83,7 +83,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "genfonts", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "fonts", FALSE, &rp))
 		return 1;
 
 	/* ------------  Generate pixa char bitmap files from file ----------- */
@@ -109,7 +109,8 @@ PIXA         *pixa;
 
     /* ----------  Generate pixa char bitmap files from string --------- */
     lept_rmdir("lept/strfonts");
-    lept_mkdir("lept/strfonts");
+    //lept_mkdir("lept/strfonts");
+
     for (i = 0; i < 9; i++) {
         pixaSaveFont(NULL, "/tmp/lept/strfonts", sizes[i]);
         pathname = pathJoin("/tmp/lept/strfonts", outputfonts[i]);
@@ -128,7 +129,8 @@ PIXA         *pixa;
 
     /* -----  Use pixaGetFont() and write the result out  -----*/
     lept_rmdir("lept/pafonts");
-    lept_mkdir("lept/pafonts");
+    //lept_mkdir("lept/pafonts");
+
     for (i = 0; i < 9; i++) {
         pixa = pixaGetFont("/tmp/lept/strfonts", sizes[i], &bl1, &bl2, &bl3);
         lept_stderr("Baselines are at: %d, %d, %d\n", bl1, bl2, bl3);
@@ -145,7 +147,8 @@ PIXA         *pixa;
 
     /* -------  Generate 4/3 encoded ascii strings from tiff files ------ */
     lept_rmdir("lept/encfonts");
-    lept_mkdir("lept/encfonts");
+    //lept_mkdir("lept/encfonts");
+
     for (i = 0; i < 9; i++) {
         fontsize = 2 * i + 4;
         pathname = pathJoin(DEMOPATH("fonts"), inputfonts[i]);

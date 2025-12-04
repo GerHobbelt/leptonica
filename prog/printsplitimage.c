@@ -90,6 +90,10 @@ FILE        *fp;
 PIX         *pixs, *pixt, *pixr;
 PIXA        *pixa;
 SARRAY      *sa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "print_split", FALSE, &rp))
+		return 1;
 
     if (argc != 4 && argc != 5)
         return ERROR_INT(" Syntax:  printsplitimage filein nx ny [printer]",
@@ -106,9 +110,8 @@ SARRAY      *sa;
          "      potential vulnerability with the 'system' call.\n"
          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n");
 
-    setLeptDebugOK(1);
     lept_rmdir("lept/split");
-    lept_mkdir("lept/split");
+    //lept_mkdir("lept/split");
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);

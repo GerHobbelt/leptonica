@@ -78,7 +78,7 @@ NUMA      *na1, *na2;
 PIX       *pixs1, *pixs2, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "comp", TRUE, &rp))
+	if (regTestSetup(&argc, &argv, "compare", TRUE, &rp))
 		return 1;
 
     if (argc != 5)

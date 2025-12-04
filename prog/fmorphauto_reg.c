@@ -58,11 +58,14 @@ const char    *filein, *selname;
 PIX     *pixs, *pixs1, *pixt1, *pixt2, *pixt3, *pixt4;
 SEL     *sel;
 SELA    *sela;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "fmorph", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  fmorphauto_reg filein", __func__, 1);
     filein = argv[1];
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);

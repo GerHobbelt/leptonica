@@ -85,9 +85,12 @@ BOXA    *boxa;
 NUMA    *nas, *nab;
 PIX     *pixs;
 PIXA    *pixa, *pixas;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/alloc");
+	if (regTestSetup(&argc, &argv, "pix_alloc", FALSE, &rp))
+		return 1;
+
+    //lept_mkdir("lept/alloc");
 
     /* ----------------- Custom with a few large pix -----------------*/
         /* Set up pms */

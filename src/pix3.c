@@ -1388,7 +1388,8 @@ PIX       *pix1, *pix2, *pix3;
 
     if (debug) {
         lept_rmdir("masknear");  /* erase previous images */
-        lept_mkdir("masknear");
+        //lept_mkdir("masknear");
+
         pixWriteDebug("/tmp/masknear/input.png", pix1, IFF_PNG);
         pixWriteDebug("/tmp/masknear/adjusted.png", pix2, IFF_PNG);
         pixWriteDebug("/tmp/masknear/outerfive.png", pix3, IFF_PNG);

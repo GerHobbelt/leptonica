@@ -56,6 +56,10 @@ int main(int    argc,
 l_int32  w, h, d, n;
 const char    *filein1, *filein2, *fileout;
 PIX     *pixs1, *pixs2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "bincompare", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  bincompare filein1 filein2 fileout",
@@ -63,7 +67,6 @@ PIX     *pixs1, *pixs2;
     filein1 = argv[1];
     filein2 = argv[2];
     fileout = argv[3];
-    setLeptDebugOK(1);
 
     if ((pixs1 = pixRead(filein1)) == NULL)
         return ERROR_INT("pixs1 not made", __func__, 1);

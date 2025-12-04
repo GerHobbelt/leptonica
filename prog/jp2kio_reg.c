@@ -203,7 +203,9 @@ FILE  *fp;
 PIX   *pix0, *pix1;
 
         /* Test write and read using J2K codec */
-    lept_mkdir("lept/jp2k");
+
+    //lept_mkdir("lept/jp2k");
+
     pix0 = pixRead(fname);
     if ((fp = lept_fopen("/tmp/lept/jp2k/wyom.j2k", "wb+")) != NULL) {
         pixWriteStreamJp2k(fp, pix0, 34, 6, L_J2K_CODEC, 0, 0);

@@ -52,13 +52,16 @@ int main(int    argc,
 const char    *filein;
 l_int32  w, h;
 PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "arith", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  arithtest filein", __func__, 1);
     filein = argv[1];
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/arith");
+    //lept_mkdir("lept/arith");
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);

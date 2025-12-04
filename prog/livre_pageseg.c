@@ -69,11 +69,14 @@ int main(int    argc,
 const char    *filein;
 l_int32  i;
 PIX     *pixs;   /* input image should be at least 300 ppi */
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  livre_pageseg filein", __func__, 1);
     filein = argv[1];
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);
@@ -128,7 +131,8 @@ l_int32   block_flag = 0;
         return ERROR_INT("invalid parameter: not in [1...4]", __func__, 1);
 
     pixa = pixaCreate(0);
-    lept_mkdir("lept/livre");
+
+    //lept_mkdir("lept/livre");
 
         /* Reduce to 150 ppi */
     pix1 = pixScaleToGray2(pixs);

@@ -54,13 +54,16 @@ l_int32   count;
 CCBORDA  *ccba, *ccba2;
 PIX      *pixs, *pixd, *pixd2, *pixd3;
 PIX      *pixt, *pixc, *pixc2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "ccbord", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  ccbordtest filein", __func__, 1);
     filein = argv[1];
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/ccbord");
+    //lept_mkdir("lept/ccbord");
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);

@@ -147,6 +147,10 @@ l_int32 main(int    argc,
 const char    *basedir, *title, *fileout;
 l_int32  res, contrast, rotation, opensize;
 SARRAY  *safiles;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "cleanpdf", FALSE, &rp))
+		return 1;
 
     if (argc != 8)
         return ERROR_INT(
@@ -160,6 +164,7 @@ SARRAY  *safiles;
     opensize = atoi(argv[5]);
     title = argv[6];
     fileout = argv[7];
+
     if (res == 0)
         res = 300;
     if (res != 300 && res != 600) {
@@ -183,7 +188,6 @@ SARRAY  *safiles;
                 __func__, opensize);
         return 1;
     }
-    setLeptDebugOK(1);
 
         /* Render all images from pdfs */
     if (l_pdfRenderFiles(basedir, NULL, 300, &safiles))

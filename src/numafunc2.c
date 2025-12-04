@@ -2268,7 +2268,7 @@ l_ok      rv = 0;
 				lept_rmdir("lept/nascore");
 			}
 			index++;
-			lept_mkdir("lept/nascore");
+			//lept_mkdir("lept/nascore");
 			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-scores-%03d", index);
 
 			lept_stderr("left = %d, right = %d\n", left, right);

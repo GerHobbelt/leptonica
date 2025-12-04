@@ -53,8 +53,11 @@ int main(int    argc,
          const char **argv)
 {
 PIX  *pixs, *pixd;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
+	if (regTestSetup(&argc, &argv, "pix_tile", FALSE, &rp))
+		return 1;
+
     pixs = pixRead(DEMOPATH("test24.jpg"));
     pixd = pixCreateTemplateNoInit(pixs);
 

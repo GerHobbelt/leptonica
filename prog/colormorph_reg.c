@@ -56,7 +56,7 @@ PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "colormorph", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "color_morph", FALSE, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("wyom.jpg"));
@@ -95,7 +95,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix2);
 
     if (rp->display) {
-        lept_mkdir("lept/cmorph");
+        //lept_mkdir("lept/cmorph");
         lept_stderr("Writing to: /tmp/lept/cmorph/colormorph.pdf\n");
         pixaConvertToPdf(pixa, 0, 1.0, L_FLATE_ENCODE, 0, "colormorph-test",
                          "/tmp/lept/cmorph/colormorph.pdf");

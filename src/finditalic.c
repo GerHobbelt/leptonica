@@ -117,7 +117,7 @@ pixItalicWords(PIX     *pixs,
                BOXA    *boxaw,
                PIX     *pixw,
                BOXA   **pboxa,
-               l_int32  debugflag)
+               LDIAG_CTX diagspec)
 {
 char     opstring[32], buf[32];
 l_int32  size, type;
@@ -168,10 +168,10 @@ SEL     *sel_ital1, *sel_ital2, *sel_ital3;
     boxa = pixConnComp(pixd, NULL, 8);
     *pboxa = boxa;
 
-    if (debugflag) {
+    if (diagspec) {
             /* Save results at at 2x reduction */
         l_int32  res, upper;
-        lept_mkdir("lept/ital");
+        //lept_mkdir("lept/ital");
         BOXA  *boxat;
         GPLOT *gplot;
         NUMA  *na;

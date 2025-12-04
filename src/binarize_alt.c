@@ -215,7 +215,7 @@ struct BG_THRES_PT_INFO {
 
 			if (pixplt) {
 				pixSetDiagnosticsSpec(pixplt, diagspec);
-				lept_mkdir("lept/otsu");
+				//lept_mkdir("lept/otsu");
 				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", diagspec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
 				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
@@ -428,7 +428,7 @@ struct BG_THRES_PT_INFO {
 
 						/* Plot the score function */
 						char title[32];
-						lept_mkdir("lept/otsu3");
+						//lept_mkdir("lept/otsu3");
 						const char* plot_path = leptDebugGenFilepathEx("lept/otsu3", diagspec, "%s.plots.%d", __func__, i);
 						snprintf(title, sizeof(title), "Plot %d", i);
 						gplot = gplotCreate(diagspec, plot_path, GPLOT_PNG,
@@ -1365,7 +1365,7 @@ PIX       *pix1, *pix2, *pix3;
     }
     if (debugflag) {
 		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pixs, pixm, NULL);
-        lept_mkdir("lept/binarize");
+        //lept_mkdir("lept/binarize");
         gplot = gplotCreate(diagspec, "/tmp/lept/binarize", GPLOT_PNG,
                             "number of cc vs. threshold",
                             "threshold", "number of cc");
@@ -1492,7 +1492,7 @@ NUMA      *na1, *na2, *na3;
 
     if (ppixhisto) {
 		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-		lept_mkdir("lept/histo");
+		//lept_mkdir("lept/histo");
 		*ppixhisto = gplotSimplePix1(diagspec, na3, "lept/histo/histo", "thresholds histogram");
     }
     if (pnahisto)

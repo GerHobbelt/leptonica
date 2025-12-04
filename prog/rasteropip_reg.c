@@ -54,7 +54,7 @@ l_int32       i, j;
 PIX          *pixs, *pixt, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "raster_opip", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "raster_op_ip", FALSE, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("test8.jpg"));

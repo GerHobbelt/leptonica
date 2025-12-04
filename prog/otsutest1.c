@@ -46,7 +46,7 @@ static const l_int32 gaussmean2[5] = {220, 200, 140, 180, 150};
 static const l_float32 gaussfract1[5] = {0.2f, 0.3f, 0.1f, 0.5f, 0.3f};
 static char  buf[256];
 
-static l_int32  GenerateSplitPlot(l_int32 i);
+static l_int32  GenerateSplitPlot(l_int32 i, LDIAG_CTX diagspec);
 static NUMA *MakeGaussian(l_int32 mean, l_int32 stdev, l_float32 fract);
 
 
@@ -63,13 +63,13 @@ PIX     *pix;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "otsu", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "otsu1", FALSE, &rp))
 		return 1;
 
     //lept_mkdir("lept/otsu");
 
     for (i = 0; i < NTests; i++)
-        GenerateSplitPlot(i);
+        GenerateSplitPlot(i, rp->diag_spec);
 
        /* Read the results back in ...  */
     pixa = pixaCreate(0);
@@ -93,7 +93,7 @@ L_REGPARAMS* rp;
 
 
 static l_int32
-GenerateSplitPlot(l_int32  i)
+GenerateSplitPlot(l_int32  i, LDIAG_CTX diagspec)
 {
 char       title[256];
 l_int32    split;
@@ -121,7 +121,7 @@ NUMA      *na1, *na2, *nascore, *nax, *nay;
         /* Plot the input histogram with the split location */
     snprintf(buf, sizeof(buf), "/tmp/lept/otsu/plot.%d", i);
     snprintf(title, sizeof(title), "Plot %d", i);
-    gplot = gplotCreate(rp->diag_spec, buf, GPLOT_PNG,
+    gplot = gplotCreate(diagspec, buf, GPLOT_PNG,
                         "Histogram: mixture of 2 gaussians",
                         "Grayscale value", "Number of pixels");
     gplotAddPlot(gplot, NULL, na1, GPLOT_LINES, title);
@@ -134,7 +134,7 @@ NUMA      *na1, *na2, *nascore, *nax, *nay;
         /* Plot the score function */
     snprintf(buf, sizeof(buf), "/tmp/lept/otsu/plots.%d", i);
     snprintf(title, sizeof(title), "Plot %d", i);
-    gplot = gplotCreate(rp->diag_spec, buf, GPLOT_PNG,
+    gplot = gplotCreate(diagspec, buf, GPLOT_PNG,
                         "Otsu score function for splitting",
                         "Grayscale value", "Score");
     gplotAddPlot(gplot, NULL, nascore, GPLOT_LINES, title);

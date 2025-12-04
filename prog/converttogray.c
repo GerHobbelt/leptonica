@@ -51,13 +51,16 @@ const char    *filein;
 const char    *fileout = NULL;
 l_int32  d, same;
 PIX     *pixs, *pixd, *pix1, *pix2, *pix3, *pix4;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "gray", FALSE, &rp))
+		return 1;
 
     if (argc != 2 && argc != 3)
         return ERROR_INT(" Syntax:  converttogray filein [fileout]",
                          __func__, 1);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/gray");
+    //lept_mkdir("lept/gray");
 
     filein = argv[1];
     if (argc == 3) fileout = argv[2];

@@ -999,7 +999,7 @@ PIX            *pixt;
     if (plottype < 0 || plottype >= NUM_GPLOT_OUTPUTS)
         return ERROR_INT("invalid plottype", __func__, 1);
 
-    lept_mkdir("lept/comp");
+    //lept_mkdir("lept/comp");
 
     if (comptype == L_COMPARE_SUBTRACT)
         pixt = pixSubtractGray(NULL, pix1, pix2);
@@ -1103,7 +1103,7 @@ PIX            *pixr, *pixg, *pixb;
     if (plottype < 0 || plottype >= NUM_GPLOT_OUTPUTS)
         return ERROR_INT("invalid plottype", __func__, 1);
 
-    lept_mkdir("lept/comp");
+    //lept_mkdir("lept/comp");
 
     pixr1 = pixGetRGBComponent(pix1, COLOR_RED);
     pixr2 = pixGetRGBComponent(pix2, COLOR_RED);
@@ -1516,7 +1516,7 @@ NUMA       *nah, *nan, *nac;
 
     if (details) {
 		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
-		lept_mkdir("lept/comp");
+		//lept_mkdir("lept/comp");
         numaGetNonzeroRange(nan, 0.0, &first, &last);
         nac = numaClipToInterval(nan, first, last);
         gplotSimple1(diagspec, nac, GPLOT_PNG, "/tmp/lept/comp/histo",
@@ -2132,7 +2132,7 @@ PIX        *pix;
         fact = L_MAX(2, 1000 / nim);
         pix3 = pixExpandReplicate(pix2, fact);
         lept_stderr("Writing to /tmp/lept/comp/scorearray.png\n");
-        lept_mkdir("lept/comp");
+        //lept_mkdir("lept/comp");
         pixWrite("/tmp/lept/comp/scorearray.png", pix3, IFF_PNG);
         pixDestroy(&pix2);
         pixDestroy(&pix3);
@@ -2249,7 +2249,7 @@ PIXA      *pixa;
 
     debugindex = 0;
     if (debugflag) {
-        lept_mkdir("lept/comp");
+        //lept_mkdir("lept/comp");
         debugindex = 666;  /* arbitrary number used for naming output */
     }
 
@@ -2368,7 +2368,7 @@ PIXA   *pixa;
     pixa = NULL;
     if (debugindex > 0) {
         pixa = pixaCreate(0);
-        lept_mkdir("lept/comp");
+        //lept_mkdir("lept/comp");
     }
 
         /* Initial crop, if necessary */
@@ -2638,7 +2638,7 @@ LDIAG_CTX diagspec = NULL;
     naa = numaaCreate(ngrids);
     if (pixadebug) {
         lept_rmdir("lept/compplot");
-        lept_mkdir("lept/compplot");
+        //lept_mkdir("lept/compplot");
     }
     for (i = 0; i < ngrids; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
@@ -2844,7 +2844,7 @@ NUMA      *na1, *na2, *nadist, *nascore;
 		diagspec = pixaGetDiagnosticsSpec(pixadebug);
 
 		lept_rmdir("lept/comptile");
-        lept_mkdir("lept/comptile");
+        //lept_mkdir("lept/comptile");
     }
 
         /* Evaluate histograms in each tile.  Remove white before
@@ -3014,7 +3014,7 @@ PIXA      *pixa;
     }
 
     if (debugflag)
-        lept_mkdir("lept/comp");
+        //lept_mkdir("lept/comp");
 
         /* Initial filter by size */
     if (box1)
@@ -3662,7 +3662,7 @@ PIX       *pix3, *pix4;
 
     if (debugflag > 0) {
         char  buf[128];
-        lept_mkdir("lept/comp");
+        //lept_mkdir("lept/comp");
         pix3 = fpixDisplayMaxDynamicRange(fpix);
         pix4 = pixExpandReplicate(pix3, 20);
         snprintf(buf, sizeof(buf), "/tmp/lept/comp/correl_%d.png",

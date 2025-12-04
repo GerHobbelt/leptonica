@@ -75,13 +75,16 @@ l_int32   w, d, threshval;
 PIX      *pixs, *pixg;
 PIX      *pix1, *pix2;
 PIXA     *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "binarize", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax: binarize_set infile", __func__, 1);
     infile = argv[1];
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/binar");
+    //lept_mkdir("lept/binar");
 
     pixa = pixaCreate(5);
     pixs = pixRead(infile);

@@ -56,10 +56,13 @@ PIX     *pix;
 PIXA    *pixa;
 PIXAC   *pac;
 const char    *filein;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "pixa", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  pixafileinfo filein", __func__, 1);
-    setLeptDebugOK(1);
 
         /* Input file can be either pixa or pixacomp */
     filein = argv[1];

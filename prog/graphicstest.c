@@ -54,12 +54,15 @@ BOX     *box1, *box2, *box3, *box4;
 BOXA    *boxa;
 PIX     *pixs, *pix1;
 PTA     *pta;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "graphics", FALSE, &rp))
+		return 1;
 
     if (argc != 3)
         return ERROR_INT(" Syntax: graphicstest filein fileout", __func__, 1);
     filein = argv[1];
     fileout = argv[2];
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT(" Syntax: pixs not made", __func__, 1);

@@ -120,8 +120,8 @@ static l_int32 numaEvalSyncError(NUMA *nas, l_int32 ifirst, l_int32 ilast,
 
 
 #ifndef  NO_CONSOLE_IO
-#define  DEBUG_DESKEW     0
-#define  DEBUG_WIDTHS     0
+#define  DEBUG_DESKEW     1
+#define  DEBUG_WIDTHS     1
 #endif  /* ~NO_CONSOLE_IO */
 
 
@@ -143,7 +143,7 @@ pixProcessBarcodes(PIX      *pixs,
                    l_int32   format,
                    l_int32   method,
                    SARRAY  **psaw,
-                   l_int32   debugflag)
+                   LDIAG_CTX diagspec)
 {
 PIX     *pixg;
 PIXA    *pixa;
@@ -163,12 +163,12 @@ SARRAY  *sad;
     else
         pixg = pixConvertTo8(pixs, 0);
 
-    pixa = pixExtractBarcodes(pixg, debugflag);
+    pixa = pixExtractBarcodes(pixg, diagspec);
     pixDestroy(&pixg);
     if (!pixa)
         return (SARRAY *)ERROR_PTR("no barcode(s) found", __func__, NULL);
 
-    sad = pixReadBarcodes(pixa, format, method, psaw, debugflag);
+    sad = pixReadBarcodes(pixa, format, method, psaw, diagspec);
     pixaDestroy(&pixa);
     return sad;
 }
@@ -233,7 +233,7 @@ PIXA      *pixa;
     boxaDestroy(&boxa);
 
 	if (debugflag) {
-		lept_mkdir("lept/barcode");
+		//lept_mkdir("lept/barcode");
 		pix3 = pixaDisplayTiledInRows(pixa, 8, 1000, 1.0, 0, 30, 2);
 		pixWrite("/tmp/lept/barcode/pix3.png", pix3, IFF_PNG);
 		pixDestroy(&pix3);
@@ -259,7 +259,7 @@ pixReadBarcodes(PIXA     *pixa,
                 l_int32   format,
                 l_int32   method,
                 SARRAY  **psaw,
-                l_int32   debugflag)
+                LDIAG_CTX diagspec)
 {
 char      *barstr, *data;
 char       emptystring[] = "";
@@ -288,7 +288,7 @@ SARRAY    *saw, *sad;
             pixDestroy(&pix1);
             continue;
         }
-        na = pixReadBarcodeWidths(pix1, method, debugflag);
+        na = pixReadBarcodeWidths(pix1, method, diagspec);
         pixDestroy(&pix1);
         if (!na) {
             ERROR_INT("valid barcode widths not returned", __func__, 1);
@@ -306,7 +306,7 @@ SARRAY    *saw, *sad;
         numaDestroy(&na);
 
             /* Decode the width strings */
-        data = barcodeDispatchDecoder(barstr, format, debugflag);
+        data = barcodeDispatchDecoder(barstr, format, diagspec);
         if (!data) {
             ERROR_INT("barcode not decoded", __func__, 1);
             sarrayAddString(sad, emptystring, L_COPY);
@@ -341,7 +341,7 @@ SARRAY    *saw, *sad;
 NUMA *
 pixReadBarcodeWidths(PIX     *pixs,
                      l_int32  method,
-                     l_int32  debugflag)
+                     LDIAG_CTX diagspec)
 {
 l_float32  winwidth;
 NUMA      *na;
@@ -356,12 +356,12 @@ NUMA      *na;
         /* Extract the widths of the lines in each barcode */
     if (method == L_USE_WIDTHS)
         na = pixExtractBarcodeWidths1(pixs, 120, 0.25, NULL, NULL,
-                                      debugflag);
+                                      diagspec);
     else  /* method == L_USE_WINDOWS */
         na = pixExtractBarcodeWidths2(pixs, 120, &winwidth,
-                                      NULL, debugflag);
-#if  DEBUG_WIDTHS
-	if (debugflag) {
+                                      NULL, diagspec);
+#if DEBUG_WIDTHS
+	if (diagspec) {
 		if (method == L_USE_WINDOWS)
 			lept_stderr("Window width for barcode: %7.3f\n", winwidth);
 		numaWriteStderr(na);
@@ -686,7 +686,7 @@ pixExtractBarcodeWidths2(PIX        *pixs,
                          l_float32   thresh,
                          l_float32  *pwidth,
                          NUMA      **pnac,
-                         l_int32     debugflag)
+                         LDIAG_CTX   diagspec)
 {
 NUMA    *nacp, *nad;
 
@@ -696,12 +696,12 @@ NUMA    *nacp, *nad;
         return (NUMA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
 
         /* Get the best estimate of the crossings, in pixel units */
-    if ((nacp = pixExtractBarcodeCrossings(pixs, thresh, debugflag)) == NULL)
+    if ((nacp = pixExtractBarcodeCrossings(pixs, thresh, diagspec)) == NULL)
         return (NUMA *)ERROR_PTR("nacp not made", __func__, NULL);
 
         /* Quantize the crossings to get actual windowed data */
     nad = numaQuantizeCrossingsByWindow(nacp, 2.0, pwidth, NULL,
-                                        pnac, debugflag);
+                                        pnac, diagspec);
     numaDestroy(&nacp);
     return nad;
 }
@@ -724,7 +724,7 @@ NUMA    *nacp, *nad;
 NUMA *
 pixExtractBarcodeCrossings(PIX       *pixs,
                            l_float32  thresh,
-                           l_int32    debugflag)
+                           LDIAG_CTX  diagspec)
 {
 l_int32    w;
 l_float32  bestthresh;
@@ -743,8 +743,8 @@ NUMA      *nas, *nax, *nay, *nad;
     numaInterpolateEqxInterval(0.0, 1.0, nas, L_QUADRATIC_INTERP, 0.0,
                                (l_float32)(w - 1), 4 * w + 1, &nax, &nay);
 
-    if (debugflag) {
-        lept_mkdir("lept/barcode");
+    if (diagspec) {
+        //lept_mkdir("lept/barcode");
         gplot = gplotCreate(diagspec, "/tmp/lept/barcode/signal", GPLOT_PNG,
                             "Pixel values", "dist in pixels", "value");
         gplotAddPlot(gplot, nax, nay, GPLOT_LINES, "plot 1");
@@ -852,7 +852,7 @@ numaQuantizeCrossingsByWidth(NUMA       *nas,
                              l_float32   binfract,
                              NUMA      **pnaehist,
                              NUMA      **pnaohist,
-                             l_int32     debugflag)
+                             LDIAG_CTX   diagspec)
 {
 l_int32    i, n, ret, ned, nod, iw, width;
 l_float32  val, minsize, maxsize, factor;
@@ -892,8 +892,8 @@ NUMA      *naerange, *naorange, *naelut, *naolut, *nad;
     naohist = numaMakeHistogramClipped(naodist, binfract * minsize,
                                        (1.25 / binfract) * maxsize);
 
-    if (debugflag) {
-        lept_mkdir("lept/barcode");
+    if (diagspec) {
+        //lept_mkdir("lept/barcode");
         gplot = gplotCreate(diagspec, "/tmp/lept/barcode/histw", GPLOT_PNG,
                             "Raw width histogram", "Width", "Number");
         gplotAddPlot(gplot, NULL, naehist, GPLOT_LINES, "plot black");
@@ -947,7 +947,7 @@ NUMA      *naerange, *naorange, *naelut, *naolut, *nad;
     numaGetIValue(naelut, width, &iw);
     numaAddNumber(nad, iw);
 
-    if (debugflag) {
+    if (diagspec) {
         lept_stderr(" ---- Black bar widths (pixels) ------ \n");
         numaWriteStderr(naedist);
         lept_stderr(" ---- Histogram of black bar widths ------ \n");

@@ -52,11 +52,14 @@ int main(int    argc,
 PIX   *pixs, *pixhm, *pixtm, *pixtb, *pixd;
 PIXA  *pixadb;
 const char  *filein;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "page_seg", FALSE, &rp))
+		return 1;
 
     if (argc != 2)
         return ERROR_INT(" Syntax:  pagesegtest1 filein", __func__, 1);
     filein = argv[1];
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
@@ -69,7 +72,9 @@ const char  *filein;
     pixDestroy(&pixs);
 
         /* Display intermediate images in a single image */
-    lept_mkdir("lept/pagseg");
+
+	//lept_mkdir("lept/pagseg");
+
     pixd = pixaDisplayTiledAndScaled(pixadb, 32, 400, 4, 0, 20, 3);
     pixWrite("/tmp/lept/pageseg/debug.png", pixd, IFF_PNG);
     pixaDestroy(&pixadb);

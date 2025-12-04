@@ -72,10 +72,13 @@ int main(int    argc,
          const char **argv)
 {
 SELA  *sela;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "dwa", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  dwalineargen", __func__, 1);
-    setLeptDebugOK(1);
 
         /* Generate the linear sel dwa code */
     sela = selaAddDwaLinear(NULL);

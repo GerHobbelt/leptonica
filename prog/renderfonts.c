@@ -54,11 +54,14 @@ char    *textstr;
 l_int32  width, wtext, overflow;
 L_BMF   *bmf;
 PIX     *pixs, *pix;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "fonts", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT("Syntax: renderfonts", __func__, 1);
 
-    setLeptDebugOK(1);
     lept_mkdir("lept/render");
 
         /* Render a character of text */

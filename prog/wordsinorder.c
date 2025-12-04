@@ -76,6 +76,10 @@ NUMAA    *naa;
 SARRAY   *safiles;
 PIX      *pixs, *pix1, *pix2, *pixd;
 PIXCMAP  *cmap;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "words", FALSE, &rp))
+		return 1;
 
     if (argc != 3 && argc != 5)
         return ERROR_INT(
@@ -91,7 +95,6 @@ PIXCMAP  *cmap;
         firstpage = atoi(argv[3]);
         npages = atoi(argv[4]);
     }
-    setLeptDebugOK(1);
 
         /* Compute the word bounding boxes at 2x reduction, along with
          * the textlines that they are in. */

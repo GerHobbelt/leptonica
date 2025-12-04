@@ -85,7 +85,7 @@ L_REGPARAMS* rp;
 #endif  /* abort */
 
     lept_rmdir("lept/webpanim");
-    lept_mkdir("lept/webpanim");
+    //lept_mkdir("lept/webpanim");
 
     niters = 5;
     duration = 250;   /* ms */

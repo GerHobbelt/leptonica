@@ -84,7 +84,7 @@ L_REGPARAMS* rp;
 #endif  /* abort */
 
     lept_rmdir("lept/webp");
-    lept_mkdir("lept/webp");
+    //lept_mkdir("lept/webp");
 
     DoWebpTest1(rp, DEMOPATH("weasel2.4c.png"));
     DoWebpTest1(rp, DEMOPATH("weasel8.240c.png"));

@@ -75,6 +75,10 @@ int main(int    argc,
 {
 const char        *filein, *tempfile, *printer = NULL;
 char   buf[512];
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "print", FALSE, &rp))
+		return 1;
 
     if (argc != 2 && argc != 3)
         return ERROR_INT(" Syntax:  printtiff filein [printer]", __func__, 1);
@@ -89,7 +93,6 @@ char   buf[512];
          "      potential vulnerability with the 'system' call.\n"
          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n");
 
-    setLeptDebugOK(1);
     (void)lept_rm(NULL, TEMP_PS);
     tempfile = genPathname("/tmp", TEMP_PS);
     convertTiffMultipageToPS(filein, tempfile, FILL_FACTOR);

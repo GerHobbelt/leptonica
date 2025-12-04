@@ -74,14 +74,18 @@ PIX     *pixs, *pixt, *pix, *pixr, *pixp, *pixsel, *pixhmt;
 PIX     *pixd1, *pixd2, *pixd3, *pixd;
 PIXA    *pixa;
 SEL     *selhm;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+		return 1;
 
     if (argc != 3)
         return ERROR_INT(" Syntax:  livre_hmt pattern reduction", __func__, 1);
     patno = atoi(argv[1]);
     reduction = atoi(argv[2]);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/livre");
+    //lept_mkdir("lept/livre");
+
     if ((pixs = pixRead(DEMOPATH(patname[patno]))) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
     if (reduction != 4 && reduction != 8 && reduction != 16)

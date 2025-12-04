@@ -51,6 +51,10 @@ int main(int    argc,
 const char    *filein, *fileout;
 l_int32  wsize, hsize, w, h, d;
 PIX     *pixs, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "gray_morph", FALSE, &rp))
+		return 1;
 
     if (argc != 5)
         return ERROR_INT(" Syntax:  graymorphtest filein wsize hsize fileout",
@@ -59,7 +63,6 @@ PIX     *pixs, *pixd;
     wsize = atoi(argv[2]);
     hsize = atoi(argv[3]);
     fileout = argv[4];
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);

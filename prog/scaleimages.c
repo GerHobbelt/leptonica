@@ -76,6 +76,10 @@ l_int32    i, n, format;
 l_float32  scalefactor;
 PIX       *pix1, *pix2;
 SARRAY    *sa1;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "scale", FALSE, &rp))
+		return 1;
 
     if (argc != 6 && argc != 7)
         return ERROR_INT(" Syntax:  scaleimages dirin pattern scalefactor"

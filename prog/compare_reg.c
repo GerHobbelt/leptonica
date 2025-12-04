@@ -64,7 +64,7 @@ PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "comp", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "compare", FALSE, &rp))
 		return 1;
 
 	//lept_mkdir("lept/comp");

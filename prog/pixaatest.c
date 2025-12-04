@@ -57,12 +57,15 @@ l_int32  w, d, tilewidth;
 PIX     *pixs;
 PIXA    *pixa, *pixad1, *pixad2;
 PIXAA   *pixaa1, *pixaa2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "pixaa", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax: pixaatest", __func__, 1);
 
-    setLeptDebugOK(1);
-    lept_mkdir("/lept/paa");
+    //lept_mkdir("/lept/paa");
 
         /* Read in file, split it into a set of tiles, and generate a pdf.
          * Two things to note for these tiny images:

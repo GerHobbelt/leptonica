@@ -64,14 +64,17 @@ l_int32     i;
 PIX        *pix1, *pix2;
 PIXA       *pixa1, *pixa2;
 L_STRCODE  *strc;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "recog_digits", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         lept_stderr(" Syntax: recog_bootnum3\n");
         return 1;
     }
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/digit");
+    //lept_mkdir("lept/digit");
 
         /* Make a pixa of the first 100 samples for each digit.
          * This will be saved to recog/digits/bootnum4.pa.  */

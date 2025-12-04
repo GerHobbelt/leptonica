@@ -185,7 +185,9 @@ L_REGPARAMS* rp;
     /*    Test the overlap and separation distance functions     */
     /* --------------------------------------------------------- */
     box1 = boxCreate(0, 0, 1, 1);
-    lept_mkdir("lept/overlap");
+
+	//lept_mkdir("lept/overlap");
+
     fp = lept_fopen("/tmp/lept/overlap/result.dat", "wb");
     for (i = 0; i < 3; i++) {  /* 9 1x1 boxes on a 3x3 square */
         for (j = 0; j < 3; j++) {

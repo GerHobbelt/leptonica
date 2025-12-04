@@ -61,9 +61,12 @@ l_float32  *a[3], b[3];
 L_BMF      *bmf;
 PIX        *pixd;
 PIXA       *pixa;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/yuv");
+	if (regTestSetup(&argc, &argv, "yuv", FALSE, &rp))
+		return 1;
+
+    //lept_mkdir("lept/yuv");
 
         /* Explore the range of rgb --> yuv transforms.  All rgb
          * values transform to a valid value of yuv, so when transforming

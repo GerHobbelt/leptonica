@@ -52,12 +52,15 @@ int main(int    argc,
          const char **argv)
 {
 char  buf[256];
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  livre_makefigs", __func__, 1);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/livre");
+    //lept_mkdir("lept/livre");
 
         /* Generate Figure 1 (page segmentation) */
     callSystemDebug("livre_seedgen");

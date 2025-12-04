@@ -58,14 +58,17 @@ BOXA      *boxa;
 PIX       *pixs, *pix1, *pix2;
 PIXA      *pixa, *pixas, *pixad;
 PIXAA     *paa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "digit_prep", FALSE, &rp))
+		return 1;
 
     if (argc != 1) {
         ERROR_INT(" Syntax: digitprep1", __func__, 1);
         return 1;
     }
 
-    setLeptDebugOK(1);
-	lept_mkdir("lept/digitprep");
+	//lept_mkdir("lept/digitprep");
 
 	if ((pixs = pixRead(DEMOPATH("barcode-digits.png"))) == NULL)
         return ERROR_INT("pixs not read", __func__, 1);

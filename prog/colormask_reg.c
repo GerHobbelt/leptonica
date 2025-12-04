@@ -66,7 +66,7 @@ PTA          *ptapk;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "colormask", FALSE, &rp))
+	if (regTestSetup(&argc, &argv, "color_mask", FALSE, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

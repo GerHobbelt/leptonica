@@ -66,6 +66,10 @@ const char    *filein, *rootname;
 char     outname[512], buffer[1024];
 l_int32  i, n, npages, nfiles, val, start, end;
 NUMA    *naeach;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "split_pdf", FALSE, &rp))
+		return 1;
 
     if (argc != 4)
         return ERROR_INT(" Syntax:  splitpdf filein n rootname",

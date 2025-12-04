@@ -64,6 +64,10 @@ l_int32    w, h, width, sep, first, last;
 l_float32  scalefact;
 BOXA      *boxa1, *boxa2;
 PIX       *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "display", FALSE, &rp))
+		return 1;
 
     if (argc != 6) {
         lept_stderr("Syntax error in displayboxa:\n"
@@ -75,11 +79,11 @@ PIX       *pixd;
     last = atoi(argv[3]);
     width = atoi(argv[4]);
     fileout = argv[5];
-    if (width < 30) {
+
+	if (width < 30) {
         L_ERROR("width too small; setting to 100\n", __func__);
         width = 100;
     }
-    setLeptDebugOK(1);
 
     if ((boxa1 = boxaRead(filein)) == NULL)
         return ERROR_INT("boxa not made", __func__, 1);

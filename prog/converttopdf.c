@@ -71,6 +71,10 @@ int main(int    argc,
 {
 l_int32  ret;
 const char    *dirin, *substr, *fileout;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+		return 1;
 
     if (argc != 3 && argc != 4) {
         lept_stderr(
@@ -83,7 +87,6 @@ const char    *dirin, *substr, *fileout;
     substr = (argc == 4) ? argv[2] : NULL;
     fileout = (argc == 4) ? argv[3] : argv[2];
 
-    setLeptDebugOK(1);
     ret = convertUnscaledFilesToPdf(dirin, substr, "", fileout);
     return ret;
 }

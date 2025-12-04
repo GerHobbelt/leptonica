@@ -52,10 +52,13 @@ int main(int    argc,
 {
 PIX   *pixs, *pix1, *pix2, *pix3, *pixr, *pixg, *pixb, *pixsg, *pixsm;
 PIXA  *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  livre_adapt", __func__, 1);
-    setLeptDebugOK(1);
 
         /* Read the image in at 150 ppi. */
     if ((pixs = pixRead(DEMOPATH("brothers.150.jpg"))) == NULL)
@@ -99,7 +102,9 @@ PIXA  *pixa;
     pixaAddPix(pixa, pix3, L_INSERT);
 
             /* Generate the output image and pdf */
-    lept_mkdir("lept/livre");
+
+    //lept_mkdir("lept/livre");
+
     lept_stderr("Writing jpg and pdf to: /tmp/lept/livre/adapt.*\n");
     pix1 = pixaDisplayTiledAndScaled(pixa, 8, 350, 4, 0, 25, 2);
     pixWrite("/tmp/lept/livre/adapt.jpg", pix1, IFF_DEFAULT);

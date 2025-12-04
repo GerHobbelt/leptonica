@@ -70,6 +70,10 @@ L_DEWARPA  *dewa;
 PIX        *pixs, *pixd, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 PIX        *pix8, *pix9, *pix10;
 PIXA       *pixa1, *pixa2;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "dewarp", FALSE, &rp))
+		return 1;
 
     if (argc != 3) {
         lept_stderr(" Syntax: dewarprules select ndew\n");
@@ -78,8 +82,7 @@ PIXA       *pixa1, *pixa2;
     select = atoi(argv[1]);
     ndew = atoi(argv[2]);
 
-    setLeptDebugOK(1);
-    lept_mkdir("dewarp");
+    //lept_mkdir("dewarp");
 
     if (select == 0) {
             /* Extract the basic grid from the sudoku image */

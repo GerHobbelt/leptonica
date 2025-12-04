@@ -2958,9 +2958,9 @@ SARRAY   *sa;
 #endif  /* _WIN32 */
 
     if (!LeptDebugOK) {
-        L_INFO("Running pdftoppm is disabled; "
-               "use setLeptDebugOK(1) to enable\n"
-               "returns default resolution 300 ppi\n", __func__);
+        L_WARNING("Running pdftoppm is disabled; "
+                  "use setLeptDebugOK(1) to enable\n"
+                  "returns default resolution 300 ppi\n", __func__);
         return 1;
     }
 

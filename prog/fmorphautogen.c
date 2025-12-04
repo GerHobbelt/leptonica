@@ -62,6 +62,10 @@ int main(int    argc,
 const char    *filename;
 l_int32  index;
 SELA    *sela;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "fmorph", FALSE, &rp))
+		return 1;
 
     if (argc != 2 && argc != 3)
         return ERROR_INT(" Syntax:  fmorphautogen index <filename>",
@@ -71,7 +75,6 @@ SELA    *sela;
     if (argc == 3)
         filename = argv[2];
 
-    setLeptDebugOK(1);
     sela = selaAddBasic(NULL);
     if (fmorphautogen(sela, index, filename))
         return 1;

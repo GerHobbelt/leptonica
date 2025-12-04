@@ -48,10 +48,13 @@ int main(int    argc,
 {
 PIX   *pixs, *pixsg, *pix1, *pix2;
 PIXA  *pixa;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
-	return ERROR_INT(" Syntax: livre_tophat", __func__, 1);
-    setLeptDebugOK(1);
+		return ERROR_INT(" Syntax: livre_tophat", __func__, 1);
 
         /* Read the image in at 150 ppi. */
     pixs = pixRead(DEMOPATH("brothers.150.jpg"));
@@ -70,7 +73,9 @@ PIXA  *pixa;
     pixaAddPix(pixa, pix2, L_INSERT);
 
         /* Generate the output image */
-    lept_mkdir("lept/livre");
+
+	//lept_mkdir("lept/livre");
+
     lept_stderr("Writing to: /tmp/lept/livre/tophat.jpg\n");
     pix1 = pixaDisplayTiledAndScaled(pixa, 8, 350, 3, 0, 25, 2);
     pixWrite("/tmp/lept/livre/tophat.jpg", pix1, IFF_JFIF_JPEG);

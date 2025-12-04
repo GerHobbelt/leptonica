@@ -61,6 +61,10 @@ int        i;
 PIX       *pixs, *pixd, *pixt;
 l_float32  pops;
 const char      *filein, *fileout;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "rotate_ortho", FALSE, &rp))
+		return 1;
 
     if (argc != 3 && argc != 4)
         return ERROR_INT(" Syntax:  rotateorthtest1 filein fileout [direction]",
@@ -71,7 +75,6 @@ const char      *filein, *fileout;
         dir = atoi(argv[3]);
     else
         dir = 1;
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);

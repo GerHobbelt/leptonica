@@ -63,9 +63,14 @@ PIXA      *pixa1, *pixa2, *pixa3;
     exit(77);
 #endif
 
-    setLeptDebugOK(1);
-    l_pdfSetDateAndVersion(0);
-    lept_mkdir("lept/tiffpdf");
+	L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "tiff", FALSE, &rp))
+		return 1;
+
+	l_pdfSetDateAndVersion(0);
+
+	//lept_mkdir("lept/tiffpdf");
 
         /* Wrap min-is-white and min-is-black */
     pix1 = pixRead(DEMOPATH("miniswhite.tif"));
@@ -81,7 +86,8 @@ PIXA      *pixa1, *pixa2, *pixa3;
 
         /* Extract the images */
     lept_rmdir("lept/tmp");
-    lept_mkdir("lept/tmp");
+    //lept_mkdir("lept/tmp");
+
     snprintf(buf, sizeof(buf),
              "pdftoppm -r 300 /tmp/lept/tiffpdf/set1.pdf /tmp/lept/tmp/sevens");
     callSystemDebug(buf);
@@ -105,7 +111,8 @@ PIXA      *pixa1, *pixa2, *pixa3;
 
         /* Extract the images again */
     lept_rmdir("lept/tmp");
-    lept_mkdir("lept/tmp");
+    //lept_mkdir("lept/tmp");
+
     snprintf(buf, sizeof(buf),
              "pdftoppm -r 300 /tmp/lept/tiffpdf/set2.pdf /tmp/lept/tmp/sevens");
     callSystemDebug(buf);

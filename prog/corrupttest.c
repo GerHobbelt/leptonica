@@ -83,18 +83,22 @@ const char      *filein;
 size_t     nbytes;
 FILE      *fp;
 PIX       *pix;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "corrupt", FALSE, &rp))
+		return 1;
 
     if (argc != 3 && argc != 5)
         return ERROR_INT("syntax: corrupttest filein deletion [loc size]",
         __func__, 1);
     filein = argv[1];
     deletion = atoi(argv[2]);
+
     findFileFormat(filein, &format);
     nbytes = nbytesInFile(filein);
     lept_stderr("file size: %lu bytes\n", (unsigned long)nbytes);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/corrupt");
+    //lept_mkdir("lept/corrupt");
 
     hint = 0;
     if (argc == 5) {  /* Single test */

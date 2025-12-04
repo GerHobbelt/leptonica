@@ -91,6 +91,10 @@ const char      *filein, *fileout;
 l_int32    sharpen, antialias, togray, lossless, d;
 l_float32  scalex, scaley;
 PIX       *pixs, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "scale", FALSE, &rp))
+		return 1;
 
     if (argc != 6 && argc != 9)
         return ERROR_INT(
@@ -111,7 +115,6 @@ PIX       *pixs, *pixd;
     }
     if (scalex <= 0 || scaley <= 0)
         return ERROR_INT("invalid scale factor; must be > 0.0", __func__, 1);
-    setLeptDebugOK(1);
 
     if ((pixs = pixRead(filein)) == NULL)
 	return ERROR_INT("pixs not made", __func__, 1);

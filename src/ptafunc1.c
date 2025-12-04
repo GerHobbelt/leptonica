@@ -1822,7 +1822,7 @@ l_uint32        val;
 NUMA           *na, *nar, *nag, *nab;
 PIX            *pixt;
 
-    lept_mkdir("lept/plot");
+    //lept_mkdir("lept/plot");
 
     if (!pixs)
         return ERROR_INT("pixs not defined", __func__, 1);

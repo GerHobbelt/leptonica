@@ -59,12 +59,16 @@ int main(int    argc,
          const char **argv)
 {
 PIX  *pixs, *pixg, *pixc, *pixd;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(&argc, &argv, "morph_seq", FALSE, &rp))
+		return 1;
 
     if (argc != 1)
         return ERROR_INT(" Syntax:  morphseq_reg", __func__, 1);
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/morphseq");
+    //lept_mkdir("lept/morphseq");
+
     pixs = pixRead(DEMOPATH("feyn.tif"));
 
         /* 1 bpp */

@@ -58,9 +58,12 @@ l_int32 main(int    argc,
 {
 l_int32  i, same;
 PIXA    *pixa;
+L_REGPARAMS* rp;
 
-    setLeptDebugOK(1);
-    lept_mkdir("lept/auto");
+	if (regTestSetup(&argc, &argv, "autogen", FALSE, &rp))
+	return 1;
+
+    //lept_mkdir("lept/auto");
 
     for (i = 0; i < 2; i++) {
        pixa = (PIXA *)l_autodecode_137(i);  /* this is the dispatcher */
