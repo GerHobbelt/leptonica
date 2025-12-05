@@ -1219,8 +1219,7 @@ NUMA    *na;
  * \param[out]   piscolor   [optional] 1 if significant color is found;
  *                          0 otherwise.  If pixs is 8 bpp, and does not have
  *                          a colormap with color entries, this is 0
- * \param[in]    debug      1 to output masked image that is tested for colors;
- *                          0 otherwise
+ * \param[in]    diagspec   [optional] activate to output masked image that is tested for colors
  * \return  0 if OK, 1 on error.
  *
  * <pre>
@@ -1288,7 +1287,7 @@ pixColorsForQuantization(PIX      *pixs,
                          l_int32   thresh,
                          l_int32  *pncolors,
                          l_int32  *piscolor,
-                         l_int32   debug)
+                         LDIAG_CTX diagspec)
 {
 l_int32    w, h, d, minside, factor;
 l_float32  pixfract, colorfract;
@@ -1380,13 +1379,17 @@ PIXCMAP   *cmap;
          * should not be overly sensitive to their actual values. */
     if (d == 8) {
         pixSetMasked(pixg, pixm, 0xff);
-        if (debug)
-			pixWrite("junkpix8.png", pixg, IFF_PNG);
+		if (leptIsDebugModeActive(diagspec)) {
+			const char* pixpath = leptDebugGenFilepath(diagspec, "junkpix8.png");
+			pixWrite(pixpath, pixg, IFF_PNG);
+		}
         pixNumSignificantGrayColors(pixg, 20, 236, 0.0001f, 1, pncolors);
     } else {  /* d == 32 */
         pixSetMasked(pixsc, pixm, 0xffffffff);
-        if (debug)
-			pixWrite("junkpix32.png", pixsc, IFF_PNG);
+		if (leptIsDebugModeActive(diagspec)) {
+			const char* pixpath = leptDebugGenFilepath(diagspec, "junkpix32.png");
+			pixWrite(pixpath, pixsc, IFF_PNG);
+		}
         pixNumberOccupiedOctcubes(pixsc, 4, 20, -1, pncolors);
     }
 

@@ -92,7 +92,9 @@ L_REGPARAMS* rp;
      *                  Test comparison with rotation                 *
      * -------------------------------------------------------------- */
         /* Make a second set that is rotated; combine with the input set. */
+	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
+	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     pixa2 = pixaScaleBySampling(pixa1, 2.0, 2.0);  /* to resolution 150 ppi */
     n = pixaGetCount(pixa2);
     for (i = 0; i < n; i++) {
@@ -106,22 +108,25 @@ L_REGPARAMS* rp;
         /* Compare between every pair of images;
          * can also use n = 2, simthresh = 0.50.  */
     pixaComparePhotoRegionsByHisto(pixa2, 0.85, 1.3, 1, 3, 0.20,
-                                   &nai, &scores, &pix1, rp->diag_spec);
+                                   &nai, &scores, &pix1, &pix2);
     lept_free(scores);
 
         /* Show the similarity classes. */
     numaWriteStderr(nai);
-    pixWrite("/tmp/lept/comp/photoclass1.jpg", pix1, IFF_JFIF_JPEG);
-    lept_stderr("Writing photo classes: /tmp/lept/comp/photoclass1.jpg\n");
+	const char* pixpath = leptDebugGenFilepath(rp->diag_spec, "comp/photoclass1.jpg");
+    pixWrite(pixpath, pix1, IFF_JFIF_JPEG);
+    lept_stderr("Writing photo classes: %s\n", pixpath);
     numaDestroy(&nai);
     pixDestroy(&pix1);
 
         /* Show the scores between images as a 2d array */
-    pix2 = pixRead("/tmp/lept/comp/scorearray.png");
+    //pix2 = pixRead("/tmp/lept/comp/scorearray.png");
+	//pixSetDiagnosticsSpec(pix2, rp->diag_spec);
     pixDisplay(pix2, 100, 100);
     pixDestroy(&pix2);
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
+	}
 #endif
 
 #if TEST2
@@ -129,30 +134,35 @@ L_REGPARAMS* rp;
      *                      Test translation                          *
      * -------------------------------------------------------------- */
         /* Make a second set that is translated; combine with the input set. */
+	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
+	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     pixa2 = pixaScaleBySampling(pixa1, 2.0, 2.0);  /* to resolution 150 ppi */
     pixa3 = pixaTranslate(pixa2, 15, -21, L_BRING_IN_WHITE);
     pixaJoin(pixa2, pixa3, 0, -1);
 
         /* Compare between every pair of images. */
     pixaComparePhotoRegionsByHisto(pixa2, 0.85, 1.3, 1, 3, 0.20,
-                                   &nai, &scores, &pix1, rp->diag_spec);
+                                   &nai, &scores, &pix1, &pix2);
     lept_free(scores);
 
         /* Show the similarity classes. */
     numaWriteStderr(nai);
-    pixWrite("/tmp/lept/comp/photoclass2.jpg", pix1, IFF_JFIF_JPEG);
-    lept_stderr("Writing photo classes: /tmp/lept/comp/photoclass2.jpg\n");
+	const char* pixpath = leptDebugGenFilepath(rp->diag_spec, "comp/photoclass2.jpg");
+	pixWrite(pixpath, pix1, IFF_JFIF_JPEG);
+    lept_stderr("Writing photo classes: %s\n", pixpath);
     numaDestroy(&nai);
     pixDestroy(&pix1);
 
         /* Show the scores between images as a 2d array */
-    pix2 = pixRead("/tmp/lept/comp/scorearray.png");
+    //pix2 = pixRead("/tmp/lept/comp/scorearray.png");
+	//pixSetDiagnosticsSpec(pix2, rp->diag_spec);
     pixDisplay(pix2, 100, 100);
     pixDestroy(&pix2);
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
     pixaDestroy(&pixa3);
+	}
 #endif
 
 #if TEST3
@@ -161,15 +171,21 @@ L_REGPARAMS* rp;
      * -------------------------------------------------------------- */
         /* Do a comparison on a pair: dinos has (5,7) and (4,10) being
          * superficially similar.  But they are far apart by this test. */
+	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
+	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     pixa2 = pixaScaleBySampling(pixa1, 2.0, 2.0);  /* to resolution 150 ppi */
     pix1 = pixaGetPix(pixa2, 5, L_CLONE);
     box1 = pixaGetBox(pixa2, 5, L_COPY);
     pix2 = pixaGetPix(pixa2, 7, L_CLONE);
     box2 = pixaGetBox(pixa2, 7, L_COPY);
-    pixGenPhotoHistos(pix1, box1, 1, 1.2, 3, &naa1, &w1, &h1, rp->diag_spec);
-    pixGenPhotoHistos(pix2, box2, 1, 1.2, 3, &naa2, &w2, &h2, rp->diag_spec);
-    pixaDestroy(&pixa1);
+	leptDebugAddStepLevel(rp->diag_spec);
+	leptDebugSetStepId(rp->diag_spec, 5);
+    pixGenPhotoHistos(pix1, box1, 1, 1.2, 3, &naa1, &w1, &h1);
+	leptDebugSetStepId(rp->diag_spec, 7);
+	pixGenPhotoHistos(pix2, box2, 1, 1.2, 3, &naa2, &w2, &h2);
+	(void)leptDebugPopStepLevel(rp->diag_spec);
+	pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
     if (!naa1 || !naa2) {
         lept_stderr("Not both image; exiting\n");
@@ -181,11 +197,11 @@ L_REGPARAMS* rp;
     naa4 = l_uncompressGrayHistograms(bytea2, size2, &w2, &h2);
     lept_stderr("*******  (%d, %d), (%d, %d)  *******\n", w1, h1, w2, h2);
     pixa1 = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
         /* Set @minratio very small to allow comparison for all pairs */
     compareTilesByHisto(naa3, naa4, 0.1, w1, h1, w2, h2, &score, pixa1);
     pixaDestroy(&pixa1);
     lept_stderr("score = %5.3f\n", score);
-    pixaDestroy(&pixa1);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     boxDestroy(&box1);
@@ -196,13 +212,16 @@ L_REGPARAMS* rp;
     numaaDestroy(&naa4);
     lept_free(bytea1);
     lept_free(bytea2);
+	}
 #endif
 
 #if TEST4
     /* -------------------------------------------------------------- *
      *                  Test comparison in detail                     *
      * -------------------------------------------------------------- */
+	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
+	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     n = pixaGetCount(pixa1);
     maxscore = 0.0;
     maxi = 0;
@@ -215,7 +234,7 @@ L_REGPARAMS* rp;
             pix2 = pixaGetPix(pixa1, j, L_CLONE);
             box2 = pixaGetBox(pixa1, j, L_COPY);
             pixCompareGrayByHisto(pix1, pix2, box1, box2, 0.85, 230, 1, 3,
-                                  &score, 0);
+                                  &score);
             lept_stderr("Score[%d,%d] = %5.3f\n", i, j, score);
             if (i != j && score > maxscore) {
                 maxscore = score;
@@ -230,6 +249,7 @@ L_REGPARAMS* rp;
     }
     pixaDestroy(&pixa1);
     lept_stderr("max score [%d,%d] = %5.3f\n", maxi, maxj, maxscore);
+	}
 #endif
 
 #if TEST5
@@ -239,7 +259,9 @@ L_REGPARAMS* rp;
         /* Are the images photo or text?  This is the morphological
          * method, which is more accurate than the variance of gray
          * histo method.  Output to /tmp/lept/comp/isphoto1.pdf.  */
+	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
+	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     n = pixaGetCount(pixa1);
     pixa2 = pixaCreate(n);
     for (i = 0; i < n; i++) {
@@ -266,11 +288,13 @@ L_REGPARAMS* rp;
         pixDestroy(&pix1);
         boxDestroy(&box1);
     }
-    lept_stderr("Writing to: /tmp/lept/comp/isphoto1.pdf\n");
+	const char* pdfpath = leptDebugGenFilepath(rp->diag_spec, "comp/isphoto1.pdf");
+	lept_stderr("Writing to: %s\n", pdfpath);
     pixaConvertToPdf(pixa2, 300, 1.0, L_FLATE_ENCODE, 0, NULL,
-                         "/tmp/lept/comp/isphoto1.pdf");
+                         pdfpath);
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
+	}
 #endif
 
     pixacompDestroy(&pac);

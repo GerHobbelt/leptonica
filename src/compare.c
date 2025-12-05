@@ -1016,12 +1016,12 @@ PIX            *pixt;
 
         /* Don't bother to plot if the images are the same */
     if (plottype && !same) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
         L_INFO("Images differ: output plots will be generated\n", __func__);
         na = pixGetGrayHistogram(pixt, 1);
         numaGetNonzeroRange(na, TINY, &first, &last);
         nac = numaClipToInterval(na, 0, last);
-        snprintf(buf, sizeof(buf), "/tmp/lept/comp/compare_gray%d", index);
+        snprintf(buf, sizeof(buf), "/tmp/lept/comp/compare_gray%d", (int)index);
         gplot = gplotCreate(diagspec, buf, plottype,
                             "Pixel Difference Histogram", "diff val",
                             "number of pixels");
@@ -1139,7 +1139,7 @@ PIX            *pixr, *pixg, *pixb;
 
         /* Don't bother to plot if the images are the same */
     if (plottype && !same) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
 		L_INFO("Images differ: output plots will be generated\n", __func__);
         nar = pixGetGrayHistogram(pixr, 1);
         nag = pixGetGrayHistogram(pixg, 1);
@@ -1152,7 +1152,7 @@ PIX            *pixr, *pixg, *pixb;
         narc = numaClipToInterval(nar, 0, last);
         nagc = numaClipToInterval(nag, 0, last);
         nabc = numaClipToInterval(nab, 0, last);
-        snprintf(buf, sizeof(buf), "/tmp/lept/comp/compare_rgb%d", index);
+        snprintf(buf, sizeof(buf), "/tmp/lept/comp/compare_rgb%d", (int)index);
         gplot = gplotCreate(diagspec, buf, plottype,
                             "Pixel Difference Histogram", "diff val",
                             "number of pixels");
@@ -1516,7 +1516,7 @@ NUMA       *nah, *nan, *nac;
     array = numaGetFArray(nan, L_NOCOPY);
 
     if (details) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
 		//lept_mkdir("lept/comp");
         numaGetNonzeroRange(nan, 0.0, &first, &last);
         nac = numaClipToInterval(nan, first, last);
@@ -1958,7 +1958,7 @@ l_float32  mse;  /* mean squared error */
  * \param[out]   pnai array  giving similarity class indices
  * \param[out]   pscores     [optional] score matrix as 1-D array of size N^2
  * \param[out]   ppixd       [optional] pix of similarity classes
- * \param[in]    debug       1 to output histograms; 0 otherwise
+ * \param[out]   ppscorearrayd  [optional] pix of score array
  * \return  0 if OK, 1 on error
  *
  * <pre>
@@ -2007,7 +2007,7 @@ pixaComparePhotoRegionsByHisto(PIXA        *pixa,
                                NUMA       **pnai,
                                l_float32  **pscores,
                                PIX        **ppixd,
-                               LDIAG_CTX    diagspec)
+                               PIX        **ppixscorearrayd)
 {
 char       *text;
 l_int32     i, j, nim, w, h, w1, h1, w2, h2, ival, classid;
@@ -2020,6 +2020,7 @@ PIX        *pix;
 
     if (pscores) *pscores = NULL;
     if (ppixd) *ppixd = NULL;
+	if (ppixscorearrayd) *ppixscorearrayd = NULL;
     if (!pnai)
         return ERROR_INT("&na not defined", __func__, 1);
     *pnai = NULL;
@@ -2038,6 +2039,9 @@ PIX        *pix;
     if (simthresh > 1.0)
         return ERROR_INT("simthresh invalid; should be near 0.25", __func__, 1);
 
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixa);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Prepare the histograms */
     nim = pixaGetCount(pixa);
     if ((n3a = (NUMAA **)LEPT_CALLOC(nim, sizeof(NUMAA *))) == NULL)
@@ -2048,8 +2052,9 @@ PIX        *pix;
         pix = pixaGetPix(pixa, i, L_CLONE);
         text = pixGetText(pix);
         pixSetResolution(pix, 150, 150);
+		//pixSetDiagnosticsSpec(pix, diagspec);
         pixGenPhotoHistos(pix, NULL, factor, textthresh, n,
-                          &naa, &w, &h, diagspec);
+                          &naa, &w, &h);
         n3a[i] = naa;
         numaAddNumber(naw, w);
         numaAddNumber(nah, h);
@@ -2097,8 +2102,11 @@ PIX        *pix;
                                 &score, NULL);
             scores[nim * i + j] = score;
             scores[nim * j + i] = score;  /* the score array is symmetric */
-/*            lept_stderr("score = %5.3f\n", score); */
-            if (score > simthresh) {
+			if (debugflag) {
+				lept_stderr("Comparing image %d and %d: score = %5.3f\n",
+					i, j, score);
+			}
+			if (score > simthresh) {
                 numaSetValue(nai, j, classid);
                 lept_stderr(
                         "Setting %d similar to %d, in class %d; score %5.3f\n",
@@ -2115,27 +2123,36 @@ PIX        *pix;
          * are on the same horizontal raster line to the right.
          * The array has been symmetrized, so images in the same
          * same similarity class also appear on the same column below. */
+	if (debugflag || ppixscorearrayd) {
+		l_int32    wpl, fact;
+		l_uint32* line, * data;
+		PIX* pix2, * pix3;
+		pix2 = pixCreate(nim, nim, 8);
+		pixSetDiagnosticsSpec(pix2, diagspec);
+		data = pixGetData(pix2);
+		wpl = pixGetWpl(pix2);
+		for (i = 0; i < nim; i++) {
+			line = data + i * wpl;
+			for (j = 0; j < nim; j++) {
+				SET_DATA_BYTE(line, j,
+					L_MIN(255, 4.0 * 255 * scores[nim * i + j]));
+			}
+		}
+		fact = L_MAX(2, 1000 / nim);
+		pix3 = pixExpandReplicate(pix2, fact);
+		if (debugflag) {
+			const char* pixpath = leptDebugGenFilepath(diagspec, "comp/scorearray.png");
+			lept_stderr("Writing to %s\n", pixpath);
+			//lept_mkdir("lept/comp");
+			pixWrite(pixpath, pix3, IFF_PNG);
+		}
+		pixDestroy(&pix2);
+		if (ppixscorearrayd)
+			*ppixscorearrayd = pix3;
+		else
+			pixDestroy(&pix3);
+	}
     if (pscores) {
-        l_int32    wpl, fact;
-        l_uint32  *line, *data;
-        PIX       *pix2, *pix3;
-        pix2 = pixCreate(nim, nim, 8);
-        data = pixGetData(pix2);
-        wpl = pixGetWpl(pix2);
-        for (i = 0; i < nim; i++) {
-            line = data + i * wpl;
-            for (j = 0; j < nim; j++) {
-                SET_DATA_BYTE(line, j,
-                              L_MIN(255, 4.0 * 255 * scores[nim * i + j]));
-            }
-        }
-        fact = L_MAX(2, 1000 / nim);
-        pix3 = pixExpandReplicate(pix2, fact);
-        lept_stderr("Writing to /tmp/lept/comp/scorearray.png\n");
-        //lept_mkdir("lept/comp");
-        pixWrite("/tmp/lept/comp/scorearray.png", pix3, IFF_PNG);
-        pixDestroy(&pix2);
-        pixDestroy(&pix3);
         *pscores = scores;
     } else {
         LEPT_FREE(scores);
@@ -2224,8 +2241,7 @@ pixComparePhotoRegionsByHisto(PIX        *pix1,
                               l_float32   minratio,
                               l_int32     factor,
                               l_int32     n,
-                              l_float32  *pscore,
-                              LDIAG_CTX   diagspec)
+                              l_float32  *pscore)
 {
 l_int32    w1, h1, w2, h2, w1c, h1c, w2c, h2c;
 l_float32  wratio, hratio;
@@ -2247,7 +2263,8 @@ PIXA      *pixa;
         n = 4;
     }
 
-    if (diagspec) {
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
+	if (diagspec) {
         //lept_mkdir("lept/comp");
     }
 
@@ -2272,19 +2289,18 @@ PIXA      *pixa;
         pix3 = pixClipRectangle(pix1, box1, NULL);
     else
         pix3 = pixClone(pix1);
-    pixGenPhotoHistos(pix3, NULL, factor, 0, n, &naa1, &w1c, &h1c, diagspec);
+    pixGenPhotoHistos(pix3, NULL, factor, 0, n, &naa1, &w1c, &h1c);
     pixDestroy(&pix3);
     if (!naa1) return 0;
     if (box2)
         pix4 = pixClipRectangle(pix2, box2, NULL);
     else
         pix4 = pixClone(pix2);
-    pixGenPhotoHistos(pix4, NULL, factor, 0, n, &naa2, &w2c, &h2c, diagspec);
+    pixGenPhotoHistos(pix4, NULL, factor, 0, n, &naa2, &w2c, &h2c);
     pixDestroy(&pix4);
     if (!naa2) return 0;
 
         /* Compare histograms */
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
 	pixa = NULL;
 	if (diagspec) {
 		pixa = pixaCreate(0);
@@ -2342,10 +2358,8 @@ pixGenPhotoHistos(PIX        *pixs,
                   l_int32     n,
                   NUMAA     **pnaa,
                   l_int32    *pw,
-                  l_int32    *ph,
-                  LDIAG_CTX   diagspec)
+                  l_int32    *ph)
 {
-char    buf[64];
 NUMAA  *naa;
 PIX    *pix1, *pix2, *pix3, *pixm;
 PIXA   *pixa;
@@ -2367,8 +2381,11 @@ PIXA   *pixa;
         n = 4;
     }
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     pixa = NULL;
-    if (diagspec) {
+    if (debugflag) {
         pixa = pixaCreate(0);
 		pixaSetDiagnosticsSpec(pixa, diagspec);
 
@@ -2392,7 +2409,7 @@ PIXA   *pixa;
     pixSetMaskedGeneral(pix3, pixm, 255, 0, 0);
     pixDestroy(&pixm);
 
-    if (diagspec) {
+    if (pixa) {
         PIX   *pix4, *pix5, *pix6, *pix7, *pix8;
         PIXA  *pixa2;
         pix4 = pixConvertTo32(pix2);
@@ -2420,10 +2437,9 @@ PIXA   *pixa;
     }
 
     if (pixa) {
-        snprintf(buf, sizeof(buf), "/tmp/lept/comp/tiledhistos.%d.pdf",
-                 debugindex);
-        lept_stderr("Writing to %s\n", buf);
-        pixaConvertToPdf(pixa, 300, 1.0, L_FLATE_ENCODE, 0, NULL, buf);
+		const char* pdfpath = leptDebugGenFilepath(diagspec, "comp/tiledhistos.%d.pdf", leptDebugGetStepId(diagspec));
+        lept_stderr("Writing to %s\n", pdfpath);
+        pixaConvertToPdf(pixa, 300, 1.0, L_FLATE_ENCODE, 0, NULL, pdfpath);
         pixaDestroy(&pixa);
     }
 
@@ -2628,10 +2644,7 @@ LDIAG_CTX diagspec = NULL;
     findHistoGridDimensions(n, w, h, &nx, &ny, 1);
 
 	if (pixadebug) {
-		diagspec = pixaGetDiagnosticsSpec(pixadebug);
-	}
-	if (!diagspec) {
-		diagspec = pixGetDiagnosticsSpec(pix);
+		diagspec = leptDebugGetDiagnosticsSpecFromAny(2, pixaGetDiagnosticsSpec(pixadebug), pixGetDiagnosticsSpec(pix));
 	}
 
         /* Evaluate histograms in each tile */
@@ -2991,8 +3004,7 @@ pixCompareGrayByHisto(PIX        *pix1,
                       l_int32     maxgray,
                       l_int32     factor,
                       l_int32     n,
-                      l_float32  *pscore,
-                      l_int32     debugflag)
+                      l_float32  *pscore)
 {
 l_int32    w1, h1, w2, h2;
 l_float32  wratio, hratio;
@@ -3017,8 +3029,12 @@ PIXA      *pixa;
         n = 4;
     }
 
-    if (debugflag)
-        //lept_mkdir("lept/comp");
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
+	if (debugflag) {
+		//lept_mkdir("lept/comp");
+	}
 
         /* Initial filter by size */
     if (box1)
@@ -3052,8 +3068,12 @@ PIXA      *pixa;
     pixCropAlignedToCentroid(pix5, pix6, factor, &box3, &box4);
     pix7 = pixClipRectangle(pix5, box3, NULL);
     pix8 = pixClipRectangle(pix6, box4, NULL);
-    pixa = (debugflag) ? pixaCreate(0) : NULL;
-    if (debugflag) {
+    pixa = NULL;
+	if (debugflag) {
+		pixa = pixaCreate(0);
+		pixaSetDiagnosticsSpec(pixa, diagspec);
+	}
+	if (pixa) {
         PIX     *pix9, *pix10, *pix11, *pix12, *pix13;
         PIXA    *pixa2;
         pix9 = pixConvertTo32(pix5);
@@ -3134,7 +3154,7 @@ PIXA      *pixa1, *pixa2;
 	if (pixadebug) {
 		diagspec = pixaGetDiagnosticsSpec(pixadebug);
 		if (!diagspec) {
-			diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+			diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
 		}
 	}
 
@@ -3458,19 +3478,20 @@ pixCompareWithTranslation(PIX        *pix1,
                           l_int32    *pdelx,
                           l_int32    *pdely,
                           l_float32  *pscore,
-                          l_int32     debugflag)
+	                      PIXA      **ppixad)
 {
 l_uint8   *subtab;
 l_int32    i, level, area1, area2, delx, dely;
-l_int32    etransx, etransy, maxshift, dbint;
+l_int32    etransx, etransy, maxshift;
 l_int32   *stab, *ctab;
 l_float32  cx1, cx2, cy1, cy2, score;
-PIX       *pixb1, *pixb2, *pixt1, *pixt2, *pixt3, *pixt4;
+PIX       *pixb1, *pixb2, *pixt1, *pixt2, *pixt3, *pixt4, *pix5;
 PIXA      *pixa1, *pixa2, *pixadb = NULL;
 
     if (pdelx) *pdelx = 0;
     if (pdely) *pdely = 0;
     if (pscore) *pscore = 0.0;
+	if (ppixad) *ppixad = NULL;
     if (!pdelx || !pdely)
         return ERROR_INT("&delx and &dely not defined", __func__, 1);
     if (!pscore)
@@ -3479,6 +3500,9 @@ PIXA      *pixa1, *pixa2, *pixadb = NULL;
         return ERROR_INT("pix1 not defined", __func__, 1);
     if (!pix2)
         return ERROR_INT("pix2 not defined", __func__, 1);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
         /* Make tables */
     subtab = makeSubsampleTab2x();
@@ -3493,8 +3517,12 @@ PIXA      *pixa1, *pixa2, *pixadb = NULL;
          * with level 2 (neutral), down to 8x reduction */
     pixa1 = pixaCreate(4);
     pixa2 = pixaCreate(4);
-    if (debugflag)
-        pixadb = pixaCreate(4);
+	if (debugflag) {
+		pixadb = pixaCreate(4);
+	}
+	if (ppixad) {
+		*ppixad = pixaCreate(0);
+	}
     pixaAddPix(pixa1, pixb1, L_INSERT);
     pixaAddPix(pixa2, pixb2, L_INSERT);
     for (i = 0; i < 3; i++) {
@@ -3505,6 +3533,11 @@ PIXA      *pixa1, *pixa2, *pixadb = NULL;
         pixb1 = pixt1;
         pixb2 = pixt2;
     }
+
+	if (pixadb) {
+		leptDebugAddStepLevel(diagspec);
+		leptDebugSetStepLevelAsForeverIncreasing(diagspec, FALSE);
+	}
 
         /* At the lowest level, use the centroids with a maxshift of 6
          * to search for the best alignment.  Then at higher levels,
@@ -3526,10 +3559,18 @@ PIXA      *pixa1, *pixa2, *pixadb = NULL;
             etransy = 2 * dely;
             maxshift = 2;
         }
-        dbint = (debugflag) ? level + 1 : 0;
+
+		if (pixadb) {
+			leptDebugSetStepId(diagspec, level + 1);
+		}
+
+		pix5 = NULL;
         pixBestCorrelation(pixt1, pixt2, area1, area2, etransx, etransy,
-                           maxshift, stab, &delx, &dely, &score, dbint);
-        if (debugflag) {
+                           maxshift, stab, &delx, &dely, &score, (ppixad ? &pix5 : NULL));
+		if (pix5) {
+			pixaAddPix(*ppixad, pix5, L_INSERT);
+		}
+        if (pixadb) {
             lept_stderr("Level %d: delx = %d, dely = %d, score = %7.4f\n",
                         level, delx, dely, score);
             pixRasteropIP(pixt2, delx, dely, L_BRING_IN_WHITE);
@@ -3542,14 +3583,18 @@ PIXA      *pixa1, *pixa2, *pixadb = NULL;
         pixDestroy(&pixt2);
     }
 
-    if (debugflag) {
+    if (pixadb) {
+		const char* pdfpath = leptDebugGenFilepath(diagspec, "comp/compare.pdf");
         pixaConvertToPdf(pixadb, 300, 1.0, L_FLATE_ENCODE, 0, NULL,
-                         "/tmp/lept/comp/compare.pdf");
-        convertFilesToPdf("/tmp/lept/comp", "correl_", 30, 1.0, L_FLATE_ENCODE,
+                         pdfpath);
+		pdfpath = leptDebugGenFilepath(diagspec, "comp/correl.pdf");
+		convertFilesToPdf("/tmp/lept/comp", "correl_", 30, 1.0, L_FLATE_ENCODE,
                           0, "Correlation scores at levels 1 through 5",
-                          "/tmp/lept/comp/correl.pdf");
+                          pdfpath);
         pixaDestroy(&pixadb);
-    }
+
+		(void)leptDebugPopStepLevel(diagspec);
+	}
 
     *pdelx = delx;
     *pdely = dely;
@@ -3615,7 +3660,7 @@ pixBestCorrelation(PIX        *pix1,
                    l_int32    *pdelx,
                    l_int32    *pdely,
                    l_float32  *pscore,
-                   l_int32     debugflag)
+	               PIX       **ppixd)
 {
 l_int32    shiftx, shifty, delx, dely;
 l_int32   *tab;
@@ -3626,12 +3671,16 @@ PIX       *pix3, *pix4;
     if (pdelx) *pdelx = 0;
     if (pdely) *pdely = 0;
     if (pscore) *pscore = 0.0;
+	if (ppixd) *ppixd = NULL;
     if (!pix1 || pixGetDepth(pix1) != 1)
         return ERROR_INT("pix1 not defined or not 1 bpp", __func__, 1);
     if (!pix2 || pixGetDepth(pix2) != 1)
         return ERROR_INT("pix2 not defined or not 1 bpp", __func__, 1);
     if (!area1 || !area2)
         return ERROR_INT("areas must be > 0", __func__, 1);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
+	l_ok debugflag = leptIsDebugModeActive(diagspec) /* || (ppixd != NULL) */;
 
     if (debugflag > 0)
         fpix = fpixCreate(2 * maxshift + 1, 2 * maxshift + 1);
@@ -3650,7 +3699,7 @@ PIX       *pix3, *pix4;
             pixCorrelationScoreShifted(pix1, pix2, area1, area2,
                                        etransx + shiftx,
                                        etransy + shifty, tab, &score);
-            if (debugflag > 0) {
+            if (debugflag) {
                 fpixSetPixel(fpix, maxshift + shiftx, maxshift + shifty,
                              1000.0 * score);
 /*                lept_stderr("(sx, sy) = (%d, %d): score = %6.4f\n",
@@ -3664,16 +3713,19 @@ PIX       *pix3, *pix4;
         }
     }
 
-    if (debugflag > 0) {
-        char  buf[128];
+    if (debugflag) {
         //lept_mkdir("lept/comp");
         pix3 = fpixDisplayMaxDynamicRange(fpix);
         pix4 = pixExpandReplicate(pix3, 20);
-        snprintf(buf, sizeof(buf), "/tmp/lept/comp/correl_%d.png",
-                 debugflag);
-        pixWrite(buf, pix4, IFF_PNG);
+		if (leptIsDebugModeActive(diagspec)) {
+			const char* pixpath = leptDebugGenFilepath(diagspec, "comp/correl_%d.png", leptDebugGetStepId(diagspec));
+			pixWrite(pixpath, pix4, IFF_PNG);
+		}
         pixDestroy(&pix3);
-        pixDestroy(&pix4);
+		if (ppixd)
+			*ppixd = pix4;
+		else
+			pixDestroy(&pix4);
         fpixDestroy(&fpix);
     }
 

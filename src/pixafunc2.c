@@ -204,7 +204,9 @@ PIX     *pix1, *pixd;
         return (PIX *)ERROR_PTR("no components; no size", __func__, NULL);
     if (n == 0) {
         L_WARNING("no components; returning empty 1 bpp pix\n", __func__);
-        return pixCreate(w, h, 1);
+        pix1 = pixCreate(w, h, 1);
+		pixSetDiagnosticsSpec(pix1, pixaGetDiagnosticsSpec(pixa));
+		return pix1;
     }
 
         /* If w and h not input, determine the minimum size required
@@ -225,7 +227,8 @@ PIX     *pix1, *pixd;
 
     if ((pixd = pixCreate(w, h, d)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-    pixSetResolution(pixd, res, res);
+	pixSetDiagnosticsSpec(pixd, pixaGetDiagnosticsSpec(pixa));
+	pixSetResolution(pixd, res, res);
     if (d > 1)
         pixSetAll(pixd);
     for (i = 0; i < n; i++) {

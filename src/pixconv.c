@@ -1680,9 +1680,11 @@ PIX     *pixg, *pixd;
         octlevel = 3;
     }
 
+	LDIAG_CTX diagspec = pixPassDiagIfDebugModeActive(pixs);
+
         /* Test the number of colors.  For color, the octcube leaves
          * are at level 4. */
-    pixColorsForQuantization(pixs, 0, &ncolors, &iscolor, 0);
+    pixColorsForQuantization(pixs, 0, &ncolors, &iscolor, diagspec);
     if (ncolors > maxcolors)
         return ERROR_INT("too many colors", __func__, 1);
 

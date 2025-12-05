@@ -88,18 +88,18 @@ L_REGPARAMS* rp;
 
 	pix1 = pixSauvolaOnContrastNorm(pixs, 130, NULL, NULL);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 30 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixaAddPix(pixa, pix1, L_INSERT);
 
        /* Contrast normalization followed by background normalization
         * and thresholding. */
     pix1 = pixThreshOnDoubleNorm(pixs, 130);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 31 */
-    pixDisplayWithTitle(pix1, 850, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 850, 0, NULL);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixaDisplayTiledInColumns(pixa, 2, 0.5, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 32 */
-    pixDisplayWithTitle(pix2, 0, 600, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 600, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pix2);
 
@@ -177,7 +177,7 @@ PIXA    *pixa;
 		pixaAddPix(pixa, pixth, L_COPY);
         pixaAddPix(pixa, pixd, L_COPY);
         pix1 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 30, 2);
-        pixDisplayWithTitle(pix1, 600, 600, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix1, 600, 600, NULL);
         pixDestroy(&pix1);
         pixaDestroy(&pixa);
     }

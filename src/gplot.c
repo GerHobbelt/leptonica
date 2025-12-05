@@ -434,9 +434,22 @@ gplotMakeOutputPix(GPLOT  *gplot)
     if (gplot->outformat != GPLOT_PNG && gplot->outformat != GPLOT_PNM)
         return (PIX *)ERROR_PTR("output format not an image", __func__, NULL);
 
-    if (gplotMakeOutput(gplot))
+	if (!LeptDebugOK) {
+		return (PIX*)ERROR_PTR("running gnuplot is disabled; "
+			"use setLeptDebugOK(1) to enable\n", __func__, NULL);
+	}
+
+#ifdef OS_IOS /* iOS 11 does not support system() */
+	return ERROR_INT("iOS 11 does not support system()", __func__, NULL);
+#endif /* OS_IOS */
+
+	if (gplotMakeOutput(gplot))
         return (PIX *)ERROR_PTR("plot output not made", __func__, NULL);
-    return pixRead(gplot->outname);
+
+    PIX* pixd = pixRead(gplot->outname);
+	pixSetDiagnosticsSpec(pixd, gplotGetDiagnosticsSpec(gplot));
+	pixSetText(pixd, gplot->title);
+	return pixd;
 }
 
 
@@ -655,7 +668,8 @@ FILE    *fp;
  * </pre>
  */
 l_ok
-gplotSimple1(LDIAG_CTX diagspec, NUMA        *na,
+gplotSimple1(LDIAG_CTX    diagspec,
+	         NUMA        *na,
              l_int32      outformat,
              const char  *outroot,
              const char  *title)
@@ -691,7 +705,8 @@ GPLOT  *gplot;
  * </pre>
  */
 l_ok
-gplotSimple2(LDIAG_CTX diagspec, NUMA        *na1,
+gplotSimple2(LDIAG_CTX    diagspec,
+			 NUMA        *na1,
              NUMA        *na2,
              l_int32      outformat,
              const char  *outroot,
@@ -729,7 +744,8 @@ GPLOT  *gplot;
  * </pre>
  */
 l_ok
-gplotSimpleN(LDIAG_CTX diagspec, NUMAA       *naa,
+gplotSimpleN(LDIAG_CTX    diagspec,
+			 NUMAA       *naa,
              l_int32      outformat,
              const char  *outroot,
              const char  *title)
@@ -760,7 +776,8 @@ GPLOT  *gplot;
  * </pre>
  */
 PIX *
-gplotSimplePix1(LDIAG_CTX diagspec, NUMA        *na,
+gplotSimplePix1(LDIAG_CTX    diagspec,
+				NUMA        *na,
                 const char  *title)
 {
 char            buf[64];
@@ -801,7 +818,8 @@ PIX            *pix;
  * </pre>
  */
 PIX *
-gplotSimplePix2(LDIAG_CTX diagspec, NUMA        *na1,
+gplotSimplePix2(LDIAG_CTX   diagspec,
+				NUMA        *na1,
                 NUMA        *na2,
                 const char  *title)
 {
@@ -843,7 +861,8 @@ PIX            *pix;
  * </pre>
  */
 PIX *
-gplotSimplePixN(LDIAG_CTX diagspec, NUMAA       *naa,
+gplotSimplePixN(LDIAG_CTX    diagspec,
+				NUMAA       *naa,
                 const char  *title)
 {
 char            buf[64];
@@ -893,7 +912,8 @@ PIX            *pix;
  * </pre>
  */
 GPLOT *
-gplotSimpleXY1(LDIAG_CTX diagspec, NUMA        *nax,
+gplotSimpleXY1(LDIAG_CTX    diagspec,
+	           NUMA        *nax,
                NUMA        *nay,
                l_int32      plotstyle,
                l_int32      outformat,
@@ -948,7 +968,8 @@ GPLOT  *gplot;
  * </pre>
  */
 GPLOT *
-gplotSimpleXY2(LDIAG_CTX diagspec, NUMA        *nax,
+gplotSimpleXY2(LDIAG_CTX    diagspec,
+	           NUMA        *nax,
                NUMA        *nay1,
                NUMA        *nay2,
                l_int32      plotstyle,
@@ -1005,7 +1026,8 @@ GPLOT  *gplot;
  * </pre>
  */
 GPLOT *
-gplotSimpleXYN(LDIAG_CTX diagspec, NUMA        *nax,
+gplotSimpleXYN(LDIAG_CTX    diagspec,
+	           NUMA        *nax,
                NUMAA       *naay,
                l_int32      plotstyle,
                l_int32      outformat,
@@ -1060,7 +1082,8 @@ NUMA    *nay;
  * </pre>
  */
 PIX *
-gplotGeneralPix1(LDIAG_CTX diagspec, NUMA        *na,
+gplotGeneralPix1(LDIAG_CTX    diagspec,
+	             NUMA        *na,
                  l_int32      plotstyle,
                  const char  *rootname,
                  const char  *title,

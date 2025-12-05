@@ -75,7 +75,7 @@ static void adjustSidePlotName(char *buf, size_t size, const char *preface,
  * \param[in]    extrapixels  pixels added on all sides (or subtracted
  *                            if %extrapixels < 0) when using
  *                            L_SUB_ON_LOC_DIFF and L_SUB_ON_SIZE_DIFF
- * \param[in]    debug        1 for debug output
+ * \param[in]    diagspec     activate for debug output
  * \return  boxad fitted boxa, or NULL on error
  *
  * <pre>
@@ -135,8 +135,10 @@ PIX     *pix1;
         return boxaCopy(boxas, L_COPY);
     }
 
-    boxaSplitEvenOdd(boxas, 0, &boxae, &boxao);
-    if (diagspec) {
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
+	boxaSplitEvenOdd(boxas, 0, &boxae, &boxao);
+    if (debugflag) {
         //lept_mkdir("lept/smooth");
         boxaWriteDebug("/tmp/lept/smooth/boxae.ba", boxae);
         boxaWriteDebug("/tmp/lept/smooth/boxao.ba", boxao);
@@ -144,20 +146,20 @@ PIX     *pix1;
 
     boxamede = boxaWindowedMedian(boxae, halfwin, diagspec);
     boxamedo = boxaWindowedMedian(boxao, halfwin, diagspec);
-    if (diagspec) {
+    if (debugflag) {
         boxaWriteDebug("/tmp/lept/smooth/boxamede.ba", boxamede);
         boxaWriteDebug("/tmp/lept/smooth/boxamedo.ba", boxamedo);
     }
 
     boxame = boxaModifyWithBoxa(boxae, boxamede, subflag, maxdiff, extrapixels);
     boxamo = boxaModifyWithBoxa(boxao, boxamedo, subflag, maxdiff, extrapixels);
-    if (diagspec) {
+    if (debugflag) {
         boxaWriteDebug("/tmp/lept/smooth/boxame.ba", boxame);
         boxaWriteDebug("/tmp/lept/smooth/boxamo.ba", boxamo);
     }
 
     boxad = boxaMergeEvenOdd(boxame, boxamo, 0);
-    if (diagspec) {
+    if (debugflag) {
         boxaPlotSides(boxas, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/smooth/plotsides1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
@@ -187,7 +189,7 @@ PIX     *pix1;
  *
  * \param[in]    boxas     source boxa
  * \param[in]    halfwin   half width of window over which the median is found
- * \param[in]    debug     1 for debug output
+ * \param[in]    diagspec  activate for debug output
  * \return  boxad smoothed boxa, or NULL on error
  *
  * <pre>
@@ -222,8 +224,10 @@ PIX     *pix1;
         return boxaCopy(boxas, L_COPY);
     }
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Fill invalid boxes in the input sequence */
-    if ((boxaf = boxaFillSequence(boxas, L_USE_ALL_BOXES, diagspec)) == NULL)
+    if ((boxaf = boxaFillSequence(boxas, L_USE_ALL_BOXES, debugflag)) == NULL)
         return (BOXA *)ERROR_PTR("filled boxa not made", __func__, NULL);
 
         /* Get the windowed median output from each of the sides */
@@ -244,7 +248,7 @@ PIX     *pix1;
         boxaAddBox(boxad, box, L_INSERT);
     }
 
-    if (diagspec) {
+	if (debugflag) {
         //lept_mkdir("lept/windowed");
         boxaPlotSides(boxaf, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsides1.png", pix1, IFF_PNG);
@@ -1265,7 +1269,9 @@ NUMA           *nal, *nat, *nar, *nab;
     if (!ppixd)
         return ERROR_INT("&pixd not defined", __func__, 1);
 
-    boxat = boxaFillSequence(boxa, L_USE_ALL_BOXES, 0);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
+    boxat = boxaFillSequence(boxa, L_USE_ALL_BOXES, debugflag);
 
         /* Build the numas for each side */
     nal = numaCreate(n);
@@ -1302,7 +1308,7 @@ NUMA           *nal, *nat, *nar, *nab;
     *ppixd = gplotMakeOutputPix(gplot);
     gplotDestroy(&gplot);
 
-    if (diagspec) {
+    if (debugflag) {
         dataname = (plotname) ? stringNew(plotname) : stringNew("no_name");
         numaGetMedian(nal, &med);
         numaGetMeanDevFromMedian(nal, med, &dev);
@@ -1390,7 +1396,9 @@ NUMA           *naw, *nah;
     if (!ppixd)
         return ERROR_INT("&pixd not defined", __func__, 1);
 
-    boxat = boxaFillSequence(boxa, L_USE_ALL_BOXES, 0);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
+	boxat = boxaFillSequence(boxa, L_USE_ALL_BOXES, debugflag);
 
         /* Build the numas for the width and height */
     naw = numaCreate(n);
@@ -1435,7 +1443,7 @@ NUMA           *naw, *nah;
  *
  * \param[in]    boxas      with at least 3 boxes
  * \param[in]    useflag    L_USE_ALL_BOXES, L_USE_SAME_PARITY_BOXES
- * \param[in]    debug      1 for debug output
+ * \param[in]    debugflag  1 for debug output
  * \return  boxad filled boxa, or NULL on error
  *
  * <pre>
@@ -1451,7 +1459,7 @@ NUMA           *naw, *nah;
 BOXA *
 boxaFillSequence(BOXA    *boxas,
                  l_int32  useflag,
-                 l_int32  debug)
+                 l_int32  debugflag)
 {
 l_int32  n, nv;
 BOXA    *boxae, *boxao, *boxad;
@@ -1465,7 +1473,7 @@ BOXA    *boxae, *boxao, *boxad;
     nv = boxaGetValidCount(boxas);
     if (n == nv)
         return boxaCopy(boxas, L_COPY);  /* all valid */
-    if (debug)
+    if (debugflag)
         L_INFO("%d valid boxes, %d invalid boxes\n", __func__, nv, n - nv);
     if (useflag == L_USE_SAME_PARITY_BOXES && n < 3) {
         L_WARNING("n < 3; some invalid\n", __func__);

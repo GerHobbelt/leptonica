@@ -63,7 +63,7 @@ PIX * pixReadMemBmp(const l_uint8 *cdata, size_t size)
 
 /* ----------------------------------------------------------------------*/
 
-l_ok pixWriteMemBmp(l_uint8 **pdata, size_t *psize, PIX *pix)
+l_ok pixWriteMemBmp(l_uint8 **pdata, size_t *psize, PIX *pixs)
 {
     return ERROR_INT("function not present", __func__, 1);
 }

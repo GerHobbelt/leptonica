@@ -77,6 +77,7 @@ L_REGPARAMS* rp;
     pixs = pixRead(DEMOPATH("wet-day.jpg"));
     pixa = pixaCreate(0);
 	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
     pixg = pixConvertRGBToGray(pixs, 0.33, 0.34, 0.33);
     pixaAddPix(pixa, pixs, L_INSERT);
     pixaAddPix(pixa, pixg, L_INSERT);
@@ -172,13 +173,14 @@ L_REGPARAMS* rp;
         /* Display results */
     pix1 = pixaDisplayTiledAndScaled(pixa, 32, 400, 4, 0, 20, 2);
     pixWrite("/tmp/lept/adapt/results.jpg", pix1, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix1, 50, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 50, 0, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 
         /* Check pixFillMapHoles() */
     pixa = pixaCreate(3);
 	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
 	pix1 = pixRead(DEMOPATH("weasel8.png"));  /* use this as the map */
     pixGammaTRC(pix1, pix1, 1.0, 0, 270);  /* darken white pixels */
     pixaAddPix(pixa, pix1, L_COPY);
@@ -194,13 +196,14 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 20, 1);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 14 */
-    pixDisplayWithTitle(pix2, 50, 850, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 50, 850, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pix2);
 
         /* An even simpler check of pixFillMapHoles() */
     pixa = pixaCreate(2);
 	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
 	pix1 = pixCreate(3, 3, 8);
     pixSetPixel(pix1, 1, 0, 128);
     pix2 = pixExpandReplicate(pix1, 25);
@@ -211,7 +214,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix1);
     pix1 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 15 */
-    pixDisplayWithTitle(pix1, 50, 1000, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 50, 1000, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
 

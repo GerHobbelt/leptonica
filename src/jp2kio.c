@@ -263,7 +263,7 @@ pixReadStreamJp2k(FILE     *fp,
                   l_uint32  reduction,
                   BOX      *box,
                   l_int32   hint,
-                  l_int32   debug)
+                  l_ok      debugflag)
 {
 l_uint8 *data;
 size_t   size;
@@ -278,7 +278,7 @@ PIX     *pix;
     if ((data = l_binaryReadStream(fp, &size)) == NULL)
         return (PIX *)ERROR_PTR("data not read", __func__, NULL);
 
-    pix = pixReadMemJp2k(data, size, reduction, box, hint, debug);
+    pix = pixReadMemJp2k(data, size, reduction, box, hint, debugflag);
 
     LEPT_FREE(data);
     return pix;
@@ -291,7 +291,7 @@ pixReadMemJp2kCore(const l_uint8  *bytes,
                    l_uint32        reduction,
                    BOX            *box,
                    l_int32         hint,
-                   l_int32         debug)
+                   l_ok            debugflag)
 {
 const char        *opjVersion;
 l_int32            i, j, index, bx, by, bw, bh, val, rval, gval, bval, aval;
@@ -363,7 +363,7 @@ OpjBuffer          buffer;
     }
 
         /* Catch and report events using callbacks */
-    if (debug) {
+    if (debugflag) {
         opj_set_info_handler(l_codec, info_callback, NULL);
         opj_set_warning_handler(l_codec, warning_callback, NULL);
         opj_set_error_handler(l_codec, error_callback, NULL);
@@ -436,7 +436,7 @@ OpjBuffer          buffer;
     prec = image->comps[0].prec;
     if (prec != bps)
         L_WARNING("precision %d != bps %d!\n", __func__, prec, bps);
-    if (debug) {
+    if (debugflag) {
         L_INFO("w = %d, h = %d, bps = %d, spp = %d\n",
                __func__, w, h, bps, spp);
         colorspace = image->color_space;
@@ -597,7 +597,7 @@ pixWriteOpjStreamJp2k(opj_stream_t  *l_stream,
                       l_int32        nlevels,
                       l_int32        codec,
                       l_int32        hint,
-                      l_int32        debug)
+                      l_int32        debugflag)
 {
 l_int32            i, w, h, d, depth, channels, success;
 l_float64          snr;
@@ -714,7 +714,7 @@ opj_image_t       *image = NULL;
     }
 
         /* Catch and report events using callbacks */
-    if (debug) {
+    if (debugflag) {
         opj_set_info_handler(l_codec, info_callback, NULL);
         opj_set_warning_handler(l_codec, warning_callback, NULL);
         opj_set_error_handler(l_codec, error_callback, NULL);
@@ -781,7 +781,7 @@ pixWriteStreamJp2k(FILE    *fp,
                    l_int32  nlevels,
                    l_int32  codec,
                    l_int32  hint,
-                   l_int32  debug)
+                   l_int32  debugflag)
 {
 l_ok           ok;
 opj_stream_t  *l_stream;
@@ -913,14 +913,14 @@ pixReadMemJp2k(const l_uint8  *data,
                l_uint32        reduction,
                BOX            *box,
                l_int32         hint,
-               l_int32         debug)
+               l_ok            debugflag)
 {
 PIX      *pix;
 
     if (!data)
         return (PIX *)ERROR_PTR("data not defined", __func__, NULL);
 
-    pix = pixReadMemJp2kCore(data, size, reduction, box, hint, debug);
+    pix = pixReadMemJp2kCore(data, size, reduction, box, hint, debugflag);
     if (!pix) L_ERROR("pix not read\n", __func__);
     return pix;
 }

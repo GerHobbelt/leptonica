@@ -224,11 +224,13 @@ PIXA    *pixa;
 
     if ((pixa = pixaCreate(n)) == NULL)
         return (PIXA *)ERROR_PTR("pixa not made", __func__, NULL);
-    pixGetDimensions(pixs, &w, &h, &d);
+	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
+	pixGetDimensions(pixs, &w, &h, &d);
     if ((pix1 = pixCreate(cellw, cellh, d)) == NULL) {
         pixaDestroy(&pixa);
         return (PIXA *)ERROR_PTR("pix1 not made", __func__, NULL);
     }
+	pixCloneDiagnosticsSpec(pix1, pixs);
 
     nw = (w + cellw - 1) / cellw;
     nh = (h + cellh - 1) / cellh;
@@ -295,7 +297,8 @@ PIXA    *pixad;
     if ((pixad = pixaCreate(end - start + 1)) == NULL)
         return (PIXA *)ERROR_PTR("pixad not made", __func__, NULL);
 
-    boxaGetExtent(boxa, &wbox, &hbox, NULL);
+	pixaSetDiagnosticsSpec(pixad, pixGetDiagnosticsSpec(pixs));
+	boxaGetExtent(boxa, &wbox, &hbox, NULL);
     pixGetDimensions(pixs, &w, &h, NULL);
     cropwarn = FALSE;
     if (wbox > w || hbox > h)
@@ -366,7 +369,8 @@ PIXA    *pixa;
 
     if ((pixa = pixaCreate(nx * ny)) == NULL)
         return (PIXA *)ERROR_PTR("pixa not made", __func__, NULL);
-    pixGetDimensions(pixs, &w, &h, &d);
+	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
+	pixGetDimensions(pixs, &w, &h, &d);
     cellw = (w + nx - 1) / nx;  /* round up */
     cellh = (h + ny - 1) / ny;
 
@@ -473,6 +477,7 @@ PIXA    *pixac;
 
     if ((pixac = pixaCreate(pixa->n)) == NULL)
         return (PIXA *)ERROR_PTR("pixac not made", __func__, NULL);
+	pixaCloneDiagnosticsSpec(pixac, pixa);
     nb = pixaGetBoxaCount(pixa);
     for (i = 0; i < pixa->n; i++) {
         if (copyflag == L_COPY) {

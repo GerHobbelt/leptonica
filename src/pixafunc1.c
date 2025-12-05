@@ -2127,8 +2127,8 @@ PIXA    *pixad;
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         pix2 = pixScaleBySampling(pix1, scalex, scaley);
-        pixCopyText(pix2, pix1);
-		pixCloneDiagnosticsSpec(pix2, pix1);
+        //pixCopyText(pix2, pix1);
+		//pixCloneDiagnosticsSpec(pix2, pix1);
 		pixaAddPix(pixad, pix2, L_INSERT);
         pixDestroy(&pix1);
     }
@@ -2873,6 +2873,7 @@ PIXA    *pixa1, *pixad;
     pixaAnyColormaps(pixas, &hascmap);
     if (hascmap) {
         pixa1 = pixaCreate(n);
+		pixaCloneDiagnosticsSpec(pixa1, pixas);
         for (i = 0; i < n; i++) {
             pix1 = pixaGetPix(pixas, i, L_CLONE);
             if (depth == 32)
@@ -2889,7 +2890,8 @@ PIXA    *pixa1, *pixad;
     pixaGetDepthInfo(pixa1, &maxdepth, &same);
     if (!same) {  /* at least one pix has depth < maxdepth */
         pixad = pixaCreate(n);
-        for (i = 0; i < n; i++) {
+		pixaCloneDiagnosticsSpec(pixad, pixas);
+		for (i = 0; i < n; i++) {
             pix1 = pixaGetPix(pixa1, i, L_CLONE);
             if (maxdepth <= 16)
                 pix2 = pixConvertTo8(pix1, 0);

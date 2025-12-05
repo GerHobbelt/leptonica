@@ -67,7 +67,7 @@ static l_int32 countAlignedMatches(NUMA *nai1, NUMA *nai2, NUMA *nasx,
                                    NUMA *nasy, l_int32 n1, l_int32 n2,
                                    l_int32 delx, l_int32 dely,
                                    l_int32 nreq, l_int32 *psame,
-                                   l_int32 debugflag);
+                                   l_ok debugflag);
 static void printRowIndices(l_int32 *index1, l_int32 n1,
                             l_int32 *index2, l_int32 n2);
 
@@ -750,7 +750,7 @@ numaaCompareImagesByBoxes(NUMAA    *naa1,
                           l_int32   delx,
                           l_int32   dely,
                           l_int32  *psame,
-                          l_int32   debugflag)
+                          l_ok      debugflag)
 {
 l_int32   n1, n2, i, j, nbox, y1, y2, xl1, xl2;
 l_int32   shiftx, shifty, match;
@@ -934,7 +934,7 @@ countAlignedMatches(NUMA     *nai1,
                     l_int32   dely,
                     l_int32   nreq,
                     l_int32  *psame,
-                    l_int32   debugflag)
+                    l_ok      debugflag)
 {
 l_int32   i, j, nm, shiftx, shifty, nmatch, diffx, diffy;
 l_int32  *ia1, *ia2, *iasx, *iasy, *index1, *index2;

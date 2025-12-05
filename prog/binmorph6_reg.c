@@ -89,7 +89,7 @@ L_REGPARAMS* rp;
 
     pix8 = pixaDisplayTiledInColumns(pixa, 2, 0.75, 20, 2);
     regTestWritePixAndCheck(rp, pix8, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix8, 100, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix8, 100, 0, NULL);
     pixDestroy(&pix2);
     pixDestroy(&pix8);
     pixaDestroy(&pixa);

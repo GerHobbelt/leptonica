@@ -770,7 +770,7 @@ PIX        *pixt, *pixt1, *pixt2;
 
 	if (debugflag > 0) {
 		fpix = fpixCreate(nx, 2 * maxyshift + 1);
-		LDIAG_CTX spec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
+		LDIAG_CTX spec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
 		fpixSetDiagnosticsSpec(fpix, spec);
 	}
     if (!tab8)

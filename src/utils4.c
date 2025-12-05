@@ -152,27 +152,38 @@
  *--------------------------------------------------------------------*/
 
 
+typedef struct StepsArray {
+#define L_MAX_STEPS_DEPTH 10         // [batch:0, step:1, item:2, level:3, sublevel:4, ...]
+	uint16_t actual_depth;
+	l_atomic vals[L_MAX_STEPS_DEPTH];
+	// Note: the last depth level is permanently auto-incrementing and serves as a 'persisted' %item_id_is_forever_increasing counter.
+} StepsArray;
 
 struct l_diag_predef_parts {
 	const char* basepath;            //!< the base path within where every generated file must land.
+#if 0
+	NUMA *steps;                     //!< a hierarchical step numbering system; the last number level will (auto)increment, or RESET every time when a more major step level incremented/changed (unless %item_id_is_forever_increasing is set).
+#else
+	struct StepsArray steps;         //!< a hierarchical step numbering system; the last number level will (auto)increment, or RESET every time when a more major step level incremented/changed (unless %item_id_is_forever_increasing is set).
+#endif
 	unsigned int basepath_minlength; //!< minimum length of the basepath, i.e. append/remove/replace APIs are prohibited from editing the leading part of basepath that is shorter than this length.
-	size_t batch_unique_id;          // 0 if unused?
-	size_t step_id;                  //!< will be RESET every time the %batch_unique_id is incremented/changed.
-	size_t item_id;                  //!< will be RESET every time the %batch_unique_id or %step_id is incremented/changed (unless %item_id_is_forever_increasing is set).
+
 	uint64_t active_hash_id;         //!< derived from the originally specified %active_filename path, or set explicitly (if user-land code has a better idea about what value this should be).
 	const char* active_filename;     //!< the currently processed source file name. To be used (in reduced form) as a target filename prefix.
 	const char* process_name;        //!< the part which identifies what we are doing right now (at a high abstraction level)
 	const char* default_path_template_str; //!< you can customize the preferred file path formatting template.
 
+	char* last_generated_filepath;   //!< internal cache: stores the last generated file path (for re-use and reference)
+	char* last_generated_step_id_string; //!< internal cache: stores the last generated steps[] id string (for re-use and reference)
+
 	l_atomic             refcount;   /*!< reference count (1 if no clones)  */
 
 	unsigned int must_regenerate : 1;		//!< set when l_filename_prefix changes mandate a freshly (re)generated target file prefix for subsequent requests.
-	unsigned int must_bump_batch_id : 1;	//!< set when %batch_unique_id should be incremented before next use.
 	unsigned int must_bump_step_id : 1;		//!< set when %step_id should be incremented before next use.
-	unsigned int must_bump_item_id : 1;		//!< set when %item_id should be incremented before next use.
-	unsigned int item_id_is_forever_increasing : 1;
+	unsigned int step_id_is_forever_increasing : L_MAX_STEPS_DEPTH;
 
-	unsigned int display : 1;               /*!< 1 if in display mode; 0 otherwise                */
+	unsigned int display : 1;        /*!< 1 if in display mode; 0 otherwise                */
+	unsigned int debugging : 1;		 //!< 1 if debugging mode is activated, resulting in several leptonica APIs producing debug/info messages and/or writing diagnostic plots and images to the basepath filesystem.
 };
 
 
@@ -252,6 +263,58 @@ leptCloneDiagnoticsSpecInstance(LDIAG_CTX spec)
 }
 
 
+void
+leptReplaceDiagnoticsSpecInstance(LDIAG_CTX* specd, LDIAG_CTX specs)
+{
+	if (!specd)
+	{
+		L_ERROR("image diagnostics spec reference not defined", __func__);
+		return;
+	}
+
+	if (*specd == specs)
+		return;
+
+	leptDestroyDiagnoticsSpecInstance(specd);
+
+	*specd = leptCloneDiagnoticsSpecInstance(specs);
+}
+
+
+// produce the diagspec which is non-NULL and has debugging mode enabled.
+// if that one is not available, produce the non-NULL diagspec.
+// if none is available, return NULL.
+static inline LDIAG_CTX
+get_prevalent_diagspec(LDIAG_CTX spec1, LDIAG_CTX spec2)
+{
+	if (spec1 != NULL && leptIsDebugModeActive(spec1))
+		return spec1;
+	if (spec2 != NULL && leptIsDebugModeActive(spec2))
+		return spec2;
+	if (spec1 != NULL)
+		return spec1;
+	return spec2;
+}
+
+
+LDIAG_CTX
+leptDebugGetDiagnosticsSpecFromAny(unsigned int arg_count, LDIAG_CTX spec1, LDIAG_CTX spec2, ...)
+{
+	LDIAG_CTX rv = spec1;
+	va_list ap;
+	va_start(ap, spec2);
+	if (arg_count < 2)
+		arg_count = 2;
+	for (arg_count--; arg_count > 0; arg_count--) {
+		rv = get_prevalent_diagspec(rv, spec2);
+
+		spec2 = va_arg(ap, LDIAG_CTX);
+	}
+	va_end(ap);
+	return rv;
+}
+
+
 LDIAG_CTX
 pixGetDiagnosticsSpec(const PIX* pixs)
 {
@@ -263,24 +326,22 @@ pixGetDiagnosticsSpec(const PIX* pixs)
 
 
 LDIAG_CTX
-pixGetDiagnosticsSpecFromAny(const PIX* pix1, const PIX* pix2, ...)
+pixGetDiagnosticsSpecFromAny(unsigned int arg_count, const PIX* pix1, const PIX* pix2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (pix1 != NULL)
 		rv = pix1->diag_spec;
-	if (pix2 == NULL || rv != NULL)
-		return rv;
 
 	va_list ap;
 	va_start(ap, pix2);
-	do {
-		assert(pix2 != NULL);
-		rv = pix2->diag_spec;
-		if (rv != NULL)
-			break;
+	if (arg_count < 2)
+		arg_count = 2;
+	for (arg_count--; arg_count > 0; arg_count--) {
+		if (pix2)
+			rv = get_prevalent_diagspec(rv, pix2->diag_spec);
 
 		pix2 = va_arg(ap, const PIX *);
-	} while (pix2 != NULL);
+	}
 	va_end(ap);
 
 	return rv;
@@ -317,7 +378,8 @@ pixCopyDiagnosticsSpec(PIX* pixd, const PIX* pixs)
 	if (!pixd)
 		return ERROR_INT("pixd not defined", __func__, 1);
 
-	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
+	LDIAG_CTX spec = pixd->diag_spec;
 
 	if (pixs->diag_spec) {
 		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
@@ -325,6 +387,9 @@ pixCopyDiagnosticsSpec(PIX* pixd, const PIX* pixs)
 	else {
 		pixd->diag_spec = NULL;
 	}
+
+	leptDestroyDiagnoticsSpecInstance(&spec);
+
 	return 0;
 }
 
@@ -363,24 +428,22 @@ fpixGetDiagnosticsSpec(const FPIX* fpixs)
 
 
 LDIAG_CTX
-fpixGetDiagnosticsSpecFromAny(const FPIX* pix1, const FPIX* pix2, ...)
+fpixGetDiagnosticsSpecFromAny(unsigned int arg_count, const FPIX* pix1, const FPIX* pix2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (pix1 != NULL)
 		rv = pix1->diag_spec;
-	if (pix2 == NULL || rv != NULL)
-		return rv;
 
 	va_list ap;
 	va_start(ap, pix2);
-	do {
-		assert(pix2 != NULL);
-		rv = pix2->diag_spec;
-		if (rv != NULL)
-			break;
+	if (arg_count < 2)
+		arg_count = 2;
+	for (arg_count--; arg_count > 0; arg_count--) {
+		if (pix2)
+			rv = get_prevalent_diagspec(rv, pix2->diag_spec);
 
 		pix2 = va_arg(ap, const FPIX*);
-	} while (pix2 != NULL);
+	}
 	va_end(ap);
 
 	return rv;
@@ -417,7 +480,8 @@ fpixCopyDiagnosticsSpec(FPIX* pixd, const FPIX* pixs)
 	if (!pixd)
 		return ERROR_INT("fpixd not defined", __func__, 1);
 
-	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
+	LDIAG_CTX spec = pixd->diag_spec;
 
 	if (pixs->diag_spec) {
 		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
@@ -425,6 +489,9 @@ fpixCopyDiagnosticsSpec(FPIX* pixd, const FPIX* pixs)
 	else {
 		pixd->diag_spec = NULL;
 	}
+
+	leptDestroyDiagnoticsSpecInstance(&spec);
+
 	return 0;
 }
 
@@ -463,24 +530,22 @@ dpixGetDiagnosticsSpec(const DPIX* dpixs)
 
 
 LDIAG_CTX
-dpixGetDiagnosticsSpecFromAny(const DPIX* pix1, const DPIX* pix2, ...)
+dpixGetDiagnosticsSpecFromAny(unsigned int arg_count, const DPIX* pix1, const DPIX* pix2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (pix1 != NULL)
 		rv = pix1->diag_spec;
-	if (pix2 == NULL || rv != NULL)
-		return rv;
 
 	va_list ap;
 	va_start(ap, pix2);
-	do {
-		assert(pix2 != NULL);
-		rv = pix2->diag_spec;
-		if (rv != NULL)
-			break;
+	if (arg_count < 2)
+		arg_count = 2;
+	for (arg_count--; arg_count > 0; arg_count--) {
+		if (pix2)
+			rv = get_prevalent_diagspec(rv, pix2->diag_spec);
 
 		pix2 = va_arg(ap, const DPIX*);
-	} while (pix2 != NULL);
+	}
 	va_end(ap);
 
 	return rv;
@@ -516,7 +581,8 @@ dpixCopyDiagnosticsSpec(DPIX* pixd, const DPIX* pixs)
 	if (!pixd)
 		return ERROR_INT("dpixd not defined", __func__, 1);
 
-	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
+	LDIAG_CTX spec = pixd->diag_spec;
 
 	if (pixs->diag_spec) {
 		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
@@ -524,12 +590,15 @@ dpixCopyDiagnosticsSpec(DPIX* pixd, const DPIX* pixs)
 	else {
 		pixd->diag_spec = NULL;
 	}
+
+	leptDestroyDiagnoticsSpecInstance(&spec);
+
 	return 0;
 }
 
 
 l_ok
-dpixCloneDiagnosticsSpec(DPIX* pixd, const FPIX* pixs)
+dpixCloneDiagnosticsSpec(DPIX* pixd, const DPIX* pixs)
 {
 	if (!pixs)
 		return ERROR_INT("dpixs not defined", __func__, 1);
@@ -557,41 +626,34 @@ pixaGetDiagnosticsSpec(const PIXA* pixa)
 	if (!pixa)
 		return (LDIAG_CTX)ERROR_PTR("pixa not defined", __func__, NULL);
 
-	if (pixa->diag_spec) {
-		return pixa->diag_spec;
+	LDIAG_CTX rv = pixa->diag_spec;
+	l_int32 cnt = pixaGetCount(pixa);
+	for (l_int32 i = 0; i < cnt; cnt++) {
+		PIX* pix1 = pixaGetPix(pixa, i, L_CLONE);
+		rv = get_prevalent_diagspec(rv, pix1->diag_spec);
+		pixDestroy(&pix1);
 	}
-	else {
-		l_int32 cnt = pixaGetCount(pixa);
-		for (l_int32 i = 0; i < cnt; cnt++) {
-			PIX* pix1 = pixaGetPix(pixa, i, L_CLONE);
-			if (pix1->diag_spec != NULL)
-				return pix1->diag_spec;
-			pixDestroy(&pix1);
-		}
-		return NULL;
-	}
+	return rv;
 }
 
 
 LDIAG_CTX
-pixaGetDiagnosticsSpecFromAny(const PIXA* pixa1, const PIXA* pixa2, ...)
+pixaGetDiagnosticsSpecFromAny(unsigned int arg_count, const PIXA* pixa1, const PIXA* pixa2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (pixa1 != NULL)
 		rv = pixaGetDiagnosticsSpec(pixa1);
-	if (pixa2 == NULL || rv != NULL)
-		return rv;
 
 	va_list ap;
 	va_start(ap, pixa2);
-	do {
-		assert(pixa2 != NULL);
-		rv = pixaGetDiagnosticsSpec(pixa2);
-		if (rv != NULL)
-			break;
+	if (arg_count < 2)
+		arg_count = 2;
+	for (arg_count--; arg_count > 0; arg_count--) {
+		if (pixa2)
+			rv = get_prevalent_diagspec(rv, pixaGetDiagnosticsSpec(pixa2));
 
 		pixa2 = va_arg(ap, const PIXA*);
-	} while (pixa2 != NULL);
+	}
 	va_end(ap);
 
 	return rv;
@@ -629,10 +691,8 @@ pixaCopyDiagnosticsSpec(PIXA* pixd, const PIXA* pixs)
 
 	LDIAG_CTX spec = pixaGetDiagnosticsSpec(pixs);
 
-	if (pixd->diag_spec == spec)
-		return 0;
-
-	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
+	LDIAG_CTX old_spec = pixd->diag_spec;
 
 	if (spec) {
 		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(spec);
@@ -640,6 +700,9 @@ pixaCopyDiagnosticsSpec(PIXA* pixd, const PIXA* pixs)
 	else {
 		pixd->diag_spec = NULL;
 	}
+
+	leptDestroyDiagnoticsSpecInstance(&old_spec);
+
 	return 0;
 }
 
@@ -669,47 +732,61 @@ pixaCloneDiagnosticsSpec(PIXA* pixd, const PIXA* pixs)
 }
 
 
+// same as pixaSetDiagnosticsSpec, except this function also sets the diagspec for each individual pix in the pixa.
+l_ok
+pixaSetDiagnosticsSpecPervasively(PIXA* pixa, LDIAG_CTX spec)
+{
+	if (!pixa)
+		return ERROR_INT("pixa not defined", __func__, 1);
+	l_ok ret = pixaSetDiagnosticsSpec(pixa, spec);
+	if (ret != 0)
+		return ret;
+	l_int32 cnt = pixaGetCount(pixa);
+	for (l_int32 i = 0; i < cnt; i++) {
+		PIX* pix1 = pixaGetPix(pixa, i, L_CLONE);
+		ret = pixSetDiagnosticsSpec(pix1, spec);
+		pixDestroy(&pix1);
+		if (ret != 0)
+			return ret;
+	}
+	return 0;
+}
+
+
 LDIAG_CTX
 fpixaGetDiagnosticsSpec(const FPIXA* pixa)
 {
 	if (!pixa)
 		return (LDIAG_CTX)ERROR_PTR("fpixa not defined", __func__, NULL);
 
-	if (pixa->diag_spec) {
-		return pixa->diag_spec;
+	LDIAG_CTX rv = pixa->diag_spec;
+	l_int32 cnt = fpixaGetCount(pixa);
+	for (l_int32 i = 0; i < cnt; cnt++) {
+		FPIX* pix1 = fpixaGetFPix(pixa, i, L_CLONE);
+		rv = get_prevalent_diagspec(rv, pix1->diag_spec);
+		fpixDestroy(&pix1);
 	}
-	else {
-		l_int32 cnt = fpixaGetCount(pixa);
-		for (l_int32 i = 0; i < cnt; cnt++) {
-			FPIX* pix1 = fpixaGetFPix(pixa, i, L_CLONE);
-			if (pix1->diag_spec != NULL)
-				return pix1->diag_spec;
-			fpixDestroy(&pix1);
-		}
-		return NULL;
-	}
+	return rv;
 }
 
 
 LDIAG_CTX
-fpixaGetDiagnosticsSpecFromAny(const FPIXA* pixa1, const FPIXA* pixa2, ...)
+fpixaGetDiagnosticsSpecFromAny(unsigned int arg_count, const FPIXA* pixa1, const FPIXA* pixa2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (pixa1 != NULL)
 		rv = fpixaGetDiagnosticsSpec(pixa1);
-	if (pixa2 == NULL || rv != NULL)
-		return rv;
 
 	va_list ap;
 	va_start(ap, pixa2);
-	do {
-		assert(pixa2 != NULL);
-		rv = fpixaGetDiagnosticsSpec(pixa2);
-		if (rv != NULL)
-			break;
+	if (arg_count < 2)
+		arg_count = 2;
+	for (arg_count--; arg_count > 0; arg_count--) {
+		if (pixa2)
+			rv = get_prevalent_diagspec(rv, fpixaGetDiagnosticsSpec(pixa2));
 
 		pixa2 = va_arg(ap, const FPIXA*);
-	} while (pixa2 != NULL);
+	}
 	va_end(ap);
 
 	return rv;
@@ -747,10 +824,8 @@ fpixaCopyDiagnosticsSpec(FPIXA* pixd, const FPIXA* pixs)
 
 	LDIAG_CTX spec = fpixaGetDiagnosticsSpec(pixs);
 
-	if (pixd->diag_spec == spec)
-		return 0;
-
-	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
+	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
+	LDIAG_CTX old_spec = pixd->diag_spec;
 
 	if (spec) {
 		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(spec);
@@ -758,6 +833,9 @@ fpixaCopyDiagnosticsSpec(FPIXA* pixd, const FPIXA* pixs)
 	else {
 		pixd->diag_spec = NULL;
 	}
+
+	leptDestroyDiagnoticsSpecInstance(&old_spec);
+
 	return 0;
 }
 
@@ -787,6 +865,26 @@ fpixaCloneDiagnosticsSpec(FPIXA* pixd, const FPIXA* pixs)
 }
 
 
+l_ok
+fpixaSetDiagnosticsSpecPervasively(FPIXA* fpixa, LDIAG_CTX spec)
+{
+	if (!fpixa)
+		return ERROR_INT("pixa not defined", __func__, 1);
+	l_ok ret = fpixaSetDiagnosticsSpec(fpixa, spec);
+	if (ret != 0)
+		return ret;
+	l_int32 cnt = fpixaGetCount(fpixa);
+	for (l_int32 i = 0; i < cnt; i++) {
+		FPIX* fpix1 = fpixaGetFPix(fpixa, i, L_CLONE);
+		ret = fpixSetDiagnosticsSpec(fpix1, spec);
+		fpixDestroy(&fpix1);
+		if (ret != 0)
+			return ret;
+	}
+	return 0;
+}
+
+
 LDIAG_CTX
 gplotGetDiagnosticsSpec(const GPLOT* gplot)
 {
@@ -798,29 +896,26 @@ gplotGetDiagnosticsSpec(const GPLOT* gplot)
 
 
 LDIAG_CTX
-gplotGetDiagnosticsSpecFromAny(const GPLOT* gplot1, const GPLOT* gplot2, ...)
+gplotGetDiagnosticsSpecFromAny(unsigned int arg_count, const GPLOT* gplot1, const GPLOT* gplot2, ...)
 {
 	LDIAG_CTX rv = NULL;
 	if (gplot1 != NULL)
 		rv = gplot1->diag_spec;
-	if (gplot2 == NULL || rv != NULL)
-		return rv;
 
 	va_list ap;
 	va_start(ap, gplot2);
-	do {
-		assert(gplot2 != NULL);
-		rv = gplot2->diag_spec;
-		if (rv != NULL)
-			break;
+	if (arg_count < 2)
+		arg_count = 2;
+	for (arg_count--; arg_count > 0; arg_count--) {
+		if (gplot2)
+			rv = get_prevalent_diagspec(rv, gplot2->diag_spec);
 
 		gplot2 = va_arg(ap, const GPLOT*);
-	} while (gplot2 != NULL);
+	}
 	va_end(ap);
 
 	return rv;
 }
-
 
 
 l_ok
@@ -852,7 +947,8 @@ gplotCopyDiagnosticsSpec(GPLOT* gplotd, const GPLOT* gplots)
 	if (!gplotd)
 		return ERROR_INT("gplotd not defined", __func__, 1);
 
-	leptDestroyDiagnoticsSpecInstance(&gplotd->diag_spec);
+	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
+	LDIAG_CTX spec = gplotd->diag_spec;
 
 	if (gplots->diag_spec) {
 		gplotd->diag_spec = leptCopyDiagnoticsSpecInstance(gplots->diag_spec);
@@ -860,6 +956,9 @@ gplotCopyDiagnosticsSpec(GPLOT* gplotd, const GPLOT* gplots)
 	else {
 		gplotd->diag_spec = NULL;
 	}
+
+	leptDestroyDiagnoticsSpecInstance(&spec);
+
 	return 0;
 }
 
@@ -904,17 +1003,16 @@ boxaGetDiagnosticsSpecFromAny(const BOXA* boxa1, const BOXA* boxa2, ...)
 	LDIAG_CTX rv = NULL;
 	if (boxa1 != NULL)
 		rv = boxa1->diag_spec;
-	if (boxa2 == NULL || rv != NULL)
-		return rv;
 	va_list ap;
 	va_start(ap, boxa2);
-	do {
-		assert(boxa2 != NULL);
-		rv = boxa2->diag_spec;
-		if (rv != NULL)
-			break;
+	if (arg_count < 2)
+		arg_count = 2;
+	for (arg_count--; arg_count > 0; arg_count--) {
+		if (boxa2)
+			rv = get_prevalent_diagspec(rv, boxa2->diag_spec);
+
 		boxa2 = va_arg(ap, const BOXA*);
-	} while (boxa2 != NULL);
+	}
 	va_end(ap);
 	return rv;
 }
@@ -945,13 +1043,19 @@ boxaCopyDiagnosticsSpec(BOXA* boxad, const BOXA* boxas)
 		return ERROR_INT("boxas not defined", __func__, 1);
 	if (!boxad)
 		return ERROR_INT("boxad not defined", __func__, 1);
-	leptDestroyDiagnoticsSpecInstance(&boxad->diag_spec);
+
+	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
+	LDIAG_CTX old_spec = boxad->diag_spec;
+
 	if (boxas->diag_spec) {
 		boxad->diag_spec = leptCopyDiagnoticsSpecInstance(boxas->diag_spec);
 	}
 	else {
 		boxad->diag_spec = NULL;
 	}
+
+	leptDestroyDiagnoticsSpecInstance(&spec);
+
 	return 0;
 }
 
@@ -1288,8 +1392,28 @@ leptDebugGetFilenameForPrefix(LDIAG_CTX spec)
 }
 
 
+static inline l_ok
+steps_is_level_forever_increasing(uint16_t depth, unsigned int forever_increasing_mask)
+{
+	unsigned int mask = 1U << depth;
+	return (forever_increasing_mask & mask) != 0;
+}
+
+
+// return TRUE when new numeric value may be assigned to this steps level/depth.
+static inline l_ok
+steps_level_numeric_value_compares(uint16_t depth, unsigned int forever_increasing_mask, uint32_t level_numeric_id, uint32_t new_numeric_id)
+{
+	if (steps_is_level_forever_increasing(depth, forever_increasing_mask))
+		// we cannot ever DECREMENT any step level: that would break our premise of delivering a unique hierarchical number set.
+		return (level_numeric_id < new_numeric_id);
+	else
+		return (level_numeric_id != new_numeric_id);
+}
+
+
 /*!
- * \brief   leptDebugSetBetchUniqueId()
+ * \brief   leptDebugSetStepId()
  *
  * \param[in]    numeric_id     sequence number; set to 0 to reset the sequence.
  *
@@ -1303,52 +1427,127 @@ leptDebugGetFilenameForPrefix(LDIAG_CTX spec)
  * </pre>
  */
 void
-leptDebugSetBetchUniqueId(LDIAG_CTX spec, size_t numeric_id)
+leptDebugSetStepId(LDIAG_CTX spec, uint32_t numeric_id)
 {
-	if (spec->batch_unique_id != numeric_id) {
-		leptDebugSetStepId(spec, 0);
-
-		spec->must_bump_batch_id = (numeric_id == 0);
+	// note: when we're at the maximum depth, we cannot change the step id any further, but for auto-incrementing (which is enforced at that level)
+	if (spec->steps.actual_depth == L_MAX_STEPS_DEPTH - 1) {
+		spec->must_bump_step_id = 0;
 		spec->must_regenerate = 1;
-
-		spec->batch_unique_id = numeric_id;
+		++spec->steps.vals[L_MAX_STEPS_DEPTH - 1];
+	}
+	else if (numeric_id == 0) {
+		spec->must_bump_step_id = 1;
+		spec->must_regenerate = 1;
+		++spec->steps.vals[L_MAX_STEPS_DEPTH - 1];
+	}
+	else if (spec->steps.vals[spec->steps.actual_depth] != numeric_id) {
+		if (steps_level_numeric_value_compares(spec->steps.actual_depth, spec->step_id_is_forever_increasing, spec->steps.vals[spec->steps.actual_depth], numeric_id)) {
+			spec->steps.vals[spec->steps.actual_depth] = numeric_id;
+			spec->must_bump_step_id = 0;
+			spec->must_regenerate = 1;
+			++spec->steps.vals[L_MAX_STEPS_DEPTH - 1];
+		}
+		else {
+			spec->must_bump_step_id = 1;
+			spec->must_regenerate = 1;
+			++spec->steps.vals[L_MAX_STEPS_DEPTH - 1];
+		}
 	}
 }
 
 
-/*!
- * \brief   leptDebugIncrementBatchUniqueId()
- */
 void
-leptDebugIncrementBatchUniqueId(LDIAG_CTX spec)
+leptDebugIncrementStepId(LDIAG_CTX spec)
 {
-	++spec->batch_unique_id;
-	spec->must_bump_batch_id = 0;
+	++spec->steps.vals[spec->steps.actual_depth];
+	spec->must_bump_step_id = 0;
 	spec->must_regenerate = 1;
-
-	leptDebugSetStepId(spec, 0);
-}
-
-
-/*!
- * \brief   leptDebugGetBatchUniqueId()
- *
- * \return  the previously set batch sequence id. Will be 1(one) when the sequence has been reset.
- */
-size_t
-leptDebugGetBatchUniqueId(LDIAG_CTX spec)
-{
-	if (spec->must_bump_batch_id) {
-		leptDebugIncrementBatchUniqueId(spec);
+	if (spec->steps.actual_depth < L_MAX_STEPS_DEPTH - 1) {
+		++spec->steps.vals[L_MAX_STEPS_DEPTH - 1];
 	}
-	return spec->batch_unique_id;
 }
 
 
 /*!
- * \brief   leptDebugSetStepId()
+ * \brief   leptDebugGetStepId()
  *
- * \param[in]    numeric_id     (batch) step sequence number
+ * \return  the previously set step sequence id at the current depth. Will be 1(one) when the sequence has been reset.
+ */
+uint32_t
+leptDebugGetStepId(LDIAG_CTX spec)
+{
+	if (spec->must_bump_step_id) {
+		leptDebugIncrementStepId(spec);
+	}
+	return spec->steps.vals[spec->steps.actual_depth];
+}
+
+
+// returned string is kept in the cache, so no need to destroy/free by caller.
+const char*
+leptDebugGetStepIdAsString(LDIAG_CTX spec)
+{
+	if (spec->must_bump_step_id) {
+		leptDebugIncrementStepId(spec);
+	}
+	const size_t bufsize = L_MAX_STEPS_DEPTH * 11 + 1; // max 10 digits (for uint32_t value) + '.' per level + '\0'
+	char* buf = spec->last_generated_step_id_string;
+	if (!buf) {
+		buf = (char*)LEPT_CALLOC(bufsize, sizeof(char));
+		spec->last_generated_step_id_string = buf;
+	}
+	char* p = buf;
+	char* e = buf + bufsize;
+	for (uint16_t i = 0; i <= spec->steps.actual_depth; i++) {
+		unsigned int v = spec->steps.vals[i];    // MSVC complains about feeding a l_atomic into a variadic function like printf() (because I was compiling in forced C++ mode, anyway). This hotfixes that.
+		int n = snprintf(p, e - p, "%u.", v);
+		p += n;
+	}
+	p--;  // discard the trailing '.'
+	*p = 0;
+
+	return buf;
+}
+
+
+void
+leptDebugMarkStepIdForIncrementing(LDIAG_CTX spec)
+{
+	spec->must_bump_step_id = 1;
+}
+
+
+void
+leptDebugSetStepLevelAsForeverIncreasing(LDIAG_CTX spec, l_ok enable)
+{
+	if (enable) {
+		unsigned int mask = 1U << spec->steps.actual_depth;
+		spec->step_id_is_forever_increasing |= mask;
+	}
+	else if (spec->steps.actual_depth < L_MAX_STEPS_DEPTH - 1) {
+		unsigned int mask = ~(1U << spec->steps.actual_depth);
+		spec->step_id_is_forever_increasing &= mask;
+	}
+}
+
+
+static inline void
+steps_reset_sub_levels(StepsArray* steps, uint16_t depth, uint16_t max_depth, unsigned int forever_increasing_mask)
+{
+	for (uint16_t d = depth; d <= max_depth; d++) {
+		unsigned int mask = 1U << d;
+		if ((forever_increasing_mask & mask) == 0) {
+			steps->vals[d] = 0;
+		}
+	}
+}
+
+
+/*!
+ * \brief   leptDebugSetStepIdAtDepth()
+ *
+ * \param[in]    relative_depth   0: current depth, -1/+1: parent depth, ...
+ * \param[in]    numeric_id       (batch) step sequence number
  *
  * <pre>
  * Notes:
@@ -1361,123 +1560,173 @@ leptDebugGetBatchUniqueId(LDIAG_CTX spec)
  * </pre>
  */
 void
-leptDebugSetStepId(LDIAG_CTX spec, size_t numeric_id)
+leptDebugSetStepIdAtDepth(LDIAG_CTX spec, int relative_depth, uint32_t numeric_id)
 {
-	if (spec->step_id != numeric_id) {
-		leptDebugSetItemId(spec, 0);
+	// we can only address current or parent levels!
+	if (relative_depth > 0)
+		relative_depth = -relative_depth;
 
-		spec->must_bump_step_id = (numeric_id == 0);
+	int target_depth = spec->steps.actual_depth + relative_depth;
+	if (target_depth < 0)
+		target_depth = 0;
+	else if (target_depth >= L_MAX_STEPS_DEPTH)
+		target_depth = L_MAX_STEPS_DEPTH - 1;
+
+	if (target_depth == spec->steps.actual_depth) {
+		leptDebugSetStepId(spec, numeric_id);
+		return;
+	}
+
+	// here we only address any parent levels, hence we won't be touching level (L_MAX_STEPS_DEPTH - 1) which simplifies matters.
+	if (numeric_id == 0) {
+		++spec->steps.vals[target_depth];
+		steps_reset_sub_levels(&spec->steps, target_depth + 1, spec->steps.actual_depth, spec->step_id_is_forever_increasing);
+		spec->must_bump_step_id = 1;
 		spec->must_regenerate = 1;
-
-		spec->step_id = numeric_id;
+		++spec->steps.vals[L_MAX_STEPS_DEPTH - 1];
+	}
+	else if (spec->steps.vals[target_depth] != numeric_id) {
+		if (steps_level_numeric_value_compares(target_depth, spec->step_id_is_forever_increasing, spec->steps.vals[target_depth], numeric_id)) {
+			spec->steps.vals[target_depth] = numeric_id;
+			steps_reset_sub_levels(&spec->steps, target_depth + 1, spec->steps.actual_depth, spec->step_id_is_forever_increasing);
+			spec->must_bump_step_id = 1;
+			spec->must_regenerate = 1;
+			++spec->steps.vals[L_MAX_STEPS_DEPTH - 1];
+		}
+		else {
+			++spec->steps.vals[target_depth];
+			steps_reset_sub_levels(&spec->steps, target_depth + 1, spec->steps.actual_depth, spec->step_id_is_forever_increasing);
+			spec->must_bump_step_id = 1;
+			spec->must_regenerate = 1;
+			++spec->steps.vals[L_MAX_STEPS_DEPTH - 1];
+		}
 	}
 }
 
 
-/*!
- * \brief   leptDebugIncrementStepId()
- */
 void
-leptDebugIncrementStepId(LDIAG_CTX spec)
+leptDebugIncrementStepIdAtDepth(LDIAG_CTX spec, int relative_depth)
 {
-	++spec->step_id;
-	spec->must_bump_step_id = 0;
-	spec->must_regenerate = 1;
-	leptDebugSetItemId(spec, 0);
-}
+	// we can only address current or parent levels!
+	if (relative_depth > 0)
+		relative_depth = -relative_depth;
 
+	int target_depth = spec->steps.actual_depth + relative_depth;
+	if (target_depth < 0)
+		target_depth = 0;
+	else if (target_depth >= L_MAX_STEPS_DEPTH)
+		target_depth = L_MAX_STEPS_DEPTH - 1;
 
-/*!
- * \brief   leptDebugGetStepId()
- *
- * \return  the previously set (batch) step sequence id. Will be 1(one) when the step sequence has been reset.
- */
-size_t
-leptDebugGetStepId(LDIAG_CTX spec)
-{
-	if (spec->must_bump_step_id) {
+	if (target_depth == spec->steps.actual_depth) {
 		leptDebugIncrementStepId(spec);
+		return;
 	}
-	return spec->step_id;
-}
 
-
-/*!
- * \brief   leptDebugSetItemId()
- *
- * \param[in]    numeric_id     (batch) substep item sequence number
- *
- * <pre>
- * Notes:
- *      (1) The given substep item id will be added to every debug plot, image, etc. file produced by leptonica.
- *          This is useful when, for example, processing source images in bulk and you wish to quickly
- *          locate the relevant debug/diagnostics outputs for a given source image.
- *      (2) By passing 0, the substep item sequence is reset.
- *      (3) On every change (increment or otherwise) of the batch id, the substep item id will already have been RESET,
- *          unless leptDebugSetItemIdAsForeverIncreasing(TRUE) was set before that particular id was changed/incremented.
- *      (4) On every change (increment or otherwise) of the (batch) step id, the substep item id will already have been RESET,
- *          unless leptDebugSetItemIdAsForeverIncreasing(TRUE) was set before that particular id was changed/incremented.
- * </pre>
- */
-void
-leptDebugSetItemId(LDIAG_CTX spec, l_uint64 numeric_id)
-{
-	// when `item_id_is_forever_increasing` is set, every SET operation, even when
-	// attempting to RESET the item_id, is an attempt at CHANGE. Therefore we
-	// choose to signal the ONLY ALLOWED CHANGE should occur instead: an increment!
-	//
-	// Also note that we accept any numeric jump *upwards* in value: the only way is up!
-	if (spec->item_id_is_forever_increasing && spec->step_id <= numeric_id) {
-		spec->must_bump_item_id = 1;
-		spec->must_regenerate = 1;
-	}
-	else if (spec->item_id != numeric_id) {
-		spec->must_bump_item_id = (numeric_id == 0);
-		spec->must_regenerate = 1;
-
-		spec->item_id = numeric_id;
-	}
-}
-
-
-/*!
- * \brief   leptDebugSetItemIdAsForeverIncreasing()
- *
- * \param[in]    enable     TRUE/FALSE
- */
-void
-leptDebugSetItemIdAsForeverIncreasing(LDIAG_CTX spec, l_ok enable)
-{
-	spec->item_id_is_forever_increasing = !!enable;
-}
-
-
-/*!
- * \brief   leptDebugIncrementItemId()
- *
- * \return  the previously set (sub-step) item sequence id. May be 0(zero) when the substep item sequence has been reset.
- */
-void
-leptDebugIncrementItemId(LDIAG_CTX spec)
-{
-	++spec->item_id;
-	spec->must_bump_item_id = 0;
+	// here we only address any parent levels, hence we won't be touching level (L_MAX_STEPS_DEPTH - 1) which simplifies matters.
+	++spec->steps.vals[target_depth];
+	steps_reset_sub_levels(&spec->steps, target_depth + 1, spec->steps.actual_depth, spec->step_id_is_forever_increasing);
+	spec->must_bump_step_id = 1;
 	spec->must_regenerate = 1;
+	++spec->steps.vals[L_MAX_STEPS_DEPTH - 1];
 }
 
 
-/*!
- * \brief   leptDebugGetStepId()
- *
- * \return  the previously set (batch) step sequence id. May be 0(zero) when the step sequence has been reset.
- */
-l_uint64
-leptDebugGetItemId(LDIAG_CTX spec)
+uint32_t
+leptDebugGetStepIdAtLevel(LDIAG_CTX spec, int relative_depth)
 {
-	if (spec->must_bump_item_id) {
-		leptDebugIncrementItemId(spec);
+	// we can only address current or parent levels!
+	if (relative_depth > 0)
+		relative_depth = -relative_depth;
+
+	int target_depth = spec->steps.actual_depth + relative_depth;
+	if (target_depth < 0)
+		target_depth = 0;
+	else if (target_depth >= L_MAX_STEPS_DEPTH)
+		target_depth = L_MAX_STEPS_DEPTH - 1;
+
+	if (target_depth == spec->steps.actual_depth) {
+		return leptDebugGetStepId(spec);
 	}
-	return spec->item_id;
+
+	// spec->must_bump_step_id only applies to the active depth level, not any parent level.
+	return spec->steps.vals[target_depth];
+}
+
+
+void
+leptDebugSetStepLevelAtLevelAsForeverIncreasing(LDIAG_CTX spec, int relative_depth, l_ok enable)
+{
+	// we can only address current or parent levels!
+	if (relative_depth > 0)
+		relative_depth = -relative_depth;
+
+	int target_depth = spec->steps.actual_depth + relative_depth;
+	if (target_depth < 0)
+		target_depth = 0;
+	else if (target_depth >= L_MAX_STEPS_DEPTH)
+		target_depth = L_MAX_STEPS_DEPTH - 1;
+
+	if (target_depth == spec->steps.actual_depth) {
+		leptDebugSetStepLevelAsForeverIncreasing(spec, enable);
+		return;
+	}
+
+	if (enable) {
+		unsigned int mask = 1U << target_depth;
+		spec->step_id_is_forever_increasing |= mask;
+	}
+	else if (target_depth < L_MAX_STEPS_DEPTH - 1) {
+		unsigned int mask = ~(1U << target_depth);
+		spec->step_id_is_forever_increasing &= mask;
+	}
+}
+
+
+NUMA*
+leptDebugGetStepNuma(LDIAG_CTX spec)
+{
+	NUMA* numa = numaCreate(L_MAX_STEPS_DEPTH);
+	for (uint16_t i = 0; i < spec->steps.actual_depth; i++) {
+		numaAddNumber(numa, spec->steps.vals[i]);
+	}
+	return numa;
+}
+
+
+uint16_t
+leptDebugGetStepDepth(LDIAG_CTX spec)
+{
+	return spec->steps.actual_depth;
+}
+
+
+uint16_t leptDebugAddStepLevel(LDIAG_CTX spec)
+{
+	if (spec->steps.actual_depth < L_MAX_STEPS_DEPTH - 2) {
+		++spec->steps.actual_depth;
+		spec->steps.vals[spec->steps.actual_depth] = 0;
+		spec->must_bump_step_id = 1;
+		spec->must_regenerate = 1;
+	}
+	else {
+		spec->steps.actual_depth = L_MAX_STEPS_DEPTH - 1;
+		spec->must_bump_step_id = 1;
+		spec->must_regenerate = 1;
+	}
+	return spec->steps.actual_depth;
+}
+
+
+uint32_t
+leptDebugPopStepLevel(LDIAG_CTX spec)
+{
+	uint32_t rv = spec->steps.vals[spec->steps.actual_depth];
+	if (spec->steps.actual_depth > 0) {
+		--spec->steps.actual_depth;
+		spec->must_bump_step_id = 1;
+		spec->must_regenerate = 1;
+	}
+	return rv;
 }
 
 
@@ -1776,6 +2025,103 @@ leptSetInDisplayMode(LDIAG_CTX spec, l_ok activate)
 	}
 	spec->display = !!activate;
 }
+
+
+/*
+* DebugMode APIs tolerate a NULL spec pointer, returning FALSE or doing nothing, IFF activate == FALSE.
+*
+* This means that any attempt to *activate* debug mode without a valid spec pointer will produce an error message,
+* while any attempt to DE-activate debug mode without a valid spec pointer will be silently accepted.
+*/
+
+l_ok
+leptIsDebugModeActive(LDIAG_CTX spec)
+{
+	if (!spec) {
+		//return ERROR_INT("spec not defined", __func__, 0);
+		return 0;
+	}
+	return spec->debugging;
+}
+
+
+void
+leptActivateDebugMode(LDIAG_CTX spec, l_ok activate)
+{
+	if (!spec && activate) {
+		L_ERROR("spec not defined", __func__);
+		return;
+	}
+	if (spec) {
+		spec->debugging = !!activate;
+	}
+}
+
+
+/*
+* Shorthand function which returns the given diagspec if debug mode has been activated.
+*
+* Intended use: inside function calls where the diagspec is passed as an argument.
+*/
+LDIAG_CTX
+leptPassIfDebugModeActive(LDIAG_CTX spec)
+{
+	if (leptIsDebugModeActive(spec))
+		return spec;
+	return NULL;
+}
+
+
+/*
+* Shorthand versions for PIX and PIXA structures.
+*/
+
+
+l_ok pixIsDebugModeActive(PIX* pix)
+{
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pix);
+	return leptIsDebugModeActive(diagspec);
+}
+
+
+void pixActivateDebugMode(PIX* pix, l_ok activate)
+{
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pix);
+	leptActivateDebugMode(diagspec, activate);
+}
+
+
+LDIAG_CTX
+pixPassDiagIfDebugModeActive(PIX* pix)
+{
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pix);
+	return leptPassIfDebugModeActive(diagspec);
+}
+
+
+l_ok
+pixaIsDebugModeActive(PIXA* pixa)
+{
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixa);
+	return leptIsDebugModeActive(diagspec);
+}
+
+
+void
+pixaActivateDebugMode(PIXA* pixa, l_ok activate)
+{
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixa);
+	leptActivateDebugMode(diagspec, activate);
+}
+
+
+LDIAG_CTX
+pixaPassDiagIfDebugModeActive(PIXA* pixa)
+{
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixa);
+	return leptPassIfDebugModeActive(diagspec);
+}
+
 
 
 

@@ -71,6 +71,8 @@ L_REGPARAMS* rp;
 
         /* Read page 7, normalize for varying background and binarize */
     pixs = pixRead(DEMOPATH("1555.007.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+
     pixn = pixBackgroundNormSimple(pixs, NULL, NULL);
     pixg = pixConvertRGBToGray(pixn, 0.5, 0.3, 0.2);
     pixb = pixThresholdToBinary(pixg, 130);
@@ -88,7 +90,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixt1);
 
         /* Remove short lines */
-    ptaa2 = dewarpRemoveShortLines(pixb, ptaa1, 0.8, rp->diag_spec);
+    ptaa2 = dewarpRemoveShortLines(pixb, ptaa1, 0.8);
 
         /* Fit to quadratic */
     n = ptaaGetCount(ptaa2);
@@ -123,6 +125,8 @@ L_REGPARAMS* rp;
 
         /* Read page 3, normalize background and binarize */
     pixs2 = pixRead(DEMOPATH("1555.003.jpg"));
+	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
+
     pixn2 = pixBackgroundNormSimple(pixs2, NULL, NULL);
     pixg2 = pixConvertRGBToGray(pixn2, 0.5, 0.3, 0.2);
     pixb2 = pixThresholdToBinary(pixg2, 130);
@@ -176,6 +180,8 @@ L_REGPARAMS* rp;
     regTestCheckFile(rp, "/tmp/lept/regout/dewarp.12.fpix");  /* 12 */
 
     fpix2 = fpixRead("/tmp/lept/regout/dewarp.12.fpix");
+	fpixaSetDiagnosticsSpec(fpix2, rp->diag_spec);
+
     fpixWrite("/tmp/lept/regout/dewarp.13.fpix", fpix2);
     regTestCheckFile(rp, "/tmp/lept/regout/dewarp.13.fpix");  /* 13 */
     regTestCompareFiles(rp, 12, 13);  /* 14 */

@@ -1517,7 +1517,7 @@ PIX      *pix1, *pix2;
     if (pixadb) {
 		LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixadb);
 		if (!diagspec) {
-			diagspec = pixGetDiagnosticsSpecFromAny(pixs, (ppixm ? *ppixm : NULL), NULL);
+			diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, (ppixm ? *ppixm : NULL));
 		}
         //lept_mkdir("lept/jb");
         {NUMA  *naseq;
@@ -2081,7 +2081,7 @@ SARRAY   *sa;
  */
 PIXA *
 jbDataRender(JBDATA  *data,
-             l_int32  debugflag)
+             l_ok     debugflag)
 {
 l_int32   i, w, h, cellw, cellh, x, y, iclass, ipage;
 l_int32   npages, nclass, ncomp, wp, hp;
@@ -2118,7 +2118,7 @@ PTA      *ptaul;
     if ((pixad = pixaCreate(npages)) == NULL)
         return (PIXA *)ERROR_PTR("pixad not made", __func__, NULL);
     for (i = 0; i < npages; i++) {
-        if (debugflag == FALSE) {
+        if (!debugflag) {
             pix1 = pixCreate(w, h, 1);
         } else {
             pix1 = pixCreate(w, h, 2);
@@ -2147,7 +2147,7 @@ PTA      *ptaul;
          * index values, 0 and 1, * so doing a bit-or between pixels
          * only affects the lower-order bit and does not generate
          * spurious colormap indices. */
-    if (debugflag == TRUE) {
+    if (debugflag) {
         baa = boxaaCreate(npages);
         boxa = boxaCreate(0);
         boxaaInitFull(baa, boxa);
@@ -2178,7 +2178,7 @@ PTA      *ptaul;
 
         /* For debug, for each page image, render the box outlines in red.
          * This adds a red colormap entry to each page. */
-    if (debugflag == TRUE) {
+    if (debugflag) {
         for (i = 0; i < npages; i++) {
             pixd = pixaGetPix(pixad, i, L_CLONE);
             boxa = boxaaGetBoxa(baa, i, L_CLONE);

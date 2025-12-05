@@ -1364,7 +1364,7 @@ PIX       *pix1, *pix2, *pix3;
         pixDestroy(&pix3);
     }
     if (debugflag) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pixs, pixm, NULL);
+		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixm);
         //lept_mkdir("lept/binarize");
         gplot = gplotCreate(diagspec, "/tmp/lept/binarize", GPLOT_PNG,
                             "number of cc vs. threshold",

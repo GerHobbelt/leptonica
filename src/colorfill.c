@@ -76,7 +76,7 @@ static COLOREL *colorelCreate(l_int32 x, l_int32 y, l_uint32 color);
 static void pixColorFillFromSeed(PIX *pixs, PIX *pixv, PTA **ppta,
                                  l_int32 x, l_int32 y, L_QUEUE *lq,
                                  l_int32 maxdiff, l_int32 minarea,
-                                 l_int32 debug);
+                                 l_ok debugflag);
 static void pixGetVisitedNeighbors(PIX *pixs, l_int32 x, l_int32 y,
                                    l_uint32 *visited);
 static l_int32 findNextUnvisited(PIX *pixv, l_int32 *px, l_int32 *py);
@@ -193,7 +193,7 @@ L_COLORFILL  *cf;
  * \param[in]    maxdiff   max component diff to be in same color region
  * \param[in]    minarea   min number of pixels for a color region
  * \param[in]    smooth    low-pass kernel size (1,3,5); use 1 to skip
- * \param[in]    diagspec  generates debug images and fill info
+ * \param[in]    diagspec  activate to generate debug images and fill info
  * \return  0 if OK, 1 on error
  *
  * <pre>
@@ -239,6 +239,8 @@ PIXA      *pixas, *pixam;
     if (minmax > 200)
         return ERROR_INT("minmax > 200; unreasonably large", __func__, 1);
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Do the optional linear color map; this checks the ref vals
          * and uses them if valid.  Use {0,0,0} to skip this operation. */
     if ((pix1 = pixColorShiftWhitePoint(cf->pixs, rref, gref, bref)) == NULL)
@@ -256,7 +258,7 @@ PIXA      *pixas, *pixam;
 	cf->pixam = pixam;
     for (i = 0; i < n; i++) {
         pix2 = pixaGetPix(pixas, i, L_COPY);
-        pix3 = pixColorFill(pix2, minmax, maxdiff, smooth, minarea, 0);
+        pix3 = pixColorFill(pix2, minmax, maxdiff, smooth, minarea, debugflag);
         pixDestroy(&pix2);
         pixaAddPix(pixam, pix3, L_INSERT);
     }
@@ -278,7 +280,7 @@ PIXA      *pixas, *pixam;
  * \param[in]    maxdiff   max component diff to be in same color region
  * \param[in]    smooth    low-pass kernel size (1,3,5); use 1 to skip
  * \param[in]    minarea   min number of pixels for a color region
- * \param[in]    debug     generates debug images and fill info
+ * \param[in]    debugflag  1 to output some fill info
  * \return  pixm   mask showing connected regions of similar color,
  *                 or null on error
  *
@@ -296,7 +298,7 @@ pixColorFill(PIX     *pixs,
              l_int32  maxdiff,
              l_int32  smooth,
              l_int32  minarea,
-             l_int32  debug)
+             l_ok     debugflag)
 {
 l_int32    x, y, w, h;
 l_uint32   val;
@@ -351,10 +353,10 @@ L_QUEUE   *lq;
     x = y = 1;  /* first row and column have been marked as visited */
     while (findNextUnvisited(pixv, &x, &y) == 1) {
             /* Flood fill this component, starting from (x,y) */
-        if (debug)
+        if (debugflag)
 			lept_stderr("Start: x = %d, y = %d\n", x, y);
         pixColorFillFromSeed(pixss, pixv, &pta1, x, y, lq, maxdiff,
-                             minarea, debug);
+                             minarea, debugflag);
         if (pta1) {  /* erode and add the pixels to pixm */
             pixm1 = pixGenerateFromPta(pta1, w, h);
             pixErodeBrick(pixm1, pixm1, 3, 3);
@@ -516,7 +518,7 @@ COLOREL *el;
  * \param[in]       lq           head of queue holding pixels
  * \param[in]       maxdiff      max component diff allowed for similar pixels
  * \param[in]       minarea      min size of component to keep
- * \param[in]       debug        output some text data
+ * \param[in]       debugflag    output some text data
  * \return  void
  *
  * <pre>
@@ -538,7 +540,7 @@ pixColorFillFromSeed(PIX      *pixs,
                      L_QUEUE  *lq,
                      l_int32   maxdiff,
                      l_int32   minarea,
-                     l_int32   debug)
+                     l_ok      debugflag)
 {
 l_int32   w, h, np;
 l_uint32  visited[8];  /* W, N, E, S, NW, NE, SW, SE */
@@ -650,12 +652,12 @@ PTA      *pta;
          * a component and put it in the mask. */
     np = ptaGetCount(pta);
     if (np < minarea) {
-        if (debug)
+        if (debugflag)
 			lept_stderr("  Too small. End: x = %d, y = %d, np = %d\n",
                                x, y, np);
         ptaDestroy(ppta);
     } else {
-        if (debug)
+        if (debugflag)
 			lept_stderr("  Keep. End: x = %d, y = %d, np = %d\n",
                                x, y, np);
     }

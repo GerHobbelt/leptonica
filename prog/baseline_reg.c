@@ -68,8 +68,6 @@ PTA          *pta;
 	if (regTestSetup(&argc, &argv, "baseline", FALSE, &rp))
 		return 1;
 
-	LDIAG_CTX diagspec = leptCopyDiagnoticsSpecInstance(rp->diag_spec);
-
 	//lept_mkdir("lept/baseline");
 
 	//leptDebugGetFileBasePath(diagspec);
@@ -77,7 +75,8 @@ PTA          *pta;
 
 	const char* sourcefilepath = DEMOPATH("keystone.png");
     pixs = pixRead(sourcefilepath);
-	leptDebugSetFilenameForPrefix(diagspec, sourcefilepath, TRUE);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	leptDebugSetFilenameForPrefix(rp->diag_spec, sourcefilepath, TRUE);
 
         /* Test function for deskewing using projective transform
 	 * on linear approximation for local skew angle */
@@ -85,14 +84,15 @@ PTA          *pta;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
 
         /* Test function for finding local skew angles */
-    na = pixGetLocalSkewAngles(pixs, 10, 0, 0, 0.0, 0.0, 0.0, NULL, NULL, diagspec);
-    pix2 = gplotSimplePix1(diagspec, na, "lept/baseline/ang", "Angles in degrees");
+    na = pixGetLocalSkewAngles(pixs, 10, 0, 0, 0.0, 0.0, 0.0, NULL, NULL);
+    pix2 = gplotSimplePix1(rp->diag_spec, na, "lept/baseline/ang", "Angles in degrees");
 
 	pix3 = pixRead("/tmp/lept/baseline/skew.png");
-    regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
+	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix2, 0, 550, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix3, 700, 550, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 550, NULL);
+    pixDisplayWithTitle(pix3, 700, 550, NULL);
     numaDestroy(&na);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -106,14 +106,17 @@ PTA          *pta;
     pix2 = pixRead("/tmp/lept/baseline/diff.png");
     pix3 = pixRead("/tmp/lept/baseline/loc.png");
     pix4 = pixRead("/tmp/lept/baseline/baselines.png");
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix4, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 4 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 5 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix3, 700, 0, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix4, 1350, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 0, NULL);
+    pixDisplayWithTitle(pix3, 700, 0, NULL);
+    pixDisplayWithTitle(pix4, 1350, 0, NULL);
     pix5 = pixaDisplayTiledInRows(pixadb, 32, 1500, 1.0, 0, 30, 2);
-    pixDisplayWithTitle(pix5, 0, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix5, 0, 500, NULL);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 7 */
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -146,7 +149,7 @@ PTA          *pta;
     regTestCompareValues(rp, 35, numaGetCount(na), 0);  /* 9 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 1500, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix2, 800, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 800, 500, NULL);
     pixaDestroy(&pixadb);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -163,7 +166,7 @@ PTA          *pta;
     regTestCompareValues(rp, 2, numaGetCount(na), 0);  /* 11 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 1500, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix2, 1400, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1400, 500, NULL);
     pixaDestroy(&pixadb);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -178,7 +181,7 @@ PTA          *pta;
     regTestCompareValues(rp, 29, numaGetCount(na), 0);  /* 13 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 1500, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 14 */
-    pixDisplayWithTitle(pix2, 1400, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1400, 500, NULL);
     pixaDestroy(&pixadb);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -193,7 +196,7 @@ PTA          *pta;
     regTestCompareValues(rp, 40, numaGetCount(na), 0);  /* 15 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 1500, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 16 */
-    pixDisplayWithTitle(pix2, 1400, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1400, 500, NULL);
     pixaDestroy(&pixadb);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

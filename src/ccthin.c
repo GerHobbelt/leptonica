@@ -91,10 +91,12 @@ SELA    *sela;
     if (d != 1)
         return (PIXA *)ERROR_PTR("pix are not all 1 bpp", __func__, NULL);
 
-    if (connectivity == 4)
-        sela = selaMakeThinSets(1, 0);
+	LDIAG_CTX diagspec = pixaPassDiagIfDebugModeActive(pixas);
+
+	if (connectivity == 4)
+        sela = selaMakeThinSets(1, diagspec);
     else  /* connectivity == 8 */
-        sela = selaMakeThinSets(5, 0);
+        sela = selaMakeThinSets(5, diagspec);
 
     n = pixaGetCount(pixas);
     pixad = pixaCreate(n);
@@ -176,10 +178,12 @@ SELA  *sela;
         return (PIX *)ERROR_PTR("connectivity not 4 or 8", __func__, NULL);
     if (maxiters == 0) maxiters = 10000;
 
+	LDIAG_CTX diagspec = pixPassDiagIfDebugModeActive(pixs);
+
     if (connectivity == 4)
-        sela = selaMakeThinSets(1, 0);
+        sela = selaMakeThinSets(1, diagspec);
     else  /* connectivity == 8 */
-        sela = selaMakeThinSets(5, 0);
+        sela = selaMakeThinSets(5, diagspec);
 
     pixd = pixThinConnectedBySet(pixs, type, sela, maxiters);
 
@@ -310,8 +314,8 @@ SEL     *sel, *selr;
 /*!
  * \brief   selaMakeThinSets()
  *
- * \param[in]   index   into specific sets
- * \param[in]   debug   1 to output display of sela
+ * \param[in]   index     into specific sets
+ * \param[in]   diagspec  activate to output display of sela
  * \return  sela, or NULL on error
  *
  * <pre>
@@ -337,8 +341,8 @@ SEL     *sel, *selr;
  * </pre>
  */
 SELA *
-selaMakeThinSets(l_int32  index,
-                 l_int32  debug)
+selaMakeThinSets(l_int32   index,
+                 LDIAG_CTX diagspec)
 {
 SEL   *sel;
 SELA  *sela1, *sela2, *sela3;
@@ -452,14 +456,15 @@ SELA  *sela1, *sela2, *sela3;
         break;
     }
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Optionally display the sel set */
-    if (debug) {
+    if (debugflag) {
         PIX  *pix1;
-        char  buf[32];
         //lept_mkdir("/lept/sels");
         pix1 = selaDisplayInPix(sela2, 35, 3, 15, 4);
-        snprintf(buf, sizeof(buf), "/tmp/lept/sels/set%d.png", index);
-        pixWrite(buf, pix1, IFF_PNG);
+		const char* pixpath = leptDebugGenFilepath(diagspec, "sels-set%02d.png", index);
+        pixWrite(pixpath, pix1, IFF_PNG);
         pixDisplay(pix1, 100, 100);
         pixDestroy(&pix1);
     }

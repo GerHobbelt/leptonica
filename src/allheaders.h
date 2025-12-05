@@ -129,13 +129,13 @@ LEPT_DLL extern l_int32 l_getDataTwoBytes ( const void *line, l_int32 n );
 LEPT_DLL extern void l_setDataTwoBytes ( void *line, l_int32 n, l_int32 val );
 LEPT_DLL extern l_int32 l_getDataFourBytes ( const void *line, l_int32 n );
 LEPT_DLL extern void l_setDataFourBytes ( void *line, l_int32 n, l_int32 val );
-LEPT_DLL extern char * barcodeDispatchDecoder ( char *barstr, l_int32 format, LDIAG_CTX diagspec );
+LEPT_DLL extern char * barcodeDispatchDecoder ( char *barstr, l_int32 format, l_ok debugflag );
 LEPT_DLL extern l_int32 barcodeFormatIsSupported ( l_int32 format );
 LEPT_DLL extern NUMA * pixFindBaselines ( PIX *pixs, PTA **ppta, PIXA *pixadb );
 LEPT_DLL extern NUMA * pixFindBaselinesGen ( PIX *pixs, l_int32 minw, PTA **ppta, PIXA *pixadb );
 LEPT_DLL extern PIX * pixDeskewLocal ( PIX *pixs, l_int32 nslices, l_int32 redsweep, l_int32 redsearch, l_float32 sweeprange, l_float32 sweepdelta, l_float32 minbsdelta );
 LEPT_DLL extern l_ok pixGetLocalSkewTransform ( PIX *pixs, l_int32 nslices, l_int32 redsweep, l_int32 redsearch, l_float32 sweeprange, l_float32 sweepdelta, l_float32 minbsdelta, PTA **pptas, PTA **pptad );
-LEPT_DLL extern NUMA * pixGetLocalSkewAngles ( PIX *pixs, l_int32 nslices, l_int32 redsweep, l_int32 redsearch, l_float32 sweeprange, l_float32 sweepdelta, l_float32 minbsdelta, l_float32 *pa, l_float32 *pb, LDIAG_CTX diagspec );
+LEPT_DLL extern NUMA * pixGetLocalSkewAngles ( PIX *pixs, l_int32 nslices, l_int32 redsweep, l_int32 redsearch, l_float32 sweeprange, l_float32 sweepdelta, l_float32 minbsdelta, l_float32 *pa, l_float32 *pb );
 LEPT_DLL extern L_BBUFFER * bbufferCreate ( const l_uint8 *indata, l_int32 nalloc );
 LEPT_DLL extern void bbufferDestroy ( L_BBUFFER **pbb );
 LEPT_DLL extern l_uint8 * bbufferDestroyAndSaveData ( L_BBUFFER **pbb, size_t *pnbytes );
@@ -170,7 +170,7 @@ LEPT_DLL extern l_ok pixSauvolaBinarizeTiled ( PIX *pixs, l_int32 whsize, l_floa
 LEPT_DLL extern l_ok pixSauvolaBinarize ( PIX *pixs, l_int32 whsize, l_float32 factor, l_int32 addborder, PIX **ppixm, PIX **ppixsd, PIX **ppixth, PIX **ppixd );
 LEPT_DLL extern PIX * pixSauvolaOnContrastNorm ( PIX *pixs, l_int32 mindiff, PIX **ppixn, PIX **ppixth );
 LEPT_DLL extern PIX * pixThreshOnDoubleNorm ( PIX *pixs, l_int32 mindiff );
-LEPT_DLL extern l_ok pixThresholdByConnComp ( PIX *pixs, PIX *pixm, l_int32 start, l_int32 end, l_int32 incr, l_float32 thresh48, l_float32 threshdiff, l_int32 *pglobthresh, PIX **ppixd, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok pixThresholdByConnComp ( PIX *pixs, PIX *pixm, l_int32 start, l_int32 end, l_int32 incr, l_float32 thresh48, l_float32 threshdiff, l_int32 *pglobthresh, PIX **ppixd );
 LEPT_DLL extern l_ok pixThresholdByHisto ( PIX *pixs, l_int32 factor, l_int32 halfw, l_int32 skip, l_int32 *pthresh, PIX **ppixd, NUMA **pnahisto, PIX **ppixhisto );
 LEPT_DLL extern PIX * pixExpandBinaryReplicate ( PIX *pixs, l_int32 xfact, l_int32 yfact );
 LEPT_DLL extern PIX * pixExpandBinaryPower2 ( PIX *pixs, l_int32 factor );
@@ -203,9 +203,9 @@ LEPT_DLL extern l_ok bmfGetBaseline ( L_BMF *bmf, char chr, l_int32 *pbaseline )
 LEPT_DLL extern PIXA * pixaGetFont ( const char *dir, l_int32 fontsize, l_int32 *pbl0, l_int32 *pbl1, l_int32 *pbl2 );
 LEPT_DLL extern l_ok pixaSaveFont ( const char *indir, const char *outdir, l_int32 fontsize );
 LEPT_DLL extern PIX * pixReadStreamBmp ( FILE *fp );
-LEPT_DLL extern l_ok pixWriteStreamBmp ( FILE *fp, PIX *pix );
 LEPT_DLL extern PIX * pixReadMemBmp ( const l_uint8 *cdata, size_t size );
-LEPT_DLL extern l_ok pixWriteMemBmp ( l_uint8 **pdata, size_t *psize, PIX *pix );
+LEPT_DLL extern l_ok pixWriteStreamBmp ( FILE *fp, PIX *pix );
+LEPT_DLL extern l_ok pixWriteMemBmp ( l_uint8 **pdata, size_t *psize, PIX *pixs );
 LEPT_DLL extern PIXA * l_bootnum_gen1 ( void );
 LEPT_DLL extern PIXA * l_bootnum_gen2 ( void );
 LEPT_DLL extern PIXA * l_bootnum_gen3 ( void );
@@ -310,7 +310,7 @@ LEPT_DLL extern BOXA * boxaAdjustHeightToTarget ( BOXA *boxad, BOXA *boxas, l_in
 LEPT_DLL extern l_ok boxEqual ( BOX *box1, BOX *box2, l_int32 *psame );
 LEPT_DLL extern l_ok boxaEqual ( BOXA *boxa1, BOXA *boxa2, l_int32 maxdist, NUMA **pnaindex, l_int32 *psame );
 LEPT_DLL extern l_ok boxSimilar ( BOX *box1, BOX *box2, l_int32 leftdiff, l_int32 rightdiff, l_int32 topdiff, l_int32 botdiff, l_int32 *psimilar );
-LEPT_DLL extern l_ok boxaSimilar ( BOXA *boxa1, BOXA *boxa2, l_int32 leftdiff, l_int32 rightdiff, l_int32 topdiff, l_int32 botdiff, LDIAG_CTX diagspec, l_int32 *psimilar, NUMA **pnasim );
+LEPT_DLL extern l_ok boxaSimilar ( BOXA *boxa1, BOXA *boxa2, l_int32 leftdiff, l_int32 rightdiff, l_int32 topdiff, l_int32 botdiff, l_ok debug, l_int32 *psimilar, NUMA **pnasim );
 LEPT_DLL extern l_ok boxaJoin ( BOXA *boxad, BOXA *boxas, l_int32 istart, l_int32 iend );
 LEPT_DLL extern l_ok boxaaJoin ( BOXAA *baad, BOXAA *baas, l_int32 istart, l_int32 iend );
 LEPT_DLL extern l_ok boxaSplitEvenOdd ( BOXA *boxa, l_int32 fillflag, BOXA **pboxae, BOXA **pboxao );
@@ -389,7 +389,7 @@ LEPT_DLL extern BOXA * boxaReconcileSidesByMedian ( BOXA *boxas, l_int32 select,
 LEPT_DLL extern BOXA * boxaReconcileSizeByMedian ( BOXA *boxas, l_int32 type, l_float32 dfract, l_float32 sfract, l_float32 factor, NUMA **pnadelw, NUMA **pnadelh, l_float32 *pratiowh );
 LEPT_DLL extern l_ok boxaPlotSides ( BOXA *boxa, const char *plotname, LDIAG_CTX diagspec, NUMA **pnal, NUMA **pnat, NUMA **pnar, NUMA **pnab, PIX **ppixd );
 LEPT_DLL extern l_ok boxaPlotSizes ( BOXA *boxa, const char *plotname, LDIAG_CTX diagspec, NUMA **pnaw, NUMA **pnah, PIX **ppixd );
-LEPT_DLL extern BOXA * boxaFillSequence ( BOXA *boxas, l_int32 useflag, LDIAG_CTX diagspec );
+LEPT_DLL extern BOXA * boxaFillSequence ( BOXA *boxas, l_int32 useflag, l_ok debugflag );
 LEPT_DLL extern l_ok boxaSizeVariation ( BOXA *boxa, l_int32 type, l_float32 *pdel_evenodd, l_float32 *prms_even, l_float32 *prms_odd, l_float32 *prms_all );
 LEPT_DLL extern l_ok boxaMedianDimensions ( BOXA *boxas, l_int32 *pmedw, l_int32 *pmedh, l_int32 *pmedwe, l_int32 *pmedwo, l_int32 *pmedhe, l_int32 *pmedho, NUMA **pnadelw, NUMA **pnadelh );
 LEPT_DLL extern L_BYTEA * l_byteaCreate ( size_t nbytes );
@@ -439,7 +439,7 @@ LEPT_DLL extern l_ok pixGetWordsInTextlines ( PIX *pixs, l_int32 minwidth, l_int
 LEPT_DLL extern l_ok pixGetWordBoxesInTextlines ( PIX *pixs, l_int32 minwidth, l_int32 minheight, l_int32 maxwidth, l_int32 maxheight, BOXA **pboxad, NUMA **pnai );
 LEPT_DLL extern l_ok pixFindWordAndCharacterBoxes ( PIX *pixs, BOX *boxs, l_int32 thresh, BOXA **pboxaw, BOXAA **pboxaac, const char *debugdir );
 LEPT_DLL extern NUMAA * boxaExtractSortedPattern ( BOXA *boxa, NUMA *na );
-LEPT_DLL extern l_ok numaaCompareImagesByBoxes ( NUMAA *naa1, NUMAA *naa2, l_int32 nperline, l_int32 nreq, l_int32 maxshiftx, l_int32 maxshifty, l_int32 delx, l_int32 dely, l_int32 *psame, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok numaaCompareImagesByBoxes ( NUMAA *naa1, NUMAA *naa2, l_int32 nperline, l_int32 nreq, l_int32 maxshiftx, l_int32 maxshifty, l_int32 delx, l_int32 dely, l_int32 *psame, l_ok debugflag );
 LEPT_DLL extern l_ok pixColorContent ( PIX *pixs, l_int32 rref, l_int32 gref, l_int32 bref, l_int32 mingray, PIX **ppixr, PIX **ppixg, PIX **ppixb );
 LEPT_DLL extern PIX * pixColorMagnitude ( PIX *pixs, l_int32 rref, l_int32 gref, l_int32 bref, l_int32 type );
 LEPT_DLL extern l_ok pixColorFraction ( PIX *pixs, l_int32 darkthresh, l_int32 lightthresh, l_int32 diffthresh, l_int32 factor, l_float32 *ppixfract, l_float32 *pcolorfract );
@@ -461,7 +461,7 @@ LEPT_DLL extern l_ok pixHasHighlightRed ( PIX *pixs, l_int32 factor, l_float32 m
 LEPT_DLL extern L_COLORFILL * l_colorfillCreate ( PIX *pixs, l_int32 nx, l_int32 ny );
 LEPT_DLL extern void l_colorfillDestroy ( L_COLORFILL **pcf );
 LEPT_DLL extern l_ok pixColorContentByLocation ( L_COLORFILL *cf, l_int32 rref, l_int32 gref, l_int32 bref, l_int32 minmax, l_int32 maxdiff, l_int32 minarea, l_int32 smooth, LDIAG_CTX diagspec );
-LEPT_DLL extern PIX * pixColorFill ( PIX *pixs, l_int32 minmax, l_int32 maxdiff, l_int32 smooth, l_int32 minarea, LDIAG_CTX diagspec );
+LEPT_DLL extern PIX * pixColorFill ( PIX *pixs, l_int32 minmax, l_int32 maxdiff, l_int32 smooth, l_int32 minarea, l_ok debugflag );
 LEPT_DLL extern PIXA * makeColorfillTestData ( l_int32 w, l_int32 h, l_int32 nseeds, l_int32 range );
 LEPT_DLL extern PIX * pixColorGrayRegions ( PIX *pixs, BOXA *boxa, l_int32 type, l_int32 thresh, l_int32 rval, l_int32 gval, l_int32 bval );
 LEPT_DLL extern l_ok pixColorGray ( PIX *pixs, BOX *box, l_int32 type, l_int32 thresh, l_int32 rval, l_int32 gval, l_int32 bval );
@@ -553,8 +553,8 @@ LEPT_DLL extern PIX * pixMedianCutQuantGeneral ( PIX *pixs, l_int32 ditherflag, 
 LEPT_DLL extern PIX * pixMedianCutQuantMixed ( PIX *pixs, l_int32 ncolor, l_int32 ngray, l_int32 darkthresh, l_int32 lightthresh, l_int32 diffthresh );
 LEPT_DLL extern PIX * pixFewColorsMedianCutQuantMixed ( PIX *pixs, l_int32 ncolor, l_int32 ngray, l_int32 maxncolors, l_int32 darkthresh, l_int32 lightthresh, l_int32 diffthresh );
 LEPT_DLL extern l_int32 * pixMedianCutHisto ( PIX *pixs, l_int32 sigbits, l_int32 subsample );
-LEPT_DLL extern PIX * pixColorSegment ( PIX *pixs, l_int32 maxdist, l_int32 maxcolors, l_int32 selsize, l_int32 finalcolors, LDIAG_CTX diagspec );
-LEPT_DLL extern PIX * pixColorSegmentCluster ( PIX *pixs, l_int32 maxdist, l_int32 maxcolors, LDIAG_CTX diagspec );
+LEPT_DLL extern PIX * pixColorSegment ( PIX *pixs, l_int32 maxdist, l_int32 maxcolors, l_int32 selsize, l_int32 finalcolors );
+LEPT_DLL extern PIX * pixColorSegmentCluster ( PIX *pixs, l_int32 maxdist, l_int32 maxcolors );
 LEPT_DLL extern l_ok pixAssignToNearestColor ( PIX *pixd, PIX *pixs, PIX *pixm, l_int32 level, l_int32 *countarray );
 LEPT_DLL extern l_ok pixColorSegmentClean ( PIX *pixs, l_int32 selsize, l_int32 *countarray );
 LEPT_DLL extern l_ok pixColorSegmentRemoveColors ( PIX *pixd, PIX *pixs, l_int32 finalcolors );
@@ -613,19 +613,19 @@ LEPT_DLL extern l_ok pixGetDifferenceStats ( PIX *pix1, PIX *pix2, l_int32 facto
 LEPT_DLL extern NUMA * pixGetDifferenceHistogram ( PIX *pix1, PIX *pix2, l_int32 factor );
 LEPT_DLL extern l_ok pixGetPerceptualDiff ( PIX *pixs1, PIX *pixs2, l_int32 sampling, l_int32 dilation, l_int32 mindiff, l_float32 *pfract, PIX **ppixdiff1, PIX **ppixdiff2 );
 LEPT_DLL extern l_ok pixGetPSNR ( PIX *pix1, PIX *pix2, l_int32 factor, l_float32 *ppsnr );
-LEPT_DLL extern l_ok pixaComparePhotoRegionsByHisto ( PIXA *pixa, l_float32 minratio, l_float32 textthresh, l_int32 factor, l_int32 n, l_float32 simthresh, NUMA **pnai, l_float32 **pscores, PIX **ppixd, LDIAG_CTX diagspec );
-LEPT_DLL extern l_ok pixComparePhotoRegionsByHisto ( PIX *pix1, PIX *pix2, BOX *box1, BOX *box2, l_float32 minratio, l_int32 factor, l_int32 n, l_float32 *pscore, LDIAG_CTX diagspec );
-LEPT_DLL extern l_ok pixGenPhotoHistos ( PIX *pixs, BOX *box, l_int32 factor, l_float32 thresh, l_int32 n, NUMAA **pnaa, l_int32 *pw, l_int32 *ph, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok pixaComparePhotoRegionsByHisto ( PIXA *pixa, l_float32 minratio, l_float32 textthresh, l_int32 factor, l_int32 n, l_float32 simthresh, NUMA **pnai, l_float32 **pscores, PIX **ppixd, PIX **ppixscorearrayd );
+LEPT_DLL extern l_ok pixComparePhotoRegionsByHisto ( PIX *pix1, PIX *pix2, BOX *box1, BOX *box2, l_float32 minratio, l_int32 factor, l_int32 n, l_float32 *pscore );
+LEPT_DLL extern l_ok pixGenPhotoHistos ( PIX *pixs, BOX *box, l_int32 factor, l_float32 thresh, l_int32 n, NUMAA **pnaa, l_int32 *pw, l_int32 *ph );
 LEPT_DLL extern PIX * pixPadToCenterCentroid ( PIX *pixs, l_int32 factor );
 LEPT_DLL extern l_ok pixCentroid8 ( PIX *pixs, l_int32 factor, l_float32 *pcx, l_float32 *pcy );
 LEPT_DLL extern l_ok pixDecideIfPhotoImage ( PIX *pix, l_int32 factor, l_float32 thresh, l_int32 n, NUMAA **pnaa, PIXA *pixadebug );
 LEPT_DLL extern l_ok compareTilesByHisto ( NUMAA *naa1, NUMAA *naa2, l_float32 minratio, l_int32 w1, l_int32 h1, l_int32 w2, l_int32 h2, l_float32 *pscore, PIXA *pixadebug );
-LEPT_DLL extern l_ok pixCompareGrayByHisto ( PIX *pix1, PIX *pix2, BOX *box1, BOX *box2, l_float32 minratio, l_int32 maxgray, l_int32 factor, l_int32 n, l_float32 *pscore, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok pixCompareGrayByHisto ( PIX *pix1, PIX *pix2, BOX *box1, BOX *box2, l_float32 minratio, l_int32 maxgray, l_int32 factor, l_int32 n, l_float32 *pscore );
 LEPT_DLL extern l_ok pixCropAlignedToCentroid ( PIX *pix1, PIX *pix2, l_int32 factor, BOX **pbox1, BOX **pbox2 );
 LEPT_DLL extern l_uint8 * l_compressGrayHistograms ( NUMAA *naa, l_int32 w, l_int32 h, size_t *psize );
 LEPT_DLL extern NUMAA * l_uncompressGrayHistograms ( l_uint8 *bytea, size_t size, l_int32 *pw, l_int32 *ph );
-LEPT_DLL extern l_ok pixCompareWithTranslation ( PIX *pix1, PIX *pix2, l_int32 thresh, l_int32 *pdelx, l_int32 *pdely, l_float32 *pscore, LDIAG_CTX diagspec );
-LEPT_DLL extern l_ok pixBestCorrelation ( PIX *pix1, PIX *pix2, l_int32 area1, l_int32 area2, l_int32 etransx, l_int32 etransy, l_int32 maxshift, l_int32 *tab8, l_int32 *pdelx, l_int32 *pdely, l_float32 *pscore, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok pixCompareWithTranslation ( PIX *pix1, PIX *pix2, l_int32 thresh, l_int32 *pdelx, l_int32 *pdely, l_float32 *pscore, PIXA **ppixad );
+LEPT_DLL extern l_ok pixBestCorrelation ( PIX *pix1, PIX *pix2, l_int32 area1, l_int32 area2, l_int32 etransx, l_int32 etransy, l_int32 maxshift, l_int32 *tab8, l_int32 *pdelx, l_int32 *pdely, l_float32 *pscore, PIX **ppixd);
 LEPT_DLL extern BOXA * pixConnComp ( PIX *pixs, PIXA **ppixa, l_int32 connectivity );
 LEPT_DLL extern BOXA * pixConnCompPixa ( PIX *pixs, PIXA **ppixa, l_int32 connectivity );
 LEPT_DLL extern BOXA * pixConnCompBB ( PIX *pixs, l_int32 connectivity );
@@ -695,7 +695,7 @@ LEPT_DLL extern l_ok dewarpBuildPageModel ( L_DEWARP *dew, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok dewarpFindVertDisparity ( L_DEWARP *dew, PTAA *ptaa, l_int32 rotflag );
 LEPT_DLL extern l_ok dewarpFindHorizDisparity ( L_DEWARP *dew, PTAA *ptaa );
 LEPT_DLL extern PTAA * dewarpGetTextlineCenters ( PIX *pixs, LDIAG_CTX diagspec );
-LEPT_DLL extern PTAA * dewarpRemoveShortLines ( PIX *pixs, PTAA *ptaas, l_float32 fract, LDIAG_CTX diagspec );
+LEPT_DLL extern PTAA * dewarpRemoveShortLines ( PIX *pixs, PTAA *ptaas, l_float32 fract );
 LEPT_DLL extern l_ok dewarpFindHorizSlopeDisparity ( L_DEWARP *dew, PIX *pixb, l_float32 fractthresh, l_int32 parity );
 LEPT_DLL extern l_ok dewarpBuildLineModel ( L_DEWARP *dew, l_int32 opensize, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok dewarpaModelStatus ( L_DEWARPA *dewa, l_int32 pageno, l_int32 *pvsuccess, l_int32 *phsuccess );
@@ -1092,7 +1092,7 @@ LEPT_DLL extern PIX * pixReadJp2k ( const char *filename, l_uint32 reduction, BO
 LEPT_DLL extern PIX * pixReadStreamJp2k ( FILE *fp, l_uint32 reduction, BOX *box, l_int32 hint, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok pixWriteJp2k ( const char *filename, PIX *pix, l_int32 quality, l_int32 nlevels, l_int32 hint, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok pixWriteStreamJp2k ( FILE *fp, PIX *pix, l_int32 quality, l_int32 nlevels, l_int32 codec, l_int32 hint, LDIAG_CTX diagspec );
-LEPT_DLL extern PIX * pixReadMemJp2k ( const l_uint8 *data, size_t size, l_uint32 reduction, BOX *box, l_int32 hint, LDIAG_CTX diagspec );
+LEPT_DLL extern PIX * pixReadMemJp2k ( const l_uint8 *data, size_t size, l_uint32 reduction, BOX *box, l_int32 hint, l_ok debugflag );
 LEPT_DLL extern l_ok pixWriteMemJp2k ( l_uint8 **pdata, size_t *psize, PIX *pix, l_int32 quality, l_int32 nlevels, l_int32 hint, LDIAG_CTX diagspec );
 LEPT_DLL extern PIX * pixReadJpeg ( const char *filename, l_int32 cmflag, l_int32 reduction, l_int32 *pnwarn, l_int32 hint );
 LEPT_DLL extern PIX * pixReadStreamJpeg ( FILE *fp, l_int32 cmflag, l_int32 reduction, l_int32 *pnwarn, l_int32 hint );
@@ -2807,7 +2807,7 @@ LEPT_DLL extern l_ok isSupportedFormat (l_int32 format);
 LEPT_DLL extern l_ok pixWriteMem ( l_uint8 **pdata, size_t *psize, PIX *pix, l_int32 format );
 LEPT_DLL extern l_ok l_fileDisplay ( const char *fname, l_int32 x, l_int32 y, l_float32 scale );
 LEPT_DLL extern l_ok pixDisplay ( PIX *pixs, l_int32 x, l_int32 y );
-LEPT_DLL extern l_ok pixDisplayWithTitle ( PIX *pixs, l_int32 x, l_int32 y, const char *title, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok pixDisplayWithTitle ( PIX *pixs, l_int32 x, l_int32 y, const char *title );
 LEPT_DLL extern PIX * pixMakeColorSquare ( l_uint32 color, l_int32 size, l_int32 addlabel, l_int32 location, l_uint32 textcolor );
 LEPT_DLL extern void l_chooseDisplayProg ( l_int32 selection );
 LEPT_DLL extern void changeFormatForMissingLib ( l_int32 *pformat );
@@ -2819,46 +2819,51 @@ LEPT_DLL extern LDIAG_CTX leptCreateDiagnoticsSpecInstance ( void );
 LEPT_DLL extern void leptDestroyDiagnoticsSpecInstance ( LDIAG_CTX* spec_ref );
 LEPT_DLL extern LDIAG_CTX leptCopyDiagnoticsSpecInstance ( LDIAG_CTX spec );
 LEPT_DLL extern LDIAG_CTX leptCloneDiagnoticsSpecInstance ( LDIAG_CTX spec );
+LEPT_DLL extern void leptReplaceDiagnoticsSpecInstance ( LDIAG_CTX *specd, LDIAG_CTX specs );
+
+LEPT_DLL extern LDIAG_CTX leptDebugGetDiagnosticsSpecFromAny ( unsigned int arg_count, LDIAG_CTX spec1, LDIAG_CTX spec2, ... );
 
 LEPT_DLL extern LDIAG_CTX pixGetDiagnosticsSpec(const PIX* pix);
-LEPT_DLL extern LDIAG_CTX pixGetDiagnosticsSpecFromAny(const PIX* pix1, const PIX* pix2, ... );
+LEPT_DLL extern LDIAG_CTX pixGetDiagnosticsSpecFromAny(unsigned int arg_count, const PIX* pix1, const PIX* pix2, ... );
 LEPT_DLL extern l_ok pixSetDiagnosticsSpec( PIX* pix, LDIAG_CTX spec );
 LEPT_DLL extern l_ok pixCopyDiagnosticsSpec( PIX* pixd, const PIX* pixs );
 LEPT_DLL extern l_ok pixCloneDiagnosticsSpec( PIX* pixd, const PIX* pixs );
 
 LEPT_DLL extern LDIAG_CTX fpixGetDiagnosticsSpec(const FPIX* pix);
-LEPT_DLL extern LDIAG_CTX fpixGetDiagnosticsSpecFromAny(const FPIX* pix1, const FPIX* pix2, ...);
+LEPT_DLL extern LDIAG_CTX fpixGetDiagnosticsSpecFromAny(unsigned int arg_count, const FPIX* pix1, const FPIX* pix2, ...);
 LEPT_DLL extern l_ok fpixSetDiagnosticsSpec(FPIX* pix, LDIAG_CTX spec);
 LEPT_DLL extern l_ok fpixCopyDiagnosticsSpec(FPIX* pixd, const FPIX* pixs);
 LEPT_DLL extern l_ok fpixCloneDiagnosticsSpec(FPIX* pixd, const FPIX* pixs);
 
 LEPT_DLL extern LDIAG_CTX dpixGetDiagnosticsSpec(const DPIX* pix);
-LEPT_DLL extern LDIAG_CTX dpixGetDiagnosticsSpecFromAny(const DPIX* pix1, const DPIX* pix2, ...);
+LEPT_DLL extern LDIAG_CTX dpixGetDiagnosticsSpecFromAny(unsigned int arg_count, const DPIX* pix1, const DPIX* pix2, ...);
 LEPT_DLL extern l_ok dpixSetDiagnosticsSpec(DPIX* pix, LDIAG_CTX spec);
 LEPT_DLL extern l_ok dpixCopyDiagnosticsSpec(DPIX* pixd, const DPIX* pixs);
 LEPT_DLL extern l_ok dpixCloneDiagnosticsSpec(DPIX* pixd, const DPIX* pixs);
 
 LEPT_DLL extern LDIAG_CTX gplotGetDiagnosticsSpec(const GPLOT* gplot);
-LEPT_DLL extern LDIAG_CTX gplotGetDiagnosticsSpecFromAny(const GPLOT* gplot1, const GPLOT* gplot2, ...);
+LEPT_DLL extern LDIAG_CTX gplotGetDiagnosticsSpecFromAny(unsigned int arg_count, const GPLOT* gplot1, const GPLOT* gplot2, ...);
 LEPT_DLL extern l_ok gplotSetDiagnosticsSpec(GPLOT* gplot, LDIAG_CTX spec);
 LEPT_DLL extern l_ok gplotCopyDiagnosticsSpec(GPLOT* gplotd, const GPLOT* gplots);
 LEPT_DLL extern l_ok gplotCloneDiagnosticsSpec(GPLOT* gplotd, const GPLOT* gplots);
 
 LEPT_DLL extern LDIAG_CTX pixaGetDiagnosticsSpec(const PIXA* pixa);
-LEPT_DLL extern LDIAG_CTX pixaGetDiagnosticsSpecFromAny(const PIXA* pixa1, const PIXA* pixa2, ...);
-LEPT_DLL extern l_ok pixaSetDiagnosticsSpec(PIXA* pix, LDIAG_CTX spec);
+LEPT_DLL extern LDIAG_CTX pixaGetDiagnosticsSpecFromAny(unsigned int arg_count, const PIXA* pixa1, const PIXA* pixa2, ...);
+LEPT_DLL extern l_ok pixaSetDiagnosticsSpec(PIXA* pixa, LDIAG_CTX spec);
 LEPT_DLL extern l_ok pixaCopyDiagnosticsSpec(PIXA* pixd, const PIXA* pixs);
 LEPT_DLL extern l_ok pixaCloneDiagnosticsSpec(PIXA* pixd, const PIXA* pixs);
+LEPT_DLL extern l_ok pixaSetDiagnosticsSpecPervasively(PIXA* pixa, LDIAG_CTX spec);
 
 LEPT_DLL extern LDIAG_CTX fpixaGetDiagnosticsSpec(const FPIXA* fpixa);
-LEPT_DLL extern LDIAG_CTX fpixaGetDiagnosticsSpecFromAny(const FPIXA* fpixa1, const FPIXA* fpixa2, ...);
+LEPT_DLL extern LDIAG_CTX fpixaGetDiagnosticsSpecFromAny(unsigned int arg_count, const FPIXA* fpixa1, const FPIXA* fpixa2, ...);
 LEPT_DLL extern l_ok fpixaSetDiagnosticsSpec(FPIXA* fpix, LDIAG_CTX spec);
 LEPT_DLL extern l_ok fpixaCopyDiagnosticsSpec(FPIXA* fpixd, const FPIXA* fpixs);
 LEPT_DLL extern l_ok fpixaCloneDiagnosticsSpec(FPIXA* fpixd, const FPIXA* fpixs);
+LEPT_DLL extern l_ok fpixaSetDiagnosticsSpecPervasively(FPIXA* fpixa, LDIAG_CTX spec);
 
 #if 0
 LEPT_DLL extern LDIAG_CTX boxaGetDiagnosticsSpec(const BOXA* boxa);
-LEPT_DLL extern LDIAG_CTX boxaGetDiagnosticsSpecFromAny(const BOXA* boxa1, const BOXA* boxa2, ...);
+LEPT_DLL extern LDIAG_CTX boxaGetDiagnosticsSpecFromAny(unsigned int arg_count, const BOXA* boxa1, const BOXA* boxa2, ...);
 LEPT_DLL extern l_ok boxaSetDiagnosticsSpec(BOXA* boxa, LDIAG_CTX spec);
 LEPT_DLL extern l_ok boxaCopyDiagnosticsSpec(BOXA* boxad, const BOXA* boxas);
 LEPT_DLL extern l_ok boxaCloneDiagnosticsSpec(BOXA* boxad, const BOXA* boxas);
@@ -2866,31 +2871,44 @@ LEPT_DLL extern l_ok boxaCloneDiagnosticsSpec(BOXA* boxad, const BOXA* boxas);
 
 LEPT_DLL extern void leptDebugSetFileBasepath ( LDIAG_CTX spec, const char * directory );
 LEPT_DLL extern void leptDebugAppendFileBasepath ( LDIAG_CTX spec, const char * directory );
+LEPT_DLL extern const char * leptDebugGetFileBasePath (LDIAG_CTX spec);
+
 LEPT_DLL extern void leptDebugAppendFilePathPart ( LDIAG_CTX spec, const char * directory );
 LEPT_DLL extern void leptDebugReplaceEntireFilePathPart ( LDIAG_CTX spec, const char * directory );
 LEPT_DLL extern void leptDebugReplaceOneFilePathPart ( LDIAG_CTX spec, const char * directory );
 LEPT_DLL extern void leptDebugEraseFilePathPart ( LDIAG_CTX spec );
 LEPT_DLL extern void leptDebugEraseOneFilePathPart ( LDIAG_CTX spec );
 LEPT_DLL extern const char * leptDebugGetFilePathPart ( LDIAG_CTX spec );
-LEPT_DLL extern const char * leptDebugGetFileBasePath ( LDIAG_CTX spec );
+
 LEPT_DLL extern void leptDebugSetFilenameForPrefix ( LDIAG_CTX spec, const char * source_filename, l_ok strip_off_extension );
 LEPT_DLL extern const char * leptDebugGetFilenameForPrefix ( LDIAG_CTX spec );
-LEPT_DLL extern void leptDebugSetBetchUniqueId ( LDIAG_CTX spec, size_t numeric_id );
-LEPT_DLL extern void leptDebugIncrementBatchUniqueId ( LDIAG_CTX spec );
-LEPT_DLL extern size_t leptDebugGetBatchUniqueId ( LDIAG_CTX spec );
-LEPT_DLL extern void leptDebugSetStepId ( LDIAG_CTX spec, size_t numeric_id );
+
+LEPT_DLL extern void leptDebugSetStepId ( LDIAG_CTX spec, uint32_t numeric_id );
 LEPT_DLL extern void leptDebugIncrementStepId ( LDIAG_CTX spec );
-LEPT_DLL extern size_t leptDebugGetStepId ( LDIAG_CTX spec );
-LEPT_DLL extern void leptDebugSetItemId ( LDIAG_CTX spec, l_uint64 numeric_id );
-LEPT_DLL extern void leptDebugSetItemIdAsForeverIncreasing ( LDIAG_CTX spec, l_ok enable );
-LEPT_DLL extern void leptDebugIncrementItemId ( LDIAG_CTX spec );
-LEPT_DLL extern l_uint64 leptDebugGetItemId ( LDIAG_CTX spec );
+LEPT_DLL extern uint32_t leptDebugGetStepId ( LDIAG_CTX spec );
+LEPT_DLL extern const char *leptDebugGetStepIdAsString ( LDIAG_CTX spec );
+LEPT_DLL extern void leptDebugMarkStepIdForIncrementing ( LDIAG_CTX spec );
+LEPT_DLL extern void leptDebugSetStepLevelAsForeverIncreasing ( LDIAG_CTX spec, l_ok enable );
+
+LEPT_DLL extern void leptDebugSetStepIdAtDepth ( LDIAG_CTX spec, int relative_depth, uint32_t numeric_id );
+LEPT_DLL extern void leptDebugIncrementStepIdAtDepth ( LDIAG_CTX spec, int relative_depth );
+LEPT_DLL extern uint32_t leptDebugGetStepIdAtLevel ( LDIAG_CTX spec, int relative_depth );
+LEPT_DLL extern void leptDebugSetStepLevelAtLevelAsForeverIncreasing ( LDIAG_CTX spec, int relative_depth, l_ok enable );
+
+LEPT_DLL extern NUMA * leptDebugGetStepNuma ( LDIAG_CTX spec );
+LEPT_DLL extern uint16_t leptDebugGetStepDepth ( LDIAG_CTX spec );
+LEPT_DLL extern uint16_t leptDebugAddStepLevel ( LDIAG_CTX spec );
+LEPT_DLL extern uint32_t leptDebugPopStepLevel ( LDIAG_CTX spec );
+
 LEPT_DLL extern void leptDebugSetHashId ( LDIAG_CTX spec, uint64_t hash_id );
 LEPT_DLL extern uint64_t leptDebugGetHashId ( LDIAG_CTX spec );
+
 LEPT_DLL extern void leptDebugSetProcessName ( LDIAG_CTX spec, const char * name );
 LEPT_DLL extern const char * leptDebugGetProcessName ( LDIAG_CTX spec );
+
 LEPT_DLL extern void leptDebugSetFilepathDefaultFormat ( LDIAG_CTX spec, const char * path_template_str );
 LEPT_DLL extern const char * leptDebugGetFilepathDefaultFormat ( LDIAG_CTX spec );
+
 LEPT_DLL extern const char * leptDebugGenFilename ( LDIAG_CTX spec, const char * filename_fmt_str, ... );
 LEPT_DLL extern const char * leptDebugGenFilepath ( LDIAG_CTX spec, const char * path_fmt_str , ... );
 LEPT_DLL extern const char * leptDebugGenFilenameEx ( const char * directory, LDIAG_CTX spec, const char * filename_fmt_str, ... );
@@ -2899,6 +2917,18 @@ LEPT_DLL extern const char * leptDebugGetLastGenFilepath ( LDIAG_CTX spec );
 
 LEPT_DLL extern l_ok leptIsInDisplayMode ( LDIAG_CTX spec );
 LEPT_DLL extern void leptSetInDisplayMode ( LDIAG_CTX spec, l_ok activate );
+
+LEPT_DLL extern l_ok leptIsDebugModeActive ( LDIAG_CTX spec );
+LEPT_DLL extern void leptActivateDebugMode ( LDIAG_CTX spec, l_ok activate );
+LEPT_DLL extern LDIAG_CTX leptPassIfDebugModeActive ( LDIAG_CTX spec );
+
+LEPT_DLL extern l_ok pixIsDebugModeActive ( PIX* pix );
+LEPT_DLL extern void pixActivateDebugMode ( PIX* pix, l_ok activate );
+LEPT_DLL extern LDIAG_CTX pixPassDiagIfDebugModeActive ( PIX* pix );
+
+LEPT_DLL extern l_ok pixaIsDebugModeActive ( PIXA* pixa );
+LEPT_DLL extern void pixaActivateDebugMode ( PIXA* pixa, l_ok activate );
+LEPT_DLL extern LDIAG_CTX pixaPassDiagIfDebugModeActive ( PIXA* pixa );
 
 LEPT_DLL extern const char* string_asprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 1, 2)));
 LEPT_DLL extern const char* string_vasprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, va_list args );

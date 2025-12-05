@@ -974,7 +974,7 @@ PIX       *pixd;
     if ((pixd = pixCreate(w, h, d)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs1);
-	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(pixs1, pixs2, NULL));
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(2, pixs1, pixs2));
 	datas1 = pixGetData(pixs1);
     datas2 = pixGetData(pixs2);
     datad = pixGetData(pixd);
@@ -1076,7 +1076,7 @@ PIX       *pixc1, *pixc2, *pixd;
     h = L_MIN(h, h2);
     pixd = pixCreate(w, h, 32);
     pixCopyResolution(pixd, pixs1);
-	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(pixs1, pixs2, NULL));
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(2, pixs1, pixs2));
 	datac1 = pixGetData(pixc1);
     datac2 = pixGetData(pixc2);
     datad = pixGetData(pixd);

@@ -2675,7 +2675,7 @@ PIX        *pix1;
 
 	LDIAG_CTX diagspec = NULL;
 	if (pixadb) {
-		diagspec = pixGetDiagnosticsSpecFromAny(pixs, pixg, NULL);
+		diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixg);
 	}
 
         /* Require that each bin has at least 5 pixels. */

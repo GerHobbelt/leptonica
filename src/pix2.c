@@ -2384,6 +2384,7 @@ PIXCMAP   *cmap;
     width = (l_int32)(scalefact * w);
 
     pixa = pixaCreate(3);
+	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
     pixSetSpp(pix1, 3);
     pixaAddPix(pixa, pix1, L_INSERT);  /* show the rgb values */
     pix1 = pixGetRGBComponent(pixs, L_ALPHA_CHANNEL);
@@ -2394,6 +2395,8 @@ PIXCMAP   *cmap;
     pixaAddPix(pixa, pix1, L_INSERT);  /* with %val color bg showing */
     pixd = pixaDisplayTiledInRows(pixa, 32, width, scalefact, 0, 25, 2);
     pixaDestroy(&pixa);
+	pixCopyResolution(pixd, pixs);
+	pixCopyText(pixd, pixs);
     return pixd;
 }
 
@@ -2451,7 +2454,7 @@ PIX     *pixd;
     if ((pixd = pixCreate(wr, hr, 32)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixr);
-	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(pixr, pixg, pixb, NULL));
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(3, pixr, pixg, pixb));
 	pixSetRGBComponent(pixd, pixr, COLOR_RED);
     pixSetRGBComponent(pixd, pixg, COLOR_GREEN);
     pixSetRGBComponent(pixd, pixb, COLOR_BLUE);

@@ -224,7 +224,7 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
 	if (pixadb) {
 		diagspec = pixaGetDiagnosticsSpec(pixadb);
 		if (!diagspec)
-			diagspec = pixGetDiagnosticsSpecFromAny(pixs, pixm, NULL);
+			diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixm);
 	}
 
         /* Check if pixm covers most of the image.  If so, just return. */

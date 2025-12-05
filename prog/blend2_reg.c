@@ -69,13 +69,16 @@ L_REGPARAMS* rp;
 
         /* --- Set up the 8 bpp blending image --- */
     pixg = pixCreate(660, 500, 8);
+	pixSetDiagnosticsSpec(pixg, rp->diag_spec);
     for (i = 0; i < 500; i++)
         for (j = 0; j < 660; j++)
             pixSetPixel(pixg, j, i, (l_int32)(0.775 * j) % 256);
 
         /* --- Set up the initial color images to be blended together --- */
     pixs1 = pixRead(DEMOPATH("wyom.jpg"));
+	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
     pixs2 = pixRead(DEMOPATH("fish24.jpg"));
+	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
     pixGetDimensions(pixs1, &w, &h, NULL);
     pixGetDimensions(pixs1, &w1, &h1, NULL);
     pixGetDimensions(pixs2, &w2, &h2, NULL);
@@ -144,7 +147,8 @@ L_REGPARAMS* rp;
     /* --------- Test png read/write with alpha channel --------- */
         /* First make pix2, using pixg as the alpha channel */
     pix1 = pixRead(DEMOPATH("fish24.jpg"));
-    box1 = boxCreate(0, 300, 660, 500);
+	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
+	box1 = boxCreate(0, 300, 660, 500);
     pix2 = pixClipRectangle(pix1, box1, NULL);
     boxDestroy(&box1);
     pixaAddPix(pixa, pix2, L_COPY);
@@ -164,6 +168,7 @@ L_REGPARAMS* rp;
 #else
     pix4 = pixRead(fname_bmp);
 #endif
+	pixSetDiagnosticsSpec(pix4, rp->diag_spec);
 
         /* Make sure that the alpha channel image hasn't changed */
     pix5 = pixGetRGBComponent(pix4, L_ALPHA_CHANNEL);
@@ -188,7 +193,7 @@ L_REGPARAMS* rp;
 
         /* Display results */
     pix1 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 40, 2);
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 100, 100, NULL);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 19 */
     pixDestroy(&pix1);
     pixaDestroy(&pixa);

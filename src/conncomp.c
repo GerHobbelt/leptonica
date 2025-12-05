@@ -215,7 +215,8 @@ L_STACK  *stack, *auxstack;
     pix1 = pix2 = pix3 = pix4 = NULL;
     stack = NULL;
     pixa = pixaCreate(0);
-    boxa = NULL;
+	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
+	boxa = NULL;
     *ppixa = pixa;
     pixZero(pixs, &iszero);
     if (iszero)

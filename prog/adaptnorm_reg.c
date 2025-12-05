@@ -65,6 +65,7 @@ L_REGPARAMS* rp;
      * ---------------------------------------------------------- */
     pixa1 = pixaCreate(0);
 	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+
 	pixs = pixRead(DEMOPATH("lighttext.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 0 */
@@ -100,7 +101,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix6, IFF_PNG);  /* 6 */
 
     pix7 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 30, 2);
-    pixDisplayWithTitle(pix7, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix7, 0, 0, NULL);
     regTestWritePixAndCheck(rp, pix7, IFF_JFIF_JPEG);  /* 7 */
     pixDestroy(&pix7);
     pixaDestroy(&pixa1);
@@ -110,6 +111,7 @@ L_REGPARAMS* rp;
      * ---------------------------------------------------------- */
     pixa1 = pixaCreate(0);
 	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+
 	pixs = pixRead(DEMOPATH("w91frag.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
     pixaAddPix(pixa1, pixs, L_INSERT);
@@ -155,7 +157,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix11, IFF_JFIF_JPEG);  /* 16 */
 
     pix2 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 30, 2);
-    pixDisplayWithTitle(pix2, 0, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 700, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 17 */
     pixDestroy(&pix2);
     pixaDestroy(&pixa1);

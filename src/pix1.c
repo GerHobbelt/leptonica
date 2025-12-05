@@ -1988,7 +1988,7 @@ const PIXCMAP  *cmap;
             pixGetWidth(pix), pixGetHeight(pix), pixGetDepth(pix),
             pixGetSpp(pix));
     fprintf(fp, "    wpl = %d, data = %p, refcount = %d\n",
-            pixGetWpl(pix), pix->data, pix->refcount);
+            pixGetWpl(pix), pix->data, (int)pix->refcount);
     fprintf(fp, "    xres = %d, yres = %d\n", pixGetXRes(pix), pixGetYRes(pix));
     if ((cmap = pix->colormap) != NULL)
         pixcmapWriteStream(fp, cmap);

@@ -60,6 +60,8 @@ L_REGPARAMS* rp;
 	if (regTestSetup(&argc, &argv, "compare", FALSE, &rp))
 		return 1;
 
+	l_ok debugflag = leptIsDebugModeActive(rp->diag_spec);
+
     //lept_mkdir("lept/comp");
 
     pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
@@ -81,7 +83,7 @@ L_REGPARAMS* rp;
     pixDisplay(pixb2, 600, 0);
     pixGetWordBoxesInTextlines(pixb2, 10, 10, 500, 50, &boxa2, &nai2);
     naa2 = boxaExtractSortedPattern(boxa2, nai2);
-    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, rp->diag_spec);
+    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, debugflag);
     lept_stderr("Translation.  same?: %d\n\n", same);
     boxaDestroy(&boxa2);
     numaDestroy(&nai2);
@@ -96,7 +98,7 @@ L_REGPARAMS* rp;
     pixDisplay(pixb2, 900, 0);
     pixGetWordBoxesInTextlines(pixb2, 10, 10, 500, 50, &boxa2, &nai2);
     naa2 = boxaExtractSortedPattern(boxa2, nai2);
-    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, rp->diag_spec);
+    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, debugflag);
     lept_stderr("Aligned part below h/3.  same?: %d\n\n", same);
     boxaDestroy(&boxa2);
     numaDestroy(&nai2);
@@ -111,7 +113,7 @@ L_REGPARAMS* rp;
     pixDisplay(pixb2, 1200, 0);
     pixGetWordBoxesInTextlines(pixb2, 10, 10, 500, 50, &boxa2, &nai2);
     naa2 = boxaExtractSortedPattern(boxa2, nai2);
-    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, rp->diag_spec);
+    numaaCompareImagesByBoxes(naa1, naa2, 5, 10, 150, 150, 20, 20, &same, debugflag);
     lept_stderr("Top/Bot switched; no alignment.  Same?: %d\n", same);
     boxaDestroy(&boxa2);
     numaDestroy(&nai2);

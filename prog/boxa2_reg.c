@@ -73,11 +73,13 @@ L_REGPARAMS* rp;
     //lept_mkdir("lept/boxa");
     boxa1 = boxaRead(DEMOPATH("boxa4.ba"));
 
+	l_ok dispdebugflag = leptIsDebugModeActive(rp->diag_spec) || leptIsInDisplayMode(rp->diag_spec);
+
         /* Fill invalid boxes */
     n = boxaGetCount(boxa1);
     na1 = boxaFindInvalidBoxes(boxa1);
     if (na1)
-        boxa2 = boxaFillSequence(boxa1, L_USE_SAME_PARITY_BOXES, 0);
+        boxa2 = boxaFillSequence(boxa1, L_USE_SAME_PARITY_BOXES, leptIsDebugModeActive(rp->diag_spec));
     else
         boxa2 = boxaCopy(boxa1, L_CLONE);
     boxaDestroy(&boxa1);
@@ -99,7 +101,7 @@ L_REGPARAMS* rp;
     median_h_diff = L_ABS(medhe - medho);
     regTestCompareValues(rp, 210, median_w_diff, 0.0);  /* 0 */
     regTestCompareValues(rp, 15, median_h_diff, 0.0);  /* 1 */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (dispdebugflag) {
         lept_stderr("diff of e/o median widths = %d\n", median_w_diff);
         lept_stderr("diff of e/o median heights = %d\n", median_h_diff);
     }
@@ -141,7 +143,7 @@ L_REGPARAMS* rp;
     numaGetCountRelativeToZero(naih, L_GREATER_THAN_ZERO, &nouth);
     regTestCompareValues(rp, 24, noutw, 0.0);  /* 2 */
     regTestCompareValues(rp, 0, nouth, 0.0);  /* 3 */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (dispdebugflag)
         lept_stderr("num width outliers = %d, num height outliers = %d\n",
                     noutw, nouth);
     numaDestroy(&nadiffw);
@@ -181,7 +183,7 @@ L_REGPARAMS* rp;
     numaDestroy(&narbho);
     regTestCompareValues(rp, 409, w_diff, 0.0);  /* 4 */
     regTestCompareValues(rp, 54, h_diff, 0.0);  /* 5 */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (dispdebugflag)
         lept_stderr("Binned rank results: w_diff = %d, h_diff = %d\n",
                     w_diff, h_diff);
 

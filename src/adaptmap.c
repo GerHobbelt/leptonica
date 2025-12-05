@@ -1717,7 +1717,7 @@ PIXA      *pixa;
 /*------------------------------------------------------------------*
  *                 Measurement of local foreground                  *
  *------------------------------------------------------------------*/
-#if 0    /* Not working properly: do not use */
+#if 0 || defined(BUILD_MONOLITHIC)    /* Not working properly: do not use */
 
 /*!
  * \brief   pixGetForegroundGrayMap()
@@ -1742,7 +1742,7 @@ PIXA      *pixa;
  *      (6) The overall procedure is:
  *            ~ reduce 2x by sampling
  *            ~ paint all 'image' pixels white, so that they don't
- *            ~ participate in the Min reduction
+ *              participate in the Min reduction
  *            ~ do a further (sx, sy) Min reduction -- think of
  *              it as a large opening followed by subsampling by the
  *              reduction factors
@@ -1780,6 +1780,9 @@ PIX     *pixd, *piximi, *pixim2, *pixims, *pixs2, *pixb, *pixt1, *pixt2, *pixt3;
     if (sx < 2 || sy < 2)
         return ERROR_INT("sx and sy must be >= 2", __func__, 1);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixim);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Generate pixd, which is reduced by the factors (sx, sy). */
     wd = (w + sx - 1) / sx;
     hd = (h + sy - 1) / sy;
@@ -1811,7 +1814,9 @@ PIX     *pixd, *piximi, *pixim2, *pixims, *pixs2, *pixb, *pixt1, *pixt2, *pixt3;
         /* Min (erosion) downscaling; total reduction (4 sx, 4 sy). */
     pixt1 = pixScaleGrayMinMax(pixs2, sx, sy, L_CHOOSE_MIN);
 
-/*    pixDisplay(pixt1, 300, 200); */
+	if (debugflag) {
+		pixDisplay(pixt1, 300, 200);
+	}
 
         /* Threshold to identify fg; paint bg pixels to white. */
     pixb = pixThresholdToBinary(pixt1, thresh);  /* fg pixels */
@@ -1822,12 +1827,16 @@ PIX     *pixd, *piximi, *pixim2, *pixims, *pixs2, *pixb, *pixt1, *pixt2, *pixt3;
         /* Replicative expansion by 2x to (sx, sy). */
     pixt2 = pixExpandReplicate(pixt1, 2);
 
-/*    pixDisplay(pixt2, 500, 200); */
+	if (debugflag) {
+		pixDisplay(pixt2, 500, 200);
+	}
 
         /* Fill holes in the fg by propagation */
     pixFillMapHoles(pixt2, w / sx, h / sy, L_FILL_WHITE);
 
-/*    pixDisplay(pixt2, 700, 200); */
+	if (debugflag) {
+		pixDisplay(pixt2, 700, 200);
+	}
 
         /* Smooth with 17x17 kernel. */
     pixt3 = pixBlockconv(pixt2, 8, 8);

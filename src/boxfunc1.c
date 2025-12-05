@@ -2393,7 +2393,7 @@ boxaSimilar(BOXA     *boxa1,
             l_int32   rightdiff,
             l_int32   topdiff,
             l_int32   botdiff,
-            l_int32   debug,
+            l_ok      debug,
             l_int32  *psimilar,
             NUMA    **pnasim)
 {

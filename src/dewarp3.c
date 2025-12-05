@@ -147,7 +147,7 @@ PIX       *pixv, *pixh;
     pixDestroy(ppixd);
     *ppixd = pixv;
     if (diagspec) {
-        pixDisplayWithTitle(pixv, 300, 0, "pixv", diagspec);
+        pixDisplayWithTitle(pixv, 300, 0, "pixv");
         lept_rmdir("lept/dewapply");  /* remove previous images */
         //lept_mkdir("lept/dewapply");
         pixWriteDebug("/tmp/lept/dewapply/001.png", pixs, IFF_PNG);
@@ -163,7 +163,7 @@ PIX       *pixv, *pixh;
                 pixDestroy(ppixd);
                 *ppixd = pixh;
                 if (diagspec) {
-                    pixDisplayWithTitle(pixh, 600, 0, "pixh", diagspec);
+                    pixDisplayWithTitle(pixh, 600, 0, "pixh");
                     pixWriteDebug("/tmp/lept/dewapply/003.png", pixh, IFF_PNG);
                 }
             } else {
@@ -332,6 +332,7 @@ PIX        *pixd;
         /* Two choices for requested pixels outside pixs: (1) use pixels'
          * from the boundary of pixs; use white or light gray pixels. */
     pixd = pixCreateTemplate(pixs);
+	pixSetDiagnosticsSpec(pixd, leptDebugGetDiagnosticsSpecFromAny(2, pixGetDiagnosticsSpec(pixs), dew->diag_specX);
     if (grayin >= 0)
         pixSetAllGray(pixd, grayin);
     datad = pixGetData(pixd);

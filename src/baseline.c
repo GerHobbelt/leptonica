@@ -383,6 +383,8 @@ PTA       *pta;
  *          by rotating or horizontally shearing it.
  *          Typically, this can be achieved by vertically aligning
  *          the page edge.
+ *      (3) when %pixs has a diagspec attached where debug mode has been
+ *          activated, then a diagnostic plot of skew angle vs. y is generated.
  * </pre>
  */
 PIX *
@@ -450,7 +452,9 @@ PTA       *ptas, *ptad;
  *      (2) The sets of 4 src and 4 dest points returned by this function
  *          can then be used, in a projective or bilinear transform,
  *          to remove keystoning in the src.
- * </pre>
+ *      (3) when %pixs has a diagspec attached where debug mode has been
+ *          activated, then a diagnostic plot of skew angle vs. y is generated.
+* </pre>
  */
 l_ok
 pixGetLocalSkewTransform(PIX       *pixs,
@@ -488,7 +492,7 @@ PTA       *ptas, *ptad;
 
     naskew = pixGetLocalSkewAngles(pixs, nslices, redsweep, redsearch,
                                    sweeprange, sweepdelta, minbsdelta,
-                                   NULL, NULL, 0);
+                                   NULL, NULL);
     if (!naskew)
         return ERROR_INT("naskew not made", __func__, 1);
 
@@ -550,9 +554,7 @@ PTA       *ptas, *ptad;
  *                             use 0.0 for default value
  * \param[out]   pa            [optional] slope of skew as fctn of y
  * \param[out]   pb            [optional] intercept at y = 0 of skew,
- 8                             as a function of y
- * \param[in]    debug         1 for generating plot of skew angle vs. y;
- *                             0 otherwise
+ *                             as a function of y
  * \return  naskew, or NULL on error
  *
  * <pre>
@@ -569,6 +571,8 @@ PTA       *ptas, *ptad;
  *          each text line has a baseline that should intersect
  *          the left edge of the image with the angle given by this
  *          array, evaluated at the raster line of intersection.
+ *      (3) when %pixs has a diagspec attached where debug mode has been
+ *          activated, then a diagnostic plot of skew angle vs. y is generated.
  * </pre>
  */
 NUMA *
@@ -580,8 +584,7 @@ pixGetLocalSkewAngles(PIX        *pixs,
                       l_float32   sweepdelta,
                       l_float32   minbsdelta,
                       l_float32  *pa,
-                      l_float32  *pb,
-                      l_int32     debug)
+                      l_float32  *pb)
 {
 l_int32    w, h, hs, i, ystart, yend, ovlap, npts;
 l_float32  angle, conf, ycenter, a, b;
@@ -640,8 +643,8 @@ PTA       *pta;
         numaAddNumber(naskew, angle);
     }
 
-    if (debug) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	LDIAG_CTX diagspec = pixPassDiagIfDebugModeActive(pixs);
+    if (diagspec) {
 		//lept_mkdir("lept/baseline");
         ptaGetArrays(pta, &nax, &nay);
         gplot = gplotCreate(diagspec, "/tmp/lept/baseline/skew", GPLOT_PNG,

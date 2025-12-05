@@ -471,6 +471,7 @@ L_DEWARP  *dew;
     dew->pageno = pageno;
     dew->w = pixGetWidth(pixs);
     dew->h = pixGetHeight(pixs);
+	dew->diag_specX = leptCloneDiagnoticsSpecInstance(pixGetDiagnosticsSpec(pixs));
     return dew;
 }
 
@@ -533,6 +534,7 @@ L_DEWARP  *dew;
     fpixDestroy(&dew->fullydispar);
     numaDestroy(&dew->namidys);
     numaDestroy(&dew->nacurves);
+	leptDestroyDiagnoticsSpecInstance(&dew->diag_specX);
     LEPT_FREE(dew);
     *pdew = NULL;
 }

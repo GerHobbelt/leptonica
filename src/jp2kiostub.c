@@ -78,7 +78,7 @@ l_ok pixWriteStreamJp2k(FILE *fp, PIX *pix, l_int32 quality,
 /* ----------------------------------------------------------------------*/
 
 PIX * pixReadMemJp2k(const l_uint8 *data, size_t size, l_uint32 reduction,
-                     BOX *box, l_int32 hint, l_int32 debug)
+                     BOX *box, l_int32 hint, l_ok debugflag)
 {
     return (PIX * )ERROR_PTR("function not present", __func__, NULL);
 }

@@ -72,7 +72,7 @@ PIXA         *pixa1, *pixa2;
 
         /* Input is a fairly clean boxa */
     boxa1 = boxaRead(DEMOPATH("boxa1.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, NULL /* rp->diag_spec */);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, rp->diag_spec);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
     scalefact = (l_float32)width / (l_float32)w;
@@ -87,7 +87,7 @@ PIXA         *pixa1, *pixa2;
 
         /* Input is an unsmoothed and noisy boxa */
     boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, NULL /* rp->diag_spec */);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, rp->diag_spec);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
     scalefact = (l_float32)width / (l_float32)w;

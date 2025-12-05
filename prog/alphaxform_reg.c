@@ -87,9 +87,13 @@ L_REGPARAMS* rp;
     pixc1 = pixRead(DEMOPATH("test24.jpg"));
     pixc2 = pixRead(DEMOPATH("wyom.jpg"));
     pixc3 = pixRead(DEMOPATH("marge.jpg"));
+	pixSetDiagnosticsSpec(pixc1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixc2, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixc3, rp->diag_spec);
 
         /* Test alpha blend scaling */
     pixd = pixCreate(900, 400, 32);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
     pixSetAll(pixd);
     pixs2 = pixScaleWithAlpha(pixc2, 0.5, 0.5, NULL, 0.3);
     pixs3 = pixScaleWithAlpha(pixc3, 0.4, 0.4, NULL, 0.7);
@@ -97,7 +101,7 @@ L_REGPARAMS* rp;
     pixb2 = pixBlendWithGrayMask(pixb1, pixs2, NULL, 300, 130);
     pixb3 = pixBlendWithGrayMask(pixb2, pixs3, NULL, 600, 160);
     regTestWritePixAndCheck(rp, pixb3, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixb3, 900, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixb3, 900, 100, NULL);
     pixDestroy(&pixd);
     pixDestroy(&pixs2);
     pixDestroy(&pixs3);
@@ -107,13 +111,14 @@ L_REGPARAMS* rp;
 
         /* Test alpha blend rotation */
     pixd = pixCreate(1200, 800, 32);
-    pixSetAll(pixd);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	pixSetAll(pixd);
     pixr3 = pixRotateWithAlpha(pixc3, -0.3, NULL, 1.0);
     pixr2 = pixRotateWithAlpha(pixc2, +0.3, NULL, 1.0);
     pixb3 = pixBlendWithGrayMask(pixd, pixr3, NULL, 100, 100);
     pixb2 = pixBlendWithGrayMask(pixb3, pixr2, NULL, 400, 100);
     regTestWritePixAndCheck(rp, pixb2, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixb2, 500, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixb2, 500, 100, NULL);
     pixDestroy(&pixd);
     pixDestroy(&pixr3);
     pixDestroy(&pixr2);
@@ -126,7 +131,8 @@ L_REGPARAMS* rp;
 
         /* Test alpha blend affine */
     pixd = pixCreate(800, 900, 32);
-    pixSetAll(pixd);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	pixSetAll(pixd);
     MakePtas(2, 3, &ptas1, &ptad1);
     MakePtas(4, 3, &ptas2, &ptad2);
     MakePtas(3, 3, &ptas3, &ptad3);
@@ -137,7 +143,7 @@ L_REGPARAMS* rp;
     pixb2 = pixBlendWithGrayMask(pixb1, pixt2, NULL, -150, -250);
     pixb3 = pixBlendWithGrayMask(pixb2, pixt3, NULL, -100, 220);
     regTestWritePixAndCheck(rp, pixb3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pixb3, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixb3, 100, 100, NULL);
     pixDestroy(&pixd);
     pixDestroy(&pixb1);
     pixDestroy(&pixb2);
@@ -154,7 +160,8 @@ L_REGPARAMS* rp;
 
         /* Test alpha blend projective */
     pixd = pixCreate(900, 900, 32);
-    pixSetAll(pixd);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	pixSetAll(pixd);
     MakePtas(2, 4, &ptas1, &ptad1);
     MakePtas(4, 4, &ptas2, &ptad2);
     MakePtas(3, 4, &ptas3, &ptad3);
@@ -165,7 +172,7 @@ L_REGPARAMS* rp;
     pixb2 = pixBlendWithGrayMask(pixb1, pixt2, NULL, -50, -250);
     pixb3 = pixBlendWithGrayMask(pixb2, pixt3, NULL, -100, 220);
     regTestWritePixAndCheck(rp, pixb3, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pixb3, 300, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixb3, 300, 100, NULL);
     pixDestroy(&pixd);
     pixDestroy(&pixb1);
     pixDestroy(&pixb2);
@@ -182,7 +189,8 @@ L_REGPARAMS* rp;
 
         /* Test alpha blend bilinear */
     pixd = pixCreate(900, 900, 32);
-    pixSetAll(pixd);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	pixSetAll(pixd);
     MakePtas(2, 4, &ptas1, &ptad1);
     MakePtas(4, 4, &ptas2, &ptad2);
     MakePtas(3, 4, &ptas3, &ptad3);
@@ -193,7 +201,7 @@ L_REGPARAMS* rp;
     pixb2 = pixBlendWithGrayMask(pixb1, pixt2, NULL, -50, -250);
     pixb3 = pixBlendWithGrayMask(pixb2, pixt3, NULL, -100, 220);
     regTestWritePixAndCheck(rp, pixb3, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pixb3, 500, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixb3, 500, 100, NULL);
     pixDestroy(&pixd);
     pixDestroy(&pixb1);
     pixDestroy(&pixb2);

@@ -155,9 +155,11 @@ L_REGPARAMS  *rp;
 		leptDebugSetFileBasepath(diagspec, "lept");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
 	}
-	leptDebugSetItemIdAsForeverIncreasing(diagspec, FALSE);
+	leptDebugSetStepLevelAsForeverIncreasing(diagspec, FALSE);
 	leptDebugSetProcessName(diagspec, testname);
 	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+
+	leptActivateDebugMode(diagspec, TRUE);
 
     setLeptDebugOK(1);  /* required for testing */
 
@@ -199,7 +201,7 @@ L_REGPARAMS  *rp;
         rp->mode = L_REG_DISPLAY;
 		leptDebugSetFileBasepath(diagspec, "lept/display");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
-		rp->display = TRUE;
+		leptSetInDisplayMode(rp->diag_spec, TRUE);
     } else if (!accept_arbitrary_argv_set) {
         LEPT_FREE(rp);
         snprintf(errormsg, sizeof(errormsg),
@@ -336,11 +338,11 @@ l_float32  diff;
             fprintf(rp->fp,
                     "Failure in %s_reg: value comparison for index %d\n"
                     "difference = %f but allowed delta = %f\n",
-                    rp->testname, rp->index, diff, delta);
+                    rp->testname, (int)rp->index, diff, delta);
         }
         lept_stderr("Failure in %s_reg: value comparison for index %d\n"
                     "difference = %f but allowed delta = %f\n",
-                    rp->testname, rp->index, diff, delta);
+                    rp->testname, (int)rp->index, diff, delta);
         rp->success = FALSE;
     }
     return 0;
@@ -378,21 +380,21 @@ char     buf[256];
     if (!same) {
             /* Write the two strings to file */
         snprintf(buf, sizeof(buf), "/tmp/lept/regout/string1_%d_%zu",
-                 rp->index, bytes1);
+                 (int)rp->index, bytes1);
         l_binaryWrite(buf, "w", string1, bytes1);
         snprintf(buf, sizeof(buf), "/tmp/lept/regout/string2_%d_%zu",
-                 rp->index, bytes2);
+			(int)rp->index, bytes2);
         l_binaryWrite(buf, "w", string2, bytes2);
 
             /* Report comparison failure */
-        snprintf(buf, sizeof(buf), "/tmp/lept/regout/string*_%d_*", rp->index);
+        snprintf(buf, sizeof(buf), "/tmp/lept/regout/string*_%d_*", (int)rp->index);
         if (rp->fp) {
             fprintf(rp->fp,
                     "Failure in %s_reg: string comp for index %d; "
-                    "written to %s\n", rp->testname, rp->index, buf);
+                    "written to %s\n", rp->testname, (int)rp->index, buf);
         }
         lept_stderr("Failure in %s_reg: string comp for index %d; "
-                    "written to %s\n", rp->testname, rp->index, buf);
+                    "written to %s\n", rp->testname, (int)rp->index, buf);
         rp->success = FALSE;
     }
     return 0;
@@ -434,10 +436,10 @@ l_int32  same;
     if (!same) {
         if (rp->fp) {
             fprintf(rp->fp, "Failure in %s_reg: pix comparison for index %d\n",
-                    rp->testname, rp->index);
+                    rp->testname, (int)rp->index);
         }
         lept_stderr("Failure in %s_reg: pix comparison for index %d\n",
-                    rp->testname, rp->index);
+                    rp->testname, (int)rp->index);
         rp->success = FALSE;
     }
     return 0;
@@ -500,10 +502,10 @@ l_int32  w, h, factor, similar;
         if (rp->fp) {
             fprintf(rp->fp,
                     "Failure in %s_reg: pix similarity comp for index %d\n",
-                    rp->testname, rp->index);
+                    rp->testname, (int)rp->index);
         }
         lept_stderr("Failure in %s_reg: pix similarity comp for index %d\n",
-                    rp->testname, rp->index);
+                    rp->testname, (int)rp->index);
         rp->success = FALSE;
     }
     return 0;
@@ -564,7 +566,7 @@ PIX     *pix1, *pix2;
         /* Generate the golden file name; used in 'generate' and 'compare' */
     splitPathAtExtension(localname, NULL, &ext);
     snprintf(namebuf, sizeof(namebuf), "/tmp/lept/golden/%s_golden.%02d%s",
-             rp->testname, rp->index, ext);
+             rp->testname, (int)rp->index, ext);
     LEPT_FREE(ext);
 
         /* Generate mode.  No testing. */
@@ -613,9 +615,9 @@ PIX     *pix1, *pix2;
     }
     if (!same) {
         fprintf(rp->fp, "Failure in %s_reg, index %d: comparing %s with %s\n",
-                rp->testname, rp->index, localname, namebuf);
+                rp->testname, (int)rp->index, localname, namebuf);
         lept_stderr("Failure in %s_reg, index %d: comparing %s with %s\n",
-                    rp->testname, rp->index, localname, namebuf);
+                    rp->testname, (int)rp->index, localname, namebuf);
         rp->success = FALSE;
     }
 
@@ -695,9 +697,9 @@ SARRAY  *sa;
     if (!same) {
         fprintf(rp->fp,
                 "Failure in %s_reg, index %d: comparing %s with %s\n",
-                rp->testname, rp->index, name1, name2);
+                rp->testname, (int)rp->index, name1, name2);
         lept_stderr("Failure in %s_reg, index %d: comparing %s with %s\n",
-                    rp->testname, rp->index, name1, name2);
+                    rp->testname, (int)rp->index, name1, name2);
         rp->success = FALSE;
     }
 
@@ -862,7 +864,7 @@ l_int32  ind;
     if (!rp)
         return (char *)ERROR_PTR("rp not defined", __func__, NULL);
 
-    ind = (index >= 0) ? index : rp->index;
+    ind = (index >= 0) ? index : (l_int32)rp->index;
     snprintf(buf, sizeof(buf), "/tmp/lept/regout/%s.%02d.%s",
              rp->testname, ind, getFormatExtension(format));
     return stringNew(buf);

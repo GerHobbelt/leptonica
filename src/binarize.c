@@ -821,7 +821,7 @@ PIX       *pixd;
 
     pixGetDimensions(pixs, &w, &h, NULL);
 	pixd = pixCreate(w, h, 1);
-	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(pixs, pixth, NULL));
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(2, pixs, pixth));
 	datas = pixGetData(pixs);
     datat = pixGetData(pixth);
     datad = pixGetData(pixd);
@@ -970,7 +970,6 @@ PIX       *pixg, *pix1, *pixd;
  *                             if no threshold is found
  * \param[out]   ppixd         [optional] image thresholded to binary, or
  *                             null if no threshold is found
- * \param[in]    debugflag     1 for plotted results
  * \return  0 if OK, 1 on error or if no threshold is found
  *
  * <pre>
@@ -1007,6 +1006,9 @@ PIX       *pixg, *pix1, *pixd;
  *          text from background (e.g., weak text over a background that
  *          has significant variation and/or bleedthrough), this returns 1,
  *          which the caller should check.
+ *      (6) when %pixs or %pixm have a diagspec attached where debug mode has been
+ *          activated, then a diagnostic plot and some additional info log lines
+ *          are produced.
  * </pre>
  */
 l_ok
@@ -1018,8 +1020,7 @@ pixThresholdByConnComp(PIX       *pixs,
                        l_float32  thresh48,
                        l_float32  threshdiff,
                        l_int32   *pglobthresh,
-                       PIX      **ppixd,
-                       l_int32    debugflag)
+                       PIX      **ppixd)
 {
 l_int32    i, thresh, n, n4, n8, mincounts, found, globthresh;
 l_float32  count4, count8, firstcount4, prevcount4, diff48, diff4;
@@ -1083,8 +1084,9 @@ PIX       *pix1, *pix2, *pix3;
         numaAddNumber(na8, n8);
         pixDestroy(&pix3);
     }
-    if (debugflag) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pixs, pixm, NULL);
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixm);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	if (debugflag) {
         //lept_mkdir("lept/binarize");
         gplot = gplotCreate(diagspec, "/tmp/lept/binarize", GPLOT_PNG,
                             "number of cc vs. threshold",

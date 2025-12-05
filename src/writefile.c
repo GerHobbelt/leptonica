@@ -906,7 +906,7 @@ pixDisplay(PIX     *pixs,
            l_int32  x,
            l_int32  y)
 {
-    return pixDisplayWithTitle(pixs, x, y, NULL, 1);
+    return pixDisplayWithTitle(pixs, x, y, NULL);
 }
 
 
@@ -916,22 +916,22 @@ pixDisplay(PIX     *pixs,
  * \param[in]    pix 1, 2, 4, 8, 16, 32 bpp
  * \param[in]    x, y  location of display frame
  * \param[in]    title [optional] on frame; can be NULL;
- * \param[in]    dispflag 1 to write, else disabled
  * \return  0 if OK; 1 on error
  *
  * <pre>
  * Notes:
  *      (1) See notes for pixDisplay().
- *      (2) This displays the image if dispflag == 1 and the global
- *          var_DISPLAY_PROG != L_DISPLAY_WITH_NONE; otherwise it punts.
+ *      (2) This displays the image if the global
+ *          var_DISPLAY_PROG != L_DISPLAY_WITH_NONE;
+ *          otherwise if %pixs debug mode has been activated it
+ *          writes the image to disk else it punts.
  * </pre>
  */
 l_ok
 pixDisplayWithTitle(PIX         *pixs,
                     l_int32      x,
                     l_int32      y,
-                    const char  *title,
-                    l_int32      dispflag)
+                    const char  *title)
 {
 char           *tempname;
 char            buffer[Bufsize];
@@ -959,23 +959,33 @@ size_t         fullpathsize;
     return ERROR_INT("iOS 11 does not support system()", __func__, 1);
 #endif /* OS_IOS */
 
-    if (dispflag != 1 || var_DISPLAY_PROG == L_DISPLAY_WITH_NONE)
-        return 0;
     if (!pixs)
         return ERROR_INT("pixs not defined", __func__, 1);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok dispflag = leptIsInDisplayMode(diagspec);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
+	if (!dispflag && !debugflag)
+		return 0;
+	if (!debugflag && var_DISPLAY_PROG == L_DISPLAY_WITH_NONE)
+		return 0;
+
 
 #ifndef _WIN32  /* unix */
     if (var_DISPLAY_PROG != L_DISPLAY_WITH_XZGV &&
         var_DISPLAY_PROG != L_DISPLAY_WITH_XLI &&
         var_DISPLAY_PROG != L_DISPLAY_WITH_XV &&
         var_DISPLAY_PROG != L_DISPLAY_WITH_OPEN &&
-		var_DISPLAY_PROG != L_DISPLAY_WITH_STORE)
+		var_DISPLAY_PROG != L_DISPLAY_WITH_STORE &&
+		var_DISPLAY_PROG == L_DISPLAY_WITH_NONE)
         return ERROR_INT("invalid unix program chosen for display",
                          __func__, 1);
 #else  /* _WIN32 */
     if (var_DISPLAY_PROG != L_DISPLAY_WITH_IV &&
         var_DISPLAY_PROG != L_DISPLAY_WITH_OPEN &&
-		var_DISPLAY_PROG != L_DISPLAY_WITH_STORE)
+		var_DISPLAY_PROG != L_DISPLAY_WITH_STORE &&
+		var_DISPLAY_PROG == L_DISPLAY_WITH_NONE)
         return ERROR_INT("invalid windows program chosen for display",
                          __func__, 1);
 #endif  /* _WIN32 */
@@ -1033,16 +1043,16 @@ size_t         fullpathsize;
     }
 
     index++;
-	//const char* sani_filename = (title ? sanitizePathToIdentifier(sani_id, sizeof(sani_id), 0, title, "@#-") : "NoTitle");
+	const char* pixpath;
     if (pixGetDepth(pix2) < 8 || pixGetColormap(pix2) ||
         (w < MaxSizeForPng && h < MaxSizeForPng)) {
-        snprintf(buffer, Bufsize, "/tmp/lept/disp/%s_write.%05d.%s.png", index);
-        pixWrite(buffer, pix2, IFF_PNG);
+		pixpath = leptDebugGenFilepath(diagspec, "disp/%s.%05d.png", __func__, (int)index);
+        pixWrite(pixpath, pix2, IFF_PNG);
     } else {
-        snprintf(buffer, Bufsize, "/tmp/lept/disp/%s_write.%05d.%s.jpg", index);
-        pixWrite(buffer, pix2, IFF_JFIF_JPEG);
+		pixpath = leptDebugGenFilepath(diagspec, "disp/%s.%05d.jpg", __func__, (int)index);
+        pixWrite(pixpath, pix2, IFF_JFIF_JPEG);
     }
-    tempname = genPathname(buffer, NULL);
+    tempname = genPathname(pixpath, NULL);
 
 #ifndef _WIN32
 
@@ -1074,7 +1084,7 @@ size_t         fullpathsize;
         }
     } else if (var_DISPLAY_PROG == L_DISPLAY_WITH_OPEN) {
         snprintf(buffer, Bufsize, "open %s &", tempname);
-	} else if (var_DISPLAY_PROG == L_DISPLAY_WITH_STORE) {
+	} else {
 		*buffer = 0;
 	}
 
@@ -1104,8 +1114,11 @@ size_t         fullpathsize;
 				fullpath, x, y);
 		}
 	}
-	else {   /* L_DISPLAY_WITH_OPEN */
-		snprintf(buffer, Bufsize, "explorer.exe /open,\"%s\"", fullpath);
+	else if (var_DISPLAY_PROG == L_DISPLAY_WITH_OPEN) {
+ 		snprintf(buffer, Bufsize, "explorer.exe /open,\"%s\"", fullpath);
+	}
+	 else {
+		*buffer = 0;
 	}
 
 	if (*buffer)

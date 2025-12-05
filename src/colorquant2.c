@@ -790,8 +790,10 @@ PIX     *pixg, *pixd;
         ngray = maxncolors;
     }
 
+	LDIAG_CTX diagspec = pixPassDiagIfDebugModeActive(pixs);
+
         /* Estimate the color content and the number of colors required */
-    pixColorsForQuantization(pixs, 15, &ncolors, &iscolor, 0);
+    pixColorsForQuantization(pixs, 15, &ncolors, &iscolor, diagspec);
 
         /* Note that maxncolors applies to all colors required to quantize,
          * both gray and colorful */

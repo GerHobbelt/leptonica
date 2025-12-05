@@ -306,7 +306,7 @@ SARRAY    *saw, *sad;
         numaDestroy(&na);
 
             /* Decode the width strings */
-        data = barcodeDispatchDecoder(barstr, format, diagspec);
+        data = barcodeDispatchDecoder(barstr, format, !!diagspec);
         if (!data) {
             ERROR_INT("barcode not decoded", __func__, 1);
             sarrayAddString(sad, emptystring, L_COPY);
@@ -633,7 +633,7 @@ pixExtractBarcodeWidths1(PIX      *pixs,
                         l_float32  binfract,
                         NUMA     **pnaehist,
                         NUMA     **pnaohist,
-                        l_int32    debugflag)
+                        LDIAG_CTX  diagspec)
 {
 NUMA  *nac, *nad;
 
@@ -643,12 +643,12 @@ NUMA  *nac, *nad;
         return (NUMA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
 
         /* Get the best estimate of the crossings, in pixel units */
-    if ((nac = pixExtractBarcodeCrossings(pixs, thresh, debugflag)) == NULL)
+    if ((nac = pixExtractBarcodeCrossings(pixs, thresh, diagspec)) == NULL)
         return (NUMA *)ERROR_PTR("nac not made", __func__, NULL);
 
         /* Get the array of bar widths, starting with a black bar  */
     nad = numaQuantizeCrossingsByWidth(nac, binfract, pnaehist,
-                                       pnaohist, debugflag);
+                                       pnaohist, diagspec);
 
     numaDestroy(&nac);
     return nad;
