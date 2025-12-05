@@ -167,8 +167,8 @@ L_REGPARAMS* rp;
     box1 = pixaGetBox(pixa2, 5, L_COPY);
     pix2 = pixaGetPix(pixa2, 7, L_CLONE);
     box2 = pixaGetBox(pixa2, 7, L_COPY);
-    pixGenPhotoHistos(pix1, box1, 1, 1.2, 3, &naa1, &w1, &h1, 5);
-    pixGenPhotoHistos(pix2, box2, 1, 1.2, 3, &naa2, &w2, &h2, 7);
+    pixGenPhotoHistos(pix1, box1, 1, 1.2, 3, &naa1, &w1, &h1, rp->diag_spec);
+    pixGenPhotoHistos(pix2, box2, 1, 1.2, 3, &naa2, &w2, &h2, rp->diag_spec);
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
     if (!naa1 || !naa2) {

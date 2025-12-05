@@ -67,6 +67,7 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/regout");
 
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Blending on a light image */
     pix1 = pixRead(DEMOPATH("fish24.jpg"));

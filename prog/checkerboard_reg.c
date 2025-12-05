@@ -76,7 +76,9 @@ PTA     *pta1;
 
     pix1 = pixRead(fname);
     pixa1 = pixaCreate(0);
-    pixFindCheckerboardCorners(pix1, 15, 3, nsels, &pix2, &pta1, pixa1);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+
+	pixFindCheckerboardCorners(pix1, 15, 3, nsels, &pix2, &pta1, pixa1);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);    /* 0, 3 */
     pix3 = pixaDisplayTiledInColumns(pixa1, 1, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1, 4 */

@@ -114,6 +114,8 @@ PIXA         *pixa1;
         /* Find background color in image with light color regions */
     pix1 = pixRead(DEMOPATH("map.057.jpg"));
     pixa1 = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+
     pixFindColorRegions(pix1, NULL, 4, 200, 70, 10, 90, 0.05,
                           &fcolor, &pix2, NULL, pixa1);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 8 */
@@ -143,6 +145,8 @@ PIXA         *pixa1;
         /* Show use of more than one plane to further restrict the
            allowed region of RGB color space */
     pixa1 = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+
     pix1 = pixMakeGamutRGB(3);
     pix2 = pixMakeArbMaskFromRGB(pix1, -0.5, -0.5, 1.0, 20);
     pix3 = pixMakeArbMaskFromRGB(pix1, 1.5, -0.5, -1.0, 0);

@@ -71,6 +71,7 @@ L_REGPARAMS* rp;
     pixc = pixRemoveColormap(pix1, REMOVE_CMAP_TO_FULL_COLOR);
     pixDestroy(&pix1);
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Gray blend (straight) */
     pixs = pixRead(DEMOPATH("test24.jpg"));

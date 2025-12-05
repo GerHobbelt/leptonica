@@ -79,6 +79,8 @@ L_REGPARAMS* rp;
         /* Test on simple random image with many colors (1 tile and 4 tiles */
     pixa1 = makeColorfillTestData(350, 350, 35, 100);
     pixa2 = pixaCreate(5);
+	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
+
     pix1 = pixaGetPix(pixa1, 0, L_COPY);
     pix2 = pixConvertTo32(pix1);
     pixDestroy(&pix1);
@@ -123,6 +125,8 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 8 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 9 */
     pixa2 = pixaCreate(3);
+	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
+
     pixaAddPix(pixa2, pix2, L_COPY);
     pixaAddPix(pixa2, pix3, L_INSERT);
     pixaAddPix(pixa2, pix4, L_INSERT);
@@ -141,6 +145,8 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 10 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 11 */
     pixa2 = pixaCreate(2);
+	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
+
     pixaAddPix(pixa2, pix3, L_INSERT);
     pixaAddPix(pixa2, pix4, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {

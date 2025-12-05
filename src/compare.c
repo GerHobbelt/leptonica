@@ -1028,6 +1028,7 @@ PIX            *pixt;
         gplotAddPlot(gplot, NULL, nac, GPLOT_LINES, "gray");
         gplotMakeOutput(gplot);
         gplotDestroy(&gplot);
+		// TODO: forego the round trip via the filesystem:
         snprintf(buf, sizeof(buf), "/tmp/lept/comp/compare_gray%d.png",
                  index++);
         l_fileDisplay(buf, 100, 100, 1.0);
@@ -2006,10 +2007,10 @@ pixaComparePhotoRegionsByHisto(PIXA        *pixa,
                                NUMA       **pnai,
                                l_float32  **pscores,
                                PIX        **ppixd,
-                               l_int32      debug)
+                               LDIAG_CTX    diagspec)
 {
 char       *text;
-l_int32     i, j, nim, w, h, w1, h1, w2, h2, ival, index, classid;
+l_int32     i, j, nim, w, h, w1, h1, w2, h2, ival, classid;
 l_float32   score;
 l_float32  *scores;
 NUMA       *nai, *naw, *nah;
@@ -2047,9 +2048,8 @@ PIX        *pix;
         pix = pixaGetPix(pixa, i, L_CLONE);
         text = pixGetText(pix);
         pixSetResolution(pix, 150, 150);
-        index = (debug) ? i : 0;
         pixGenPhotoHistos(pix, NULL, factor, textthresh, n,
-                          &naa, &w, &h, index);
+                          &naa, &w, &h, diagspec);
         n3a[i] = naa;
         numaAddNumber(naw, w);
         numaAddNumber(nah, h);
@@ -2225,9 +2225,9 @@ pixComparePhotoRegionsByHisto(PIX        *pix1,
                               l_int32     factor,
                               l_int32     n,
                               l_float32  *pscore,
-                              l_int32     debugflag)
+                              LDIAG_CTX   diagspec)
 {
-l_int32    w1, h1, w2, h2, w1c, h1c, w2c, h2c, debugindex;
+l_int32    w1, h1, w2, h2, w1c, h1c, w2c, h2c;
 l_float32  wratio, hratio;
 NUMAA     *naa1, *naa2;
 PIX       *pix3, *pix4;
@@ -2247,10 +2247,8 @@ PIXA      *pixa;
         n = 4;
     }
 
-    debugindex = 0;
-    if (debugflag) {
+    if (diagspec) {
         //lept_mkdir("lept/comp");
-        debugindex = 666;  /* arbitrary number used for naming output */
     }
 
         /* Initial filter by size */
@@ -2274,21 +2272,25 @@ PIXA      *pixa;
         pix3 = pixClipRectangle(pix1, box1, NULL);
     else
         pix3 = pixClone(pix1);
-    pixGenPhotoHistos(pix3, NULL, factor, 0, n, &naa1, &w1c, &h1c, debugindex);
+    pixGenPhotoHistos(pix3, NULL, factor, 0, n, &naa1, &w1c, &h1c, diagspec);
     pixDestroy(&pix3);
     if (!naa1) return 0;
     if (box2)
         pix4 = pixClipRectangle(pix2, box2, NULL);
     else
         pix4 = pixClone(pix2);
-    pixGenPhotoHistos(pix4, NULL, factor, 0, n, &naa2, &w2c, &h2c, debugindex);
+    pixGenPhotoHistos(pix4, NULL, factor, 0, n, &naa2, &w2c, &h2c, diagspec);
     pixDestroy(&pix4);
     if (!naa2) return 0;
 
         /* Compare histograms */
 	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(pix1, pix2, NULL);
-	pixa = (debugflag) ? pixaCreate(0) : NULL;
-    compareTilesByHisto(naa1, naa2, minratio, w1c, h1c, w2c, h2c, pscore, pixa);
+	pixa = NULL;
+	if (diagspec) {
+		pixa = pixaCreate(0);
+		pixaSetDiagnosticsSpec(pixa, diagspec);
+	}
+	compareTilesByHisto(naa1, naa2, minratio, w1c, h1c, w2c, h2c, pscore, pixa);
     pixaDestroy(&pixa);
     return 0;
 }
@@ -2341,7 +2343,7 @@ pixGenPhotoHistos(PIX        *pixs,
                   NUMAA     **pnaa,
                   l_int32    *pw,
                   l_int32    *ph,
-                  l_int32     debugindex)
+                  LDIAG_CTX   diagspec)
 {
 char    buf[64];
 NUMAA  *naa;
@@ -2366,8 +2368,9 @@ PIXA   *pixa;
     }
 
     pixa = NULL;
-    if (debugindex > 0) {
+    if (diagspec) {
         pixa = pixaCreate(0);
+		pixaSetDiagnosticsSpec(pixa, diagspec);
 
         //lept_mkdir("lept/comp");
     }
@@ -2389,7 +2392,7 @@ PIXA   *pixa;
     pixSetMaskedGeneral(pix3, pixm, 255, 0, 0);
     pixDestroy(&pixm);
 
-    if (debugindex > 0) {
+    if (diagspec) {
         PIX   *pix4, *pix5, *pix6, *pix7, *pix8;
         PIXA  *pixa2;
         pix4 = pixConvertTo32(pix2);

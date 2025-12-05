@@ -61,6 +61,7 @@ L_REGPARAMS* rp;
 
     pixs = pixRead(DEMOPATH("wyom.jpg"));
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     pix1 = pixColorMorph(pixs, L_MORPH_DILATE, SIZE, SIZE);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 0 */

@@ -503,7 +503,7 @@ FILE    *fp;
         return ERROR_INT_1("file not tiff format", filein, __func__, 1);
 
     pixa = pixaReadMultipageTiff(filein);
-    pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "weasel2", fileout);
+	pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "weasel2", fileout);
     pixaDestroy(&pixa);
     return 0;
 }

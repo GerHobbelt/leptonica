@@ -92,7 +92,9 @@ L_REGPARAMS* rp;
 
         /* --- Blend 2 rgb images --- */
     pixa = pixaCreate(0);
-    pix3 = pixBlendWithGrayMask(pix1, pix2, pixg, 50, 50);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
+	pix3 = pixBlendWithGrayMask(pix1, pix2, pixg, 50, 50);
     pixaAddPix(pixa, pix1, L_COPY);
     pixaAddPix(pixa, pix2, L_COPY);
     pixaAddPix(pixa, pix3, L_INSERT);

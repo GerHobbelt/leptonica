@@ -85,6 +85,7 @@ PIXCMAP      *cmap;
     pix0 = pixRead(DEMOPATH("harmoniam100-11.png"));
     cmap = pixGetColormap(pix0);
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Do cmapped coloring on the white pixels only */
     pixcmapGetIndex(cmap, 255, 255, 255, &index);  /* index of white pixels */

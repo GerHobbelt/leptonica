@@ -87,7 +87,8 @@ SARRAY       *sa;
     writeMultipageTiff(".", "weasel8.", "/tmp/lept/tiff/weasel8.tif");
     regTestCheckFile(rp, "/tmp/lept/tiff/weasel8.tif");  /* 0 */
     pixa = pixaReadMultipageTiff("/tmp/lept/tiff/weasel8.tif");
-    pix1 = pixaDisplayTiledInRows(pixa, 1, 1200, 0.5, 0, 15, 4);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix1 = pixaDisplayTiledInRows(pixa, 1, 1200, 0.5, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
     pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
     pixDestroy(&pix1);
@@ -182,7 +183,8 @@ SARRAY       *sa;
 
     startTimer();
     pixa = pixaReadMultipageTiff("/tmp/lept/tiff/junkm.tif");
-    lept_stderr("Time to read %d images and return a pixa: %6.3f sec\n",
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	lept_stderr("Time to read %d images and return a pixa: %6.3f sec\n",
             pixaGetCount(pixa), stopTimer());
     pix1 = pixaDisplayTiledInRows(pixa, 8, 1500, 0.8, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */

@@ -123,7 +123,9 @@ PIXA         *pixa1, *pixa2;
         /* Reconcile all sides by median */
     boxa1 = boxaRead(DEMOPATH("boxa5.ba"));
     pixa1 = pixaCreate(0);
-    boxa2 = boxaReconcileAllByMedian(boxa1, L_ADJUST_LEFT_AND_RIGHT,
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+
+	boxa2 = boxaReconcileAllByMedian(boxa1, L_ADJUST_LEFT_AND_RIGHT,
                                      L_ADJUST_TOP_AND_BOT, 50, 0, pixa1);
     boxaWriteMem(&data, &size, boxa2);
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 5 */
@@ -137,7 +139,9 @@ PIXA         *pixa1, *pixa2;
 
         /* Reconcile top/bot sides by median */
     pixa1 = pixaCreate(0);
-    boxa2 = boxaReconcileAllByMedian(boxa1, L_ADJUST_SKIP,
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+
+	boxa2 = boxaReconcileAllByMedian(boxa1, L_ADJUST_SKIP,
                                      L_ADJUST_TOP_AND_BOT, 50, 0, pixa1);
     boxaWriteMem(&data, &size, boxa2);
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 7 */
@@ -153,6 +157,8 @@ PIXA         *pixa1, *pixa2;
         /* Split even/odd and reconcile all sides by median */
     boxa1 = boxaRead(DEMOPATH("boxa5.ba"));
     pixa1 = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+
     boxaSplitEvenOdd(boxa1, 0, &boxa1e, &boxa1o);
     boxa2e = boxaReconcileSidesByMedian(boxa1e, L_ADJUST_TOP_AND_BOT, 50,
                                         0, pixa1);

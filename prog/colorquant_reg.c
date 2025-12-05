@@ -101,6 +101,7 @@ PIXA      *pixa;
     pixDestroy(&pix);
 
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Median cut quantizer (no dither; 5 sigbits) */
     pixaAddPix(pixa, pixs, L_COPY);

@@ -80,7 +80,8 @@ PIX   *pix, *pixd;
 PIXA  *pixa;
 
     pixa = pixaCreate(0);
-    pix = pixBilateral(pixs, 5.0, 10.0, ncomps, 4);  /* 0 */
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix = pixBilateral(pixs, 5.0, 10.0, ncomps, 4);  /* 0 */
     regTestWritePixAndCheck(rp, pix, IFF_JFIF_JPEG);
     pixaAddPix(pixa, pix, L_INSERT);
     pix = pixBilateral(pixs, 5.0, 20.0, ncomps, 4);  /* 1 */

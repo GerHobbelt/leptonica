@@ -102,7 +102,8 @@ L_REGPARAMS* rp;
         /* Test invertability of sequential. */
     lept_stderr("Test invertability of sequential\n");
     pixa = pixaCreate(0);
-    for (i = 0; i < 3; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < 3; i++) {
         pixb = pixAddBorder(pixs, ADDED_BORDER_PIXELS, 0);
         MakePtas(i, &ptas, &ptad);
         pix1 = pixAffineSequential(pixb, ptad, ptas, 0, 0);
@@ -133,7 +134,8 @@ L_REGPARAMS* rp;
         /* Test invertability of sampling */
     lept_stderr("Test invertability of sampling\n");
     pixa = pixaCreate(0);
-    for (i = 0; i < 3; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < 3; i++) {
         pixb = pixAddBorder(pixs, ADDED_BORDER_PIXELS, 0);
         MakePtas(i, &ptas, &ptad);
         pix1 = pixAffineSampledPta(pixb, ptad, ptas, L_BRING_IN_WHITE);
@@ -168,7 +170,8 @@ L_REGPARAMS* rp;
     pixg = pixScaleToGray3(pix);
     pixDestroy(&pix);
     pixa = pixaCreate(0);
-    for (i = 0; i < 3; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < 3; i++) {
         pixb = pixAddBorder(pixg, ADDED_BORDER_PIXELS / 3, 255);
         MakePtas(i, &ptas, &ptad);
         pix1 = pixAffinePta(pixb, ptad, ptas, L_BRING_IN_WHITE);
@@ -201,7 +204,9 @@ L_REGPARAMS* rp;
         /* Test invertability of interpolation on color */
     lept_stderr("Test invertability of color interpolation\n");
     pixa = pixaCreate(0);
-    pixc = pixRead(DEMOPATH("test24.jpg"));
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
+	pixc = pixRead(DEMOPATH("test24.jpg"));
     pixcs = pixScale(pixc, 0.3, 0.3);
     for (i = 0; i < 3; i++) {
         pixb = pixAddBorder(pixcs, ADDED_BORDER_PIXELS / 4, 0xffffff00);
@@ -242,6 +247,7 @@ L_REGPARAMS* rp;
 
     MakePtas(3, &ptas, &ptad);
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Use sequential transforms */
     pix1 = pixAffineSequential(pixs, ptas, ptad,
@@ -277,7 +283,9 @@ L_REGPARAMS* rp;
     lept_stderr("Test with large distortion\n");
     MakePtas(4, &ptas, &ptad);
     pixa = pixaCreate(0);
-    pix = pixRead(DEMOPATH("feyn.tif"));
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
+	pix = pixRead(DEMOPATH("feyn.tif"));
     pixg = pixScaleToGray6(pix);
     pixDestroy(&pix);
 
@@ -318,7 +326,9 @@ L_REGPARAMS* rp;
         /* Set up pix and boxa */
     lept_stderr("Test affine transforms and inverses on pix and boxa\n");
     pixa = pixaCreate(0);
-    pix = pixRead(DEMOPATH("lucasta.1.300.tif"));
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
+	pix = pixRead(DEMOPATH("lucasta.1.300.tif"));
     pixTranslate(pix, pix, 70, 0, L_BRING_IN_WHITE);
     pix1 = pixCloseBrick(NULL, pix, 14, 5);
     pixOpenBrick(pix1, pix1, 1, 2);

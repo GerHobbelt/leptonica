@@ -75,11 +75,13 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("tetons.jpg"));
-    for (k = 0; k < 3; k++) {
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	for (k = 0; k < 3; k++) {
         maxcolors = MaxColors[k];
         finalcolors = FinalColors[k];
         pixa = pixaCreate(0);
-        for (i = 1; i <= 9; i++) {
+		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+		for (i = 1; i <= 9; i++) {
             maxdist = 20 * i;
             for (j = 0; j <= 6; j++) {
                 selsize = j;

@@ -62,6 +62,7 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* First, snap the color directly on the input rgb image. */
     pixs = pixRead(DEMOPATH("Leptonica.jpg"));

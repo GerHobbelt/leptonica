@@ -60,6 +60,7 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Generate and display all of the 4-cc sels */
     sela4 = sela4ccThin(NULL);
@@ -171,6 +172,7 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa);
 
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Test the best 4 and 8 cc thinning */
     pix2 = pixRead(DEMOPATH("feyn.tif"));

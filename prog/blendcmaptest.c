@@ -63,6 +63,7 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/blend");
 
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     pixs = pixRead(DEMOPATH("rabi.png"));  /* blendee */
     pixb = pixRead(DEMOPATH("weasel4.11c.png"));   /* blender */

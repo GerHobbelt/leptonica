@@ -100,7 +100,8 @@ PTA          *pta;
 
         /* Test baseline finder */
     pixadb = pixaCreate(6);
-    na = pixFindBaselines(pix1, &pta, pixadb);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	na = pixFindBaselines(pix1, &pta, pixadb);
     regTestCompareValues(rp, 23, numaGetCount(na), 0);  /* 3 */
     pix2 = pixRead("/tmp/lept/baseline/diff.png");
     pix3 = pixRead("/tmp/lept/baseline/loc.png");
@@ -126,7 +127,8 @@ PTA          *pta;
         /* Another test for baselines, with dark image.
          * With minw = 60, the number at the top of the page is skipped. */
     pixadb = pixaCreate(6);
-    pixs = pixRead(DEMOPATH("pedante.079.jpg"));  /* 75 ppi */
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("pedante.079.jpg"));  /* 75 ppi */
     pix1 = pixRemoveBorder(pixs, 30);
     pixaAddPix(pixadb, pix1, L_COPY);
     pix2 = pixConvertRGBToGray(pix1, 0.33, 0.34, 0.33);
@@ -155,7 +157,8 @@ PTA          *pta;
 
         /* Another test for baselines: very short textblock is removed */
     pixadb = pixaCreate(6);
-    pix1 = pixRead("baseline1.png");
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pix1 = pixRead("baseline1.png");
     na = pixFindBaselines(pix1, &pta, pixadb);
     regTestCompareValues(rp, 2, numaGetCount(na), 0);  /* 11 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 1500, 1.0, 0, 30, 2);
@@ -169,7 +172,8 @@ PTA          *pta;
 
         /* Another test for baselines: some very short lines */
     pixadb = pixaCreate(6);
-    pix1 = pixRead("baseline2.tif");
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pix1 = pixRead("baseline2.tif");
     na = pixFindBaselinesGen(pix1, 30, &pta, pixadb);
     regTestCompareValues(rp, 29, numaGetCount(na), 0);  /* 13 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 1500, 1.0, 0, 30, 2);
@@ -183,7 +187,8 @@ PTA          *pta;
 
         /* Another test for baselines: more short lines' */
     pixadb = pixaCreate(6);
-    pix1 = pixRead("baseline3.tif");
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pix1 = pixRead("baseline3.tif");
     na = pixFindBaselinesGen(pix1, 30, &pta, pixadb);
     regTestCompareValues(rp, 40, numaGetCount(na), 0);  /* 15 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 1500, 1.0, 0, 30, 2);

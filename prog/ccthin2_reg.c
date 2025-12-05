@@ -79,6 +79,7 @@ SELA         *sela;
     boxDestroy(&box);
 
     pixa1 = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
     sela = selaMakeThinSets(1, 0);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
@@ -170,7 +171,8 @@ SELA         *sela;
     pixa3 = pixaScaleToSizeRel(pixa2, 4, 0);
     pixaaAddPixa(paa, pixa3, L_INSERT);
     pixa5 = pixaCreate(6);
-    for (i = 0; i < 3; i++) {
+	pixaSetDiagnosticsSpec(pixa5, rp->diag_spec);
+	for (i = 0; i < 3; i++) {
         pixa3 = pixaaGetPixa(paa, i, L_CLONE);
         pix1 = pixaDisplayTiledInColumns(pixa3, 15, 1.0, 10, 1);
         regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 12, 14, 16 */

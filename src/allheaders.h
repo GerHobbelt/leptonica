@@ -615,7 +615,7 @@ LEPT_DLL extern l_ok pixGetPerceptualDiff ( PIX *pixs1, PIX *pixs2, l_int32 samp
 LEPT_DLL extern l_ok pixGetPSNR ( PIX *pix1, PIX *pix2, l_int32 factor, l_float32 *ppsnr );
 LEPT_DLL extern l_ok pixaComparePhotoRegionsByHisto ( PIXA *pixa, l_float32 minratio, l_float32 textthresh, l_int32 factor, l_int32 n, l_float32 simthresh, NUMA **pnai, l_float32 **pscores, PIX **ppixd, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok pixComparePhotoRegionsByHisto ( PIX *pix1, PIX *pix2, BOX *box1, BOX *box2, l_float32 minratio, l_int32 factor, l_int32 n, l_float32 *pscore, LDIAG_CTX diagspec );
-LEPT_DLL extern l_ok pixGenPhotoHistos ( PIX *pixs, BOX *box, l_int32 factor, l_float32 thresh, l_int32 n, NUMAA **pnaa, l_int32 *pw, l_int32 *ph, l_int32 debugindex );
+LEPT_DLL extern l_ok pixGenPhotoHistos ( PIX *pixs, BOX *box, l_int32 factor, l_float32 thresh, l_int32 n, NUMAA **pnaa, l_int32 *pw, l_int32 *ph, LDIAG_CTX diagspec );
 LEPT_DLL extern PIX * pixPadToCenterCentroid ( PIX *pixs, l_int32 factor );
 LEPT_DLL extern l_ok pixCentroid8 ( PIX *pixs, l_int32 factor, l_float32 *pcx, l_float32 *pcy );
 LEPT_DLL extern l_ok pixDecideIfPhotoImage ( PIX *pix, l_int32 factor, l_float32 thresh, l_int32 n, NUMAA **pnaa, PIXA *pixadebug );

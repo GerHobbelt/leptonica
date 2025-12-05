@@ -186,7 +186,8 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pix2, 600, 400, "cleaned under transparent", rp->diag_spec);
 
     pixa = pixaCreate(0);
-    pixaAddPix(pixa, pixg2, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pixg2, L_INSERT);
     pixaAddPix(pixa, pixcs1, L_INSERT);
     pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pixd1, L_INSERT);
@@ -212,7 +213,8 @@ L_REGPARAMS* rp;
     maxval = 200;
     box = boxCreate(0, 85, 600, 100);
     pixa = pixaCreate(6);
-    pix1 = pixRead(DEMOPATH("blend-green1.jpg"));
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix1 = pixRead(DEMOPATH("blend-green1.jpg"));
 	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixaAddPix(pixa, pix1, L_INSERT);
     pix1 = pixRead(DEMOPATH("blend-green2.png"));
@@ -232,10 +234,13 @@ L_REGPARAMS* rp;
 	pixaAddPix(pixa, pix1, L_INSERT);
     n = pixaGetCount(pixa);
     pixa2 = pixaCreate(n);
-    pixa3 = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
+	pixa3 = pixaCreate(n);
+	pixaSetDiagnosticsSpec(pixa3, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa, i, L_CLONE);
-        pix2 = DoBlendTest(pix1, box, color, gamma, minval, maxval, 1);
+		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+		pix2 = DoBlendTest(pix1, box, color, gamma, minval, maxval, 1);
         regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 12, 14, ... 22 */
         pixDisplayWithTitle(pix2, 150 * i, 0, NULL, rp->diag_spec);
         pixaAddPix(pixa2, pix2, L_INSERT);

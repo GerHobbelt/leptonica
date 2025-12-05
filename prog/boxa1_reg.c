@@ -139,7 +139,9 @@ PIX     *pix1, *pix2, *pix3;
 PIXA    *pixa;
 
     pixa = pixaCreate(2);
-    boxaGetExtent(boxa, &w, &h, &box);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
+	boxaGetExtent(boxa, &w, &h, &box);
     pix1 = pixCreate(w, h, 1);
     pixMaskBoxa(pix1, pix1, boxa, L_SET_PIXELS);
     pixaAddPix(pixa, pix1, L_INSERT);

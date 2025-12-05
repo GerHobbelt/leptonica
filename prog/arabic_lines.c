@@ -94,6 +94,7 @@ L_REGPARAMS* rp;
     //lept_mkdir("lept/lineseg");
 
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Binarize input */
     pixs = pixRead(DEMOPATH("arabic.png"));

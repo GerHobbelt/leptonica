@@ -91,6 +91,8 @@ PTA          *ptapk;
     pixDestroy(&pix2);
     pixDisplayWithTitle(pixs, 400, 0, "Input image", rp->diag_spec);
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
     pixhsv = pixConvertRGBToHSV(NULL, pixs);
 
         /* Work in the HS projection of HSV */
@@ -133,6 +135,8 @@ PTA          *ptapk;
 
         /* Make masks for each of the peaks */
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
     pixr = pixScaleBySampling(pixs, 0.4, 0.4);
     for (i = 0; i < 6; i++) {
         ptaGetIPt(ptapk, i, &x, &y);

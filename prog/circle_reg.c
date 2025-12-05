@@ -80,9 +80,11 @@ PIXA         *pixas, *pixa1, *pixa2;
     n = pixaGetCount(pixas);
 
     pixa2 = pixaCreate(0);
-    for (k = 0; k < n; k++) {
+	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
+	for (k = 0; k < n; k++) {
         pixa1 = pixaCreate(0);
-        na = numaCreate(0);
+		pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+		na = numaCreate(0);
         pixs = pixaGetPix(pixas, k, L_COPY);
         pixaAddPix(pixa1, pixs, L_INSERT);
         pixsi = pixInvert(NULL, pixs);

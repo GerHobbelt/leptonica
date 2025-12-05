@@ -87,7 +87,9 @@ L_REGPARAMS* rp;
     //lept_mkdir("lept/binar");
 
     pixa = pixaCreate(5);
-    pixs = pixRead(infile);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+
+	pixs = pixRead(infile);
     pixGetDimensions(pixs, &w, NULL, &d);
     pixaAddPix(pixa, pixs, L_INSERT);
     pixDisplay(pixs, 100, 0);

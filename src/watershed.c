@@ -397,7 +397,8 @@ PTA      *ptas, *ptao;
      * ------------------------------------------------------------ */
 
     pixad = pixaCreate(nseeds);
-    wshed->pixad = pixad;  /* wshed owns this */
+	pixaSetDiagnosticsSpec(pixad, pixGetDiagnosticsSpec(wshed->pixs));
+	wshed->pixad = pixad;  /* wshed owns this */
     nalevels = numaCreate(nseeds);
     wshed->nalevels = nalevels;  /* wshed owns this */
     L_INFO("nseeds = %d, nother = %d\n", __func__, nseeds, nother);
