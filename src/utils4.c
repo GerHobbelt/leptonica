@@ -1002,6 +1002,7 @@ leptDebugSetFileBasepath(LDIAG_CTX spec, const char* directory)
 
 	if (spec->basepath)
 		stringDestroy(&spec->basepath);
+
 	if (!directory[0]) {
 		spec->basepath = NULL;
 	}
@@ -1022,7 +1023,7 @@ leptDebugSetFileBasepath(LDIAG_CTX spec, const char* directory)
 		}
 	}
 
-	spec->basepath_minlength = strlen(spec->basepath);
+	spec->basepath_minlength = spec->basepath ? strlen(spec->basepath) : 0;
 
 	spec->must_regenerate = 1;
 }
