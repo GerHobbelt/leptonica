@@ -2368,6 +2368,7 @@ PIXA   *pixa;
     pixa = NULL;
     if (debugindex > 0) {
         pixa = pixaCreate(0);
+
         //lept_mkdir("lept/comp");
     }
 

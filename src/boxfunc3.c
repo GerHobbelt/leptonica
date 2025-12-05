@@ -759,7 +759,8 @@ PIXA      *pixad;
     }
 
     pixad = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaCloneDiagnosticsSpec(pixad, pixas);
+	for (i = 0; i < n; i++) {
         pix = pixaGetPix(pixas, i, L_COPY);
         boxa = boxaaGetBoxa(baa, i, L_CLONE);
         nbox = boxaGetCount(boxa);

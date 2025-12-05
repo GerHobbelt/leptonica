@@ -3454,6 +3454,7 @@ l_float32  numfg, numbg;
 GPLOT     *gplot;
 NUMA      *na, *nascore, *nax, *nay;
 PIX       *pixg;
+LDIAG_CTX  diagspec;
 
     if (pthresh) *pthresh = 0;
     if (pfgval) *pfgval = 0;
@@ -3464,18 +3465,22 @@ PIX       *pixg;
     if (!pixs)
         return ERROR_INT("pixs not defined", __func__, 1);
 
+	diagspec = NULL;
+
         /* Generate a subsampled 8 bpp version */
     pixg = pixConvertTo8BySampling(pixs, factor, 0);
 
         /* Make the fg/bg estimates */
     na = pixGetGrayHistogram(pixg, 1);
     if (ppixdb) {
+		diagspec = pixGetDiagnosticsSpec(pixs);
+
         numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
                               &numfg, &numbg, diagspec, &nascore);
         numaDestroy(&nascore);
     } else {
         numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
-                              &numfg, &numbg, diagspec, NULL);
+                              &numfg, &numbg, NULL, NULL);
     }
 
     if (pthresh) *pthresh = thresh;
@@ -3521,7 +3526,7 @@ PIX       *pixg;
 		index++;
 		//lept_mkdir("lept/redout");
 		snprintf(namebuf, sizeof(namebuf), "/tmp/lept/redout/histplot-%03d", index);
-			gplot = gplotCreate(diagspec, namebuf, GPLOT_PNG, "Histogram",
+		gplot = gplotCreate(diagspec, namebuf, GPLOT_PNG, "Histogram",
                             "Grayscale value", "Number of pixels");
         gplotAddPlot(gplot, NULL, na, GPLOT_LINES, NULL);
 
@@ -3556,6 +3561,7 @@ PIX       *pixg;
 
 		/* create a final chart image of: chart on top, image tile from which this histogram was taken at the bottom, with a border to clearly delineate it. */
 		pixadb = pixaCreate(2);
+		pixaSetDiagnosticsSpec(pixadb, diagspec);
 		pixaAddPix(pixadb, pixplot, L_INSERT);
 		/* scale the pix (image tile) to approximate the plot image width; to keep the original pixels obvious, this must be a *sampled* scaling */
 		int pw, ph, tw, th;

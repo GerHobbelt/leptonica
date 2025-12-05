@@ -1282,8 +1282,10 @@ PTA      *pta;
         /* Sequentially identify and erase peaks in the histogram.
          * If requested for debugging, save a pixa of the sequence of
          * false color histograms. */
-    if (ppixa)
-        *ppixa = pixaCreate(0);
+	if (ppixa) {
+		*ppixa = pixaCreate(0);
+		pixaSetDiagnosticsSpec(*ppixa, pixGetDiagnosticsSpec(pixs));
+	}
     for (i = 0; i < npeaks; i++) {
         pixGetMaxValueInRect(pixw, NULL, &maxval, &xmax, &ymax);
         if (maxval == 0) break;

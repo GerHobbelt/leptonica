@@ -478,6 +478,7 @@ PIXCMAP  *cmap;
                 pixSetPixel(pixt, x, ival, index);
             }
         }
+		const char* debugfile = leptDebugGenFilepath(diagspec, "%s-%d.png", __func__, side);
         pixWrite(debugfile, pixt, IFF_PNG);
         pixDestroy(&pixt);
     }

@@ -866,8 +866,7 @@ PIXA     *pixan;
     if (boxaWriteMem(&data, &size, boxa) == 0)
         pixSetText(pixd, (char *)data);  /* data is ascii */
 
-	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixa);
-	pixSetDiagnosticsSpec(pixd, diagspec);
+	pixSetDiagnosticsSpec(pixd, pixaGetDiagnosticsSpec(pixa));
 
     LEPT_FREE(data);
     boxaDestroy(&boxa);

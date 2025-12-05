@@ -98,7 +98,8 @@ SELA    *sela;
 
     n = pixaGetCount(pixas);
     pixad = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaCloneDiagnosticsSpec(pixad, pixas);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         pix2 = pixThinConnectedBySet(pix1, type, sela, maxiters);
         pixaAddPix(pixad, pix2, L_INSERT);

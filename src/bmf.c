@@ -605,7 +605,8 @@ NUMA     *na;
 
     tab = makePixelSumTab8();
     pixa = pixaCreate(95);
-    for (i = 0; i < nrows; i++) {
+	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
+	for (i = 0; i < nrows; i++) {
         box = boxaGetBox(boxar, i, L_CLONE);
         pixr = pixClipRectangle(pixs, box, NULL);  /* row of chars */
         pixGetTextBaseline(pixr, tab, &yval);
@@ -617,7 +618,7 @@ NUMA     *na;
         pix1 = pixCopy(NULL, pixr);
         pixRenderLine(pix1, 0, yval, pixGetWidth(pix1), yval, 1,
                       L_FLIP_PIXELS);
-        if (i == 0 )
+        if (i == 0)
             pixWriteDebug("/tmp/baseline/row0.png", pix1, IFF_PNG);
         else if (i == 1)
             pixWriteDebug("/tmp/baseline/row1.png", pix1, IFF_PNG);

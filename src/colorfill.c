@@ -252,7 +252,8 @@ PIXA      *pixas, *pixam;
         /* Find regions of similar color in each tile */
     n = pixaGetCount(pixas);
     pixam = pixaCreate(n);
-    cf->pixam = pixam;
+	pixaSetDiagnosticsSpec(pixam, diagspec);
+	cf->pixam = pixam;
     for (i = 0; i < n; i++) {
         pix2 = pixaGetPix(pixas, i, L_COPY);
         pix3 = pixColorFill(pix2, minmax, maxdiff, smooth, minarea, 0);
@@ -341,10 +342,12 @@ L_QUEUE   *lq;
 
         /* Find the color components */
     pixv = pixCreate(w, h, 1);  /* visited pixels */
-    pixOr(pixv, pixv, pixncd);  /* consider non-color as visited */
+	pixCloneDiagnosticsSpec(pixv, pixs);
+	pixOr(pixv, pixv, pixncd);  /* consider non-color as visited */
     pixSetBorderRingVal(pixv, 1, 1);
     pixm = pixCreate(w, h, 1);  /* color components */
-    lq = lqueueCreate(0);
+	pixCloneDiagnosticsSpec(pixm, pixs);
+	lq = lqueueCreate(0);
     x = y = 1;  /* first row and column have been marked as visited */
     while (findNextUnvisited(pixv, &x, &y) == 1) {
             /* Flood fill this component, starting from (x,y) */

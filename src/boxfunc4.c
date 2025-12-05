@@ -1353,7 +1353,8 @@ PIXA    *pixat;
     bmf = bmfCreate(NULL, fontsize);
 
     pixat = pixaCreate(n);
-    boxaGetExtent(boxa, &w, &h, NULL);
+	pixaCloneDiagnosticsSpec(pixat, pixa);
+	boxaGetExtent(boxa, &w, &h, NULL);
     for (i = first; i <= last; i++) {
         box = boxaGetBox(boxa, i, L_CLONE);
         if (!pixa) {

@@ -174,7 +174,8 @@ PIX       *pixv, *pixh;
     }
 
     if (diagspec) {
-        dew1 = dewarpaGetDewarp(dewa, pageno);
+		const char* debugfile = leptDebugGenFilepath(diagspec, "%s.pdf", __func__);
+		dew1 = dewarpaGetDewarp(dewa, pageno);
         dewarpDebug(dew1, "lept/dewapply", 0);
         convertFilesToPdf("/tmp/lept/dewapply", NULL, 250, 1.0, 0, 0,
                          "Dewarp Apply Disparity", debugfile);
@@ -604,7 +605,8 @@ PIX       *pixv, *pixh;
     }
 
     if (debug_out) {
-        pixDestroy(&pixv);
+		const char* debugfile = leptDebugGenFilepath(diagspec, "%s.pdf", __func__);
+		pixDestroy(&pixv);
         dew1 = dewarpaGetDewarp(dewa, pageno);
         dewarpDebug(dew1, "lept/dewapply", 0);
         convertFilesToPdf("/tmp/lept/dewboxa", NULL, 135, 1.0, 0, 0,

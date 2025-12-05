@@ -401,6 +401,7 @@ PIXA         *pixac;
      *            Generate principal bilateral component images             *
      * -------------------------------------------------------------------- */
     pixac = pixaCreate(ncomps);
+	pixaSetDiagnosticsSpec(pixac, pixGetDiagnosticsSpec(pixs));
     pixGetDimensions(pixsc, &ws, &hs, NULL);
     datas = pixGetData(pixsc);
     wpls = pixGetWpl(pixsc);
