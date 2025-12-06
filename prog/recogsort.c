@@ -59,7 +59,7 @@ L_RECOG  *recog;
 SARRAY   *sa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "recog", FALSE, &rp))
+	if (regTestSetup(argc, argv, "recog", &rp))
 		return 1;
 
     /* ----- Example identifying samples using training data ----- */

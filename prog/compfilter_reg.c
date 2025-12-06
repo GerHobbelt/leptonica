@@ -80,7 +80,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2, *pixa3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "filter", FALSE, &rp))
+	if (regTestSetup(argc, argv, "filter", &rp))
 		return 1;
 
 	//lept_mkdir("lept/filter");

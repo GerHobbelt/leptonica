@@ -74,7 +74,7 @@ PIX     *pixd;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "scale", FALSE, &rp))
+	if (regTestSetup(argc, argv, "scale", &rp))
 		return 1;
 
     if (argc != 7)

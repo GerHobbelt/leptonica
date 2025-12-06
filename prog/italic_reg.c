@@ -63,7 +63,7 @@ PIXA         *pixadb;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "ital", FALSE, &rp))
+	if (regTestSetup(argc, argv, "ital", &rp))
 		return 1;
 
 	//lept_mkdir("lept/ital");

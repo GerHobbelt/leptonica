@@ -70,7 +70,7 @@ l_int32 main(int    argc,
 PIX          *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rotate", FALSE, &rp))
+	if (regTestSetup(argc, argv, "rotate", &rp))
 		return 1;
 
     lept_stderr("Test binary image:\n");

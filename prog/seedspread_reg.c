@@ -56,7 +56,7 @@ PIX          *pixsq, *pixs, *pixc, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "seed_spread", FALSE, &rp))
+	if (regTestSetup(argc, argv, "seed_spread", &rp))
 		return 1;
 
     pixsq = pixCreate(3, 3, 32);

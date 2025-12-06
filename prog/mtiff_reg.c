@@ -74,7 +74,7 @@ SARRAY       *sa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "tiff", FALSE, &rp))
+	if (regTestSetup(argc, argv, "tiff", &rp))
 		return 1;
 
 	//lept_mkdir("lept/tiff");

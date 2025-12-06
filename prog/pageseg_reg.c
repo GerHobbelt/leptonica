@@ -83,7 +83,7 @@ SARRAY       *sa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pageseg", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pageseg", &rp))
 		return 1;
 
 #if 1

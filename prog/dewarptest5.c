@@ -60,7 +60,7 @@ L_DEWARPA  *dewa;
 PIX        *pixs, *pixn, *pixg, *pixb, *pix2, *pix3, *pix4, *pix5, *pix6;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dewarp5", FALSE, &rp))
+	if (regTestSetup(argc, argv, "dewarp5", &rp))
 		return 1;
 
     //lept_mkdir("lept/dewarp5");

@@ -87,7 +87,7 @@ PIX     *pixs;
 PIXA    *pixa, *pixas;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pix_alloc", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pix_alloc", &rp))
 		return 1;
 
     //lept_mkdir("lept/alloc");

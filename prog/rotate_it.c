@@ -71,7 +71,7 @@ const char      *filein, *fileout, *type = NULL, *incolor = NULL;
 PIX       *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rotate", FALSE, &rp))
+	if (regTestSetup(argc, argv, "rotate", &rp))
 		return 1;
 
     if (argc != 4 && argc != 6)

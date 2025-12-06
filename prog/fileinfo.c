@@ -51,7 +51,7 @@ int main(int    argc,
 const char  *filein;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "file", FALSE, &rp))
+	if (regTestSetup(argc, argv, "file", &rp))
 		return 1;
 
     if (argc != 2)

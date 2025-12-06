@@ -56,7 +56,7 @@ SEL          *sel, *sel1, *sel2, *sel3;
 SELA         *sela, *sela4, *sela8, *sela48;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "ccthin", FALSE, &rp))
+	if (regTestSetup(argc, argv, "ccthin", &rp))
 		return 1;
 
     pixa = pixaCreate(0);

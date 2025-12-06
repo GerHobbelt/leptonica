@@ -63,7 +63,7 @@ int main(int    argc,
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "equal", FALSE, &rp))
+	if (regTestSetup(argc, argv, "equal", &rp))
 		return 1;
 
     //lept_mkdir("lept/equal");

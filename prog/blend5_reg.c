@@ -58,7 +58,7 @@ PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "blend", FALSE, &rp))
+	if (regTestSetup(argc, argv, "blend", &rp))
 		return 1;
 
     pixa = pixaCreate(0);

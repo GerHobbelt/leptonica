@@ -59,7 +59,7 @@ PIXA         *pixa1, *pixa2;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "newspaper", FALSE, &rp))
+	if (regTestSetup(argc, argv, "newspaper", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

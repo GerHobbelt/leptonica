@@ -48,7 +48,7 @@ int main(int    argc,
 {
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "partify", FALSE, &rp))
+	if (regTestSetup(argc, argv, "partify", &rp))
 		return 1;
 
     if (argc != 1)

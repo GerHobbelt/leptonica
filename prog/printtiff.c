@@ -77,7 +77,7 @@ const char        *filein, *tempfile, *printer = NULL;
 char   buf[512];
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "print", FALSE, &rp))
+	if (regTestSetup(argc, argv, "print", &rp))
 		return 1;
 
     if (argc != 2 && argc != 3)

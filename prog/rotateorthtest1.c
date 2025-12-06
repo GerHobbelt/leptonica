@@ -63,7 +63,7 @@ l_float32  pops;
 const char      *filein, *fileout;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rotate_ortho", FALSE, &rp))
+	if (regTestSetup(argc, argv, "rotate_ortho", &rp))
 		return 1;
 
     if (argc != 3 && argc != 4)

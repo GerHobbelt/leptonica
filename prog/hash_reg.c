@@ -80,7 +80,7 @@ SARRAY       *sa0, *sa1, *sa2, *sa3;
 PIX          *pix1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "hash", FALSE, &rp))
+	if (regTestSetup(argc, argv, "hash", &rp))
 		return 1;
 
     //lept_mkdir("lept/hash");

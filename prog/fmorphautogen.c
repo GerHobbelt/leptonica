@@ -64,7 +64,7 @@ l_int32  index;
 SELA    *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "fmorph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "fmorph", &rp))
 		return 1;
 
     if (argc != 2 && argc != 3)

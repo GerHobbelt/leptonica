@@ -54,7 +54,7 @@ PIX     *pixs;
 l_int32  d;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "scale", TRUE, &rp))
+	if (regTestSetup(argc, argv, "scale", TRUE, &rp))
 		return 1;
 
     if (argc != 2)

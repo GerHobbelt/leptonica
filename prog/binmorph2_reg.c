@@ -61,7 +61,7 @@ l_int32  i, same, same2, factor1, factor2, diff, success;
 PIX     *pixs, *pixsd, *pixt1, *pixt2, *pixt3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "binmorph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "binmorph", &rp))
 		return 1;
 
     if (argc != 1)

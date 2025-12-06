@@ -64,7 +64,7 @@ BOXAA        *boxaa1;
 PIX          *pix1, *pix2, *pix3, *pix4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "word_boxes", FALSE, &rp))
+	if (regTestSetup(argc, argv, "word_boxes", &rp))
 		return 1;
 
 	//lept_mkdir("lept/testboxes");

@@ -88,7 +88,7 @@ SEL          *sel;
 SELA         *sela1, *sela2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "sel_io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "sel_io", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

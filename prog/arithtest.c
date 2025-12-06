@@ -54,7 +54,7 @@ l_int32  w, h;
 PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "arith", FALSE, &rp))
+	if (regTestSetup(argc, argv, "arith", &rp))
 		return 1;
 
     if (argc != 2)

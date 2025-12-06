@@ -57,7 +57,7 @@ l_uint8      *bina, *bina2, *bin85c, *bin85c2;
 PIX          *pix1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "encode", FALSE, &rp))
+	if (regTestSetup(argc, argv, "encode", &rp))
 		return 1;
 
     //lept_mkdir("lept/encode");

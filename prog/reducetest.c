@@ -55,7 +55,7 @@ l_int32  level1, level2, level3, level4;
 const char    *filein, *fileout;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "reduce", FALSE, &rp))
+	if (regTestSetup(argc, argv, "reduce", &rp))
 		return 1;
 
     if (argc != 7)

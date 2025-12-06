@@ -66,7 +66,7 @@ SEL       *sel;
 SELA      *selalinear;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dwa_morph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "dwa_morph", &rp))
 		return 1;
 
     if (argc != 1)

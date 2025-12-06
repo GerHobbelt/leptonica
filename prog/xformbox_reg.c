@@ -76,7 +76,7 @@ PIX          *pix, *pixs, *pixc, *pixt, *pix1, *pix2, *pix3;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "xform", FALSE, &rp))
+	if (regTestSetup(argc, argv, "xform", &rp))
 		return 1;
 
     /* ----------------------------------------------------------- *

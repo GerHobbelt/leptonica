@@ -71,7 +71,7 @@ PIXA         *pixad;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "partition", FALSE, &rp))
+	if (regTestSetup(argc, argv, "partition", &rp))
 		return 1;
 
 	l_pdfSetDateAndVersion(0);

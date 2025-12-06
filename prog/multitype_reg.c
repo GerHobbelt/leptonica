@@ -76,7 +76,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixas, *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "multitype", FALSE, &rp))
+	if (regTestSetup(argc, argv, "multitype", &rp))
 		return 1;
 
     pixas = pixaCreate(11);

@@ -73,7 +73,7 @@ l_int32    ret, res, type, quality;
 l_float32  scalefactor;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+	if (regTestSetup(argc, argv, "convert", &rp))
 		return 1;
 
     if (argc != 9) {

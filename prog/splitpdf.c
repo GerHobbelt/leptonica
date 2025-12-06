@@ -68,7 +68,7 @@ l_int32  i, n, npages, nfiles, val, start, end;
 NUMA    *naeach;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "split_pdf", FALSE, &rp))
+	if (regTestSetup(argc, argv, "split_pdf", &rp))
 		return 1;
 
     if (argc != 4)

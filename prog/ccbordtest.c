@@ -56,7 +56,7 @@ PIX      *pixs, *pixd, *pixd2, *pixd3;
 PIX      *pixt, *pixc, *pixc2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "ccbord", FALSE, &rp))
+	if (regTestSetup(argc, argv, "ccbord", &rp))
 		return 1;
 
     if (argc != 2)

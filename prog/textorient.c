@@ -78,7 +78,7 @@ l_float32    minupconf, minratio;
 PIX         *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "text_orient", TRUE, &rp))
+	if (regTestSetup(argc, argv, "text_orient", TRUE, &rp))
 		return 1;
 
     if (argc != 5) {

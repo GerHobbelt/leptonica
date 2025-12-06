@@ -63,7 +63,7 @@ NUMA         *na, *nahisto, *nax;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dna", FALSE, &rp))
+	if (regTestSetup(argc, argv, "dna", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

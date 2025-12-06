@@ -65,7 +65,7 @@ PIXA      *pixa1, *pixa2, *pixa3;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "tiff", FALSE, &rp))
+	if (regTestSetup(argc, argv, "tiff", &rp))
 		return 1;
 
 	l_pdfSetDateAndVersion(0);

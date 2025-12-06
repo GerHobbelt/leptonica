@@ -58,7 +58,7 @@ PIXAC   *pac;
 const char    *filein;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pixa", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pixa", &rp))
 		return 1;
 
     if (argc != 2)

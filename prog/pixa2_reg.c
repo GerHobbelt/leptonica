@@ -56,7 +56,7 @@ PIXA         *pixa;
 SARRAY       *sa1, *sa2, *sa3, *sa4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pixa2", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pixa2", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

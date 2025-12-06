@@ -76,7 +76,7 @@ PIX       *pix, *pixs, *pix0, *pix1, *pix2;
 PIXA      *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "partition", FALSE, &rp))
+	if (regTestSetup(argc, argv, "partition", &rp))
 		return 1;
 
     if (argc != 3 && argc != 5)

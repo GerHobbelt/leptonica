@@ -58,7 +58,7 @@ l_float32  fract;
 const char      *filein, *fileout;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "sharp", FALSE, &rp))
+	if (regTestSetup(argc, argv, "sharp", &rp))
 		return 1;
 
     if (argc != 5)

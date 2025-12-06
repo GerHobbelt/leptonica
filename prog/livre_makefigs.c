@@ -54,7 +54,7 @@ int main(int    argc,
 char  buf[256];
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+	if (regTestSetup(argc, argv, "livre", &rp))
 		return 1;
 
     if (argc != 1)

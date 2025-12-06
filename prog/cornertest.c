@@ -58,7 +58,7 @@ PTA     *pta;
 PTAA    *ptaa, *ptaa2, *ptaa3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "corner", FALSE, &rp))
+	if (regTestSetup(argc, argv, "corner", &rp))
 		return 1;
 
     if (argc != 3)

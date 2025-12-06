@@ -56,7 +56,7 @@ PIX     *pixs, *pix1;
 PTA     *pta;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "graphics", FALSE, &rp))
+	if (regTestSetup(argc, argv, "graphics", &rp))
 		return 1;
 
     if (argc != 3)

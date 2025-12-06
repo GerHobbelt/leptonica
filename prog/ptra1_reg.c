@@ -63,7 +63,7 @@ PIXA         *pixas, *pixa1, *pixa2, *pixac1, *pixac2;
 L_PTRA       *papix, *pabox, *papix2, *pabox2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "ptra", FALSE, &rp))
+	if (regTestSetup(argc, argv, "ptra", &rp))
 		return 1;
 
     pixac1 = pixaCreate(0);

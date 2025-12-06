@@ -122,7 +122,7 @@ l_float32  maxwiden;
 SARRAY    *safiles;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "crop", FALSE, &rp))
+	if (regTestSetup(argc, argv, "crop", &rp))
 		return 1;
 
     if (argc != 11)

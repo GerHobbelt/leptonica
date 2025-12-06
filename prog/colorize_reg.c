@@ -72,7 +72,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "colorize", FALSE, &rp))
+	if (regTestSetup(argc, argv, "colorize", &rp))
 		return 1;
 
 	pixa = pixaCreate(0);

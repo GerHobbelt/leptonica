@@ -58,7 +58,7 @@ const char    *filein1, *filein2, *fileout;
 PIX     *pixs1, *pixs2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "bincompare", FALSE, &rp))
+	if (regTestSetup(argc, argv, "bincompare", &rp))
 		return 1;
 
     if (argc != 4)

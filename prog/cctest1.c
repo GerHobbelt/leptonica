@@ -70,7 +70,7 @@ PIXA     *pixa;
 PIXCMAP  *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "cctest", FALSE, &rp))
+	if (regTestSetup(argc, argv, "cctest", &rp))
 		return 1;
 
     if (argc != 2)

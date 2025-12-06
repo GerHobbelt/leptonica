@@ -58,7 +58,7 @@ L_BBUFFER  *bb, *bb2;
 FILE       *fp;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "buffer", FALSE, &rp))
+	if (regTestSetup(argc, argv, "buffer", &rp))
 		return 1;
 
     if (argc != 3)

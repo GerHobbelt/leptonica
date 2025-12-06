@@ -60,7 +60,7 @@ NUMA      *na, *nax;
 PIX       *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "contrast", TRUE, &rp))
+	if (regTestSetup(argc, argv, "contrast", TRUE, &rp))
 		return 1;
 
     if (argc != 4)

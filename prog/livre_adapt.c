@@ -54,7 +54,7 @@ PIX   *pixs, *pix1, *pix2, *pix3, *pixr, *pixg, *pixb, *pixsg, *pixsm;
 PIXA  *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+	if (regTestSetup(argc, argv, "livre", &rp))
 		return 1;
 
     if (argc != 1)

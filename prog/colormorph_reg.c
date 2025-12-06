@@ -56,7 +56,7 @@ PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "color_morph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "color_morph", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("wyom.jpg"));

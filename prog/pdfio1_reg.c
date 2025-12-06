@@ -81,7 +81,7 @@ PIXCMAP      *cmap;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pdf_io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pdf_io", &rp))
 		return 1;
 
 	l_pdfSetDateAndVersion(0);

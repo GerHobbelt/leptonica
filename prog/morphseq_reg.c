@@ -61,7 +61,7 @@ int main(int    argc,
 PIX  *pixs, *pixg, *pixc, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "morph_seq", FALSE, &rp))
+	if (regTestSetup(argc, argv, "morph_seq", &rp))
 		return 1;
 
     if (argc != 1)

@@ -66,7 +66,7 @@ BOXA      *boxa1, *boxa2;
 PIX       *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "display", FALSE, &rp))
+	if (regTestSetup(argc, argv, "display", &rp))
 		return 1;
 
     if (argc != 6) {

@@ -78,7 +78,7 @@ PIX      *pixs, *pix1, *pix2, *pixd;
 PIXCMAP  *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "words", FALSE, &rp))
+	if (regTestSetup(argc, argv, "words", &rp))
 		return 1;
 
     if (argc != 3 && argc != 5)

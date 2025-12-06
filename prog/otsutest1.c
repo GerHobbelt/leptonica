@@ -63,7 +63,7 @@ PIX     *pix;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "otsu1", FALSE, &rp))
+	if (regTestSetup(argc, argv, "otsu1", &rp))
 		return 1;
 
     //lept_mkdir("lept/otsu");

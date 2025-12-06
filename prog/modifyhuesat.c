@@ -62,7 +62,7 @@ PIX       *pixs, *pixt1, *pixt2, *pixd;
 PIXA      *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "hue_sat", FALSE, &rp))
+	if (regTestSetup(argc, argv, "hue_sat", &rp))
 		return 1;
 
     if (argc != 7)

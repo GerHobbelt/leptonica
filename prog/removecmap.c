@@ -61,7 +61,7 @@ PIX      *pixs, *pixd;
 PIXCMAP  *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "cmap", FALSE, &rp))
+	if (regTestSetup(argc, argv, "cmap", &rp))
 		return 1;
 
     if (argc != 4)

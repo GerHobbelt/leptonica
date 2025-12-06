@@ -59,7 +59,7 @@ l_int32 main(int    argc,
 {
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "recog_digits", FALSE, &rp))
+	if (regTestSetup(argc, argv, "recog_digits", &rp))
 		return 1;
 
 	//lept_mkdir("lept/digit");

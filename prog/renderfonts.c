@@ -56,7 +56,7 @@ L_BMF   *bmf;
 PIX     *pixs, *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "fonts", FALSE, &rp))
+	if (regTestSetup(argc, argv, "fonts", &rp))
 		return 1;
 
     if (argc != 1)

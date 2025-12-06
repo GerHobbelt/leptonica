@@ -65,7 +65,7 @@ L_DEWARPA  *dewa;
 PIX        *pixs, *pixn, *pixg, *pixb, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dewarp", TRUE, &rp))
+	if (regTestSetup(argc, argv, "dewarp", TRUE, &rp))
 		return 1;
 
     if (argc != 2 && argc != 4)

@@ -68,7 +68,7 @@ PIXA         *pixa1;
 SEL          *sel_ast, *sel1, *sel2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pattern", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pattern", &rp))
 		return 1;
 
     //lept_mkdir("lept/pattern");

@@ -58,7 +58,7 @@ l_int32  d;
 PIX     *pixs, *pixgr, *pixb;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "edges", FALSE, &rp))
+	if (regTestSetup(argc, argv, "edges", &rp))
 		return 1;
 
     if (argc != 3)

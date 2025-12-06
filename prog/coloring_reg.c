@@ -71,7 +71,7 @@ PIXCMAP      *cmap;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "coloring", FALSE, &rp))
+	if (regTestSetup(argc, argv, "coloring", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

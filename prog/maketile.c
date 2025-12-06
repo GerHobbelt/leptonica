@@ -70,7 +70,7 @@ PIX       *pix, *pixt, *pixd;
 PIXA      *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "tile", FALSE, &rp))
+	if (regTestSetup(argc, argv, "tile", &rp))
 		return 1;
 
     if (argc != 7)

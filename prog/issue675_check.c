@@ -55,7 +55,7 @@ l_int32 same;
 
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "bmp-test-issue-675", FALSE, &rp))
+	if (regTestSetup(argc, argv, "bmp-test-issue-675", &rp))
 		return 1;
 
 	lept_rmdir("lept/bmp-test");

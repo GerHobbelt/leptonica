@@ -92,7 +92,7 @@ int main(int    argc,
 PIX          *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "binmorph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "binmorph", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));

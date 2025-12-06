@@ -60,7 +60,7 @@ PIX     *pixs;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-if (regTestSetup(&argc, &argv, "split_image", FALSE, &rp))
+if (regTestSetup(argc, argv, "split_image", &rp))
 return 1;
 
     if (argc != 5)

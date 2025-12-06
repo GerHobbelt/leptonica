@@ -66,7 +66,7 @@ PIX          *pixs, *pixc, *pixt, *pixd, *pix32;
 PIXA         *pixas, *pixad;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "split_comp", FALSE, &rp))
+	if (regTestSetup(argc, argv, "split_comp", &rp))
 		return 1;
 
         /* Generate and save 1 bpp masks */

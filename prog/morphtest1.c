@@ -63,7 +63,7 @@ SEL       *sel;
 SELA      *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "morph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "morph", &rp))
 		return 1;
 
     if (argc != 3)

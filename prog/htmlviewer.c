@@ -84,7 +84,7 @@ const char    *dirin, *dirout, *rootname;
 l_int32  thumbwidth, viewwidth;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "html", FALSE, &rp))
+	if (regTestSetup(argc, argv, "html", &rp))
 		return 1;
 
     if (argc != 6)

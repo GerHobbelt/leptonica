@@ -55,7 +55,7 @@ FILE         *fp;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pnm_io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pnm_io", &rp))
 		return 1;
 
 #if !USE_PNMIO

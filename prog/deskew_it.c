@@ -77,7 +77,7 @@ l_float32  sweeprange, angle, conf;
 PIX       *pixs, *pix1, *pix2, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "deskew", FALSE, &rp))
+	if (regTestSetup(argc, argv, "deskew", &rp))
 		return 1;
 
     if (argc != 6)

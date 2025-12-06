@@ -55,7 +55,7 @@ int main(int    argc,
 PIX  *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pix_tile", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pix_tile", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("test24.jpg"));

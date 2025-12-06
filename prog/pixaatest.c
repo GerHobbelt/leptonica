@@ -59,7 +59,7 @@ PIXA    *pixa, *pixad1, *pixad2;
 PIXAA   *pixaa1, *pixaa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pixaa", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pixaa", &rp))
 		return 1;
 
     if (argc != 1)

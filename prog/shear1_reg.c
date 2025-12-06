@@ -67,7 +67,7 @@ PIX          *pixs, *pix1, *pixc, *pixd;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "shear", FALSE, &rp))
+	if (regTestSetup(argc, argv, "shear", &rp))
 		return 1;
 
     lept_stderr("Test binary image:\n");

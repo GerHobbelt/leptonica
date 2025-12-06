@@ -67,7 +67,7 @@ PIXA         *pixa1;
 SEL          *sel1, *sel2, *sel3, *sel4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "speckle", FALSE, &rp))
+	if (regTestSetup(argc, argv, "speckle", &rp))
 		return 1;
 
         /*  Normalize for rapidly varying background */

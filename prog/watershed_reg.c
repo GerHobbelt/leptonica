@@ -54,7 +54,7 @@ l_float32     f;
 PIX          *pix1, *pix2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "watershed", FALSE, &rp))
+	if (regTestSetup(argc, argv, "watershed", &rp))
 		return 1;
 
     pix1 = pixCreate(500, 500, 8);

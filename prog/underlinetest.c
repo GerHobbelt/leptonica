@@ -58,7 +58,7 @@ PIX     *pixs, *pixg, *pixg2, *pixb, *pixm, *pixsd, *pixsdd, *pixt, *pixd;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "underline", FALSE, &rp))
+	if (regTestSetup(argc, argv, "underline", &rp))
 		return 1;
 
     //lept_mkdir("lept/underline");

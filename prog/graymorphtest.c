@@ -53,7 +53,7 @@ l_int32  wsize, hsize, w, h, d;
 PIX     *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "gray_morph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "gray_morph", &rp))
 		return 1;
 
     if (argc != 5)

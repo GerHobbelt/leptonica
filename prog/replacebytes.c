@@ -67,7 +67,7 @@ l_int32  start, nbytes;
 const char    *filein, *fileout, *newstr = NULL;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "replace", FALSE, &rp))
+	if (regTestSetup(argc, argv, "replace", &rp))
 		return 1;
 
     if (argc != 5 && argc != 6)

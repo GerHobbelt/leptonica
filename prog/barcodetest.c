@@ -59,7 +59,7 @@ PIX     *pixs;
 SARRAY  *saw1, *saw2, *sad1, *sad2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "barcode", FALSE, &rp))
+	if (regTestSetup(argc, argv, "barcode", &rp))
 	return 1;
 
     if (argc != 2)

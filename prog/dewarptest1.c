@@ -64,7 +64,7 @@ PIX        *pixs, *pixn, *pixg, *pixb, *pixd, *pixt1, *pixt2;
 PIX        *pixs2, *pixn2, *pixg2, *pixb2, *pixd2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dewarp_model", FALSE, &rp))
+	if (regTestSetup(argc, argv, "dewarp_model", &rp))
 		return 1;
 
     lept_rmdir("lept/dewmod");

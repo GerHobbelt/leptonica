@@ -92,7 +92,7 @@ PTA          *ptas, *ptad;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "fpix", FALSE, &rp))
+	if (regTestSetup(argc, argv, "fpix", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

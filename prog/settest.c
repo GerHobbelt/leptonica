@@ -62,7 +62,7 @@ L_ASET  *s;
 PIX     *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "set", FALSE, &rp))
+	if (regTestSetup(argc, argv, "set", &rp))
 		return 1;
 
     pix = pixRead(DEMOPATH("weasel8.240c.png"));

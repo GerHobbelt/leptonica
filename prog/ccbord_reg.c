@@ -54,7 +54,7 @@ int main(int    argc,
 {
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "ccbord", FALSE, &rp))
+	if (regTestSetup(argc, argv, "ccbord", &rp))
 		return 1;
 
     //lept_mkdir("lept/ccbord");

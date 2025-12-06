@@ -71,7 +71,7 @@ PIXA         *pixa;
 PIXCMAP      *cmap, *cmapr;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "color_seg", FALSE, &rp))
+	if (regTestSetup(argc, argv, "color_seg", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("tetons.jpg"));

@@ -102,7 +102,7 @@ PIX       *pixs, *pix1;
 SARRAY    *sa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "print", FALSE, &rp))
+	if (regTestSetup(argc, argv, "print", &rp))
 		return 1;
 
     if (argc < 2)

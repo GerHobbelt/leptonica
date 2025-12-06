@@ -68,7 +68,7 @@ l_int32       i;
 
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "boxa", FALSE, &rp))
+	if (regTestSetup(argc, argv, "boxa", &rp))
 		return 1;
 
     for (i = 0; i < 3; i++)

@@ -68,7 +68,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rank", FALSE, &rp))
+	if (regTestSetup(argc, argv, "rank", &rp))
 		return 1;
 
 	//lept_mkdir("lept/rank");

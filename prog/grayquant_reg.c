@@ -61,7 +61,7 @@ PIXA         *pixa;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "gray_quant", FALSE, &rp))
+	if (regTestSetup(argc, argv, "gray_quant", &rp))
 		return 1;
 
     /* ------------------------------------------------------------- */

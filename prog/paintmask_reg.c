@@ -74,7 +74,7 @@ PIX          *pixs, *pixs8, *pixm, *pixt1, *pixt2, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "paintmask", FALSE, &rp))
+	if (regTestSetup(argc, argv, "paintmask", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

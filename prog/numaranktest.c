@@ -58,7 +58,7 @@ NUMA      *na, *nah, *nar, *nav;
 PIX       *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "numa_rank", TRUE, &rp))
+	if (regTestSetup(argc, argv, "numa_rank", TRUE, &rp))
 		return 1;
 
     if (argc != 3)

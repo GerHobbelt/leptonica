@@ -60,7 +60,7 @@ PIXA      *pixa, *pixas, *pixad;
 PIXAA     *paa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "digit_prep", FALSE, &rp))
+	if (regTestSetup(argc, argv, "digit_prep", &rp))
 		return 1;
 
     if (argc != 1) {

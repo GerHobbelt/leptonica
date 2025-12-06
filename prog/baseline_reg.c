@@ -65,7 +65,7 @@ PTA          *pta;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "baseline", FALSE, &rp))
+	if (regTestSetup(argc, argv, "baseline", &rp))
 		return 1;
 
 	//lept_mkdir("lept/baseline");

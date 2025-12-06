@@ -58,7 +58,7 @@ PIXA      *pixa, *pixa1;
 SARRAY    *sa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "light_color", FALSE, &rp))
+	if (regTestSetup(argc, argv, "light_color", &rp))
 		return 1;
 
     if (argc != 1)

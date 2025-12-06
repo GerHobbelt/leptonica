@@ -93,7 +93,7 @@ SEL          *sel;
 SELA         *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "corners", FALSE, &rp))
+	if (regTestSetup(argc, argv, "corners", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

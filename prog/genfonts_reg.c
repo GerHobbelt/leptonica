@@ -83,7 +83,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "fonts", FALSE, &rp))
+	if (regTestSetup(argc, argv, "fonts", &rp))
 		return 1;
 
 	/* ------------  Generate pixa char bitmap files from file ----------- */

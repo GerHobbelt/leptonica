@@ -63,7 +63,7 @@ PIX          *pix1, *pix2;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "webp_anim_io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "webp_anim_io", &rp))
 		return 1;
 
 #if !HAVE_LIBJPEG

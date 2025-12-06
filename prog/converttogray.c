@@ -53,7 +53,7 @@ l_int32  d, same;
 PIX     *pixs, *pixd, *pix1, *pix2, *pix3, *pix4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "gray", FALSE, &rp))
+	if (regTestSetup(argc, argv, "gray", &rp))
 		return 1;
 
     if (argc != 2 && argc != 3)

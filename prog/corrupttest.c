@@ -85,7 +85,7 @@ FILE      *fp;
 PIX       *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "corrupt", FALSE, &rp))
+	if (regTestSetup(argc, argv, "corrupt", &rp))
 		return 1;
 
     if (argc != 3 && argc != 5)

@@ -55,7 +55,7 @@ char     error_msg[] = " ps level = {1,2,3}; level 2 is default";
 l_int32  level;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+	if (regTestSetup(argc, argv, "convert", &rp))
 		return 1;
 
     if (argc != 3 && argc != 4) {

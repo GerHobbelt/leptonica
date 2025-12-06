@@ -54,7 +54,7 @@ PIXA  *pixadb;
 const char  *filein;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "page_seg", FALSE, &rp))
+	if (regTestSetup(argc, argv, "page_seg", &rp))
 		return 1;
 
     if (argc != 2)

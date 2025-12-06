@@ -79,7 +79,7 @@ SEL   *sel1, *sel2, *sel3, *sel4;
 SELA  *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+	if (regTestSetup(argc, argv, "livre", &rp))
 		return 1;
 
     lept_mkdir("lept/livre");

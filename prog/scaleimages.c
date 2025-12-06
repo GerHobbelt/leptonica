@@ -78,7 +78,7 @@ PIX       *pix1, *pix2;
 SARRAY    *sa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "scale", FALSE, &rp))
+	if (regTestSetup(argc, argv, "scale", &rp))
 		return 1;
 
     if (argc != 6 && argc != 7)

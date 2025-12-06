@@ -72,7 +72,7 @@ PIX       *pix1, *pix2, *pix3, *pix4;
 PIXA      *pixadb;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "color_regions", FALSE, &rp))
+	if (regTestSetup(argc, argv, "color_regions", &rp))
 		return 1;
 
     //lept_mkdir("lept/color");

@@ -68,7 +68,7 @@ L_DNA        *da;
 SARRAY       *sa1, *sa2, *sa3, *sa4, *sa5;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "string", FALSE, &rp))
+	if (regTestSetup(argc, argv, "string", &rp))
 		return 1;
 
     //lept_mkdir("lept/string");

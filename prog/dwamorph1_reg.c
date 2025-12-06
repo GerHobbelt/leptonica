@@ -66,7 +66,7 @@ SEL          *sel;
 SELA         *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dwamorph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "dwamorph", &rp))
 		return 1;
 
     if ((pixs = pixRead(DEMOPATH("feyn-fract.tif"))) == NULL) {

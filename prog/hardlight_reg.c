@@ -52,7 +52,7 @@ int main(int    argc,
 {
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "hard_light", FALSE, &rp))
+	if (regTestSetup(argc, argv, "hard_light", &rp))
 		return 1;
 
     TestHardlight(DEMOPATH("hardlight1_1.jpg"), DEMOPATH("hardlight1_2.jpg"), rp);

@@ -63,7 +63,7 @@ PIX          *pixs, *pix1, *pix2;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "binarize", FALSE, &rp))
+	if (regTestSetup(argc, argv, "binarize", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("w91frag.jpg"));

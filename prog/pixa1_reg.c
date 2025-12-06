@@ -58,7 +58,7 @@ PIX          *pixs, *pix1, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pixa1", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pixa1", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));

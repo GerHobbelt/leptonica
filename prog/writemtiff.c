@@ -56,7 +56,7 @@ int main(int    argc,
 {
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "tiff", FALSE, &rp))
+	if (regTestSetup(argc, argv, "tiff", &rp))
 		return 1;
 
     if (argc != 3 && argc != 4)

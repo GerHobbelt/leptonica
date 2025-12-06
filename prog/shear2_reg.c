@@ -63,7 +63,7 @@ PIXA         *pixa;
 
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "shear", FALSE, &rp))
+	if (regTestSetup(argc, argv, "shear", &rp))
 		return 1;
 
     bmf = bmfCreate(DEMOPATH("fonts"), 8);

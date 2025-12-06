@@ -70,7 +70,7 @@ PIX          *pix1, *pix2, *pix3;
 PIXA         *pixa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "overlap", FALSE, &rp))
+	if (regTestSetup(argc, argv, "overlap", &rp))
 		return 1;
 
     /* -------------------------------------------------------- */

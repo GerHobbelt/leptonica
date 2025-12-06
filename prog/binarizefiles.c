@@ -62,7 +62,7 @@ PIX       *pix1, *pix2, *pix3, *pix4;
 SARRAY    *sa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "binarize", FALSE, &rp))
+	if (regTestSetup(argc, argv, "binarize", &rp))
 		return 1;
 
     if (argc != 6) {

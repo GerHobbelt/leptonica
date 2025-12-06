@@ -65,7 +65,7 @@ int main(int    argc,
 {
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "webp_io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "webp_io", &rp))
 		return 1;
 
 #if !HAVE_LIBJPEG

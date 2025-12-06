@@ -78,7 +78,7 @@ PIX         *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8, *pix9;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pdf_seg", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pdf_seg", &rp))
 		return 1;
 
 	lept_rmdir("lept/pdfseg");

@@ -60,7 +60,7 @@ FPIX    *fpix;
 PIX     *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "fpix_contours", FALSE, &rp))
+	if (regTestSetup(argc, argv, "fpix_contours", &rp))
 		return 1;
 
     if (argc != 2 && argc != 3) {

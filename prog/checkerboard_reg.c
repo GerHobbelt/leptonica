@@ -55,7 +55,7 @@ int main(int    argc,
 {
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "checkerboard", FALSE, &rp))
+	if (regTestSetup(argc, argv, "checkerboard", &rp))
 		return 1;
 
     LocateCheckerboardCorners(rp, DEMOPATH("checkerboard1.tif"), 2);

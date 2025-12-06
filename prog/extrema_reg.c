@@ -65,7 +65,7 @@ PIX          *pix1;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "extrema", FALSE, &rp))
+	if (regTestSetup(argc, argv, "extrema", &rp))
 		return 1;
 
 	//lept_mkdir("lept/extrema");

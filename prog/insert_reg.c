@@ -64,7 +64,7 @@ PIXA         *pixa1, *pixa2, *pixa3, *pixa4;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "insert", FALSE, &rp))
+	if (regTestSetup(argc, argv, "insert", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

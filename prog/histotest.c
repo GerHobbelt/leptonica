@@ -69,7 +69,7 @@ PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 PIXA    *pixa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "histo", TRUE, &rp))
+	if (regTestSetup(argc, argv, "histo", TRUE, &rp))
 		return 1;
 
     if (argc != 3)

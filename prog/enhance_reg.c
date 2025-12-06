@@ -73,7 +73,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "enhance", FALSE, &rp))
+	if (regTestSetup(argc, argv, "enhance", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

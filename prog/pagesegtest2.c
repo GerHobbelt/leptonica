@@ -79,7 +79,7 @@ PIX     *pixs, *pixg, *pixb;
 PIX     *pixmask4, *pixseed4, *pixsf4, *pixd4, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "page_seg", FALSE, &rp))
+	if (regTestSetup(argc, argv, "page_seg", &rp))
 		return 1;
 
     if (argc != 4)

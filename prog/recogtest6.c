@@ -68,7 +68,7 @@ PIXA     *pixa1, *pixa2;
 L_RECOG  *recog;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "recog", FALSE, &rp))
+	if (regTestSetup(argc, argv, "recog", &rp))
 		return 1;
 
     if (argc != 1) {

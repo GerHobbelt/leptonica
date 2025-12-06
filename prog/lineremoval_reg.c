@@ -54,7 +54,7 @@ PIX          *pix6, *pix7, *pix8, *pix9;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "lines", FALSE, &rp))
+	if (regTestSetup(argc, argv, "lines", &rp))
 		return 1;
 
     deg2rad = 3.14159 / 180.;

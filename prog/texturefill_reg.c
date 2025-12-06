@@ -73,7 +73,7 @@ PIX          *pixs, *pixm, *pixd;
 PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "texture_fill", FALSE, &rp))
+	if (regTestSetup(argc, argv, "texture_fill", &rp))
 		return 1;
 
         /* Find a mask for repainting pixels */

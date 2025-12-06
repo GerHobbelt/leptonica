@@ -59,7 +59,7 @@ PIXCMAP     *cmap;
 SARRAY      *sa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "conversion", FALSE, &rp))
+	if (regTestSetup(argc, argv, "conversion", &rp))
 		return 1;
 
     pixs1 = pixRead(DEMOPATH("test1.png"));

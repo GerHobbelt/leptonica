@@ -104,7 +104,7 @@ l_int32       success, failure;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "png_io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "png_io", &rp))
 		return 1;
 
 	failure = FALSE;

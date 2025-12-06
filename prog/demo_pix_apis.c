@@ -714,7 +714,7 @@ int main(int argc, const char **argv)
 {
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "api_demo", FALSE, &rp))
+	if (regTestSetup(argc, argv, "api_demo", &rp))
 		return 1;
 
 	l_chooseDisplayProg(L_DISPLAY_WITH_OPEN);

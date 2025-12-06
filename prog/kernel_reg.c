@@ -70,7 +70,7 @@ SARRAY       *sa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "kernel", FALSE, &rp))
+	if (regTestSetup(argc, argv, "kernel", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

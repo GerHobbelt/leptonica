@@ -61,7 +61,7 @@ l_float32  size;
 PIX       *pixs, *pixd, *pixm, *pixmi, *pixt1, *pixt2, *pixt3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "seed_fill", FALSE, &rp))
+	if (regTestSetup(argc, argv, "seed_fill", &rp))
 		return 1;
 
     if (argc != 3)

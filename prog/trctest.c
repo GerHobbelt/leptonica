@@ -54,7 +54,7 @@ l_float32  gamma;
 const char      *filein, *fileout;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "trc", FALSE, &rp))
+	if (regTestSetup(argc, argv, "trc", &rp))
 		return 1;
 
     if (argc != 6)

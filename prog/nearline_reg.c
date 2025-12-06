@@ -62,7 +62,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "nearline", FALSE, &rp))
+	if (regTestSetup(argc, argv, "nearline", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

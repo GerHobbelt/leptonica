@@ -60,7 +60,7 @@ l_int32  i, same;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "autogen", FALSE, &rp))
+	if (regTestSetup(argc, argv, "autogen", &rp))
 	return 1;
 
     //lept_mkdir("lept/auto");

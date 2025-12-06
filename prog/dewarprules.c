@@ -72,7 +72,7 @@ PIX        *pix8, *pix9, *pix10;
 PIXA       *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dewarp", FALSE, &rp))
+	if (regTestSetup(argc, argv, "dewarp", &rp))
 		return 1;
 
     if (argc != 3) {

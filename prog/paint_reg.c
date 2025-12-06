@@ -65,7 +65,7 @@ PIXA         *pixa;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "paint", FALSE, &rp))
+	if (regTestSetup(argc, argv, "paint", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

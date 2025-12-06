@@ -60,7 +60,7 @@ PIX     *pixs, *pixt, *pixd;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "smooth", FALSE, &rp))
+	if (regTestSetup(argc, argv, "smooth", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("raggededge.png"));

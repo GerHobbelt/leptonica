@@ -78,7 +78,7 @@ GPLOT     *gplot1, *gplot2, *gplot3, *gplot4, *gplot5;
 NUMA      *nax, *nay1, *nay2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "plot", FALSE, &rp))
+	if (regTestSetup(argc, argv, "plot", &rp))
 		return 1;
 
     if (argc != 1)

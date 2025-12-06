@@ -81,7 +81,7 @@ l_float32  angle, conf, score, endscore;
 PIX       *pix, *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "skew", FALSE, &rp))
+	if (regTestSetup(argc, argv, "skew", &rp))
 		return 1;
 
     if (argc != 2)

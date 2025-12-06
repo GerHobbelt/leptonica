@@ -59,7 +59,7 @@ PIXA    *pixa;
 PTAA    *ptaa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "percolate", FALSE, &rp))
+	if (regTestSetup(argc, argv, "percolate", &rp))
 		return 1;
 
     if (argc != 1) {

@@ -69,7 +69,7 @@ NUMA         *na1, *na2, *na3, *na4, *na5;
 L_HEAP       *lh;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "heap", FALSE, &rp))
+	if (regTestSetup(argc, argv, "heap", &rp))
 		return 1;
 
     //lept_mkdir("lept/heap");

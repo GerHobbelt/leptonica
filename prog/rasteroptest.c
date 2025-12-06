@@ -68,7 +68,7 @@ PIX     *pix1;
 l_int32  niters, op, selectop;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "raster_op", FALSE, &rp))
+	if (regTestSetup(argc, argv, "raster_op", &rp))
 		return 1;
 
     pix1 = pixRead(DEMOPATH("test24.jpg"));

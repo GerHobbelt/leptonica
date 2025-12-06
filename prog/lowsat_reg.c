@@ -56,7 +56,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "low_sat", FALSE, &rp))
+	if (regTestSetup(argc, argv, "low_sat", &rp))
 		return 1;
 
     //lept_mkdir("lept/lowsat");

@@ -53,7 +53,7 @@ l_float32  avediff, rmsdiff;
 PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "runlength", FALSE, &rp))
+	if (regTestSetup(argc, argv, "runlength", &rp))
 		return 1;
 
     if (argc != 1)

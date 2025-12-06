@@ -73,7 +73,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "subpixel", FALSE, &rp))
+	if (regTestSetup(argc, argv, "subpixel", &rp))
 		return 1;
 
 	/* ----------------- Test on 8 bpp grayscale ---------------------*/

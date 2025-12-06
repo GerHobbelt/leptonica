@@ -66,7 +66,7 @@ PIX  *pixd1, *pixd2, *pixd3;
 SEL  *selhm;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pattern", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pattern", &rp))
 		return 1;
 
     if (argc != 1)

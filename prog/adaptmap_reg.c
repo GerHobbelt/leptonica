@@ -69,7 +69,7 @@ PIX          *pixmr, *pixmg, *pixmb, *pixmri, *pixmgi, *pixmbi;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "adaptmap", FALSE, &rp))
+	if (regTestSetup(argc, argv, "adaptmap", &rp))
 		return 1;
 
     //lept_mkdir("lept/adapt");

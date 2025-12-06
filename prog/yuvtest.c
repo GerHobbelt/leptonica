@@ -63,7 +63,7 @@ PIX        *pixd;
 PIXA       *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "yuv", FALSE, &rp))
+	if (regTestSetup(argc, argv, "yuv", &rp))
 		return 1;
 
     //lept_mkdir("lept/yuv");

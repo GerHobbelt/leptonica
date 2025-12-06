@@ -80,7 +80,7 @@ PIXA    *pixa1, *pixa2, *pixa3, *pixa4;
 PIXAC   *pixac1, *pixac2, *pixac3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "adaptmap", FALSE, &rp))
+	if (regTestSetup(argc, argv, "adaptmap", &rp))
 		return 1;
 
     bmf = bmfCreate(NULL, 10);

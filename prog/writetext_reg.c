@@ -90,7 +90,7 @@ SARRAY       *sa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "write_text", FALSE, &rp))
+	if (regTestSetup(argc, argv, "write_text", &rp))
 		return 1;
 
 	bmf = bmfCreate(DEMOPATH("fonts"), 6);

@@ -58,7 +58,7 @@ l_float32  angle, deg2rad;
 PIX       *pixt1, *pixt2, *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "shear", FALSE, &rp))
+	if (regTestSetup(argc, argv, "shear", &rp))
 		return 1;
 
     if (argc != 4)

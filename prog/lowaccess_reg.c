@@ -78,7 +78,7 @@ void        **lines1, **linet1, **linet2;
 PIX          *pixs, *pix1, *pix2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "low_access", FALSE, &rp))
+	if (regTestSetup(argc, argv, "low_access", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));

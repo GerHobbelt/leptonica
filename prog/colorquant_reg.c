@@ -61,7 +61,7 @@ int main(int    argc,
 l_int32       i;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "color_quant", FALSE, &rp))
+	if (regTestSetup(argc, argv, "color_quant", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

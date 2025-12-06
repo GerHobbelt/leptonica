@@ -57,7 +57,7 @@ PIX   *pix1, *pix2, *pix3;
 PIXA  *pixa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "misc", FALSE, &rp))
+	if (regTestSetup(argc, argv, "misc", &rp))
 		return 1;
 
     //lept_mkdir("lept/misc");

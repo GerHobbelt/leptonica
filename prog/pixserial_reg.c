@@ -74,7 +74,7 @@ BOX          *box;
 PIX          *pixs, *pixt, *pixt2, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pix_serial", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pix_serial", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

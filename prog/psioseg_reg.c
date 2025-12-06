@@ -84,7 +84,7 @@ PIX          *pix4c, *pix8c, *pix8g, *pix32, *pixcs, *pixcs2;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "ps_io_seg", FALSE, &rp))
+	if (regTestSetup(argc, argv, "ps_io_seg", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

@@ -54,7 +54,7 @@ FPIX         *fpix1, *fpix2, *fpix3, *fpix4;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "fpix", FALSE, &rp))
+	if (regTestSetup(argc, argv, "fpix", &rp))
 		return 1;
 
         /* Test orthogonal rotations */

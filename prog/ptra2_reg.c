@@ -63,7 +63,7 @@ int main(int    argc,
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "ptra", FALSE, &rp))
+	if (regTestSetup(argc, argv, "ptra", &rp))
 		return 1;
 
 	//lept_mkdir("lept/ptra");

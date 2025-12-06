@@ -94,7 +94,7 @@ l_int32    threshold, page_numpre, mask_numpre, numpost, maxnum;
 l_float32  textscale, imagescale;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "convert", FALSE, &rp))
+	if (regTestSetup(argc, argv, "convert", &rp))
 		return 1;
 
     if (argc != 13) {

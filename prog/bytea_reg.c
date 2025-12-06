@@ -66,7 +66,7 @@ L_BYTEA      *lba1, *lba2, *lba3, *lba4;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "bytea", FALSE, &rp))
+	if (regTestSetup(argc, argv, "bytea", &rp))
 		return 1;
 
 	//lept_mkdir("lept/bytea");

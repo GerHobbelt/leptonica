@@ -59,7 +59,7 @@ NUMA         *na1, *na2;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "label", FALSE, &rp))
+	if (regTestSetup(argc, argv, "label", &rp))
 		return 1;
 
         /* Test earthmover distance: extreme example */

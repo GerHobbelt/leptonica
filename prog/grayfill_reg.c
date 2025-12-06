@@ -58,7 +58,7 @@ PIX          *pixb1, *pixb2, *pixb3, *pixmin;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "gray_fill", FALSE, &rp))
+	if (regTestSetup(argc, argv, "gray_fill", &rp))
 		return 1;
 
         /* Mask */

@@ -70,7 +70,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "expand", FALSE, &rp))
+	if (regTestSetup(argc, argv, "expand", &rp))
 		return 1;
 
 	//lept_mkdir("lept/expand");

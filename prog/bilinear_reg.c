@@ -80,7 +80,7 @@ PIXA         *pixa;
 PTA          *ptas, *ptad;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "bilinear", FALSE, &rp))
+	if (regTestSetup(argc, argv, "bilinear", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));

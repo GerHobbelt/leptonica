@@ -73,7 +73,7 @@ PIXA         *pixa;
 PTA          *pta1, *pta2, *pta3, *pta4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "small", FALSE, &rp))
+	if (regTestSetup(argc, argv, "small", &rp))
 		return 1;
 
         /* Make a small test image, the hard way! */

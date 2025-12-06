@@ -72,7 +72,7 @@ PIXA         *pixas, *pixa1, *pixa2;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "circle", FALSE, &rp))
+	if (regTestSetup(argc, argv, "circle", &rp))
 		return 1;
 
 	/* Read the images */

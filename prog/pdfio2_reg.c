@@ -74,7 +74,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pdf_io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pdf_io", &rp))
 		return 1;
 
 	l_pdfSetDateAndVersion(0);

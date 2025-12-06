@@ -75,7 +75,7 @@ PIXAA    *paa;
 PIXCMAP  *cmap, *cmapg;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "misc", FALSE, &rp))
+	if (regTestSetup(argc, argv, "misc", &rp))
 		return 1;
 
     //lept_mkdir("lept/misc");

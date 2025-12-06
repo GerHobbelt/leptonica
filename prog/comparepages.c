@@ -57,7 +57,7 @@ NUMAA   *naa1, *naa2;
 PIX     *pixs, *pixt, *pixb1, *pixb2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "compare", FALSE, &rp))
+	if (regTestSetup(argc, argv, "compare", &rp))
 		return 1;
 
 	l_ok debugflag = leptIsDebugModeActive(rp->diag_spec);

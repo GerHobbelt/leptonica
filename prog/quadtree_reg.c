@@ -64,7 +64,7 @@ BOXAA        *baa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "quadtree", FALSE, &rp))
+	if (regTestSetup(argc, argv, "quadtree", &rp))
 		return 1;
 
 	//lept_mkdir("lept/quad");

@@ -57,7 +57,7 @@ PIX         *pix6, *pix7, *pix8, *pix9, *pix10, *pix11;
 PIXA        *pixa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "adaptnorm", FALSE, &rp))
+	if (regTestSetup(argc, argv, "adaptnorm", &rp))
 		return 1;
 
     /* ---------------------------------------------------------- *

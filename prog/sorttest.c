@@ -57,7 +57,7 @@ PIX     *pixs, *pixt;
 PIXA    *pixa, *pixas, *pixas2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "sort", FALSE, &rp))
+	if (regTestSetup(argc, argv, "sort", &rp))
 		return 1;
 
     if (argc != 2)

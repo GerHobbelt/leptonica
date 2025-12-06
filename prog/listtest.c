@@ -59,7 +59,7 @@ DLLIST  *head, *tail, *head2, *tail2, *elem, *nextelem;
 PIX     *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "list", FALSE, &rp))
+	if (regTestSetup(argc, argv, "list", &rp))
 		return 1;
 
     if (argc != 2)

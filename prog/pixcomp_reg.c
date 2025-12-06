@@ -71,7 +71,7 @@ SARRAY       *sa;
 
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pix_comp", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pix_comp", &rp))
 		return 1;
 
     //lept_mkdir("lept/comp");

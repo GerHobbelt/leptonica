@@ -1083,7 +1083,7 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "thresholding", TRUE, &rp))
+	if (regTestSetup(argc, argv, "thresholding", TRUE, &rp))
 		return 1;
 
 	if (argc >= 3)

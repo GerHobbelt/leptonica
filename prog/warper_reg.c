@@ -65,7 +65,7 @@ PIX          *pixs, *pixt, *pixg, *pixd;
 PIXA         *pixac;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "warp", FALSE, &rp))
+	if (regTestSetup(argc, argv, "warp", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-word.tif"));

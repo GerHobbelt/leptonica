@@ -71,7 +71,7 @@ l_int32 main(int    argc,
 l_int32       exists;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "files", FALSE, &rp))
+	if (regTestSetup(argc, argv, "files", &rp))
 		return 1;
 
     lept_stderr(" ===================================================\n");

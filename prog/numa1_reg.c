@@ -68,7 +68,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "numa", FALSE, &rp))
+	if (regTestSetup(argc, argv, "numa", &rp))
 		return 1;
 
 	//lept_mkdir("lept/numa1");

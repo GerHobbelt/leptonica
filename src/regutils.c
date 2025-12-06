@@ -70,6 +70,7 @@
 #endif  /* HAVE_CONFIG_H */
 
 #include <string.h>
+#include <getopt.h>
 #include "allheaders.h"
 
 static char *getRootNameFromArgv0(const char *argv0);
@@ -117,38 +118,168 @@ static char *getRootNameFromArgv0(const char *argv0);
  * </pre>
  */
 l_ok
-regTestSetup(int            *argc_ref,
-	         const char   ***argv_ref,
-	         const char*     output_path_base,
-	         l_int32         accept_arbitrary_argv_set,
-             L_REGPARAMS   **prp)
+regTestSetup(int argc,
+	const char** argv,
+	const char* output_path_base,
+	L_REGPARAMS** prp)
 {
-char         *testname;
-const char   *vers;
-char          errormsg[64];
-int           argc;
-const char**  argv;
-L_REGPARAMS  *rp;
+	char* testname;
+	const char* vers;
+	char          errormsg[64];
+	L_REGPARAMS* rp;
+	l_ok          fail = FALSE;
+	int           opt;
+	int           longopt_index;
+	int           debug_mode = 1;
+	const char* help_mode = (argc <= 1 ? "?" : NULL);
+	const char* tmppath = NULL;
+	const char* outpath = NULL;
+	const char** inpaths = NULL;
+	unsigned int  inpaths_size = 0;
+	const char** srcfiles = NULL;
+	unsigned int  srcfiles_size = 0;
+	int           cmd_mode;
 
-	if (!argc_ref || !argv_ref || !prp)
+	const struct option options[] = {
+		{ "debug", optional_argument, &debug_mode, 1 },
+		{ "no-debug", no_argument, &debug_mode, 0 },
+		{ "tmppath", required_argument, NULL, 1 },
+		{ "outpath", required_argument, NULL, 2 },
+		{ "inpath", required_argument, NULL, 3 },
+		{ "help", optional_argument, NULL, 'h' },
+		{ 0 }
+	};
+
+	if (!prp)
 		return ERROR_INT("ptrs not all defined", __func__, 1);
 
-	argc = *argc_ref;
-	argv = *argv_ref;
+	// reset the getopt_long parser:
+	optind = 0;
+	longopt_index = -1;
 
-	// TODO: detect and consume a '-d' / '--debug' option...
+	for (;;) {
+		opt = getopt_long(argc, argv, "dh", options, &longopt_index);
+		if (opt == -1)
+			break;
 
-    if (argc != 1 && argc != 2 && argc != 3 && !accept_arbitrary_argv_set) {
+		switch (opt) {
+		case 1:
+			if (tmppath) {
+				L_ERROR("Must not define tmppath twice on the command line.", __func__);
+				fail = TRUE;
+				continue;
+			}
+			tmppath = stringNew(optarg);
+			continue;
+
+		case 2:
+			if (outpath) {
+				L_ERROR("Must not define outpath twice on the command line.", __func__);
+				fail = TRUE;
+				continue;
+			}
+			outpath = stringNew(optarg);
+			continue;
+
+		case 3:
+			if (!inpaths) {
+				inpaths_size = 4;
+				inpaths = LEPT_CALLOC(inpaths_size, sizeof(inpaths[0]));
+				if (!inpaths)
+					return ERROR_INT("inpaths[] array could not be allocated.", __func__, 1);
+			}
+			else if (inpaths[inpaths_size - 1] != NULL) {
+				inpaths = LEPT_REALLOC(inpaths, (inpaths_size + 4) * sizeof(inpaths[0]));
+				if (!inpaths)
+					return ERROR_INT("inpaths[] array could not be expanded.", __func__, 1);
+				for (int i = 0; i < 4; i++) {
+					inpaths[inpaths_size + i] = NULL;
+				}
+			}
+			for (int i = 0; ; i++) {
+				if (inpaths[i] != NULL)
+					continue;
+				inpaths[i] = stringNew(optarg);
+				break;
+			}
+			continue;
+
+		case 'd':
+			debug_mode = (optarg != NULL ? atoi(optarg) : 1);
+			continue;
+
+		case 'h':
+			help_mode = (optarg != NULL ? optarg : "?");
+			continue;
+
+		default:
+			L_ERROR("Unknown command line option %c has been specified.", __func__, (opt > ' ' ? opt : '?'));
+			fail = TRUE;
+			continue;
+		}
+	}
+
+	// process the remaining non-options in argv[]:
+	for (cmd_mode = -1; optind < argc; optind++) {
+		optarg = argv[optind];
+
+		if (cmd_mode == -1) {
+			if (!strcmp(optarg, "compare")) {
+				cmd_mode = L_REG_COMPARE;
+				continue;
+			}
+			else if (!strcmp(optarg, "generate")) {
+				cmd_mode = L_REG_GENERATE;
+				continue;
+			}
+			else if (!strcmp(optarg, "display")) {
+				cmd_mode = L_REG_DISPLAY;
+				continue;
+			}
+		}
+
+		if (!srcfiles) {
+			srcfiles_size = 4;
+			srcfiles = LEPT_CALLOC(srcfiles_size, sizeof(srcfiles[0]));
+			if (!srcfiles)
+				return ERROR_INT("srcfiles[] array could not be allocated.", __func__, 1);
+		}
+		else if (srcfiles[srcfiles_size - 1] != NULL) {
+			srcfiles = LEPT_REALLOC(srcfiles, (srcfiles_size + 4) * sizeof(srcfiles[0]));
+			if (!srcfiles)
+				return ERROR_INT("srcfiles[] array could not be expanded.", __func__, 1);
+			for (int i = 0; i < 4; i++) {
+				srcfiles[srcfiles_size + i] = NULL;
+			}
+		}
+		for (int i = 0; ; i++) {
+			if (srcfiles[i] != NULL)
+				continue;
+			srcfiles[i] = stringNew(optarg);
+			break;
+		}
+	}
+
+	if (cmd_mode == -1) {
+		cmd_mode = L_REG_BASIC_EXEC;
+	}
+
+	if ((testname = getRootNameFromArgv0(argv[0])) == NULL)
+		return ERROR_INT("invalid root", __func__, 1);
+
+	if (fail) {
+		return ERROR_INT("Failed to parse the command line entirely. Run the application with -h or --help to get some general information.", __func__, 1);
+	}
+
+	if (help_mode) {
+		// TODO: advanced help
         snprintf(errormsg, sizeof(errormsg),
-            "Syntax: %s [ [compare] | generate | display ] ...", argv[0]);
+            "Syntax: %s [ [compare] | generate | display ] ...", getRootNameFromArgv0(argv[0]));
         return ERROR_INT(errormsg, __func__, 1);
     }
 
-    if ((testname = getRootNameFromArgv0(argv[0])) == NULL)
-        return ERROR_INT("invalid root", __func__, 1);
-
 	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	if (!accept_arbitrary_argv_set) {
+	if (cmd_mode == L_REG_BASIC_EXEC) {
 		leptDebugSetFileBasepath(diagspec, "lept/regout");
 	}
 	else {
@@ -159,30 +290,28 @@ L_REGPARAMS  *rp;
 	leptDebugSetProcessName(diagspec, testname);
 	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
 
-	leptActivateDebugMode(diagspec, TRUE);
+	leptActivateDebugMode(diagspec, !!debug_mode);
 
     setLeptDebugOK(1);  /* required for testing */
 
     rp = (L_REGPARAMS *)LEPT_CALLOC(1, sizeof(L_REGPARAMS));
     *prp = rp;
-    rp->testname = testname;
+	rp->mode = cmd_mode;
+	rp->testname = testname;
 	rp->diag_spec = diagspec;
 	rp->index = -1;  /* increment before each test */
 
         /* Initialize to true.  A failure in any test is registered
          * as a failure of the regression test. */
-    rp->success = TRUE;
+    rp->success = !!fail;
 
 #if 0
 	/* Make sure the lept/regout subdirectory exists */
     lept_mkdir(leptDebugGetFileBasePath(diagspec));
 #endif
 
-	int consume_cgd_arg = 1;
-
         /* Only open a stream to a temp file for the 'compare' case */
-    if (argc == 1 || !strcmp(argv[1], "compare")) {
-        rp->mode = L_REG_COMPARE;
+    if (cmd_mode == L_REG_COMPARE) {
 		leptDebugSetFileBasepath(diagspec, "lept/regout");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
 		rp->tempfile = stringNew("/tmp/lept/regout/regtest_output.txt");
@@ -192,34 +321,18 @@ L_REGPARAMS  *rp;
             return ERROR_INT_1("stream not opened for tempfile",
                                rp->tempfile, __func__, 1);
         }
-    } else if (!strcmp(argv[1], "generate")) {
-        rp->mode = L_REG_GENERATE;
+    } else if (cmd_mode == L_REG_GENERATE) {
 		leptDebugSetFileBasepath(diagspec, "lept/golden");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
 		//lept_mkdir("lept/golden");
-    } else if (!strcmp(argv[1], "display")) {
-        rp->mode = L_REG_DISPLAY;
+    } else if (cmd_mode == L_REG_DISPLAY) {
 		leptDebugSetFileBasepath(diagspec, "lept/display");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
 		leptSetInDisplayMode(rp->diag_spec, TRUE);
-    } else if (!accept_arbitrary_argv_set) {
-        LEPT_FREE(rp);
-        snprintf(errormsg, sizeof(errormsg),
-            "Syntax: %s [ [generate] | compare | display ]", argv[0]);
-        return ERROR_INT(errormsg, __func__, 1);
-    }
-	else {
-		consume_cgd_arg = 0;
+    } else {
 		rp->mode = L_REG_BASIC_EXEC;
 		leptDebugSetFileBasepath(diagspec, "lept/prog");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
-	}
-
-	if (consume_cgd_arg && argc > 1) {
-		memmove(&argv[1], &argv[2], sizeof(argv[1]) * (argc - 1));
-		argc--;
-		*argv_ref = argv;
-		*argc_ref = argc;
 	}
 
 	/* Make sure the lept/regout subdirectory exists */

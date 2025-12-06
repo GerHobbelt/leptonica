@@ -74,7 +74,7 @@ int main(int    argc,
 SELA  *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dwa", FALSE, &rp))
+	if (regTestSetup(argc, argv, "dwa", &rp))
 		return 1;
 
     if (argc != 1)

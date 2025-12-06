@@ -76,7 +76,7 @@ PIX     *pix1;
 PIXA    *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "display", FALSE, &rp))
+	if (regTestSetup(argc, argv, "display", &rp))
 		return 1;
 
     if (argc != 7) {

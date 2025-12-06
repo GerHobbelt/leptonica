@@ -65,7 +65,7 @@ PIXA         *pixa1, *pixa2;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "boxa", FALSE, &rp))
+	if (regTestSetup(argc, argv, "boxa", &rp))
 		return 1;
 
 	//lept_mkdir("lept/boxa");

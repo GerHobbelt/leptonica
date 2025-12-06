@@ -54,7 +54,7 @@ PIXA         *pixa;
 SEL          *sel;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "binmorph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "binmorph", &rp))
 		return 1;
 
         /* Test making sel from a pix */

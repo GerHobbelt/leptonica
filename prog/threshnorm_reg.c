@@ -59,7 +59,7 @@ PIX          *pixs, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "thresh_norm", FALSE, &rp))
+	if (regTestSetup(argc, argv, "thresh_norm", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("stampede2.jpg"));

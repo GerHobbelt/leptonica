@@ -63,7 +63,7 @@ PTA        *pta, *ptad;
 PTAA       *ptaa1, *ptaa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "dewarp", FALSE, &rp))
+	if (regTestSetup(argc, argv, "dewarp", &rp))
 		return 1;
 
     //lept_mkdir("lept/dewarp");

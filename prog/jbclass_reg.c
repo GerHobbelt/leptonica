@@ -68,7 +68,7 @@ PIX         *pix1, *pix2;
 PIXA        *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "class", FALSE, &rp))
+	if (regTestSetup(argc, argv, "class", &rp))
 		return 1;
 
     //lept_mkdir("lept/class");

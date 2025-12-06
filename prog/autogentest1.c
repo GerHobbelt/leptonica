@@ -73,7 +73,7 @@ l_int32     i;
 L_STRCODE  *strc;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "autogen", FALSE, &rp))
+	if (regTestSetup(argc, argv, "autogen", &rp))
 	return 1;
 
 	//lept_mkdir("lept/auto");

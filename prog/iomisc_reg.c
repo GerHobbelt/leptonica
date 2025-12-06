@@ -77,7 +77,7 @@ PIXA         *pixa;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "io", &rp))
 		return 1;
 
     //lept_mkdir("lept/io");

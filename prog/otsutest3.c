@@ -78,7 +78,7 @@ int main(int    argc,
 	PIXA* pixa1, * pixad;
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "otsu3", FALSE, &rp))
+	if (regTestSetup(argc, argv, "otsu3", &rp))
 		return 1;
 
 	//lept_mkdir("lept/otsu3");

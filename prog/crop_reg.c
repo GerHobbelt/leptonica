@@ -66,7 +66,7 @@ PIX          *pixs, *pixr, *pixg, *pixgi, *pixd, *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "crop", FALSE, &rp))
+	if (regTestSetup(argc, argv, "crop", &rp))
 		return 1;
 
     //lept_mkdir("lept/crop");

@@ -93,7 +93,7 @@ l_float32  scalex, scaley;
 PIX       *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "scale", FALSE, &rp))
+	if (regTestSetup(argc, argv, "scale", &rp))
 		return 1;
 
     if (argc != 6 && argc != 9)

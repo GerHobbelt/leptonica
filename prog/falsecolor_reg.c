@@ -56,7 +56,7 @@ PIX          *pix1, *pix8, *pix16, *pix8f, *pix16f;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "falsecolor", FALSE, &rp))
+	if (regTestSetup(argc, argv, "falsecolor", &rp))
 		return 1;
 
     pix8 = pixCreate(768, 100, 8);

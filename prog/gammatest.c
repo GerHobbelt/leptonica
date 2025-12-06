@@ -60,7 +60,7 @@ NUMA      *na, *nax;
 PIX       *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "gamma", FALSE, &rp))
+	if (regTestSetup(argc, argv, "gamma", &rp))
 		return 1;
 
     if (argc != 4)

@@ -142,7 +142,7 @@ PIXCMAP      *cmap;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "io_formats", FALSE, &rp))
+	if (regTestSetup(argc, argv, "io_formats", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

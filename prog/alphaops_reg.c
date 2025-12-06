@@ -83,7 +83,7 @@ PIXCMAP      *cmap, *cmap2;
 RGBA_QUAD    *cta;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "alpha_ops", FALSE, &rp))
+	if (regTestSetup(argc, argv, "alpha_ops", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

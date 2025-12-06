@@ -149,7 +149,7 @@ l_int32  res, contrast, rotation, opensize;
 SARRAY  *safiles;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "cleanpdf", FALSE, &rp))
+	if (regTestSetup(argc, argv, "cleanpdf", &rp))
 		return 1;
 
     if (argc != 8)

@@ -65,7 +65,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rank_histo", FALSE, &rp))
+	if (regTestSetup(argc, argv, "rank_histo", &rp))
 		return 1;
 
 	/* Find the rank bin colors */

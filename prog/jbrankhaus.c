@@ -89,7 +89,7 @@ PIX        *pix;
 PIXA       *pixa, *pixadb;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rankhaus", TRUE, &rp))
+	if (regTestSetup(argc, argv, "rankhaus", TRUE, &rp))
 		return 1;
 
     if (argc != 4 && argc != 6)

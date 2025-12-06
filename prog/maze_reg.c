@@ -63,7 +63,7 @@ PTA          *pta;
 PTAA         *ptaa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "maze", FALSE, &rp))
+	if (regTestSetup(argc, argv, "maze", &rp))
 		return 1;
 
     paa = pixaaCreate(2);

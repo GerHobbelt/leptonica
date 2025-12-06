@@ -65,7 +65,7 @@ PIXA         *pixa1;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "color_content", FALSE, &rp))
+	if (regTestSetup(argc, argv, "color_content", &rp))
 		return 1;
 
 	/* Find the most populated colors */

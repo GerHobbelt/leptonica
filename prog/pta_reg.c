@@ -73,7 +73,7 @@ PTA          *pta, *pta1, *pta2, *pta3;
 PTAA         *ptaafg, *ptaabg;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pta", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pta", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));

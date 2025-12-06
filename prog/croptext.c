@@ -64,7 +64,7 @@ PIX     *pixs, *pixt1, *pixd;
 SARRAY  *safiles;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "crop", FALSE, &rp))
+	if (regTestSetup(argc, argv, "crop", &rp))
 		return 1;
 
     if (argc != 4)

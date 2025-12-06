@@ -80,7 +80,7 @@ RB_TYPE    key, value;
 RB_TYPE   *pval;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "map", FALSE, &rp))
+	if (regTestSetup(argc, argv, "map", &rp))
 		return 1;
 
 	//lept_mkdir("lept/map");

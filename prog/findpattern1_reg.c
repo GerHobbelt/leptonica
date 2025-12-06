@@ -77,7 +77,7 @@ int main(int    argc,
 l_int32      patno, red;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pattern", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pattern", &rp))
 		return 1;
 
     for (patno = 0; patno < 2; patno++) {

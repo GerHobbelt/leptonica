@@ -53,7 +53,7 @@ l_float32  angle, deg2rad, ang;
 const char      *filein, *fileout;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rotate", TRUE, &rp))
+	if (regTestSetup(argc, argv, "rotate", TRUE, &rp))
 		return 1;
 
     if (argc != 4)

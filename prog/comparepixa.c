@@ -80,7 +80,7 @@ l_int32  nx, ny, tw, spacing, border, fontsize;
 PIXA    *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "compare", FALSE, &rp))
+	if (regTestSetup(argc, argv, "compare", &rp))
 		return 1;
 
     if (argc != 10) {

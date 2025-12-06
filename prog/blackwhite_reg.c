@@ -62,7 +62,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "blackwhite", FALSE, &rp))
+	if (regTestSetup(argc, argv, "blackwhite", &rp))
 		return 1;
 
         /* Scale each image and add a white boundary */

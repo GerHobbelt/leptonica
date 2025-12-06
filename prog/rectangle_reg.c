@@ -64,7 +64,7 @@ PIX          *pixs, *pix1, *pix2, *pix3;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rectangle", FALSE, &rp))
+	if (regTestSetup(argc, argv, "rectangle", &rp))
 		return 1;
 
 	//lept_mkdir("lept/rect");

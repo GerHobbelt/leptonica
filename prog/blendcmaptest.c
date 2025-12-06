@@ -57,7 +57,7 @@ PIXA     *pixa;
 PIXCMAP  *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "blend_cmap", FALSE, &rp))
+	if (regTestSetup(argc, argv, "blend_cmap", &rp))
 		return 1;
 
 	//lept_mkdir("lept/blend");

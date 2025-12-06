@@ -62,7 +62,7 @@ PIX          *pixs, *pixg, *pixc, *pix1;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "blend", FALSE, &rp))
+	if (regTestSetup(argc, argv, "blend", &rp))
 		return 1;
 
         /* Set up blenders */

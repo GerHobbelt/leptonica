@@ -51,7 +51,7 @@ PIX     *pixs, *pix1, *pix2, *pix3;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+	if (regTestSetup(argc, argv, "livre", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("pageseg2.tif"));

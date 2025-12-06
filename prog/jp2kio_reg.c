@@ -87,7 +87,7 @@ int main(int    argc,
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "jp2k_io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "jp2k_io", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

@@ -69,7 +69,7 @@ int main(int argc, const char** argv)
 	PIXA* pixa1, * pixad;
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "otsu2", FALSE, &rp))
+	if (regTestSetup(argc, argv, "otsu2", &rp))
 		return 1;
 
 	//lept_mkdir("lept/otsu2");

@@ -64,7 +64,7 @@ PIXA         *pixa1;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "conn_comp", FALSE, &rp))
+	if (regTestSetup(argc, argv, "conn_comp", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));

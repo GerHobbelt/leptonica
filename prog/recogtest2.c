@@ -76,7 +76,7 @@ L_RECOG  *recogboot, *recog1;
 SARRAY   *sa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "recog", FALSE, &rp))
+	if (regTestSetup(argc, argv, "recog", &rp))
 		return 1;
 
     if (argc != 1) {

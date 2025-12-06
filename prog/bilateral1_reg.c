@@ -59,7 +59,7 @@ int main(int    argc,
 PIX          *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "bilateral", FALSE, &rp))
+	if (regTestSetup(argc, argv, "bilateral", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("rock.png"));

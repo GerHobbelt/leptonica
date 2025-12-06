@@ -71,7 +71,7 @@ PIX          *pixs, *pixacc, *pixg, *pixt, *pixd;
 PIX          *pixb, *pixm, *pixms, *pixrv, *pix1, *pix2, *pix3, *pix4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "convolve", FALSE, &rp))
+	if (regTestSetup(argc, argv, "convolve", &rp))
 		return 1;
 
         /* Test pixBlockconvGray() on 8 bpp */

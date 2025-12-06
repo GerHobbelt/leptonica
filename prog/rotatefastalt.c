@@ -72,7 +72,7 @@ l_float32  angle, deg2rad;
 PIX       *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rotate", FALSE, &rp))
+	if (regTestSetup(argc, argv, "rotate", &rp))
 		return 1;
 
     if (argc != 4)

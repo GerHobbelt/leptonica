@@ -78,7 +78,7 @@ PIXCMAP  *cmap;
 SEL      *sel_2h, *sel;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pattern", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pattern", &rp))
 		return 1;
 
     if (argc != 4)

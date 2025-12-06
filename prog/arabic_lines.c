@@ -85,7 +85,7 @@ PIXAA     *pixaa, *pixaa2;
 SEL       *selsplit;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "lineseg", FALSE, &rp))
+	if (regTestSetup(argc, argv, "lineseg", &rp))
 		return 1;
 
     if (argc != 1)

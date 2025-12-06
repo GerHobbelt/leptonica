@@ -65,7 +65,7 @@ PIX          *pix, *pixs, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "distance", FALSE, &rp))
+	if (regTestSetup(argc, argv, "distance", &rp))
 		return 1;
 
     pix = pixRead(DEMOPATH("feyn.tif"));

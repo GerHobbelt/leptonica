@@ -61,7 +61,7 @@ PIXA         *pixa, *pixa1, *pixa2, *pixa3;
 SARRAY       *sa1, *sa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "pixa_display", FALSE, &rp))
+	if (regTestSetup(argc, argv, "pixa_display", &rp))
 		return 1;
 
     pixa = pixaCreate(0);

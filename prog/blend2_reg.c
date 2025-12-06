@@ -62,7 +62,7 @@ PIX          *pixg, *pixs1, *pixs2, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "blend", FALSE, &rp))
+	if (regTestSetup(argc, argv, "blend", &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

@@ -66,7 +66,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "translate", FALSE, &rp))
+	if (regTestSetup(argc, argv, "translate", &rp))
 		return 1;
 
         /* Set up images */

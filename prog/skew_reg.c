@@ -72,7 +72,7 @@ PIX          *pixs, *pixb1, *pixb2, *pixr, *pixf, *pixd, *pixc;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "skew", FALSE, &rp))
+	if (regTestSetup(argc, argv, "skew", &rp))
 		return 1;
 
     deg2rad = 3.1415926535 / 180.;

@@ -64,7 +64,7 @@ SELA         *sela;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "ccthin", FALSE, &rp))
+	if (regTestSetup(argc, argv, "ccthin", &rp))
 		return 1;
 
 	/* Clip to foreground to see if there are any boundary

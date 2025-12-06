@@ -71,7 +71,7 @@ l_int32  i;
 PIX     *pixs;   /* input image should be at least 300 ppi */
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "livre", FALSE, &rp))
+	if (regTestSetup(argc, argv, "livre", &rp))
 		return 1;
 
     if (argc != 2)

@@ -59,7 +59,7 @@ PIX          *pix, *pixs, *pix1, *pix2;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "flip", FALSE, &rp))
+	if (regTestSetup(argc, argv, "flip", &rp))
 		return 1;
 
     pix = pixRead(DEMOPATH("feyn.tif"));

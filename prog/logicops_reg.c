@@ -52,7 +52,7 @@ int main(int    argc,
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "logic_ops", FALSE, &rp))
+	if (regTestSetup(argc, argv, "logic_ops", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("test1.png"));

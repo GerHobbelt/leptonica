@@ -77,7 +77,7 @@ PIXACC       *pacc;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "gray_morph", FALSE, &rp))
+	if (regTestSetup(argc, argv, "gray_morph", &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("aneurisms8.jpg"));

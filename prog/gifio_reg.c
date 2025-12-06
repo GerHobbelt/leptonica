@@ -95,7 +95,7 @@ PIX          *pix;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "gif_io", FALSE, &rp))
+	if (regTestSetup(argc, argv, "gif_io", &rp))
 		return 1;
 
 #if !HAVE_LIBGIF && !HAVE_LIBUNGIF

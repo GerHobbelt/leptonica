@@ -75,7 +75,7 @@ PTA        *pta0, *pta1, *pta2, *pta3;
 SARRAY     *sa0, *sa1, *sa2, *sa3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "hash", FALSE, &rp))
+	if (regTestSetup(argc, argv, "hash", &rp))
 		return 1;
 
     if (argc != 4)

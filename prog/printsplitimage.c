@@ -92,7 +92,7 @@ PIXA        *pixa;
 SARRAY      *sa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "print_split", FALSE, &rp))
+	if (regTestSetup(argc, argv, "print_split", &rp))
 		return 1;
 
     if (argc != 4 && argc != 5)

@@ -149,7 +149,7 @@ l_float32  scalefactor;
 SARRAY    *safiles;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "compress_pdf", FALSE, &rp))
+	if (regTestSetup(argc, argv, "compress_pdf", &rp))
 		return 1;
 
     if (argc != 9)

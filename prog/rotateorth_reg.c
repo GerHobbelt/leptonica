@@ -56,7 +56,7 @@ int main(int    argc,
 PIX          *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rotate_ortho", FALSE, &rp))
+	if (regTestSetup(argc, argv, "rotate_ortho", &rp))
 		return 1;
 
     lept_stderr("\nTest binary image:\n");

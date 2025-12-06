@@ -67,7 +67,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "rank_bin", FALSE, &rp))
+	if (regTestSetup(argc, argv, "rank_bin", &rp))
 		return 1;
 
 	/* Generate arrays of word widths and heights */

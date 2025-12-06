@@ -59,7 +59,7 @@ PIX          *pix0, *pixs, *pixse, *pixd1, *pixd2;
 SEL          *sel;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(&argc, &argv, "raster_op", FALSE, &rp))
+	if (regTestSetup(argc, argv, "raster_op", &rp))
 		return 1;
 
     pix0 = pixRead(DEMOPATH("feyn-fract.tif"));
