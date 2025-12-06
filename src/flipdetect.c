@@ -483,7 +483,7 @@ makeOrientDecision(l_float32  upconf,
                    l_float32  minupconf,
                    l_float32  minratio,
                    l_int32   *porient,
-                   l_int32    debug)
+                   l_ok       debugflag)
 {
 l_float32  absupconf, absleftconf;
 
@@ -513,7 +513,7 @@ l_float32  absupconf, absleftconf;
     else if (leftconf < -minupconf && absleftconf > minratio * absupconf)
         *porient = L_TEXT_ORIENT_RIGHT;
 
-    if (debug) {
+    if (debugflag) {
         lept_stderr("upconf = %7.3f, leftconf = %7.3f\n", upconf, leftconf);
         if (*porient == L_TEXT_ORIENT_UNKNOWN)
             lept_stderr("Confidence is low; no determination is made\n");
@@ -834,5 +834,4 @@ PIX  *pixt, *pixthm;
     pixWriteDebug(filename, pixt, IFF_PNG);
     pixDestroy(&pixthm);
     pixDestroy(&pixt);
-    return;
 }

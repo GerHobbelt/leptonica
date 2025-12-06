@@ -836,7 +836,7 @@ LEPT_DLL extern l_int32 fhmtgen_low_1 ( l_uint32 *datad, l_int32 w, l_int32 h, l
 LEPT_DLL extern l_ok pixItalicWords ( PIX *pixs, BOXA *boxaw, PIX *pixw, BOXA **pboxa, LDIAG_CTX diagspec );
 LEPT_DLL extern PIX * pixOrientCorrect ( PIX *pixs, l_float32 minupconf, l_float32 minratio, l_float32 *pupconf, l_float32 *pleftconf, l_int32 *protation, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok pixOrientDetect ( PIX *pixs, l_float32 *pupconf, l_float32 *pleftconf, l_int32 mincount, LDIAG_CTX diagspec );
-LEPT_DLL extern l_ok makeOrientDecision ( l_float32 upconf, l_float32 leftconf, l_float32 minupconf, l_float32 minratio, l_int32 *porient, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok makeOrientDecision ( l_float32 upconf, l_float32 leftconf, l_float32 minupconf, l_float32 minratio, l_int32 *porient, l_ok debugflag );
 LEPT_DLL extern l_ok pixUpDownDetect ( PIX *pixs, l_float32 *pconf, l_int32 mincount, l_int32 npixels, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok pixMirrorDetect ( PIX *pixs, l_float32 *pconf, l_int32 mincount, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok fmorphautogen ( SELA *sela, l_int32 fileindex, const char *filename );
