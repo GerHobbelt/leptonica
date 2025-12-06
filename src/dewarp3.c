@@ -332,7 +332,7 @@ PIX        *pixd;
         /* Two choices for requested pixels outside pixs: (1) use pixels'
          * from the boundary of pixs; use white or light gray pixels. */
     pixd = pixCreateTemplate(pixs);
-	pixSetDiagnosticsSpec(pixd, leptDebugGetDiagnosticsSpecFromAny(2, pixGetDiagnosticsSpec(pixs), dew->diag_specX);
+	pixSetDiagnosticsSpec(pixd, leptDebugGetDiagnosticsSpecFromAny(2, pixGetDiagnosticsSpec(pixs), dew->diag_specX));
     if (grayin >= 0)
         pixSetAllGray(pixd, grayin);
     datad = pixGetData(pixd);
