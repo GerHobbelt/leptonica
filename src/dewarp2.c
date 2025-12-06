@@ -862,9 +862,11 @@ PTAA     *ptaa;
 
     if (debugflag) {
         //lept_mkdir("lept/dewmod");
-        pixWriteDebug("/tmp/lept/dewmod/0011.tif", pix1, IFF_TIFF_G4);
+		const char* pixpath = leptDebugGenFilepath(diagspec, "dewmod/0011.tif");
+        pixWriteDebug(pixpath, pix1, IFF_TIFF_G4);
         pixDisplayWithTitle(pix1, 0, 600, "pix1");
-        pixWriteDebug("/tmp/lept/dewmod/0012.tif", pix2, IFF_TIFF_G4);
+		pixpath = leptDebugGenFilepath(diagspec, "dewmod/0012.tif");
+		pixWriteDebug(pixpath, pix2, IFF_TIFF_G4);
         pixDisplayWithTitle(pix2, 0, 800, "pix2");
     }
     pixDestroy(&pix1);
@@ -888,7 +890,8 @@ PTAA     *ptaa;
     }
     if (debugflag) {
         pix2 = pixaDisplay(pixa2, w, h);
-        pixWriteDebug("/tmp/lept/dewmod/0013.tif", pix2, IFF_TIFF_G4);
+		const char* pixpath = leptDebugGenFilepath(diagspec, "dewmod/0013.tif");
+		pixWriteDebug(pixpath, pix2, IFF_TIFF_G4);
         pixDisplayWithTitle(pix2, 0, 1000, "pix2");
         pixDestroy(&pix2);
     }
@@ -907,7 +910,8 @@ PTAA     *ptaa;
     if (debugflag) {
         pix1 = pixCreateTemplate(pixs);
         pix2 = pixDisplayPtaa(pix1, ptaa);
-        pixWriteDebug("/tmp/lept/dewmod/0014.tif", pix2, IFF_PNG);
+		const char* pixpath = leptDebugGenFilepath(diagspec, "dewmod/0014.tif");
+		pixWriteDebug(pixpath, pix2, IFF_PNG);
         pixDisplayWithTitle(pix2, 0, 1200, "pix3");
         pixDestroy(&pix1);
         pixDestroy(&pix2);

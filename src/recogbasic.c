@@ -352,6 +352,8 @@ L_RECOG  *recog;
     if (ntext < n)
         L_ERROR("%d text strings < %d pix\n", __func__, ntext, n);
 
+	l_ok debugflag = pixaIsDebugModeActive(pixa);
+
     recog = recogCreate(scalew, scaleh, linew, threshold, maxyshift);
     if (!recog)
         return (L_RECOG *)ERROR_PTR("recog not made", __func__, NULL);
@@ -363,7 +365,7 @@ L_RECOG  *recog;
             pixDestroy(&pix);
             continue;
         }
-        recogTrainLabeled(recog, pix, NULL, text, 0);
+        recogTrainLabeled(recog, pix, NULL, text, debugflag);
         pixDestroy(&pix);
     }
 

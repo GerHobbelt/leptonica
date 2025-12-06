@@ -65,8 +65,8 @@
 #include "monolithic_examples.h"
 
 
-static PIXA  *MakeBootnum1(void);
-static PIXA  *MakeBootnum2(void);
+static PIXA  *MakeBootnum1(L_REGPARAMS* rp);
+static PIXA  *MakeBootnum2(L_REGPARAMS* rp);
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -93,7 +93,7 @@ L_REGPARAMS* rp;
 
     /* ----------------------- Bootnum 1 --------------------- */
         /* Make the bootnum pixa from the images */
-    pixa1 = MakeBootnum1();
+    pixa1 = MakeBootnum1(rp);
     pixaWrite("/tmp/lept/recog/digits/bootnum1.pa", pixa1);
     pix1 = pixaDisplayTiledWithText(pixa1, 1500, 1.0, 10, 2, 6, 0xff000000);
     pixDisplay(pix1, 100, 0);
@@ -199,7 +199,7 @@ L_REGPARAMS* rp;
 }
 
 
-PIXA *MakeBootnum1(void)
+PIXA *MakeBootnum1(L_REGPARAMS* rp)
 {
 const char  *str;
 PIXA        *pixa1, *pixa2, *pixa3;
@@ -290,7 +290,7 @@ PIXA        *pixa1, *pixa2, *pixa3;
 }
 
 
-PIXA *MakeBootnum2(void)
+PIXA *MakeBootnum2(L_REGPARAMS* rp)
 {
 char     *fname;
 l_int32   i, n, w, h;
@@ -299,6 +299,8 @@ PIX      *pix;
 PIXA     *pixa;
 L_RECOG  *recog;
 SARRAY   *sa;
+
+	l_ok debugflag = leptIsDebugModeActive(rp->diag_spec);
 
         /* Phase 1: generate recog from the digit data */
     recog = recogCreate(0, 40, 0, 128, 1);
@@ -315,7 +317,7 @@ SARRAY   *sa;
             /* Convert to a set of 1 bpp, single character, labelled */
         pixGetDimensions(pix, &w, &h, NULL);
         box = boxCreate(0, 0, w, h);
-        recogTrainLabeled(recog, pix, box, NULL, 0);
+        recogTrainLabeled(recog, pix, box, NULL, debugflag);
         pixDestroy(&pix);
         boxDestroy(&box);
     }

@@ -84,10 +84,14 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("dewarp");
 
-    if (select == 0) {
+	leptDebugSetFilenameForPrefix(rp->diag_spec, "sud", 0);
+	leptDebugSetStepId(rp->diag_spec, 1);
+
+	if (select == 0) {
             /* Extract the basic grid from the sudoku image */
         pixs = pixRead(DEMOPATH("warped_sudoku.jpg"));
-        pixGetDimensions(pixs, &w, &h, NULL);
+		pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+		pixGetDimensions(pixs, &w, &h, NULL);
         pix1 = pixConvertTo1(pixs, 220);
         boxa1 = pixConnComp(pix1, &pixa1, 8);
         pixa2 = pixaSelectBySize(pixa1, 400, 400, L_SELECT_IF_BOTH,
@@ -98,7 +102,8 @@ L_REGPARAMS* rp;
     } else {  /* select == 1 */
             /* Extract the grid from the graph paper image */
         pixs = pixRead(DEMOPATH("warped_paper.jpg"));
-        pixDisplay(pixs, 1500, 1000);
+		pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+		pixDisplay(pixs, 1500, 1000);
         pix3 = pixConvertTo8(pixs, 0);
         pix4 = pixBackgroundNormSimple(pix3, NULL, NULL);
         pix5 = pixGammaTRC(NULL, pix4, 1.0, 50, 200);
@@ -115,17 +120,20 @@ L_REGPARAMS* rp;
         pixDestroy(&pix5);
     }
 
+	leptDebugIncrementStepId(rp->diag_spec);
+
     if (ndew == 1) {
     /* -------------------------------------------------------------------*
      *     Use dewarpBuildLineModel() to correct using both horizontal
      *     and vertical lines with one dew.
      * -------------------------------------------------------------------*/
-        dewa = dewarpaCreate(1, 30, 1, 4, 50);
+		dewa = dewarpaCreate(1, 30, 1, 4, 50);
         dewarpaSetCurvatures(dewa, 500, 0, 500, 100, 100, 200);
         dewarpaUseBothArrays(dewa, 1);
         dew = dewarpCreate(pix2, 0);
         dewarpaInsertDewarp(dewa, dew);
-        dewarpBuildLineModel(dew, 10, "/tmp/dewarp/sud.pdf");
+		leptDebugSetStepId(rp->diag_spec, 3);
+		dewarpBuildLineModel(dew, 10, rp->diag_spec);
         dewarpaApplyDisparity(dewa, 0, pix1, 255, 0, 0, &pix3, NULL);
         dewarpaApplyDisparity(dewa, 0, pix2, 255, 0, 0, &pix4, NULL);
         pixDisplay(pix3, 500, 100);
@@ -149,7 +157,8 @@ L_REGPARAMS* rp;
         dewarpaUseBothArrays(dewa, 0);
         dew = dewarpCreate(pix3, 0);
         dewarpaInsertDewarp(dewa, dew);
-        dewarpBuildPageModel(dew, "/tmp/dewarp/sud1.pdf");
+		leptDebugSetStepId(rp->diag_spec, 4);
+		dewarpBuildPageModel(dew, rp->diag_spec);
         dewarpaApplyDisparity(dewa, 0, pix1, 255, 0, 0, &pix4, NULL);
         dewarpaApplyDisparity(dewa, 0, pix2, 255, 0, 0, &pix5, NULL);
         pixDisplay(pix4, 500, 100);
@@ -170,7 +179,8 @@ L_REGPARAMS* rp;
         dewarpaUseBothArrays(dewa, 0);
         dew = dewarpCreate(pix8, 0);
         dewarpaInsertDewarp(dewa, dew);
-        dewarpBuildPageModel(dew, "/tmp/dewarp/sud2.pdf");
+		leptDebugIncrementStepId(rp->diag_spec);
+        dewarpBuildPageModel(dew, rp->diag_spec);
         dewarpaApplyDisparity(dewa, 0, pix6, 255, 0, 0, &pix9, NULL);
         dewarpaApplyDisparity(dewa, 0, pix8, 255, 0, 0, &pix10, NULL);
         pixd = pixRotateOrth(pix9, 3);

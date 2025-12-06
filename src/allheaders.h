@@ -2306,9 +2306,9 @@ LEPT_DLL extern l_ok rchExtract ( L_RCH *rch, l_int32 *pindex, l_float32 *pscore
 LEPT_DLL extern PIX * recogProcessToIdentify ( L_RECOG *recog, PIX *pixs, l_int32 pad );
 LEPT_DLL extern SARRAY * recogExtractNumbers ( L_RECOG *recog, BOXA *boxas, l_float32 scorethresh, l_int32 spacethresh, BOXAA **pbaa, NUMAA **pnaa );
 LEPT_DLL extern PIXA * showExtractNumbers ( PIX *pixs, SARRAY *sa, BOXAA *baa, NUMAA *naa, PIX **ppixdb );
-LEPT_DLL extern l_ok recogTrainLabeled ( L_RECOG *recog, PIX *pixs, BOX *box, char *text, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok recogTrainLabeled ( L_RECOG *recog, PIX *pixs, BOX *box, char *text, l_ok debugflag );
 LEPT_DLL extern l_ok recogProcessLabeled ( L_RECOG *recog, PIX *pixs, BOX *box, char *text, PIX **ppix );
-LEPT_DLL extern l_ok recogAddSample ( L_RECOG *recog, PIX *pix, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok recogAddSample ( L_RECOG *recog, PIX *pix, l_ok debugflag );
 LEPT_DLL extern PIX * recogModifyTemplate ( L_RECOG *recog, PIX *pixs );
 LEPT_DLL extern l_int32 recogAverageSamples ( L_RECOG *recog, LDIAG_CTX diagspec );
 LEPT_DLL extern l_int32 pixaAccumulateSamples ( PIXA *pixa, PTA *pta, PIX **ppixd, l_float32 *px, l_float32 *py );

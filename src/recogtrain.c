@@ -218,7 +218,7 @@ recogTrainLabeled(L_RECOG  *recog,
                   PIX      *pixs,
                   BOX      *box,
                   char     *text,
-                  LDIAG_CTX diagspec)
+                  l_ok      debugflag)
 {
 l_int32  ret;
 PIX     *pix;
@@ -238,7 +238,7 @@ PIX     *pix;
         return 1;
     }
 
-    recogAddSample(recog, pix, diagspec);
+    recogAddSample(recog, pix, debugflag);
     pixDestroy(&pix);
     return 0;
 }
@@ -352,7 +352,7 @@ PIX     *pix1, *pix2, *pix3, *pix4;
 l_ok
 recogAddSample(L_RECOG  *recog,
                PIX      *pix,
-               l_int32   debug)
+               l_ok      debugflag)
 {
 char    *text;
 l_int32  npa, charint, index;
@@ -390,7 +390,7 @@ PIXAA   *paa;
             pixaaAddPixa(paa, pixa1, L_INSERT);
         }
     }
-    if (debug) {
+    if (debugflag) {
         L_INFO("Identified text label: %s\n", __func__, text);
         L_INFO("Identified: charint = %d, index = %d\n",
                __func__, charint, index);
