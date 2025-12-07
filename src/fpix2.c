@@ -157,7 +157,8 @@ FPIX       *fpixd;
         pixDestroy(&pixt);
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
     }
-    datat = pixGetData(pixt);
+	fpixSetDiagnosticsSpec(fpixd, pixGetDiagnosticsSpec(pixs));
+	datat = pixGetData(pixt);
     wplt = pixGetWpl(pixt);
     datad = fpixGetData(fpixd);
     wpld = fpixGetWpl(fpixd);
@@ -649,6 +650,7 @@ FPIX       *fpix;
     dpixGetDimensions(dpix, &w, &h);
     if ((fpix = fpixCreate(w, h)) == NULL)
         return (FPIX *)ERROR_PTR("fpix not made", __func__, NULL);
+	fpixSetDiagnosticsSpec(fpix, dpixGetDiagnosticsSpec(dpix));
 
     datas = dpixGetData(dpix);
     datad = fpixGetData(fpix);
@@ -914,7 +916,8 @@ FPIX       *fpixd;
     wd = factor * (ws - 1) + 1;
     hd = factor * (hs - 1) + 1;
     fpixd = fpixCreate(wd, hd);
-    datas = fpixGetData(fpixs);
+	fpixCloneDiagnosticsSpec(fpixd, fpixs);
+	datas = fpixGetData(fpixs);
     datad = fpixGetData(fpixd);
     wpls = fpixGetWpl(fpixs);
     wpld = fpixGetWpl(fpixd);
@@ -1379,7 +1382,8 @@ FPIX    *fpixd;
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
 
     fpixCopyResolution(fpixd, fpixs);
-    fpixRasterop(fpixd, left, top, ws, hs, fpixs, 0, 0);
+	fpixCloneDiagnosticsSpec(fpixd, fpixs);
+	fpixRasterop(fpixd, left, top, ws, hs, fpixs, 0, 0);
     return fpixd;
 }
 
@@ -1415,7 +1419,8 @@ FPIX    *fpixd;
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
 
     fpixCopyResolution(fpixd, fpixs);
-    fpixRasterop(fpixd, 0, 0, wd, hd, fpixs, left, top);
+	fpixCloneDiagnosticsSpec(fpixd, fpixs);
+	fpixRasterop(fpixd, 0, 0, wd, hd, fpixs, left, top);
     return fpixd;
 }
 
@@ -1795,6 +1800,7 @@ FPIX       *fpixd;
     if ((fpixd = fpixCreate(wd, hd)) == NULL)
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
     fpixCopyResolution(fpixd, fpixs);
+	fpixCloneDiagnosticsSpec(fpixd, fpixs);
 
     datas = fpixGetData(fpixs);
     wpls = fpixGetWpl(fpixs);
@@ -2317,7 +2323,8 @@ FPIX       *fpixd;
     datas = pixGetData(pix);
     wpls = pixGetWpl(pix);
     fpixd = fpixCreate(w, h);
-    datad = fpixGetData(fpixd);
+	fpixSetDiagnosticsSpec(fpixd, pixGetDiagnosticsSpec(pix));
+	datad = fpixGetData(fpixd);
     wpld = fpixGetWpl(fpixd);
     zerodenom = (rdenom == 0.0 && gdenom == 0.0 && bdenom == 0.0) ? 1: 0;
     onedenom = ((rdenom == 1.0 && gdenom == 0.0 && bdenom == 0.0) ||

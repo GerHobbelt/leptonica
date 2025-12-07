@@ -77,9 +77,11 @@ L_REGPARAMS* rp;
 
 #if 1
     pixa1 = pixaRead("recog/digits/bootnum4.pa");
-    pixa2 = pixaMakeFromTiledPixa(pixa1, 0, 0, 100);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixa2 = pixaMakeFromTiledPixa(pixa1, 0, 0, 100);
     pixa3 = l_bootnum_gen4(100);
-    pixaEqual(pixa2, pixa3, 0, NULL, &same);
+	pixaSetDiagnosticsSpec(pixa3, rp->diag_spec);
+	pixaEqual(pixa2, pixa3, 0, NULL, &same);
     if (!same) L_ERROR("Bad!  The pixa differ!\n", __func__);
     pix1 = pixaDisplayTiledWithText(pixa1, 1400, 1.0, 10, 2, 6, 0xff000000);
     pixDisplay(pix1, 100, 100);
@@ -105,7 +107,7 @@ L_REGPARAMS* rp;
 
 #if 1
     lept_stderr("\nShow averaged samples\n");
-    recogAverageSamples(recog1, rp->diag_spec);
+    recogAverageSamples(recog1);
     recogShowAverageTemplates(recog1);
     pix1 = pixaGetPix(recog1->pixadb_ave, 0, L_CLONE);
     pixWrite("/tmp/lept/digits/unscaled_ave.png", pix1, IFF_PNG);
@@ -119,12 +121,13 @@ L_REGPARAMS* rp;
 #if 1
         /* Make a tiny recognizer and test it against itself */
     pixa1 = l_bootnum_gen4(5);
-    pix1 = pixaDisplayTiledWithText(pixa1, 1400, 1.0, 10, 2, 6, 0xff000000);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pix1 = pixaDisplayTiledWithText(pixa1, 1400, 1.0, 10, 2, 6, 0xff000000);
     pixDisplay(pix1, 1000, 100);
     pixDestroy(&pix1);
     recog1 = recogCreateFromPixa(pixa1, scaledw, scaledh, 0, 120, 1);
     lept_stderr("\nShow matches against all inputs for given range\n");
-    recogDebugAverages(recog1, 0);
+    recogDebugAverages(recog1);
     recogShowMatchesInRange(recog1, recog1->pixa_tr, 0.85, 1.00, 1);
     pixWrite("/tmp/lept/digits/match_input.png", recog1->pixdb_range, IFF_PNG);
     lept_stderr("\nShow best match against average template\n");
@@ -139,7 +142,7 @@ L_REGPARAMS* rp;
 
     lept_stderr("\nTest serialization\n");
     recogWrite("/tmp/lept/digits/rec1.rec", recog1);
-    recog2 = recogRead("/tmp/lept/digits/rec1.rec");
+    recog2 = recogRead("/tmp/lept/digits/rec1.rec", rp->diag_spec);
     lept_stderr("Contents of recog after write/read:\n");
     recogShowContent(stderr, recog2, 3, 1);
     recogWrite("/tmp/lept/digits/rec2.rec", recog2);

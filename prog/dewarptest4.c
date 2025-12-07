@@ -56,7 +56,7 @@ PIX        *pixs2, *pixn2, *pixg2, *pixb2, *pixd2;
 PIX        *pixd3, *pixc1, *pixc2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "dewarp", &rp))
+	if (regTestSetup(argc, argv, "dewarp4", &rp))
 		return 1;
 
     //lept_mkdir("lept/dewarp4");
@@ -74,10 +74,11 @@ L_REGPARAMS* rp;
         /* Run the basic functions */
     dew1 = dewarpCreate(pixb, 35);
     dewarpaInsertDewarp(dewa1, dew1);
-    dewarpBuildPageModel(dew1, "/tmp/lept/dewarp4/dewarp_junk35.pdf");
+	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_junk35.pdf");
+	dewarpBuildPageModel(dew1, rp->diag_spec);
     dewarpPopulateFullRes(dew1, pixg, 0, 0);
-    dewarpaApplyDisparity(dewa1, 35, pixg, 200, 0, 0, &pixd,
-                          "/tmp/lept/dewarp4/dewarp_debug_35.pdf");
+	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_debug_35.pdf");
+	dewarpaApplyDisparity(dewa1, 35, pixg, 200, 0, 0, &pixd, rp->diag_spec);
 
         /* Normalize another image. */
 /*    pixs2 = pixRead(DEMOPATH("1555.003.jpg")); */
@@ -89,9 +90,10 @@ L_REGPARAMS* rp;
         /* Run the basic functions */
     dew2 = dewarpCreate(pixb2, 7);
     dewarpaInsertDewarp(dewa1, dew2);
-    dewarpBuildPageModel(dew2, "/tmp/lept/dewarp4/dewarp_junk7.pdf");
-    dewarpaApplyDisparity(dewa1, 7, pixg, 200, 0, 0, &pixd2,
-                          "/tmp/lept/dewarp4/dewarp_debug_7.pdf");
+	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_junk7.pdf");
+	dewarpBuildPageModel(dew2, rp->diag_spec);
+	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_debug_7.pdf");
+	dewarpaApplyDisparity(dewa1, 7, pixg, 200, 0, 0, &pixd2, rp->diag_spec);
 
         /* Serialize and deserialize dewarpa */
     dewarpaWrite("/tmp/lept/dewarp4/dewarpa1.dewa", dewa1);
@@ -109,8 +111,8 @@ L_REGPARAMS* rp;
     dewarpPopulateFullRes(dew3, pixs, 0, 0);
     pixc2 = fpixRenderContours(dew3->fullvdispar, 2.0, 0.2);
     pixDisplay(pixc2, 1400, 900);
-    dewarpaApplyDisparity(dewa2, 35, pixb, 200, 0, 0, &pixd3,
-                          "/tmp/lept/dewarp4/dewarp_debug_35b.pdf");
+	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_debug_35b.pdf");
+	dewarpaApplyDisparity(dewa2, 35, pixb, 200, 0, 0, &pixd3, rp->diag_spec);
     pixDisplay(pixd, 0, 1000);
     pixDisplay(pixd2, 600, 1000);
     pixDisplay(pixd3, 1200, 1000);

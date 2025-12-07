@@ -71,7 +71,16 @@ L_REGPARAMS* rp;
     pixc8 = pixRead(DEMOPATH("weasel8.240c.png"));
     pixs16 = pixRead(DEMOPATH("test16.tif"));
     pixs32 = pixRead(DEMOPATH("marge.jpg"));
-    error = FALSE;
+	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixc2, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs4, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixc4, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs8, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixc8, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs16, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs32, rp->diag_spec);
+	error = FALSE;
     sa = sarrayCreate(0);
 
         /* Conversion: 1 bpp --> 8 bpp --> 1 bpp */
@@ -80,8 +89,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixs1, pix2);  /* 0 */
     pixEqual(pixs1, pix2, &same);
     if (!same) {
-        pixDisplayWithTitle(pixs1, 100, 100, "1 bpp, no cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix2, 500, 100, "1 bpp, no cmap", rp->diag_spec);
+        pixDisplayWithTitle(pixs1, 100, 100, "1 bpp, no cmap");
+        pixDisplayWithTitle(pix2, 500, 100, "1 bpp, no cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 1 bpp <==> 8 bpp", L_COPY);
     } else {
@@ -99,8 +108,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix2, pix4);  /* 1 */
     pixEqual(pix2, pix4, &same);
     if (!same) {
-        pixDisplayWithTitle(pix2, 100, 100, "2 bpp, no cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix4, 500, 100, "2 bpp, no cmap", rp->diag_spec);
+        pixDisplayWithTitle(pix2, 100, 100, "2 bpp, no cmap");
+        pixDisplayWithTitle(pix4, 500, 100, "2 bpp, no cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 2 bpp <==> 8 bpp", L_COPY);
     } else {
@@ -111,8 +120,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixs2, pix6);  /* 2 */
     pixEqual(pixs2, pix6, &same);
     if (!same) {
-        pixDisplayWithTitle(pixs2, 100, 100, "2 bpp, cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix6, 500, 100, "2 bpp, cmap", rp->diag_spec);
+        pixDisplayWithTitle(pixs2, 100, 100, "2 bpp, cmap");
+        pixDisplayWithTitle(pix6, 500, 100, "2 bpp, cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 2 bpp <==> 8 bpp; cmap",
                         L_COPY);
@@ -135,8 +144,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix2, pix4);  /* 3 */
     pixEqual(pix2, pix4, &same);
     if (!same) {
-        pixDisplayWithTitle(pix2, 100, 100, "4 bpp, no cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix4, 500, 100, "4 bpp, no cmap", rp->diag_spec);
+        pixDisplayWithTitle(pix2, 100, 100, "4 bpp, no cmap");
+        pixDisplayWithTitle(pix4, 500, 100, "4 bpp, no cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 4 bpp <==> 8 bpp", L_COPY);
     } else {
@@ -147,8 +156,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixs4, pix6);  /* 4 */
     pixEqual(pixs4, pix6, &same);
     if (!same) {
-        pixDisplayWithTitle(pixs4, 100, 100, "4 bpp, cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix6, 500, 100, "4 bpp, cmap", rp->diag_spec);
+        pixDisplayWithTitle(pixs4, 100, 100, "4 bpp, cmap");
+        pixDisplayWithTitle(pix6, 500, 100, "4 bpp, cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 4 bpp <==> 8 bpp, cmap",
                         L_COPY);
@@ -170,8 +179,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix4);  /* 5 */
     pixEqual(pix1, pix4, &same);
     if (!same) {
-        pixDisplayWithTitle(pixs2, 100, 100, "2 bpp, cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix4, 500, 100, "2 bpp, cmap", rp->diag_spec);
+        pixDisplayWithTitle(pixs2, 100, 100, "2 bpp, cmap");
+        pixDisplayWithTitle(pix4, 500, 100, "2 bpp, cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 2 bpp <==> 2 bpp", L_COPY);
     } else {
@@ -190,8 +199,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix4);  /* 6 */
     pixEqual(pix1, pix4, &same);
     if (!same) {
-        pixDisplayWithTitle(pixs4, 100, 100, "4 bpp, cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix4, 500, 100, "4 bpp, cmap", rp->diag_spec);
+        pixDisplayWithTitle(pixs4, 100, 100, "4 bpp, cmap");
+        pixDisplayWithTitle(pix4, 500, 100, "4 bpp, cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 4 bpp <==> 4 bpp", L_COPY);
     } else {
@@ -208,8 +217,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixs8, pix2);  /* 7 */
     pixEqual(pixs8, pix2, &same);
     if (!same) {
-        pixDisplayWithTitle(pix1, 100, 100, "8 bpp, cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix2, 500, 100, "8 bpp, no cmap", rp->diag_spec);
+        pixDisplayWithTitle(pix1, 100, 100, "8 bpp, cmap");
+        pixDisplayWithTitle(pix2, 500, 100, "8 bpp, no cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 8 bpp <==> 8 bpp", L_COPY);
     } else {
@@ -225,8 +234,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix2, pix3);  /* 8 */
     pixEqual(pix2, pix3, &same);
     if (!same) {
-        pixDisplayWithTitle(pix2, 100, 100, "32 bpp", rp->diag_spec);
-        pixDisplayWithTitle(pix3, 500, 100, "32 bpp", rp->diag_spec);
+        pixDisplayWithTitle(pix2, 100, 100, "32 bpp");
+        pixDisplayWithTitle(pix3, 500, 100, "32 bpp");
         error = TRUE;
         sarrayAddString(sa, "conversion 2 bpp ==> 32 bpp", L_COPY);
     } else {
@@ -237,8 +246,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixc2, pix4);  /* 9 */
     pixEqual(pixc2, pix4, &same);
     if (!same) {
-        pixDisplayWithTitle(pixc2, 100, 100, "4 bpp, cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix4, 500, 100, "4 bpp, cmap", rp->diag_spec);
+        pixDisplayWithTitle(pixc2, 100, 100, "4 bpp, cmap");
+        pixDisplayWithTitle(pix4, 500, 100, "4 bpp, cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 2 bpp <==> 32 bpp", L_COPY);
     } else {
@@ -256,8 +265,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix2, pix3);  /* 10 */
     pixEqual(pix2, pix3, &same);
     if (!same) {
-        pixDisplayWithTitle(pix2, 100, 100, "32 bpp", rp->diag_spec);
-        pixDisplayWithTitle(pix3, 500, 100, "32 bpp", rp->diag_spec);
+        pixDisplayWithTitle(pix2, 100, 100, "32 bpp");
+        pixDisplayWithTitle(pix3, 500, 100, "32 bpp");
         error = TRUE;
         sarrayAddString(sa, "conversion 4 bpp ==> 32 bpp", L_COPY);
     } else {
@@ -268,8 +277,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixc4, pix4);  /* 11 */
     pixEqual(pixc4, pix4, &same);
     if (!same) {
-        pixDisplayWithTitle(pixc4, 100, 100, "4 bpp, cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix4, 500, 100, "4 bpp, cmap", rp->diag_spec);
+        pixDisplayWithTitle(pixc4, 100, 100, "4 bpp, cmap");
+        pixDisplayWithTitle(pix4, 500, 100, "4 bpp, cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 4 bpp <==> 32 bpp", L_COPY);
     } else {
@@ -286,8 +295,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixs8, pix2);  /* 12 */
     pixEqual(pixs8, pix2, &same);
     if (!same) {
-        pixDisplayWithTitle(pixs8, 100, 100, "8 bpp", rp->diag_spec);
-        pixDisplayWithTitle(pix2, 500, 100, "8 bpp", rp->diag_spec);
+        pixDisplayWithTitle(pixs8, 100, 100, "8 bpp");
+        pixDisplayWithTitle(pix2, 500, 100, "8 bpp");
         error = TRUE;
         sarrayAddString(sa, "conversion 8 bpp <==> 32 bpp", L_COPY);
     } else {
@@ -302,8 +311,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixs8, pix2);  /* 13 */
     pixEqual(pixs8, pix2, &same);
     if (!same) {
-        pixDisplayWithTitle(pixs8, 100, 100, "8 bpp", rp->diag_spec);
-        pixDisplayWithTitle(pix2, 500, 100, "8 bpp", rp->diag_spec);
+        pixDisplayWithTitle(pixs8, 100, 100, "8 bpp");
+        pixDisplayWithTitle(pix2, 500, 100, "8 bpp");
         error = TRUE;
         sarrayAddString(sa, "conversion 8 bpp <==> 16 bpp", L_COPY);
     } else {
@@ -318,8 +327,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixs16, pix2);  /* 14 */
     pixEqual(pixs16, pix2, &same);
     if (!same) {
-        pixDisplayWithTitle(pixs16, 100, 100, "16 bpp", rp->diag_spec);
-        pixDisplayWithTitle(pix2, 500, 100, "16 bpp", rp->diag_spec);
+        pixDisplayWithTitle(pixs16, 100, 100, "16 bpp");
+        pixDisplayWithTitle(pix2, 500, 100, "16 bpp");
         error = TRUE;
         sarrayAddString(sa, "conversion 16 bpp <==> 8 bpp", L_COPY);
     } else {
@@ -336,8 +345,8 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pixc8, pix2);  /* 15 */
     pixEqual(pixc8, pix2, &same);
     if (!same) {
-        pixDisplayWithTitle(pixc8, 100, 100, "8 bpp cmap", rp->diag_spec);
-        pixDisplayWithTitle(pix2, 500, 100, "8 bpp cmap", rp->diag_spec);
+        pixDisplayWithTitle(pixc8, 100, 100, "8 bpp cmap");
+        pixDisplayWithTitle(pix2, 500, 100, "8 bpp cmap");
         error = TRUE;
         sarrayAddString(sa, "conversion 8 bpp cmap <==> 32 bpp cmap",
                         L_COPY);
@@ -383,7 +392,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 23 */
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixaDisplayTiledAndScaled(pixa, 32, 300, 4, 0, 30, 2);
-    pixDisplayWithTitle(pix2, 500, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 500, 0, NULL);
     pixDestroy(&pix2);
     pixaDestroy(&pixa);
 
@@ -414,7 +423,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 31 */
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixaDisplayTiledAndScaled(pixa, 32, 300, 4, 0, 30, 2);
-    pixDisplayWithTitle(pix2, 500, 750, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 500, 750, NULL);
     pixDestroy(&pix2);
     pixaDestroy(&pixa);
 

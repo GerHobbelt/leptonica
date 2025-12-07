@@ -102,7 +102,7 @@
  *       regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  // 6
  *
  *       // Display if reg test was called in 'display' mode
- *       pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
+ *       pixDisplayWithTitle(pix1, 100, 100, NULL);
  *
  *       // Clean up and output result
  *       regTestCleanup(rp);

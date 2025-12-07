@@ -89,7 +89,8 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
          * small bogus regions at the top, but we'll keep them for
          * the demonstration. */
     pix1 = pixRead(DEMOPATH("rabi.png"));
-    pix2 = pixScaleToGray2(pix1);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixScaleToGray2(pix1);
     pixWrite("/tmp/lept/pdf2/rabi8.jpg", pix2, IFF_JFIF_JPEG);
     pix3 = pixThresholdTo4bpp(pix2, 16, 1);
     pixWrite("/tmp/lept/pdf2/rabi4.png", pix3, IFF_PNG);
@@ -148,13 +149,13 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
 
-#if 1
     /* -------- pdf convert segmented from color image -------- */
     lept_stderr("\n*** Writing color segmented images\n");
     startTimer();
 
     pix1 = pixRead(DEMOPATH("candelabrum.011.jpg"));
-    pix2 = pixScale(pix1, 3.0, 3.0);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixScale(pix1, 3.0, 3.0);
     pixWrite("/tmp/lept/pdf2/candelabrum3.jpg", pix2, IFF_JFIF_JPEG);
     GetImageMask(pix2, 200, &boxa1, rp, "seg1");
     convertToPdfSegmented("/tmp/lept/pdf2/candelabrum3.jpg", 200, L_G4_ENCODE,
@@ -172,10 +173,12 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     boxaDestroy(&boxa1);
 
     pix1 = pixRead(DEMOPATH("lion-page.00016.jpg"));
-    pix2 = pixScale(pix1, 3.0, 3.0);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixScale(pix1, 3.0, 3.0);
     pixWrite("/tmp/lept/pdf2/lion16.jpg", pix2, IFF_JFIF_JPEG);
     pix3 = pixRead(DEMOPATH("lion-mask.00016.tif"));
-    boxa1 = pixConnComp(pix3, NULL, 8);
+	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
+	boxa1 = pixConnComp(pix3, NULL, 8);
     boxa2 = boxaTransform(boxa1, 0, 0, 3.0, 3.0);
     convertToPdfSegmented("/tmp/lept/pdf2/lion16.jpg", 200, L_G4_ENCODE,
                           190, boxa2, 0, 0.5, NULL, "/tmp/lept/pdf2/file15.pdf");
@@ -201,9 +204,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     pixDestroy(&pix5);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
-#endif
 
-#if 1
     /* -- Test simple interface for generating multi-page pdf from images -- */
     lept_stderr("\n*** Writing multipage pdfs from images");
     startTimer();
@@ -218,11 +219,14 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 
     pix1 = pixRead(DEMOPATH("feyn.tif"));
     pix2 = pixRead(DEMOPATH("rabi.png"));
-    pix3 = pixScaleToGray3(pix1);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	pix3 = pixScaleToGray3(pix1);
     pix4 = pixScaleToGray3(pix2);
     pix5 = pixScale(pix1, 0.33, 0.33);
     pix6 = pixRead(DEMOPATH("test24.jpg"));
-    pixWrite("/tmp/lept/image/file1.png", pix3, IFF_PNG);  /* 10 colors */
+	pixSetDiagnosticsSpec(pix6, rp->diag_spec);
+	pixWrite("/tmp/lept/image/file1.png", pix3, IFF_PNG);  /* 10 colors */
     pixWrite("/tmp/lept/image/file2.jpg", pix4, IFF_JFIF_JPEG); /* 256 colors */
     pixWrite("/tmp/lept/image/file3.tif", pix5, IFF_TIFF_G4);
     pixWrite("/tmp/lept/image/file4.jpg", pix6, IFF_JFIF_JPEG);
@@ -238,7 +242,6 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     pixDestroy(&pix4);
     pixDestroy(&pix5);
     pixDestroy(&pix6);
-#endif
 
     regTestCheckFile(rp, "/tmp/lept/pdf2/file00.pdf");
     regTestCheckFile(rp, "/tmp/lept/pdf2/file01.pdf");
@@ -261,7 +264,6 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     regTestCheckFile(rp, "/tmp/lept/pdf2/file18.pdf");
     regTestCheckFile(rp, "/tmp/lept/pdf2/file19.pdf");
 
-#if 1
     /* ------------------ Test multipage pdf generation ----------------- */
     lept_stderr("\n*** Writing multipage pdfs from single page pdfs\n");
 
@@ -270,10 +272,8 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     concatenatePdf("/tmp/lept/pdf2", "file", "/tmp/lept/pdf2/cat_lept.pdf");
     lept_stderr("All files are concatenated: /tmp/lept/pdf2/cat_lept.pdf\n"
                 "Concatenation time: %7.3f\n", stopTimer());
-#endif
 
-#if 1
-    /* ----------- Test corruption recovery by concatenation ------------ */
+	/* ----------- Test corruption recovery by concatenation ------------ */
         /* Put two good pdf files in a directory */
     startTimer();
 
@@ -296,7 +296,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
                   data + 10, nbytes - 10);
 
         /* Make a version with a corrupted trailer */
-    if (data)
+    if (data && nbytes > 2297)
         data[2297] = '2';  /* munge trailer object 6: change 458 --> 428 */
     l_binaryWrite("/tmp/lept/bad/testfile2.bad.pdf", "w", data, nbytes);
     l_byteaDestroy(&ba);
@@ -318,7 +318,6 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     else
         lept_stderr("Busted: files are different\n");
     lept_stderr("Corruption recovery time: %7.3f\n", stopTimer());
-#endif
 
 #if 0
 {
@@ -359,7 +358,8 @@ PIXA  *pixa;
     if (debugfile && rp->diag_spec) {
 		leptDebugSetFilenameForPrefix(rp->diag_spec, debugfile, TRUE);
         pixa = pixaCreate(0);
-        pixaAddPix(pixa, pixs, L_COPY);
+		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+		pixaAddPix(pixa, pixs, L_COPY);
         pixaAddPix(pixa, pix1, L_INSERT);
         pixaAddPix(pixa, pix2, L_INSERT);
         pixaAddPix(pixa, pix3, L_INSERT);
@@ -367,7 +367,7 @@ PIXA  *pixa;
 		const char* pixfilepath = leptDebugGenFilepath(rp->diag_spec, "%s.%s", __func__, ".jpg");
         pixWrite(debugfile, pix4, IFF_JFIF_JPEG);
 		stringDestroy(&pixfilepath);
-        pixDisplayWithTitle(pix4, 100, 100, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix4, 100, 100, NULL);
         pixDestroy(&pix4);
         pixaDestroy(&pixa);
     } else {

@@ -52,8 +52,6 @@
 #include "monolithic_examples.h"
 
 
-#define   SHOW    0
-
 static const size_t  zlibsize[5] = {1047868, 215039, 195778, 189709, 180987};
 
 
@@ -85,27 +83,32 @@ L_REGPARAMS* rp;
         /* Combine two grayscale images using a mask */
     lept_stderr("Combine two grayscale images using a mask\n");
     pixa1 = pixaCreate(0);
-    pixd = pixRead(DEMOPATH("feyn.tif"));
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixd = pixRead(DEMOPATH("feyn.tif"));
     pixs = pixRead(DEMOPATH("rabi.png"));
     pixm = pixRead(DEMOPATH("pageseg2-seed.png"));
-    pixd2 = pixScaleToGray2(pixd);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixm, rp->diag_spec);
+	pixd2 = pixScaleToGray2(pixd);
     pixs2 = pixScaleToGray2(pixs);
     pixaAddPix(pixa1, pixd2, L_COPY);
     pixaAddPix(pixa1, pixs2, L_INSERT);
     pixaAddPix(pixa1, pixm, L_COPY);
     pixCombineMaskedGeneral(pixd2, pixs2, pixm, 100, 100);
     pixaAddPix(pixa1, pixd2, L_INSERT);
-    pixDisplayWithTitle(pixd2, 100, 100, NULL, SHOW);
+    pixDisplayWithTitle(pixd2, 100, 100, NULL);
     pixaaAddPixa(paa, pixa1, L_INSERT);
 
         /* Combine two binary images using a mask */
     lept_stderr("Combine two binary images using a mask\n");
     pixa1 = pixaCreate(0);
-    pixm2 = pixExpandBinaryReplicate(pixm, 2, 2);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixm2 = pixExpandBinaryReplicate(pixm, 2, 2);
     pix1 = pixCopy(NULL, pixd);
     pixCombineMaskedGeneral(pixd, pixs, pixm2, 200, 200);
     pixaAddPix(pixa1, pixd, L_COPY);
-    pixDisplayWithTitle(pixd, 700, 100, NULL, SHOW);
+    pixDisplayWithTitle(pixd, 700, 100, NULL);
     pixCombineMasked(pix1, pixs, pixm2);
     pixaAddPix(pixa1, pix1, L_INSERT);
     pixaaAddPixa(paa, pixa1, L_INSERT);
@@ -117,15 +120,18 @@ L_REGPARAMS* rp;
         /* Do a restricted seedfill */
     lept_stderr("Do a restricted seedfill\n");
     pixa1 = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("pageseg2-seed.png"));
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("pageseg2-seed.png"));
     pixm = pixRead(DEMOPATH("pageseg2-mask.png"));
-    pixd = pixSeedfillBinaryRestricted(NULL, pixs, pixm, 8, 50, 175);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixm, rp->diag_spec);
+	pixd = pixSeedfillBinaryRestricted(NULL, pixs, pixm, 8, 50, 175);
     pixaAddPix(pixa1, pixs, L_INSERT);
     pixaAddPix(pixa1, pixm, L_INSERT);
     pixaAddPix(pixa1, pixd, L_INSERT);
     pixaaAddPixa(paa, pixa1, L_INSERT);
     pix1 = pixaaDisplayByPixa(paa, 10, 0.5, 40, 40, 2);
-    pixWrite("/tmp/lept/misc/mos1.png", pix1, IFF_PNG);
+	pixWrite("/tmp/lept/misc/mos1.png", pix1, IFF_PNG);
     pixDisplay(pix1, 100, 100);
     pixaaDestroy(&paa);
     pixDestroy(&pix1);
@@ -134,8 +140,10 @@ L_REGPARAMS* rp;
     lept_stderr("Colorize a grayscale image\n");
     paa = pixaaCreate(0);
     pixa1 = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("lucasta.150.jpg"));
-    pixGetDimensions(pixs, &w, &h, NULL);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("lucasta.150.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixGetDimensions(pixs, &w, &h, NULL);
     pixb = pixThresholdToBinary(pixs, 128);
     boxa1 = pixConnComp(pixb, &pixa2, 8);
     pixaAddPix(pixa1, pixs, L_COPY);
@@ -154,8 +162,10 @@ L_REGPARAMS* rp;
         /* Convert color to gray */
     lept_stderr("Convert color to gray\n");
     pixa1 = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("weasel4.16c.png"));
-    pixaAddPix(pixa1, pixs, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("weasel4.16c.png"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa1, pixs, L_INSERT);
     pixc = pixConvertTo32(pixs);
     pix1 = pixConvertRGBToGray(pixc, 3., 7., 5.);  /* bad weights */
     pixaAddPix(pixa1, pix1, L_INSERT);
@@ -178,7 +188,8 @@ L_REGPARAMS* rp;
         /* Extract text lines */
     lept_stderr("Extract text lines\n");
     pix1 = pixRead(DEMOPATH("feyn.tif"));
-    pixa1 = pixExtractTextlines(pix1, 150, 150, 0, 0, 5, 5, NULL);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixa1 = pixExtractTextlines(pix1, 150, 150, 0, 0, 5, 5, NULL);
     boxa1 = pixaGetBoxa(pixa1, L_CLONE);
     boxaWrite("/tmp/lept/misc/lines1.ba", boxa1);
     pix2 = pixaDisplayRandomCmap(pixa1, 0, 0);

@@ -69,7 +69,8 @@ L_REGPARAMS* rp;
 		return 1;
 
     pix = pixRead(DEMOPATH("feyn.tif"));
-    box = boxCreate(383, 338, 1480, 1050);
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	box = boxCreate(383, 338, 1480, 1050);
     pixs = pixClipRectangle(pix, box, NULL);
     regTestWritePixAndCheck(rp, pixs, IFF_PNG);  /* 0 */
 
@@ -86,10 +87,11 @@ L_REGPARAMS* rp;
                                 rp->index + 1, conn, depth, bc);
                 }
                 pixa = pixaCreate(0);
-                pixaAddPix(pixa, pixs, L_COPY);
+				pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+				pixaAddPix(pixa, pixs, L_COPY);
                 TestDistance(pixa, pixs, conn, depth, bc, rp);
                 pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 20, 2);
-                pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
+                pixDisplayWithTitle(pixd, 0, 0, NULL);
                 pixaDestroy(&pixa);
                 pixDestroy(&pixd);
             }

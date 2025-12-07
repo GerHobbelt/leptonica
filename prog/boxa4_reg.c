@@ -78,8 +78,9 @@ PIXA         *pixa1, *pixa2;
     scalefact = (l_float32)width / (l_float32)w;
     boxa3 = boxaTransform(boxa2, 0, 0, scalefact, scalefact);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 1500, 2, 1.0, 0, 3, 2);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
+    pixDisplayWithTitle(pix1, 600, 0, NULL);
     pixDestroy(&pix1);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
@@ -93,8 +94,9 @@ PIXA         *pixa1, *pixa2;
     scalefact = (l_float32)width / (l_float32)w;
     boxa3 = boxaTransform(boxa2, 0, 0, scalefact, scalefact);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 1500, 2, 1.0, 0, 3, 2);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 800, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
+    pixDisplayWithTitle(pix1, 800, 0, NULL);
     pixDestroy(&pix1);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
@@ -110,9 +112,9 @@ PIXA         *pixa1, *pixa2;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 1300, 0, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix2, 1300, 500, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix3, 1300, 1000, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1300, 0, NULL);
+    pixDisplayWithTitle(pix2, 1300, 500, NULL);
+    pixDisplayWithTitle(pix3, 1300, 1000, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -130,8 +132,9 @@ PIXA         *pixa1, *pixa2;
     boxaWriteMem(&data, &size, boxa2);
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 5 */
     pix1 = pixRead("/tmp/lept/boxa/recon_sides.png");
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
     lept_free(data);
     pixaDestroy(&pixa1);
     boxaDestroy(&boxa2);
@@ -146,8 +149,9 @@ PIXA         *pixa1, *pixa2;
     boxaWriteMem(&data, &size, boxa2);
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 7 */
     pix1 = pixRead("/tmp/lept/boxa/recon_sides.png");
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 8 */
-    pixDisplayWithTitle(pix1, 0, 300, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 8 */
+    pixDisplayWithTitle(pix1, 0, 300, NULL);
     lept_free(data);
     pixaDestroy(&pixa1);
     boxaDestroy(&boxa1);
@@ -195,8 +199,9 @@ PIXA         *pixa1, *pixa2;
     scalefact = (l_float32)width / (l_float32)w;
     boxa3 = boxaTransform(boxa2, 0, 0, scalefact, scalefact);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 1500, 2, 1.0, 0, 3, 2);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix1, 1000, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
+    pixDisplayWithTitle(pix1, 1000, 0, NULL);
     pixDestroy(&pix1);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
@@ -204,7 +209,8 @@ PIXA         *pixa1, *pixa2;
 
         /* ----------- Test pixaDisplayBoxaa() ------------ */
     pixa1 = pixaReadBoth("showboxes.pac");
-    baa1 = boxaaRead("showboxes1.baa");
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	baa1 = boxaaRead("showboxes1.baa");
     baa2 = boxaaTranspose(baa1);
     baa3 = boxaaTranspose(baa2);
     nb = boxaaGetCount(baa1);
@@ -223,7 +229,7 @@ PIXA         *pixa1, *pixa2;
     pixa2 = pixaDisplayBoxaa(pixa1, baa2, L_DRAW_RGB, 2);
     pix1 = pixaDisplayTiledInRows(pixa2, 32, 1400, 1.0, 0, 10, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 12 */
-    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 600, NULL);
     lept_stderr("Writing to: /tmp/lept/boxa/show.pdf\n");
     l_pdfSetDateAndVersion(FALSE);
     pixaConvertToPdf(pixa2, 75, 0.6, 0, 0, NULL, "/tmp/lept/boxa/show.pdf");

@@ -84,10 +84,12 @@ L_REGPARAMS* rp;
 
         /* Test 16 to 8 stripping */
     pixs = pixRead(DEMOPATH("test16.tif"));
-    pixWrite("/tmp/lept/io/test16.png", pixs, IFF_PNG);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixWrite("/tmp/lept/io/test16.png", pixs, IFF_PNG);
     regTestCheckFile(rp, "/tmp/lept/io/test16.png");  /* 0 */
     pix1 = pixRead("/tmp/lept/io/test16.png");
-    d = pixGetDepth(pix1);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	d = pixGetDepth(pix1);
     regTestCompareValues(rp, 8, d, 0.0);  /* 1 */
     pixDestroy(&pix1);
     l_pngSetReadStrip16To8(0);
@@ -99,7 +101,8 @@ L_REGPARAMS* rp;
 
         /* Test chroma sampling options in jpeg */
     pixs = pixRead(DEMOPATH("marge.jpg"));
-    pixWrite("/tmp/lept/io/chromatest1.jpg", pixs, IFF_JFIF_JPEG);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixWrite("/tmp/lept/io/chromatest1.jpg", pixs, IFF_JFIF_JPEG);
     regTestCheckFile(rp, "/tmp/lept/io/chromatest1.jpg");  /* 3 */
     if (leptIsInDisplayMode(rp->diag_spec)) {
         size = nbytesInFile("/tmp/lept/io/chromatest1.jpg");
@@ -123,26 +126,27 @@ L_REGPARAMS* rp;
 
         /* Test read/write of alpha with png */
     pixs = pixRead(DEMOPATH("books_logo.png"));
-    pixDisplayWithTitle(pixs, 0, 100, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixDisplayWithTitle(pixs, 0, 100, NULL);
     pixg = pixGetRGBComponent(pixs, L_ALPHA_CHANNEL);
     regTestWritePixAndCheck(rp, pixg, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pixg, 300, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixg, 300, 100, NULL);
     pixDestroy(&pixg);
     pix1 = pixAlphaBlendUniform(pixs, 0xffffff00);  /* render rgb over white */
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix1, 0, 250, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 250, NULL);
     pix2 = pixSetAlphaOverWhite(pix1);  /* regenerate alpha from white */
     pixWrite("/tmp/lept/io/logo2.png", pix2, IFF_PNG);
     regTestCheckFile(rp, "/tmp/lept/io/logo2.png");  /* 8 */
-    pixDisplayWithTitle(pix2, 0, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 400, NULL);
     pixg = pixGetRGBComponent(pix2, L_ALPHA_CHANNEL);
     regTestWritePixAndCheck(rp, pixg, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pixg, 300, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixg, 300, 400, NULL);
     pixDestroy(&pixg);
     pix3 = pixRead("/tmp/lept/io/logo2.png");
     pix4 = pixAlphaBlendUniform(pix3, 0x00ffff00);  /* render rgb over cyan */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix3, 0, 550, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0, 550, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -151,8 +155,10 @@ L_REGPARAMS* rp;
 
         /* A little fun with rgb colormaps */
     pixs = pixRead(DEMOPATH("weasel4.11c.png"));
-    pixa = pixaCreate(6);
-    pixaAddPix(pixa, pixs, L_CLONE);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixa = pixaCreate(6);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_CLONE);
     pixGetDimensions(pixs, &w, &h, &d);
     wpl = pixGetWpl(pixs);
     if (leptIsInDisplayMode(rp->diag_spec))
@@ -189,7 +195,8 @@ L_REGPARAMS* rp;
 
        /* Remove and regnerate gray colormap */
     pixs = pixRead(DEMOPATH("weasel4.5g.png"));
-    pixaAddPix(pixa, pixs, L_CLONE);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_CLONE);
     pix1 = pixRemoveColormap(pixs, REMOVE_CMAP_BASED_ON_SRC);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 15 */
     pixaAddPix(pixa, pix1, L_CLONE);
@@ -199,7 +206,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pix3 = pixaDisplayTiled(pixa, 400, 0, 20);
-    pixDisplayWithTitle(pix3, 0, 750, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0, 750, NULL);
     pixDestroy(&pix3);
     pixaDestroy(&pixa);
 
@@ -225,7 +232,8 @@ L_REGPARAMS* rp;
 			        getFormatExtension(format));
     }
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
-    pixWrite("/tmp/lept/io/fract1.tif", pixs, IFF_TIFF);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixWrite("/tmp/lept/io/fract1.tif", pixs, IFF_TIFF);
     regTestCheckFile(rp, "/tmp/lept/io/fract1.tif");  /* 18 */
     size = nbytesInFile("/tmp/lept/io/fract1.tif");
     regTestCompareValues(rp, tiffsize[0], size, 0.0);  /* 19 */
@@ -265,11 +273,13 @@ L_REGPARAMS* rp;
 
         /* Test read/write of alpha with pnm */
     pixs = pixRead(DEMOPATH("books_logo.png"));
-    pixWrite("/tmp/lept/io/alpha1.pnm", pixs, IFF_PNM);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixWrite("/tmp/lept/io/alpha1.pnm", pixs, IFF_PNM);
     regTestCheckFile(rp, "/tmp/lept/io/alpha1.pnm");  /* 30 */
     pix1 = pixRead("/tmp/lept/io/alpha1.pnm");
-    regTestComparePix(rp, pixs, pix1);  /* 31 */
-    pixDisplayWithTitle(pix1, 600, 100, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestComparePix(rp, pixs, pix1);  /* 31 */
+    pixDisplayWithTitle(pix1, 600, 100, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
 

@@ -66,12 +66,13 @@ L_REGPARAMS* rp;
 
         /* First, snap the color directly on the input rgb image. */
     pixs = pixRead(DEMOPATH("Leptonica.jpg"));
-    pixaAddPix(pixa, pixs, L_COPY);
-    pixDisplayWithTitle(pixs, 0, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_COPY);
+    pixDisplayWithTitle(pixs, 0, 0, NULL);
     pix1 = pixSnapColor(NULL, pixs, 0xffffff00, LEPTONICA_YELLOW, 30);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 0 */
-    pixDisplayWithTitle(pix1, 480, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 480, 0, NULL);
 
         /* Then make a colormapped version and snap the color */
     pix1 = pixOctreeQuantNumColors(pixs, 250, 0);
@@ -79,43 +80,46 @@ L_REGPARAMS* rp;
     pixSnapColor(pix1, pix1, 0xffffff00, LEPTONICA_YELLOW, 30);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 880, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 880, 0, NULL);
     pixDestroy(&pixs);
 
         /* Set the background of the google searchbox to yellow.
          * The input image is colormapped with all 256 colors used. */
     pixs = pixRead(DEMOPATH("google-searchbox.png"));
-    pixaAddPix(pixa, pixs, L_INSERT);
-    pixDisplayWithTitle(pixs, 0, 200, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_INSERT);
+    pixDisplayWithTitle(pixs, 0, 200, NULL);
     pix1 = pixSnapColor(NULL, pixs, 0xffffff00, LEPTONICA_YELLOW, 30);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 220, 200, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 220, 200, NULL);
 
         /* A couple of more, setting pixels near white to strange colors */
     pixs = pixRead(DEMOPATH("weasel4.11c.png"));
-    pixaAddPix(pixa, pixs, L_INSERT);
-    pixDisplayWithTitle(pixs, 0, 300, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_INSERT);
+    pixDisplayWithTitle(pixs, 0, 300, NULL);
     pix1 = pixSnapColor(NULL, pixs, 0xfefefe00, 0x80800000, 50);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix1, 200, 300, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 200, 300, NULL);
 
     pixs = pixRead(DEMOPATH("wyom.jpg"));
-    pix1 = pixFixedOctcubeQuant256(pixs, 0);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix1 = pixFixedOctcubeQuant256(pixs, 0);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 0, 450, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 450, NULL);
     pix2 = pixSnapColor(NULL, pix1, 0xf0f0f000, 0x80008000, 100);
     pixaAddPix(pixa, pix2, L_INSERT);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix2, 900, 450, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 900, 450, NULL);
     pixDestroy(&pixs);
 
         /* --- Display results --- */
     pix1 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 6 */
-    pixDisplayWithTitle(pix1, 500, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 500, 0, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 
@@ -126,14 +130,14 @@ L_REGPARAMS* rp;
     pixLinearEdgeFade(pix1, L_FROM_LEFT, L_BLEND_TO_BLACK, 0.5, 0.8);
     pixLinearEdgeFade(pix1, L_FROM_RIGHT, L_BLEND_TO_BLACK, 0.5, 0.8);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix1, 900, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 900, 0, NULL);
     pixDestroy(&pix1);
     pix1 = pixCreate(300, 300, 32);
     pixSetAllArbitrary(pix1, val32);
     pixLinearEdgeFade(pix1, L_FROM_TOP, L_BLEND_TO_BLACK, 0.5, 0.8);
     pixLinearEdgeFade(pix1, L_FROM_BOT, L_BLEND_TO_BLACK, 0.5, 0.8);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 8 */
-    pixDisplayWithTitle(pix1, 1250, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1250, 0, NULL);
     pixDestroy(&pix1);
     pix1 = pixCreate(300, 300, 32);
     pixSetAllArbitrary(pix1, val32);
@@ -142,7 +146,7 @@ L_REGPARAMS* rp;
     pixLinearEdgeFade(pix1, L_FROM_TOP, L_BLEND_TO_BLACK, 0.5, 0.8);
     pixLinearEdgeFade(pix1, L_FROM_BOT, L_BLEND_TO_BLACK, 0.5, 0.8);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pix1, 1600, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1600, 0, NULL);
     pixDestroy(&pix1);
     pix1 = pixCreate(300, 300, 8);   /* 8 bpp */
     pixSetAll(pix1);
@@ -151,7 +155,7 @@ L_REGPARAMS* rp;
     pixLinearEdgeFade(pix1, L_FROM_TOP, L_BLEND_TO_BLACK, 0.5, 0.8);
     pixLinearEdgeFade(pix1, L_FROM_BOT, L_BLEND_TO_BLACK, 0.5, 0.8);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix1, 1950, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1950, 0, NULL);
     pixDestroy(&pix1);
 
         /* Test linear fade to white */
@@ -161,14 +165,14 @@ L_REGPARAMS* rp;
     pixLinearEdgeFade(pix1, L_FROM_LEFT, L_BLEND_TO_WHITE, 0.5, 0.8);
     pixLinearEdgeFade(pix1, L_FROM_RIGHT, L_BLEND_TO_WHITE, 0.5, 0.8);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
-    pixDisplayWithTitle(pix1, 900, 380, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 900, 380, NULL);
     pixDestroy(&pix1);
     pix1 = pixCreate(300, 300, 32);
     pixSetAllArbitrary(pix1, val32);
     pixLinearEdgeFade(pix1, L_FROM_TOP, L_BLEND_TO_WHITE, 0.5, 0.8);
     pixLinearEdgeFade(pix1, L_FROM_BOT, L_BLEND_TO_WHITE, 0.5, 0.8);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix1, 1250, 380, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1250, 380, NULL);
     pixDestroy(&pix1);
     pix1 = pixCreate(300, 300, 32);
     pixSetAllArbitrary(pix1, val32);
@@ -177,7 +181,7 @@ L_REGPARAMS* rp;
     pixLinearEdgeFade(pix1, L_FROM_TOP, L_BLEND_TO_WHITE, 0.5, 0.8);
     pixLinearEdgeFade(pix1, L_FROM_BOT, L_BLEND_TO_WHITE, 0.5, 0.8);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 13 */
-    pixDisplayWithTitle(pix1, 1600, 380, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1600, 380, NULL);
     pixDestroy(&pix1);
     pix1 = pixCreate(300, 300, 8);   /* 8 bpp */
     pixLinearEdgeFade(pix1, L_FROM_LEFT, L_BLEND_TO_WHITE, 0.5, 0.8);
@@ -185,7 +189,7 @@ L_REGPARAMS* rp;
     pixLinearEdgeFade(pix1, L_FROM_TOP, L_BLEND_TO_WHITE, 0.5, 0.8);
     pixLinearEdgeFade(pix1, L_FROM_BOT, L_BLEND_TO_WHITE, 0.5, 0.8);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 14 */
-    pixDisplayWithTitle(pix1, 1950, 380, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1950, 380, NULL);
     pixDestroy(&pix1);
 
     return regTestCleanup(rp);

@@ -92,7 +92,8 @@ L_REGPARAMS* rp;
         /* Get a 1 bpp version of the page */
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
-    if (pixGetDepth(pixs) == 32)
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	if (pixGetDepth(pixs) == 32)
         pixg = pixConvertRGBToGrayFast(pixs);
     else
         pixg = pixClone(pixs);
@@ -114,19 +115,19 @@ L_REGPARAMS* rp;
         /* Extract non-image parts (e.g., text) at full resolution */
     pixSubtract(pixb, pixb, pixd);
 
-    pixDisplayWithTitle(pixseed4, 400, 100, "halftone seed", rp->diag_spec);
-    pixDisplayWithTitle(pixmask4, 100, 100, "halftone seed mask", rp->diag_spec);
-    pixDisplayWithTitle(pixd4, 700, 100, "halftone mask", rp->diag_spec);
-    pixDisplayWithTitle(pixb, 1000, 100, "non-halftone", rp->diag_spec);
+    pixDisplayWithTitle(pixseed4, 400, 100, "halftone seed");
+    pixDisplayWithTitle(pixmask4, 100, 100, "halftone seed mask");
+    pixDisplayWithTitle(pixd4, 700, 100, "halftone mask");
+    pixDisplayWithTitle(pixb, 1000, 100, "non-halftone");
 
-#if 1
     //lept_mkdir("lept/pageseg");
+
+	// TODO: should pixWrite enforce the filename extension, based on the written format?
 
     pixWrite("/tmp/lept/pageseg/seed2", pixseed4, IFF_TIFF_G4);
     pixWrite("/tmp/lept/pageseg/mask2", pixmask4, IFF_TIFF_G4);
     pixWrite("/tmp/lept/pageseg/fill2", pixd4, IFF_TIFF_G4);
     pixWrite("/tmp/lept/pageseg/text2", pixb, IFF_TIFF_G4);
-#endif
 
     pixDestroy(&pixs);
     pixDestroy(&pixg);

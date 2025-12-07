@@ -71,11 +71,13 @@ L_REGPARAMS* rp;
 
         /* Blending on a light image */
     pix1 = pixRead(DEMOPATH("fish24.jpg"));
-    pixGetDimensions(pix1, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 3; i++) {
 		char fname[256];
 		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), blenders[i]);
 		pix2 = pixRead(fname);
+		pixSetDiagnosticsSpec(pix2, rp->diag_spec);
         if (i == 2) {
             pix3 = pixScale(pix2, 0.5, 0.5);
             pixDestroy(&pix2);
@@ -86,7 +88,7 @@ L_REGPARAMS* rp;
         pix5 = pixBlendWithGrayMask(pix1, pix4, NULL, 0, 0);
         pixaAddPix(pixa, pix5, L_INSERT);
         regTestWritePixAndCheck(rp, pix5, IFF_JFIF_JPEG);  /* 0 - 2 */
-        pixDisplayWithTitle(pix5, 200 * i, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix5, 200 * i, 0, NULL);
         pixDestroy(&pix2);
         pixDestroy(&pix3);
         pixDestroy(&pix4);
@@ -95,18 +97,20 @@ L_REGPARAMS* rp;
 
         /* Blending on a dark image */
     pix0 = pixRead(DEMOPATH("karen8.jpg"));
-    pix1 = pixScale(pix0, 2.0, 2.0);
+	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
+	pix1 = pixScale(pix0, 2.0, 2.0);
     pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 2; i++) {
 		char fname[256];
 		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), blenders[i]);
 		pix2 = pixRead(fname);
-        pix3 = pixAddAlphaToBlend(pix2, 0.3, 1);
+		pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+		pix3 = pixAddAlphaToBlend(pix2, 0.3, 1);
         pix4 = pixMirroredTiling(pix3, w, h);
         pix5 = pixBlendWithGrayMask(pix1, pix4, NULL, 0, 0);
         pixaAddPix(pixa, pix5, L_INSERT);
         regTestWritePixAndCheck(rp, pix5, IFF_JFIF_JPEG);  /* 3 - 4 */
-        pixDisplayWithTitle(pix5, 600 + 200 * i, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix5, 600 + 200 * i, 0, NULL);
         pixDestroy(&pix2);
         pixDestroy(&pix3);
         pixDestroy(&pix4);
@@ -117,14 +121,16 @@ L_REGPARAMS* rp;
         /* Blending of two color images using special mask */
     pix1 = pixRead("fish24.jpg");
     pix2 = pixRead("wyom.jpg");
-    pixGetDimensions(pix2, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	pixGetDimensions(pix2, &w, &h, NULL);
     pix3 = pixRotateOrth(pix1, 1);
     pix4 = pixScaleToSize(pix3, w, h);   /* same size as wyom.jpg */
     pix5 = AlphaRectangle(w, h, 1.0);
     pix6 = pixBlendWithGrayMask(pix4, pix2, pix5, 0, 0);
     pix7 = pixBlendWithGrayMask(pix2, pix4, pix5, 0, 0);
-    pixDisplayWithTitle(pix6, 1000, 0, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix7, 1000, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix6, 1000, 0, NULL);
+    pixDisplayWithTitle(pix7, 1000, 500, NULL);
     regTestWritePixAndCheck(rp, pix4, IFF_JFIF_JPEG);  /* 5 */
     regTestWritePixAndCheck(rp, pix5, IFF_JFIF_JPEG);  /* 6 */
     regTestWritePixAndCheck(rp, pix6, IFF_JFIF_JPEG);  /* 7 */

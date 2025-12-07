@@ -82,16 +82,17 @@ L_REGPARAMS* rp;
 
         /* Generate the recognizer */
     pixa1 = pixaRead("recog/sets/train01.pa");
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 #if 1   /* scale to fixed height */
     recog = recogCreateFromPixa(pixa1, 0, 40, 0, 128, 1);
 #else   /* no scaling */
     recog = recogCreateFromPixa(pixa1, 0, 0, 0, 128, 1);
 #endif
-    recogAverageSamples(recog, rp->diag_spec);
+    recogAverageSamples(recog);
     recogWrite("/tmp/lept/recog/rec1.rec", recog);
 
         /* Show the templates */
-    if (recogDebugAverages(recog, rp->diag_spec) != 0) {
+    if (recogDebugAverages(recog) != 0) {
         lept_stderr("Averaging failed!!\n");
         return 1;
     }

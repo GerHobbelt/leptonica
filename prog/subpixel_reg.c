@@ -115,8 +115,10 @@ PIXA         *pixa;
 
     /* ----------------- Test on 32 bpp rgb ---------------------*/
     pixa = pixaCreate(5);
-    pixs = pixRead(DEMOPATH("fish24.jpg"));
-    pix1 = pixScale(pixs, 0.4, 0.4);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("fish24.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix1 = pixScale(pixs, 0.4, 0.4);
     AddTextAndSave(pixa, pix1, bmf, textstr[0], L_ADD_BELOW, 0xff000000);
     pix2 = pixConvertToSubpixelRGB(pixs, 0.4, 0.4, L_SUBPIXEL_ORDER_RGB);
     AddTextAndSave(pixa, pix2, bmf, textstr[1], L_ADD_BELOW, 0x00ff0000);
@@ -132,7 +134,7 @@ PIXA         *pixa;
                                  "Regression test for subpixel scaling: color",
                                  0xff00ff00, L_ADD_ABOVE, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 1 */
-    pixDisplayWithTitle(pixd, 50, 350, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 50, 350, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pixs);
     pixDestroy(&pixt);
@@ -151,7 +153,8 @@ PIXA         *pixa;
         /* Normal scaling of 8 bpp grayscale */
     scalefact = 800. / 2320.;
     pixs = pixRead(DEMOPATH("patent.png"));   /* sharp, 300 ppi, 1 bpp image */
-    pix1 = pixConvertTo8(pixs, FALSE);  /* use 8 bpp input */
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix1 = pixConvertTo8(pixs, FALSE);  /* use 8 bpp input */
     pix2 = pixScale(pix1, scalefact, scalefact);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 2 */
 

@@ -54,7 +54,7 @@ PIX     *pixs;
 l_int32  d;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "scale", TRUE, &rp))
+	if (regTestSetup(argc, argv, "scale", &rp))
 		return 1;
 
     if (argc != 2)
@@ -64,7 +64,8 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(argv[1])) == NULL)
        	return ERROR_INT("pixs not made", __func__, 1);
-    d = pixGetDepth(pixs);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	d = pixGetDepth(pixs);
 
 #if 1
         /* Integer scale-to-gray functions */
@@ -160,11 +161,11 @@ L_REGPARAMS* rp;
         startTimer();
         pixt1 = pixScaleSmooth(pixs, 0.154, 0.154);
         lept_stderr("fast scale: %5.3f sec\n", stopTimer());
-        pixDisplayWithTitle(pixt1, 0, 0, "smooth scaling", DISPLAY);
+        pixDisplayWithTitle(pixt1, 0, 0, "smooth scaling");
         pixWrite("/tmp/lept/scale/smooth1.png", pixt1, IFF_PNG);
         pixt2 = pixUnsharpMasking(pixt1, 1, 0.3);
         pixWrite("/tmp/lept/scale/smooth2.png", pixt2, IFF_PNG);
-        pixDisplayWithTitle(pixt2, 200, 0, "sharp scaling", DISPLAY);
+        pixDisplayWithTitle(pixt2, 200, 0, "sharp scaling");
         pixDestroy(&pixt1);
         pixDestroy(&pixt2);
     }
@@ -184,7 +185,7 @@ L_REGPARAMS* rp;
             pixd = pixScaleToGray(pixs, scale);
             lept_stderr("Time for scale %7.3f: %7.3f sec\n",
             scale, stopTimer());
-            pixDisplayWithTitle(pixd, 75 * i, 100, "scaletogray", DISPLAY);
+            pixDisplayWithTitle(pixd, 75 * i, 100, "scaletogray");
             pixDestroy(&pixd);
         }
         for (i = 8; i < 14; i++) {
@@ -193,7 +194,7 @@ L_REGPARAMS* rp;
             pixd = pixScaleToGray(pixs, scale);
             lept_stderr("Time for scale %7.3f: %7.3f sec\n",
             scale, stopTimer());
-            pixDisplayWithTitle(pixd, 100 * i, 600, "scaletogray", DISPLAY);
+            pixDisplayWithTitle(pixd, 100 * i, 600, "scaletogray");
             pixDestroy(&pixd);
         }
     }
@@ -213,7 +214,7 @@ L_REGPARAMS* rp;
             pixd = pixScaleToGrayMipmap(pixs, scale);
             lept_stderr("Time for scale %7.3f: %7.3f sec\n",
             scale, stopTimer());
-            pixDisplayWithTitle(pixd, 75 * i, 100, "scale mipmap", DISPLAY);
+            pixDisplayWithTitle(pixd, 75 * i, 100, "scale mipmap");
             pixDestroy(&pixd);
         }
         for (i = 8; i < 12; i++) {
@@ -222,7 +223,7 @@ L_REGPARAMS* rp;
             pixd = pixScaleToGrayMipmap(pixs, scale);
             lept_stderr("Time for scale %7.3f: %7.3f sec\n",
             scale, stopTimer());
-            pixDisplayWithTitle(pixd, 100 * i, 600, "scale mipmap", DISPLAY);
+            pixDisplayWithTitle(pixd, 100 * i, 600, "scale mipmap");
             pixDestroy(&pixd);
         }
     }
@@ -243,16 +244,16 @@ L_REGPARAMS* rp;
         startTimer();
         pixt1 = pixScaleSmooth(pixs, SCALING, SCALING);
         lept_stderr("fast scale: %5.3f sec\n", stopTimer());
-        pixDisplayWithTitle(pixt1, 0, 0, "smooth scaling", DISPLAY);
+        pixDisplayWithTitle(pixt1, 0, 0, "smooth scaling");
         pixWrite("/tmp/lept/scale/sm_1.png", pixt1, IFF_PNG);
         pixt2 = pixUnsharpMasking(pixt1, 1, 0.3);
-        pixDisplayWithTitle(pixt2, 150, 0, "sharpened scaling", DISPLAY);
+        pixDisplayWithTitle(pixt2, 150, 0, "sharpened scaling");
 
         startTimer();
         pixt3 = pixBlockconv(pixs, smooth, smooth);
         pixt4 = pixScaleBySampling(pixt3, SCALING, SCALING);
         lept_stderr("slow scale: %5.3f sec\n", stopTimer());
-        pixDisplayWithTitle(pixt4, 200, 200, "sampled scaling", DISPLAY);
+        pixDisplayWithTitle(pixt4, 200, 200, "sampled scaling");
         pixWrite("/tmp/lept/scale/sm_2.png", pixt4, IFF_PNG);
 
         startTimer();
@@ -260,7 +261,7 @@ L_REGPARAMS* rp;
         pixt6 = pixBlockconv(pixt5, smooth, smooth);
         pixt7 = pixScaleBySampling(pixt6, SCALING, SCALING);
         lept_stderr("very slow scale + sharp: %5.3f sec\n", stopTimer());
-        pixDisplayWithTitle(pixt7, 500, 200, "sampled scaling", DISPLAY);
+        pixDisplayWithTitle(pixt7, 500, 200, "sampled scaling");
         pixWrite("/tmp/lept/scale/sm_3.jpg", pixt7, IFF_JFIF_JPEG);
 
         pixDestroy(&pixt1);

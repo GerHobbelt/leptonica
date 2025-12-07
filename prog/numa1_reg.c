@@ -122,13 +122,14 @@ PIXA         *pixa;
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 3 */
     pixa = pixaCreate(4);
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaAddPix(pixa, pix3, L_INSERT);
     pixaAddPix(pixa, pix4, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 0, 0, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);
@@ -165,7 +166,8 @@ PIXA         *pixa;
      * -------------------------------------------------------------------*/
         /* Test numaInterpolateEqxInterval() */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-    na = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	na = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     nasy = numaGetPartialSums(na);
     pix1 = gplotGeneralPix1(rp->diag_spec, nasy, GPLOT_LINES, "/tmp/lept/numa1/int1",
                             "partial sums", NULL, NULL);
@@ -183,7 +185,8 @@ PIXA         *pixa;
 
         /* Test numaInterpolateArbxInterval() */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-    na = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	na = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     nasy = numaGetPartialSums(na);
     numaInsertNumber(nasy, 0, 0.0);
     nasx = numaMakeSequence(0.0, 1.0, 257);
@@ -200,7 +203,8 @@ PIXA         *pixa;
 
         /* Test numaInterpolateArbxVal() */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-    na = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	na = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     nasy = numaGetPartialSums(na);
     numaInsertNumber(nasy, 0, 0.0);
     nasx = numaMakeSequence(0.0, 1.0, 257);
@@ -248,7 +252,8 @@ PIXA         *pixa;
     numaFitMax(nay, &yval, nax, &xval);
     if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("max = %f at loc = %f\n", yval, xval);
     pixa = pixaCreate(7);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 12 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 13 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 14 */
@@ -264,7 +269,7 @@ PIXA         *pixa;
     pixaAddPix(pixa, pix7, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 300, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 300, 0, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);
@@ -310,13 +315,14 @@ PIXA         *pixa;
     pix2 = gplotMakeOutputPix(gplot);
     gplotDestroy(&gplot);
     pixa = pixaCreate(2);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18 */
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 19 */
     pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 600, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 600, 0, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);

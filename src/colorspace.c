@@ -1955,9 +1955,14 @@ FPIXA      *fpixad;
         /* Convert XYZ image */
     if (fpixaGetFPixDimensions(fpixas, 0, &w, &h))
         return (FPIXA *)ERROR_PTR("fpixas sizes not found", __func__, NULL);
-    fpixad = fpixaCreate(3);
+
+	LDIAG_CTX diagspec = fpixaGetDiagnosticsSpec(fpixas);
+
+	fpixad = fpixaCreate(3);
+	fpixaSetDiagnosticsSpec(fpixad, diagspec);
     for (i = 0; i < 3; i++) {
         fpix = fpixCreate(w, h);
+		fpixSetDiagnosticsSpec(fpix, diagspec);
         fpixaAddFPix(fpixad, fpix, L_INSERT);
     }
     wpl = fpixGetWpl(fpix);
@@ -2019,10 +2024,15 @@ FPIXA      *fpixad;
         /* Convert LAB image */
     if (fpixaGetFPixDimensions(fpixas, 0, &w, &h))
         return (FPIXA *)ERROR_PTR("fpixas sizes not found", __func__, NULL);
-    fpixad = fpixaCreate(3);
-    for (i = 0; i < 3; i++) {
+
+	LDIAG_CTX diagspec = fpixaGetDiagnosticsSpec(fpixas);
+
+	fpixad = fpixaCreate(3);
+	fpixaSetDiagnosticsSpec(fpixad, diagspec);
+	for (i = 0; i < 3; i++) {
         fpix = fpixCreate(w, h);
-        fpixaAddFPix(fpixad, fpix, L_INSERT);
+		fpixSetDiagnosticsSpec(fpix, diagspec);
+		fpixaAddFPix(fpixad, fpix, L_INSERT);
     }
     wpl = fpixGetWpl(fpix);
     datal = fpixaGetData(fpixas, 0);
@@ -2205,12 +2215,16 @@ FPIXA      *fpixa;
     if (!pixs || pixGetDepth(pixs) != 32)
         return (FPIXA *)ERROR_PTR("pixs undefined or not rgb", __func__, NULL);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+
         /* Convert RGB image */
     pixGetDimensions(pixs, &w, &h, NULL);
     fpixa = fpixaCreate(3);
+	fpixaSetDiagnosticsSpec(fpixa, diagspec);
     for (i = 0; i < 3; i++) {
         fpix = fpixCreate(w, h);
-        fpixaAddFPix(fpixa, fpix, L_INSERT);
+		fpixSetDiagnosticsSpec(fpix, diagspec);
+		fpixaAddFPix(fpixa, fpix, L_INSERT);
     }
     wpls = pixGetWpl(pixs);
     wpld = fpixGetWpl(fpix);
@@ -2263,8 +2277,12 @@ FPIX       *fpix;
         /* Convert LAB image */
     if (fpixaGetFPixDimensions(fpixa, 0, &w, &h))
         return (PIX *)ERROR_PTR("fpixa dimensions not found", __func__, NULL);
-    pixd = pixCreate(w, h, 32);
-    wpld = pixGetWpl(pixd);
+
+	LDIAG_CTX diagspec = fpixaGetDiagnosticsSpec(fpixa);
+
+	pixd = pixCreate(w, h, 32);
+	pixSetDiagnosticsSpec(pixd, diagspec);
+	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
     datal = fpixaGetData(fpixa, 0);
     dataa = fpixaGetData(fpixa, 1);

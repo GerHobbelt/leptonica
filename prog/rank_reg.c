@@ -74,15 +74,16 @@ PIXA         *pixa;
 	//lept_mkdir("lept/rank");
 
     pixs = pixRead(DEMOPATH("lucasta.150.jpg"));
-    pixGetDimensions(pixs, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixGetDimensions(pixs, &w, &h, NULL);
 
     startTimer();
     pix1 = pixRankFilterGray(pixs, 15, 15, 0.4);
     t1 = stopTimer();
     lept_stderr("pixRankFilterGray: %7.3f MPix/sec\n", 0.000001 * w * h / t1);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixs, 0, 0, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixs, 0, 0, NULL);
+    pixDisplayWithTitle(pix1, 600, 0, NULL);
     pixDestroy(&pix1);
 
     /* ---------- Compare grayscale morph with rank operator ---------- */
@@ -142,7 +143,8 @@ PIXA         *pixa;
     gplotMakeOutput(gplot);
     gplotDestroy(&gplot);
     pix1 = pixRead("/tmp/lept/rank/plots.png");
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixDisplayWithTitle(pix1, 100, 100, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix0);
     numaDestroy(&nax);
@@ -151,27 +153,30 @@ PIXA         *pixa;
 
         /* Display tiled */
     pix1 = pixaDisplayTiledAndScaled(pixa, 8, 250, 5, 0, 25, 2);
-    pixDisplayWithTitle(pix1, 100, 600, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 100, 600, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
     pixDestroy(&pixs);
 
     /* ------------------     Gray tests    ------------------ */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-    pixa = pixaCreate(4);
-    for (i = 1; i <= 4; i++) {
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixa = pixaCreate(4);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 1; i <= 4; i++) {
         pix1 = pixScaleGrayRank2(pixs, i);
         pixaAddPix(pixa, pix1, L_INSERT);
     }
     pix1 = pixaDisplayTiledInRows(pixa, 8, 1500, 1.0, 0, 20, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 5 */
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 100, 100, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 
     pixs = pixRead(DEMOPATH("test24.jpg"));
-    pix1 = pixConvertRGBToLuminance(pixs);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix1 = pixConvertRGBToLuminance(pixs);
     pix2 = pixScale(pix1, 1.5, 1.5);
     pixa = pixaCreate(5);
     for (i = 1; i <= 4; i++) {
@@ -182,7 +187,7 @@ PIXA         *pixa;
     }
     pix4 = pixaDisplayTiledInRows(pixa, 8, 1500, 0.7, 0, 20, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_JFIF_JPEG);  /* 6 */
-    pixDisplayWithTitle(pix4, 100, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 100, 700, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -191,7 +196,8 @@ PIXA         *pixa;
 
     /* ---------- Compare color morph with rank operator ---------- */
     pixs = pixRead(DEMOPATH("wyom.jpg"));
-    box = boxCreate(400, 220, 300, 250);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	box = boxCreate(400, 220, 300, 250);
     pix0 = pixClipRectangle(pixs, box, NULL);
     boxDestroy(&box);
     pix1 = pixColorMorph(pix0, L_MORPH_DILATE, 11, 11);
@@ -215,7 +221,8 @@ PIXA         *pixa;
     /* Show color results for different rank values */
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixa = pixaCreate(10);
-        pix1 = pixColorMorph(pix0, L_MORPH_ERODE, 13, 13);
+		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+		pix1 = pixColorMorph(pix0, L_MORPH_ERODE, 13, 13);
         pixaAddPix(pixa, pix1, L_INSERT);
         for (i = 0; i <= 10; i++) {
             pix1 = pixRankFilter(pix0, 13, 13, 0.1 * i);
@@ -224,7 +231,7 @@ PIXA         *pixa;
         pix1 = pixColorMorph(pix0, L_MORPH_DILATE, 13, 13);
         pixaAddPix(pixa, pix1, L_INSERT);
         pix1 = pixaDisplayTiledAndScaled(pixa, 32, 400, 3, 0, 25, 2);
-        pixDisplayWithTitle(pix1, 500, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix1, 500, 0, NULL);
         pixaDestroy(&pixa);
         pixDestroy(&pix1);
     }

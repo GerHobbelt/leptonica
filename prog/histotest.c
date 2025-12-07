@@ -69,7 +69,7 @@ PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 PIXA    *pixa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "histo", TRUE, &rp))
+	if (regTestSetup(argc, argv, "histo", &rp))
 		return 1;
 
     if (argc != 3)
@@ -81,7 +81,8 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
-    d = pixGetDepth(pixs);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	d = pixGetDepth(pixs);
     if (d != 8 && d != 32)
         return ERROR_INT("depth not 8 or 32 bpp", __func__, 1);
 
@@ -118,18 +119,21 @@ L_REGPARAMS* rp;
         /* Test behavior of pixThresholdByHisto() */
 #if 0  /* for valgrind, use pnm instead of jpg */
     pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
-    pixWrite("/tmp/lyra.005.pnm", pix1, IFF_PNM);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixWrite("/tmp/lyra.005.pnm", pix1, IFF_PNM);
 #endif
 /*    pix1 = pixRead("/tmp/lyra.005.pnm"); */
     pixs = pixRead(DEMOPATH("lyra.005.jpg"));
-    box1 = boxCreate(0, 173, 350, 580);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	box1 = boxCreate(0, 173, 350, 580);
     pix1 = pixClipRectangle(pixs, box1, 0);
     pix2 = pixRotateOrth(pix1, 1);
     pix3 = pixConvertTo8(pix2, 0);
     pixThresholdByHisto(pix3, 1, 0, 0, &val, &pix4, &na1, &pix5);
     lept_stderr("val = %d\n", val);
     pixa1 = pixaCreate(4);
-    pixaAddPix(pixa1, pix2, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixaAddPix(pixa1, pix2, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix4, L_INSERT);
     pixaAddPix(pixa1, pix5, L_INSERT);

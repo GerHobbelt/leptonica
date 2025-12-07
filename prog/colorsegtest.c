@@ -78,7 +78,7 @@ PIX     *pixs, *pixd, *pixt;
 const char    *filein, *fileout;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "color_seg", TRUE, &rp))
+	if (regTestSetup(argc, argv, "color_seg", &rp))
 		return 1;
 
     if (argc != 3 && argc != 7)

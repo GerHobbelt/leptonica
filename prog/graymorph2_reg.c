@@ -57,10 +57,12 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("test8.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Dilation */
     pixa = pixaCreate(0);
-    pix1 = pixDilateGray3(pixs, 3, 1);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix1 = pixDilateGray3(pixs, 3, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixDilateGray(pixs, 3, 1);
     pixaAddPix(pixa, pix2, L_INSERT);
@@ -79,13 +81,14 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix2);  /* 2 */
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
-    pixDisplayWithTitle(pixd, 0, 100, "Dilation", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 0, 100, "Dilation");
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
         /* Erosion */
     pixa = pixaCreate(0);
-    pix1 = pixErodeGray3(pixs, 3, 1);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix1 = pixErodeGray3(pixs, 3, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixErodeGray(pixs, 3, 1);
     pixaAddPix(pixa, pix2, L_INSERT);
@@ -104,13 +107,14 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix2);  /* 5 */
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
-    pixDisplayWithTitle(pixd, 250, 100, "Erosion", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 250, 100, "Erosion");
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
         /* Opening */
     pixa = pixaCreate(0);
-    pix1 = pixOpenGray3(pixs, 3, 1);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix1 = pixOpenGray3(pixs, 3, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixOpenGray(pixs, 3, 1);
     pixaAddPix(pixa, pix2, L_INSERT);
@@ -129,13 +133,14 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix2);  /* 8 */
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
-    pixDisplayWithTitle(pixd, 500, 100, "Opening", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 500, 100, "Opening");
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
         /* Closing */
     pixa = pixaCreate(0);
-    pix1 = pixCloseGray3(pixs, 3, 1);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix1 = pixCloseGray3(pixs, 3, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixCloseGray(pixs, 3, 1);
     pixaAddPix(pixa, pix2, L_INSERT);
@@ -154,7 +159,7 @@ L_REGPARAMS* rp;
     regTestComparePix(rp, pix1, pix2);  /* 11 */
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
-    pixDisplayWithTitle(pixd, 750, 100, "Closing", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 750, 100, "Closing");
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
     pixDestroy(&pixs);

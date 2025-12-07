@@ -58,13 +58,14 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("test8.jpg"));
-    pixt = pixCopy(NULL, pixs);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixt = pixCopy(NULL, pixs);
 
         /* Copy, in-place and one COLUMN at a time, from the right
            side to the left side. */
     for (j = 0; j < 200; j++)
         pixRasterop(pixs, 20 + j, 20, 1, 250, PIX_SRC, pixs, 250 + j, 20);
-    pixDisplayWithTitle(pixs, 50, 50, "in-place copy", rp->diag_spec);
+    pixDisplayWithTitle(pixs, 50, 50, "in-place copy");
 
         /* Copy, in-place and one ROW at a time, from the right
            side to the left side. */
@@ -79,10 +80,11 @@ L_REGPARAMS* rp;
         /* Show the mirrored border, which uses the general
            pixRasterop() on an image in-place.  */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-    pixt = pixRemoveBorder(pixs, 40);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixt = pixRemoveBorder(pixs, 40);
     pixd = pixAddMirroredBorder(pixt, 40, 40, 40, 40);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixd, 650, 50, "mirrored border", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 650, 50, "mirrored border");
     pixDestroy(&pixs);
     pixDestroy(&pixt);
     pixDestroy(&pixd);

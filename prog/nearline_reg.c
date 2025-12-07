@@ -68,8 +68,9 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 	//lept_mkdir("lept/regout");
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
-    pix1 = pixScaleToGray6(pixs);
-    pixDisplayWithTitle(pix1, 100, 600, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix1 = pixScaleToGray6(pixs);
+    pixDisplayWithTitle(pix1, 100, 600, NULL);
 
         /* Find averages of min and max along about 120 horizontal lines */
     lept_stderr("******************************************************\n");
@@ -93,7 +94,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
          * identical to the first set.  Also generate a single-sided
          * scan (L_SCAN_NEGATIVE) for comparison with the double-sided scans. */
     pix2 = pixRotateOrth(pix1, 3);
-    pixDisplayWithTitle(pix2, 600, 600, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 600, 600, NULL);
     na2 = numaCreate(0);
     na4 = numaCreate(0);
     na5 = numaCreate(0);
@@ -136,7 +137,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 	pix3 = gplotSimplePixN(rp->diag_spec, naa, "/tmp/lept/regout/nearline",
                  "Average minimums along lines");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix3, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 100, 100, NULL);
 
     if (leptIsInDisplayMode(rp->diag_spec)) {
         n = numaGetCount(na3);
@@ -183,7 +184,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 	pix4 = gplotSimplePixN(rp->diag_spec, naa, "/tmp/lept/regout/nearline2",
                  "Min along line");
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pix4, 800, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 800, 100, NULL);
     numaaDestroy(&naa);
     numaDestroy(&na4);
     numaDestroy(&na5);

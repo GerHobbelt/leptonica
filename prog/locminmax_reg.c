@@ -61,7 +61,8 @@ L_REGPARAMS* rp;
 		return 1;
 
     pix1 = pixCreate(500, 500, 8);
-    for (i = 0; i < 500; i++) {
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	for (i = 0; i < 500; i++) {
         for (j = 0; j < 500; j++) {
             f = 128.0 + 26.3 * sin(0.0438 * (l_float32)i);
             f += 33.4 * cos(0.0712 * (l_float32)i);
@@ -71,7 +72,8 @@ L_REGPARAMS* rp;
         }
     }
     pix2 = pixRead(DEMOPATH("karen8.jpg"));
-    pix3 = pixBlockconv(pix2, 10, 10);
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	pix3 = pixBlockconv(pix2, 10, 10);
     DoLocMinmax(rp, pix1, 0, 0);  /* 0 - 2 */
     DoLocMinmax(rp, pix3, 50, 100);  /* 3 - 5 */
     pixDestroy(&pix1);
@@ -91,7 +93,8 @@ PIX      *pix1, *pix2, *pix3, *pixd;
 PIXA     *pixa;
 
     pixa = pixaCreate(0);
-    regTestWritePixAndCheck(rp, pixs, IFF_PNG);  /* 0 */
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pixs, IFF_PNG);  /* 0 */
     pixaAddPix(pixa, pixs, L_COPY);
     pixLocalExtrema(pixs, minmax, maxmin, &pix1, &pix2);
     composeRGBPixel(255, 0, 0, &redval);
@@ -103,7 +106,7 @@ PIXA     *pixa;
     pixaAddPix(pixa, pixd, L_INSERT);
     pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix3, 300, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 300, 0, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

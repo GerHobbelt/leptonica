@@ -94,13 +94,14 @@ PIXA         *pixa;
         pixaSaveFont("fonts", "/tmp/lept/filefonts", sizes[i]);
         pathname = pathJoin("/tmp/lept/filefonts", outputfonts[i]);
         pixa = pixaRead(pathname);
-        if (leptIsInDisplayMode(rp->diag_spec)) {
+		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+		if (leptIsInDisplayMode(rp->diag_spec)) {
             lept_stderr("Found %d chars in font size %d\n",
                         pixaGetCount(pixa), sizes[i]);
         }
         pixd = pixaDisplayTiled(pixa, 1500, 0, 15);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0 - 8 */
-        if (i == 2) pixDisplayWithTitle(pixd, 100, 0, NULL, rp->diag_spec);
+        if (i == 2) pixDisplayWithTitle(pixd, 100, 0, NULL);
         pixDestroy(&pixd);
         pixaDestroy(&pixa);
         lept_free(pathname);
@@ -115,13 +116,14 @@ PIXA         *pixa;
         pixaSaveFont(NULL, "/tmp/lept/strfonts", sizes[i]);
         pathname = pathJoin("/tmp/lept/strfonts", outputfonts[i]);
         pixa = pixaRead(pathname);
-        if (leptIsInDisplayMode(rp->diag_spec)) {
+		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+		if (leptIsInDisplayMode(rp->diag_spec)) {
             lept_stderr("Found %d chars in font size %d\n",
                         pixaGetCount(pixa), sizes[i]);
         }
         pixd = pixaDisplayTiled(pixa, 1500, 0, 15);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 9 - 17 */
-        if (i == 2) pixDisplayWithTitle(pixd, 100, 150, NULL, rp->diag_spec);
+        if (i == 2) pixDisplayWithTitle(pixd, 100, 150, NULL);
         pixDestroy(&pixd);
         pixaDestroy(&pixa);
         lept_free(pathname);
@@ -133,12 +135,13 @@ PIXA         *pixa;
 
     for (i = 0; i < 9; i++) {
         pixa = pixaGetFont("/tmp/lept/strfonts", sizes[i], &bl1, &bl2, &bl3);
-        lept_stderr("Baselines are at: %d, %d, %d\n", bl1, bl2, bl3);
+		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+		lept_stderr("Baselines are at: %d, %d, %d\n", bl1, bl2, bl3);
         snprintf(buf, sizeof(buf), "/tmp/lept/pafonts/chars-%d.pa", sizes[i]);
         pixaWrite(buf, pixa);
         if (i == 2) {
             pixd = pixaDisplayTiled(pixa, 1500, 0, 15);
-            pixDisplayWithTitle(pixd, 100, 300, NULL, rp->diag_spec);
+            pixDisplayWithTitle(pixd, 100, 300, NULL);
             pixDestroy(&pixd);
         }
         pixaDestroy(&pixa);
@@ -162,8 +165,10 @@ PIXA         *pixa;
                  fontsize);
         l_binaryWrite(buf, "w", formstr, formbytes);
         regTestCheckFile(rp, buf);  /* 18-26 */
-        if (i == 8)
-            pix1 = pixReadMem(data1, nbytes);  /* original */
+		if (i == 8) {
+			pix1 = pixReadMem(data1, nbytes);  /* original */
+			pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+		}
         lept_free(data1);
 
         data2 = decodeBase64(datastr, sbytes, &rbytes);
@@ -171,7 +176,8 @@ PIXA         *pixa;
         l_binaryWrite(buf, "w", data2, rbytes);
         if (i == 8) {
             pix2 = pixReadMem(data2, rbytes);  /* encode/decode */
-            regTestComparePix(rp, pix1, pix2);  /* 27 */
+			pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+			regTestComparePix(rp, pix1, pix2);  /* 27 */
             pixDestroy(&pix1);
             pixDestroy(&pix2);
         }

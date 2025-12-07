@@ -209,6 +209,7 @@ FPIX    *fpixd;
     if ((fpixd = fpixCreate(w, h)) == NULL)
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
     fpixCopyResolution(fpixd, fpixs);
+	fpixCloneDiagnosticsSpec(fpixd, fpixs);
     return fpixd;
 }
 

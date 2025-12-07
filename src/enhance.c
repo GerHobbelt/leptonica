@@ -1423,7 +1423,8 @@ FPIX       *fpix;
         pixDestroy(&pixd);
         return (PIX *)ERROR_PTR("fpix not made", __func__, NULL);
     }
-    dataf = fpixGetData(fpix);
+	fpixSetDiagnosticsSpec(fpix, pixGetDiagnosticsSpec(pixs));
+	dataf = fpixGetData(fpix);
     wplf = fpixGetWpl(fpix);
     if (halfwidth == 1) {
         for (i = 0; i < h; i++) {

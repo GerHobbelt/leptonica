@@ -77,12 +77,13 @@ PTA     *pta1;
     pix1 = pixRead(fname);
     pixa1 = pixaCreate(0);
 	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 
 	pixFindCheckerboardCorners(pix1, 15, 3, nsels, &pix2, &pta1, pixa1);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);    /* 0, 3 */
     pix3 = pixaDisplayTiledInColumns(pixa1, 1, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1, 4 */
-    pixDisplayWithTitle(pix3, 100 * (nsels - 2), 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 100 * (nsels - 2), 100, NULL);
     pixGetDimensions(pix1, &w, &h, NULL);
     pix4 = pixGenerateFromPta(pta1, w, h);
 	pixSetDiagnosticsSpec(pix4, rp->diag_spec);

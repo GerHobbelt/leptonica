@@ -75,14 +75,16 @@ L_REGPARAMS* rp;
 
         /* Set up the input data */
     pix1 = pixRead(DEMOPATH("pageseg1.tif"));
-    pixGetDimensions(pix1, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixGetDimensions(pix1, &w, &h, NULL);
     box = boxCreate(0, 0, w, h / 2);
     pix2 = pixClipRectangle(pix1, box, NULL);
     pixWrite("/tmp/lept/class/pix1.tif", pix2, IFF_TIFF_G4);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pix1 = pixRead(DEMOPATH("pageseg4.tif"));
-    pix2 = pixClipRectangle(pix1, box, NULL);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixClipRectangle(pix1, box, NULL);
     pixWrite("/tmp/lept/class/pix2.tif", pix2, IFF_TIFF_G4);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -103,8 +105,9 @@ L_REGPARAMS* rp;
     lept_stderr("Number of classes: %d\n", classer->nclass);
 
     pix1 = pixRead("/tmp/lept/class/corr.templates.png");
-    regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 0 */
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixDestroy(&pix1);
 
         /* Render the pages from the classifier data.
@@ -119,6 +122,7 @@ L_REGPARAMS* rp;
 
         /* Display all instances, organized by template */
     pixa1 = pixaaFlattenToPixa(classer->pixaa, &na, L_CLONE);
+	// TODO: apply diagspec pervasively in pixa?
     pixa2 = PixaOutlineTemplates(pixa1, na);
     pix1 = pixaDisplayTiledInColumns(pixa2, 40, 1.0, 10, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 3 */
@@ -143,8 +147,9 @@ L_REGPARAMS* rp;
     lept_stderr("Number of classes: %d\n", classer->nclass);
 
     pix1 = pixRead("/tmp/lept/class2/haus.templates.png");
-    regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 4 */
-    pixDisplayWithTitle(pix1, 200, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 4 */
+    pixDisplayWithTitle(pix1, 200, 0, NULL);
     pixDestroy(&pix1);
 
         /* Render the pages from the classifier data.
@@ -201,6 +206,7 @@ PIXA    *pixad;
 
         /* Add a boundary of 3 white and 1 black pixels to templates */
     pixad = pixaCreate(n);
+	pixaCloneDiagnosticsSpec(pixad, pixas);
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         numaGetIValue(nai, i, &val);

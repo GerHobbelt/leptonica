@@ -77,8 +77,9 @@ L_REGPARAMS* rp;
 
         /* Test the reconstructed image */
     pix1 = pixReadMem(bina2, nbytes2);
-    regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 1 */
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 1 */
+    pixDisplayWithTitle(pix1, 100, 100, NULL);
     pixDestroy(&pix1);
 
         /* Test with compression, starting with ascii data */
@@ -103,7 +104,8 @@ L_REGPARAMS* rp;
         /* Test storing and retrieving compressed text from pix */
     bina = l_binaryRead(DEMOPATH("weasel32.png"), &nbytes1);
     pix1 = pixRead(DEMOPATH("rabi.png"));
-    pixSetTextCompNew(pix1, bina, nbytes1);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixSetTextCompNew(pix1, bina, nbytes1);
     bina2 = pixGetTextCompNew(pix1, &nbytes2);
     if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("nbytes1 = %zu, nbytes2 = %zu\n", nbytes1, nbytes2);

@@ -74,7 +74,8 @@ L_REGPARAMS* rp;
 
     /* ---------------- Largest rectangles in image ---------------- */
     pixs = pixRead(DEMOPATH("test1.png"));
-    pix1 = pixConvertTo8(pixs, FALSE);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix1 = pixConvertTo8(pixs, FALSE);
     cmap = pixcmapCreateRandom(8, 1, 1);
     pixSetColormap(pix1, cmap);
 
@@ -100,7 +101,7 @@ L_REGPARAMS* rp;
     pix2 = pixAddBorder(pix1, 2, 0x0);
     pix3 = pixAddBorder(pix2, 20, 0xffffff00);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix3, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0, 0, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

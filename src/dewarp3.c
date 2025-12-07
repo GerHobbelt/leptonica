@@ -904,7 +904,8 @@ FPIX      *fpixd;
     if (wd < 3 || hd < 3)
         return (FPIX *)ERROR_PTR("wd < 3 or hd < 3", __func__, NULL);
     fpixd = fpixCreate(wd, hd);
-    for (i = 0; i < hd; i++) {
+	fpixCloneDiagnosticsSpec(fpixd, fpixs);
+	for (i = 0; i < hd; i++) {
         is = sampling * i;
         if (is >= h) continue;
         for (j = 0; j < wd; j++) {
@@ -981,7 +982,8 @@ FPIX       *fpixh;
 
     fw = w + *pxwid;
     fpixh = fpixCreate(fw, h);
-    data = fpixGetData(fpixh);
+	fpixCloneDiagnosticsSpec(fpixh, fpixv);
+	data = fpixGetData(fpixh);
     wpl = fpixGetWpl(fpixh);
     fadiff = numaGetFArray(nadiff, L_NOCOPY);
     for (i = 0; i < h; i++) {

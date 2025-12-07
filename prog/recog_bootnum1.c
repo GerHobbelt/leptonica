@@ -303,7 +303,7 @@ SARRAY   *sa;
 	l_ok debugflag = leptIsDebugModeActive(rp->diag_spec);
 
         /* Phase 1: generate recog from the digit data */
-    recog = recogCreate(0, 40, 0, 128, 1);
+    recog = recogCreate(0, 40, 0, 128, 1, rp->diag_spec);
     sa = getSortedPathnamesInDirectory("recog/bootnums", "png", 0, 0);
     n = sarrayGetCount(sa);
     for (i = 0; i < n; i++) {
@@ -317,7 +317,7 @@ SARRAY   *sa;
             /* Convert to a set of 1 bpp, single character, labelled */
         pixGetDimensions(pix, &w, &h, NULL);
         box = boxCreate(0, 0, w, h);
-        recogTrainLabeled(recog, pix, box, NULL, debugflag);
+        recogTrainLabeled(recog, pix, box, NULL);
         pixDestroy(&pix);
         boxDestroy(&box);
     }

@@ -65,7 +65,7 @@ L_DEWARPA  *dewa;
 PIX        *pixs, *pixn, *pixg, *pixb, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "dewarp", TRUE, &rp))
+	if (regTestSetup(argc, argv, "dewarp", &rp))
 		return 1;
 
     if (argc != 2 && argc != 4)
@@ -82,7 +82,9 @@ L_REGPARAMS* rp;
     }
     if (!pixs)
         return ERROR_INT("image not read", __func__, 1);
-    method = atoi(argv[1]);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+
+	method = atoi(argv[1]);
 
     //lept_mkdir("lept/dewarp");
 
@@ -121,9 +123,10 @@ L_REGPARAMS* rp;
         pixWrite("/tmp/lept/dewarp/pixb.tif", pixb, IFF_TIFF_G4);
         dew1 = dewarpCreate(pixb, pageno);
         dewarpaInsertDewarp(dewa, dew1);
-        dewarpBuildPageModel(dew1, "/tmp/lept/dewarp/test2_model.pdf");
-        dewarpaApplyDisparity(dewa, pageno, pixb, -1, 0, 0, &pixd,
-                              "/tmp/lept/dewarp/test2_apply.pdf");
+		leptDebugSetFilenameBasename(rp->diag_spec, "test2_model.pdf");
+		dewarpBuildPageModel(dew1, rp->diag_spec);
+		leptDebugSetFilenameBasename(rp->diag_spec, "test2_apply.pdf");
+		dewarpaApplyDisparity(dewa, pageno, pixb, -1, 0, 0, &pixd, rp->diag_spec);
 
         dewarpaInfo(stderr, dewa);
         dewarpaDestroy(&dewa);

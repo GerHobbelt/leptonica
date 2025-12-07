@@ -256,7 +256,7 @@ L_REGPARAMS* rp;
     pix4 = pixColorGrayRegions(pix2, boxa, L_PAINT_DARK, 230, 255, 0, 0);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 18 */
     pixaAddPix(pixa, pix4, L_INSERT);
-    pixDisplayWithTitle(pix4, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 0, 0, NULL);
 
         /* Threshold to 10 levels of gray */
     pix3 = pixThresholdOn8bpp(pix2, 10, 1);
@@ -267,7 +267,7 @@ L_REGPARAMS* rp;
     pix4 = pixColorGrayRegions(pix3, boxa, L_PAINT_DARK, 230, 255, 0, 0);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 20 */
     pixaAddPix(pixa, pix4, L_INSERT);
-    pixDisplayWithTitle(pix4, 0, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 0, 100, NULL);
     boxaDestroy(&boxa);
 
         /* Color the entire gray image (not component-wise) */

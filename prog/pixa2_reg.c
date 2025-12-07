@@ -75,14 +75,17 @@ L_REGPARAMS* rp;
 
     /* ---------------- Use replace to fill up a pixa -------------------*/
     pixa = pixaCreate(1);
-    pixaExtendArrayToSize(pixa, n);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaExtendArrayToSize(pixa, n);
     if ((pix0 = pixRead(DEMOPATH("marge.jpg"))) == NULL)
         rp->success = FALSE;
-    pix1 = pixScaleToSize(pix0, 144, 108);  /* scale 0.25 */
+	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
+	pix1 = pixScaleToSize(pix0, 144, 108);  /* scale 0.25 */
     pixDestroy(&pix0);
     pixaInitFull(pixa, pix1, NULL);  /* fill it up */
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
     pixd = pixaDisplayTiledInRows(pixa, 32, 1000, 1.0, 0, 25, 2);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 100, 100, NULL);
     pixWrite("/tmp/lept/regout/pixa2-1.jpg", pixd, IFF_JFIF_JPEG);
     pixDestroy(&pix1);
     pixDestroy(&pixd);
@@ -101,14 +104,15 @@ L_REGPARAMS* rp;
         pixDestroy(&pix0);
     }
     pixd = pixaDisplayTiledInRows(pixa, 32, 1000, 1.0, 0, 25, 2);
-    pixDisplayWithTitle(pixd, 400, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 400, 100, NULL);
     pixWrite("/tmp/lept/regout/pixa2-2.jpg", pixd, IFF_JFIF_JPEG);
     pixDestroy(&pixd);
 
     /* ---------------- And again, reversing the order ------------------*/
     box = boxCreate(0, 0, 0, 0);
     pixaInitFull(pixa, NULL, box);
-    boxDestroy(&box);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	boxDestroy(&box);
     for (i = 0; i < n; i++) {
         name = sarrayGetString(sa3, i, L_NOCOPY);
         if ((pix0 = pixRead(name)) == NULL) {
@@ -117,12 +121,13 @@ L_REGPARAMS* rp;
             rp->success = FALSE;
             continue;
         }
-        pix1 = pixScaleToSize(pix0, 144, 108);
+		pixSetDiagnosticsSpec(pix0, rp->diag_spec);
+		pix1 = pixScaleToSize(pix0, 144, 108);
         pixaReplacePix(pixa, n - 1 - i, pix1, NULL);
         pixDestroy(&pix0);
     }
     pixd = pixaDisplayTiledInRows(pixa, 32, 1000, 1.0, 0, 25, 2);
-    pixDisplayWithTitle(pixd, 700, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 700, 100, NULL);
     pixWrite("/tmp/lept/regout/pixa2-3.jpg", pixd, IFF_JFIF_JPEG);
     pixDestroy(&pixd);
     sarrayDestroy(&sa3);

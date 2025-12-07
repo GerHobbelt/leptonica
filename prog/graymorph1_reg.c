@@ -81,7 +81,9 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("aneurisms8.jpg"));
-    pixa = pixaCreate(0);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     /* =========================================================== */
 
@@ -188,14 +190,15 @@ L_REGPARAMS* rp;
 
     pix1 = pixaDisplayTiledInColumns(pixa, 4, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 22 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
 
     /* =========================================================== */
 
     pixa = pixaCreate(0);
-    /* ---------- Closing plus white tophat result ------------ *
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	/* ---------- Closing plus white tophat result ------------ *
      *            Parameters: wsize, hsize = 9, 29             *
      * ---------------------------------------------------------*/
     pix1 = pixCloseGray(pixs, 9, 9);
@@ -267,7 +270,7 @@ L_REGPARAMS* rp;
 
     pix1 = pixaDisplayTiledInColumns(pixa, 4, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 36 */
-    pixDisplayWithTitle(pix1, 1100, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1100, 0, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
     pixDestroy(&pixs);
@@ -275,10 +278,12 @@ L_REGPARAMS* rp;
     /* =========================================================== */
 
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     /* ----  Tophat result on feynman stamp, to extract diagrams ----- */
     pixs = pixRead(DEMOPATH("feynman-stamp.jpg"));
-    pixGetDimensions(pixs, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixGetDimensions(pixs, &w, &h, NULL);
 
         /* Make output image to hold five intermediate images */
     pix1 = pixCreate(5 * w + 18, h + 6, 32);  /* composite output image */
@@ -332,7 +337,7 @@ L_REGPARAMS* rp;
 
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1700, 1.0, 0, 20, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 42 */
-    pixDisplayWithTitle(pix1, 0, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 800, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
     pixDestroy(&pixs);

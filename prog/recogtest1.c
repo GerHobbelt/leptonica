@@ -87,6 +87,7 @@ L_REGPARAMS* rp;
 
 #if 1
     pixa1 = pixaRead("recog/digits/bootnum1.pa");
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
     recog1 = recogCreateFromPixa(pixa1, scaledw, scaledh, linew, 120, 1);
     pix1 = pixaDisplayTiledWithText(pixa1, 1400, 1.0, 10, 2, 6, 0xff000000);
     pixWrite("/tmp/lept/digits/bootnum1.png", pix1, IFF_PNG);
@@ -102,7 +103,7 @@ L_REGPARAMS* rp;
 
 #if 1
     lept_stderr("AverageSamples\n");
-    recogAverageSamples(recog1, rp->diag_spec);
+    recogAverageSamples(recog1);
     recogShowAverageTemplates(recog1);
     pix1 = pixaGetPix(recog1->pixadb_ave, 0, L_CLONE);
     pixWrite("/tmp/lept/digits/unscaled_ave.png", pix1, IFF_PNG);
@@ -113,7 +114,7 @@ L_REGPARAMS* rp;
 #endif
 
 #if 1
-    recogDebugAverages(recog1, 0);
+    recogDebugAverages(recog1);
     recogShowMatchesInRange(recog1, recog1->pixa_tr, 0.65, 1.0, 0);
     pixWrite("/tmp/lept/digits/match_ave1.png", recog1->pixdb_range, IFF_PNG);
     recogShowMatchesInRange(recog1, recog1->pixa_tr, 0.0, 1.0, 0);
@@ -124,7 +125,7 @@ L_REGPARAMS* rp;
     lept_stderr("Print stats 2\n");
     recogShowContent(stderr, recog1, 2, 1);
     recogWrite("/tmp/lept/digits/rec1.rec", recog1);
-    recog2 = recogRead("/tmp/lept/digits/rec1.rec");
+    recog2 = recogRead("/tmp/lept/digits/rec1.rec", rp->diag_spec);
     recogShowContent(stderr, recog2, 3, 1);
     recogWrite("/tmp/lept/digits/rec2.rec", recog2);
     filesAreIdentical("/tmp/lept/digits/rec1.rec",
@@ -158,7 +159,8 @@ L_REGPARAMS* rp;
         /* Split touching characters */
     lept_stderr("Split touching\n");
     pixd = pixRead(DEMOPATH("recog/digits/page.590.png"));  /* 590 or 306 */
-    recogIdentifyMultiple(recog1, pixd, 0, 0, &boxat, &pixa2, &pixdb, 1);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	recogIdentifyMultiple(recog1, pixd, 0, 0, &boxat, &pixa2, &pixdb, 1);
     pixDisplay(pixdb, 800, 800);
     boxaWriteStderr(boxat);
     pix1 = pixaDisplay(pixa2, 0, 0);
@@ -174,9 +176,10 @@ L_REGPARAMS* rp;
     lept_stderr("Reading new training set and computing averages\n");
     lept_stderr("Print stats 3\n");
     pixa1 = pixaRead("recog/sets/train03.pa");
-    recog2 = recogCreateFromPixa(pixa1, 0, 40, 0, 128, 1);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	recog2 = recogCreateFromPixa(pixa1, 0, 40, 0, 128, 1);
     recogShowContent(stderr, recog2, 3, 1);
-    recogDebugAverages(recog2, rp->diag_spec);
+    recogDebugAverages(recog2);
     pixWrite("/tmp/lept/digits/averages.png", recog2->pixdb_ave, IFF_PNG);
     recogShowAverageTemplates(recog2);
     pixaDestroy(&pixa1);

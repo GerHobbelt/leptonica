@@ -65,7 +65,7 @@ L_REGPARAMS* rp;
 	l_ok debugflag = leptIsDebugModeActive(rp->diag_spec);
 
     pix = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
     pixs = pixScale(pix, 0.5, 0.5);
     pixDestroy(&pix);
 

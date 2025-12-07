@@ -75,12 +75,13 @@ L_REGPARAMS* rp;
 
         /* Generate the recognizer */
     pixa1 = pixaRead("recog/sets/train01.pa");
-    recog = recogCreateFromPixa(pixa1, 0, 0, 0, 128, 1);  /* no scaling */
-    recogAverageSamples(recog, rp->diag_spec);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	recog = recogCreateFromPixa(pixa1, 0, 0, 0, 128, 1);  /* no scaling */
+    recogAverageSamples(recog);
     recogWrite("/tmp/lept/recog/rec1.rec", recog);
 
         /* Show the templates */
-    recogDebugAverages(recog, rp->diag_spec);
+    recogDebugAverages(recog);
     recogShowMatchesInRange(recog, recog->pixa_tr, 0.0, 1.0, 1);
 
         /* Get a set of problem images to decode */

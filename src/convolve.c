@@ -1323,15 +1323,19 @@ FPIX       *fpixv, *fpixrv;  /* variance and square root of variance */
     if (w != ws || h != hs)
         return ERROR_INT("pixm and pixms sizes differ", __func__, 1);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixm, pixms);
+
     if (pfpixv) {
         fpixv = fpixCreate(w, h);
-        *pfpixv = fpixv;
+		fpixSetDiagnosticsSpec(fpixv, diagspec);
+		*pfpixv = fpixv;
         wplv = fpixGetWpl(fpixv);
         datav = fpixGetData(fpixv);
     }
     if (pfpixrv) {
         fpixrv = fpixCreate(w, h);
-        *pfpixrv = fpixrv;
+		fpixSetDiagnosticsSpec(fpixrv, diagspec);
+		*pfpixrv = fpixrv;
         wplrv = fpixGetWpl(fpixrv);
         datarv = fpixGetData(fpixrv);
     }
@@ -2220,6 +2224,8 @@ FPIX       *fpixt, *fpixd;
     else
         keln = kernelCopy(keli);
 
+	LDIAG_CTX diagspec = fpixGetDiagnosticsSpec(fpixs);
+
     fpixGetDimensions(fpixs, &w, &h);
     fpixt = fpixAddMirroredBorder(fpixs, cx, sx - cx, cy, sy - cy);
     if (!fpixt) {
@@ -2230,7 +2236,8 @@ FPIX       *fpixt, *fpixd;
     wd = (w + ConvolveSamplingFactX - 1) / ConvolveSamplingFactX;
     hd = (h + ConvolveSamplingFactY - 1) / ConvolveSamplingFactY;
     fpixd = fpixCreate(wd, hd);
-    datat = fpixGetData(fpixt);
+	fpixSetDiagnosticsSpec(fpixd, diagspec);
+	datat = fpixGetData(fpixt);
     datad = fpixGetData(fpixd);
     wplt = fpixGetWpl(fpixt);
     wpld = fpixGetWpl(fpixd);

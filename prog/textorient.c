@@ -93,7 +93,7 @@ L_REGPARAMS* rp;
 
     pixs = pixRead(filein);
 	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
-	pixd = pixOrientCorrect(pixs, minupconf, minratio, NULL, NULL, NULL, rp->diag_spec);
+	pixd = pixOrientCorrect(pixs, minupconf, minratio, NULL, NULL, NULL);
 
     pixformat = pixChooseOutputFormat(pixd);
     snprintf(buf, BUF_SIZE, "%s.%s", fileout,

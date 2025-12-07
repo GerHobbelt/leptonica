@@ -49,11 +49,12 @@ int main(int    argc,
 {
 l_int32    i, w, h, d, rotflag;
 PIX       *pixs, *pixt, *pixd;
+PIXA      *pixa;
 l_float32  angle, deg2rad, ang;
 const char      *filein, *fileout;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "rotate", TRUE, &rp))
+	if (regTestSetup(argc, argv, "rotate", &rp))
 		return 1;
 
     if (argc != 4)
@@ -68,7 +69,8 @@ L_REGPARAMS* rp;
     deg2rad = 3.1415926535 / 180.;
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);
-    if (pixGetDepth(pixs) == 1) {
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	if (pixGetDepth(pixs) == 1) {
         pixt = pixScaleToGray3(pixs);
         pixDestroy(&pixs);
         pixs = pixAddBorderGeneral(pixt, 1, 0, 1, 0, 255);
@@ -78,20 +80,41 @@ L_REGPARAMS* rp;
     pixGetDimensions(pixs, &w, &h, &d);
     lept_stderr("w = %d, h = %d\n", w, h);
 
-#if 0
+#if 01
         /* repertory of rotation operations to choose from */
+	pixa = pixaCreate(6);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+
     pixd = pixRotateAM(pixs, deg2rad * angle, L_BRING_IN_WHITE);
+	pixSetText(pixd, "pixRotateAM");
+	pixaAddPix(pixa, pixd, L_INSERT);
     pixd = pixRotateAMColor(pixs, deg2rad * angle, 0xffffff00);
-    pixd = pixRotateAMColorFast(pixs, deg2rad * angle, 255);
-    pixd = pixRotateAMCorner(pixs, deg2rad * angle, L_BRING_IN_WHITE);
-    pixd = pixRotateShear(pixs, w /2, h / 2, deg2rad * angle,
+	pixSetText(pixd, "pixRotateAMColor");
+	pixaAddPix(pixa, pixd, L_INSERT);
+	pixd = pixRotateAMColorFast(pixs, deg2rad * angle, 255);
+	pixSetText(pixd, "pixRotateAMColorFast");
+	pixaAddPix(pixa, pixd, L_INSERT);
+	pixd = pixRotateAMCorner(pixs, deg2rad * angle, L_BRING_IN_WHITE);
+	pixSetText(pixd, "pixRotateAMCorner");
+	pixaAddPix(pixa, pixd, L_INSERT);
+	pixd = pixRotateShear(pixs, w /2, h / 2, deg2rad * angle,
                           L_BRING_IN_WHITE);
-    pixd = pixRotate3Shear(pixs, w /2, h / 2, deg2rad * angle,
+	pixSetText(pixd, "pixRotateShear");
+	pixaAddPix(pixa, pixd, L_INSERT);
+	pixd = pixRotate3Shear(pixs, w /2, h / 2, deg2rad * angle,
                            L_BRING_IN_WHITE);
-    pixRotateShearIP(pixs, w / 2, h / 2, deg2rad * angle); pixd = pixs;
+	pixSetText(pixd, "pixRotate3Shear");
+	pixaAddPix(pixa, pixd, L_INSERT);
+	pixd = pixCopy(NULL, pixs);
+	pixRotateShearIP(pixd, w / 2, h / 2, deg2rad * angle, L_BRING_IN_WHITE);
+	pixSetText(pixd, "pixRotateShearIP");
+	pixaAddPix(pixa, pixd, L_INSERT);
+	pixd = pixaDisplayTiledWithText(pixa, w * 1.5, 1.0, 10, 1, 8, 0xff000000);
+	pixDisplay(pixd, 100, 100);
+	pixDestroy(&pixd);
 #endif
 
-#if 0
+#if 01
         /* timing of shear rotation */
     for (i = 0; i < NITERS; i++) {
         pixd = pixRotateShear(pixs, (i * w) / NITERS,
@@ -102,19 +125,15 @@ L_REGPARAMS* rp;
     }
 #endif
 
-#if 0
+#if 01
         /* timing of in-place shear rotation */
-    for (i = 0; i < NITERS; i++) {
-        pixRotateShearIP(pixs, w/2, h/2, deg2rad * angle, L_BRING_IN_WHITE);
+	pixd = pixCopy(NULL, pixs);
+	for (i = 0; i < NITERS; i++) {
+        pixRotateShearIP(pixd, w/2, h/2, deg2rad * angle, L_BRING_IN_WHITE);
 /*        pixRotateShearCenterIP(pixs, deg2rad * angle, L_BRING_IN_WHITE); */
-        pixDisplay(pixs, 100 + 20 * i, 100 + 20 * i);
+        pixDisplay(pixd, 100 + 20 * i, 100 + 20 * i);
     }
-    pixd = pixs;
-    if (pixGetDepth(pixd) == 1)
-        pixWrite(fileout, pixd, IFF_PNG);
-    else
-        pixWrite(fileout, pixd, IFF_JFIF_JPEG);
-    pixDestroy(&pixs);
+    pixDestroy(&pixd);
 #endif
 
 #if 01
@@ -131,30 +150,39 @@ L_REGPARAMS* rp;
     }
     pops = (l_float32)(w * h * NTIMES / 1000000.) / stopTimer();
     lept_stderr("vers. 1, mpops: %f\n", pops);
-    startTimer();
-    w = pixGetWidth(pixs);
-    h = pixGetHeight(pixs);
+
+	pixd = pixCopy(NULL, pixs);
+	startTimer();
+    w = pixGetWidth(pixd);
+    h = pixGetHeight(pixd);
     for (i = 0; i < NTIMES; i++) {
-        pixRotateShearIP(pixs, w/2, h/2, deg2rad * angle, L_BRING_IN_WHITE);
+        pixRotateShearIP(pixd, w/2, h/2, deg2rad * angle, L_BRING_IN_WHITE);
     }
     pops = (l_float32)(w * h * NTIMES / 1000000.) / stopTimer();
     lept_stderr("shear, mpops: %f\n", pops);
-    pixWrite(fileout, pixs, IFF_PNG);
-    for (i = 0; i < NTIMES; i++) {
-        pixRotateShearIP(pixs, w/2, h/2, -deg2rad * angle, L_BRING_IN_WHITE);
+	pixDestroy(&pixd);
+
+	pixd = pixCopy(NULL, pixs);
+	for (i = 0; i < NTIMES; i++) {
+        pixRotateShearIP(pixd, w/2, h/2, -deg2rad * angle, L_BRING_IN_WHITE);
     }
-    pixWrite("/usr/tmp/junkout", pixs, IFF_PNG);
-}
+    pixWrite("/usr/tmp/junkout", pixd, IFF_PNG);
+	pixDestroy(&pixd);
+	}
 #endif
 
-#if 0
+#if 01
         /* area-mapping rotation operations */
-    pixd = pixRotateAM(pixs, deg2rad * angle, L_BRING_IN_WHITE);
-/*    pixd = pixRotateAMColorFast(pixs, deg2rad * angle, 255); */
-    if (pixGetDepth(pixd) == 1)
-        pixWrite(fileout, pixd, IFF_PNG);
+	if (0)
+		pixd = pixRotateAM(pixs, deg2rad * angle, L_BRING_IN_WHITE);
     else
-        pixWrite(fileout, pixd, IFF_JFIF_JPEG);
+		pixd = pixRotateAMColorFast(pixs, deg2rad * angle, 255);
+	// TODO: auto-assign the proper filename extension.
+    if (pixGetDepth(pixd) == 1)
+        pixWrite("/tmp/lept/rotate/areamapped", pixd, IFF_PNG);
+    else
+        pixWrite("/tmp/lept/rotate/areamapped", pixd, IFF_JFIF_JPEG);
+	pixDestroy(&pixd);
 #endif
 
 #if 01

@@ -67,7 +67,8 @@ L_REGPARAMS* rp;
 
     snprintf(buf, sizeof(buf), "cat.%03d.jpg", pageno);
     pixs = pixRead(buf);
-    dewa = dewarpaCreate(40, 30, 1, 15, 10);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	dewa = dewarpaCreate(40, 30, 1, 15, 10);
     dewarpaUseBothArrays(dewa, 1);
 
         /* Normalize for varying background and binarize */
@@ -80,8 +81,8 @@ L_REGPARAMS* rp;
     dew = dewarpCreate(pixb, pageno);
     dewarpaInsertDewarp(dewa, dew);
     if (build_output) {
-        snprintf(buf, sizeof(buf), "/tmp/lept/dewarp5/dewarp_build_%d.pdf", pageno);
-        dewarpBuildPageModel(dew, buf);
+		leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_build_%d.pdf", pageno);
+        dewarpBuildPageModel(dew, rp->diag_spec);
     } else {
         dewarpBuildPageModel(dew, NULL);
     }
@@ -89,8 +90,8 @@ L_REGPARAMS* rp;
         /* Apply the model */
     dewarpPopulateFullRes(dew, pixg, 0, 0);
     if (apply_output) {
-        snprintf(buf, sizeof(buf), "/tmp/lept/dewarp5/dewarp_apply_%d.pdf", pageno);
-        dewarpaApplyDisparity(dewa, pageno, pixb, 200, 0, 0, &pix2, buf);
+		leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_apply_%d.pdf", pageno);
+        dewarpaApplyDisparity(dewa, pageno, pixb, 200, 0, 0, &pix2, rp->diag_spec);
     } else {
         dewarpaApplyDisparity(dewa, pageno, pixb, 200, 0, 0, &pix2, NULL);
     }
@@ -104,9 +105,9 @@ L_REGPARAMS* rp;
 
         /* ... and map to the word boxes for the input image */
     if (map_output) {
-        snprintf(buf, sizeof(buf), "/tmp/lept/dewarp5/dewarp_map1_%d.pdf", pageno);
+		leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_map1_%d.pdf", pageno);
         dewarpaApplyDisparityBoxa(dewa, pageno, pix2, boxa1, 0, 0, 0, &boxa2,
-                                  buf);
+                                  rp->diag_spec);
     } else {
         dewarpaApplyDisparityBoxa(dewa, pageno, pix2, boxa1, 0, 0, 0, &boxa2,
                                   NULL);
@@ -123,9 +124,9 @@ L_REGPARAMS* rp;
 
         /* ... and map to the word boxes for the dewarped image */
     if (map_output) {
-        snprintf(buf, sizeof(buf), "/tmp/lept/dewarp5/dewarp_map2_%d.pdf", pageno);
+		leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_map2_%d.pdf", pageno);
         dewarpaApplyDisparityBoxa(dewa, pageno, pixb, boxa3, 1, 0, 0, &boxa4,
-                                  buf);
+                                  rp->diag_spec);
     } else {
         dewarpaApplyDisparityBoxa(dewa, pageno, pixb, boxa3, 1, 0, 0, &boxa4,
                                   NULL);

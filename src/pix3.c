@@ -402,6 +402,8 @@ PIX       *pixt;
     if (pixGetColormap(pixd) || pixGetColormap(pixs))
         return ERROR_INT("pixs and/or pixd is cmapped", __func__, 1);
 
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(3, pixs, pixd, pixm));
+
         /* For d = 1, use rasterop.  pixt is the part from pixs, under
          * the fg of pixm, that is to be combined with pixd.  We also
          * use pixt to remove all fg of pixd that is under the fg of pixm.
@@ -520,6 +522,8 @@ PIX       *pixt;
         return ERROR_INT("pixd not 1, 8 or 32 bpp", __func__, 1);
     if (pixGetColormap(pixd) || pixGetColormap(pixs))
         return ERROR_INT("pixs and/or pixd is cmapped", __func__, 1);
+
+	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(3, pixs, pixd, pixm));
 
         /* For d = 1, use rasterop.  pixt is the part from pixs, under
          * the fg of pixm, that is to be combined with pixd.  We also
@@ -1553,6 +1557,8 @@ pixOr(PIX  *pixd,
         L_WARNING("pixs1 and pixs2 not equal sizes\n", __func__);
 #endif  /* EQUAL_SIZE_WARNING */
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
+
         /* Prepare pixd to be a copy of pixs1 */
     if ((pixd = pixCopy(pixd, pixs1)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, pixd);
@@ -1560,6 +1566,8 @@ pixOr(PIX  *pixd,
         /* src1 | src2 --> dest */
     pixRasterop(pixd, 0, 0, pixGetWidth(pixd), pixGetHeight(pixd),
                 PIX_SRC | PIX_DST, pixs2, 0, 0);
+
+	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -1615,6 +1623,8 @@ pixAnd(PIX  *pixd,
         L_WARNING("pixs1 and pixs2 not equal sizes\n", __func__);
 #endif  /* EQUAL_SIZE_WARNING */
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
+
         /* Prepare pixd to be a copy of pixs1 */
     if ((pixd = pixCopy(pixd, pixs1)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, pixd);
@@ -1622,6 +1632,8 @@ pixAnd(PIX  *pixd,
         /* src1 & src2 --> dest */
     pixRasterop(pixd, 0, 0, pixGetWidth(pixd), pixGetHeight(pixd),
                 PIX_SRC & PIX_DST, pixs2, 0, 0);
+
+	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -1677,6 +1689,8 @@ pixXor(PIX  *pixd,
         L_WARNING("pixs1 and pixs2 not equal sizes\n", __func__);
 #endif  /* EQUAL_SIZE_WARNING */
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
+
         /* Prepare pixd to be a copy of pixs1 */
     if ((pixd = pixCopy(pixd, pixs1)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, pixd);
@@ -1684,6 +1698,8 @@ pixXor(PIX  *pixd,
         /* src1 ^ src2 --> dest */
     pixRasterop(pixd, 0, 0, pixGetWidth(pixd), pixGetHeight(pixd),
                 PIX_SRC ^ PIX_DST, pixs2, 0, 0);
+
+	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -1740,6 +1756,8 @@ l_int32  w, h;
         L_WARNING("pixs1 and pixs2 not equal sizes\n", __func__);
 #endif  /* EQUAL_SIZE_WARNING */
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
+
     pixGetDimensions(pixs1, &w, &h, NULL);
     if (!pixd) {
         pixd = pixCopy(NULL, pixs1);
@@ -1756,6 +1774,8 @@ l_int32  w, h;
         pixRasterop(pixd, 0, 0, w, h, PIX_DST & PIX_NOT(PIX_SRC),
             pixs2, 0, 0);   /* src1 & (~src2)  */
     }
+
+	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }

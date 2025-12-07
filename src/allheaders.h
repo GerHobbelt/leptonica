@@ -2271,7 +2271,7 @@ LEPT_DLL extern l_ok ioFormatTest ( const char *filename );
 LEPT_DLL extern L_RECOG * recogCreateFromRecog ( L_RECOG *recs, l_int32 scalew, l_int32 scaleh, l_int32 linew, l_int32 threshold, l_int32 maxyshift );
 LEPT_DLL extern L_RECOG * recogCreateFromPixa ( PIXA *pixa, l_int32 scalew, l_int32 scaleh, l_int32 linew, l_int32 threshold, l_int32 maxyshift );
 LEPT_DLL extern L_RECOG * recogCreateFromPixaNoFinish ( PIXA *pixa, l_int32 scalew, l_int32 scaleh, l_int32 linew, l_int32 threshold, l_int32 maxyshift );
-LEPT_DLL extern L_RECOG * recogCreate ( l_int32 scalew, l_int32 scaleh, l_int32 linew, l_int32 threshold, l_int32 maxyshift );
+LEPT_DLL extern L_RECOG * recogCreate ( l_int32 scalew, l_int32 scaleh, l_int32 linew, l_int32 threshold, l_int32 maxyshift, LDIAG_CTX diagspec );
 LEPT_DLL extern void recogDestroy ( L_RECOG **precog );
 LEPT_DLL extern l_int32 recogGetCount ( const L_RECOG *recog );
 LEPT_DLL extern l_ok recogSetParams ( L_RECOG *recog, l_int32 type, l_int32 min_nopad, l_float32 max_wh_ratio, l_float32 max_ht_ratio );
@@ -2279,9 +2279,9 @@ LEPT_DLL extern l_int32 recogGetClassIndex ( L_RECOG *recog, l_int32 val, char *
 LEPT_DLL extern l_ok recogStringToIndex ( L_RECOG *recog, char *text, l_int32 *pindex );
 LEPT_DLL extern l_int32 recogGetClassString ( L_RECOG *recog, l_int32 index, char **pcharstr );
 LEPT_DLL extern l_ok l_convertCharstrToInt ( const char *str, l_int32 *pval );
-LEPT_DLL extern L_RECOG * recogRead ( const char *filename );
-LEPT_DLL extern L_RECOG * recogReadStream ( FILE *fp );
-LEPT_DLL extern L_RECOG * recogReadMem ( const l_uint8 *data, size_t size );
+LEPT_DLL extern L_RECOG * recogRead ( const char *filename, LDIAG_CTX diagspec );
+LEPT_DLL extern L_RECOG * recogReadStream ( FILE *fp, LDIAG_CTX diagspec );
+LEPT_DLL extern L_RECOG * recogReadMem ( const l_uint8 *data, size_t size, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok recogWrite ( const char *filename, L_RECOG *recog );
 LEPT_DLL extern l_ok recogWriteStream ( FILE *fp, L_RECOG *recog );
 LEPT_DLL extern l_ok recogWriteMem ( l_uint8 **pdata, size_t *psize, L_RECOG *recog );
@@ -2306,11 +2306,11 @@ LEPT_DLL extern l_ok rchExtract ( L_RCH *rch, l_int32 *pindex, l_float32 *pscore
 LEPT_DLL extern PIX * recogProcessToIdentify ( L_RECOG *recog, PIX *pixs, l_int32 pad );
 LEPT_DLL extern SARRAY * recogExtractNumbers ( L_RECOG *recog, BOXA *boxas, l_float32 scorethresh, l_int32 spacethresh, BOXAA **pbaa, NUMAA **pnaa );
 LEPT_DLL extern PIXA * showExtractNumbers ( PIX *pixs, SARRAY *sa, BOXAA *baa, NUMAA *naa, PIX **ppixdb );
-LEPT_DLL extern l_ok recogTrainLabeled ( L_RECOG *recog, PIX *pixs, BOX *box, char *text, l_ok debugflag );
+LEPT_DLL extern l_ok recogTrainLabeled ( L_RECOG *recog, PIX *pixs, BOX *box, char *text );
 LEPT_DLL extern l_ok recogProcessLabeled ( L_RECOG *recog, PIX *pixs, BOX *box, char *text, PIX **ppix );
-LEPT_DLL extern l_ok recogAddSample ( L_RECOG *recog, PIX *pix, l_ok debugflag );
+LEPT_DLL extern l_ok recogAddSample ( L_RECOG *recog, PIX *pix );
 LEPT_DLL extern PIX * recogModifyTemplate ( L_RECOG *recog, PIX *pixs );
-LEPT_DLL extern l_ok recogAverageSamples ( L_RECOG *recog, l_ok debugflag );
+LEPT_DLL extern l_ok recogAverageSamples ( L_RECOG *recog );
 LEPT_DLL extern l_ok pixaAccumulateSamples ( PIXA *pixa, PTA *pta, PIX **ppixd, l_float32 *px, l_float32 *py );
 LEPT_DLL extern l_ok recogTrainingFinished ( L_RECOG **precog, l_int32 modifyflag, l_int32 minsize, l_float32 minfract );
 LEPT_DLL extern PIXA * recogFilterPixaBySize ( PIXA *pixas, l_int32 setsize, l_int32 maxkeep, l_float32 max_ht_ratio, NUMA **pna );
@@ -2326,7 +2326,7 @@ LEPT_DLL extern PIXA * recogAddDigitPadTemplates ( L_RECOG *recog, SARRAY *sa );
 LEPT_DLL extern L_RECOG * recogMakeBootDigitRecog ( l_int32 nsamp, l_int32 scaleh, l_int32 linew, l_int32 maxyshift, LDIAG_CTX diagspec );
 LEPT_DLL extern PIXA * recogMakeBootDigitTemplates ( l_int32 nsamp, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok recogShowContent ( FILE *fp, L_RECOG *recog, l_int32 index, l_int32 display );
-LEPT_DLL extern l_ok recogDebugAverages ( L_RECOG *recog, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok recogDebugAverages ( L_RECOG *recog );
 LEPT_DLL extern l_int32 recogShowAverageTemplates ( L_RECOG *recog );
 LEPT_DLL extern l_ok recogShowMatchesInRange ( L_RECOG *recog, PIXA *pixa, l_float32 minscore, l_float32 maxscore, l_int32 display );
 LEPT_DLL extern PIX * recogShowMatch ( L_RECOG *recog, PIX *pix1, PIX *pix2, BOX *box, l_int32 index, l_float32 score );
@@ -2883,6 +2883,9 @@ LEPT_DLL extern const char * leptDebugGetFilePathPart ( LDIAG_CTX spec );
 LEPT_DLL extern void leptDebugSetFilenameForPrefix ( LDIAG_CTX spec, const char * source_filename, l_ok strip_off_extension );
 LEPT_DLL extern const char * leptDebugGetFilenameForPrefix ( LDIAG_CTX spec );
 
+LEPT_DLL extern void leptDebugSetFilenameBasename ( LDIAG_CTX spec, const char * filename_fmt, ... );
+LEPT_DLL extern const char * leptDebugGetFilenameBasename ( LDIAG_CTX spec );
+
 LEPT_DLL extern void leptDebugSetStepId ( LDIAG_CTX spec, uint32_t numeric_id );
 LEPT_DLL extern void leptDebugIncrementStepId ( LDIAG_CTX spec );
 LEPT_DLL extern uint32_t leptDebugGetStepId ( LDIAG_CTX spec );
@@ -2900,6 +2903,9 @@ LEPT_DLL extern uint16_t leptDebugGetStepDepth ( LDIAG_CTX spec );
 LEPT_DLL extern uint16_t leptDebugAddStepLevel ( LDIAG_CTX spec );
 LEPT_DLL extern uint32_t leptDebugPopStepLevel ( LDIAG_CTX spec );
 
+LEPT_DLL extern void leptDebugSetStepDisplayWidth (LDIAG_CTX spec, unsigned int width_per_level );
+LEPT_DLL extern unsigned int leptDebugGetStepDisplayWidth (LDIAG_CTX spec);
+
 LEPT_DLL extern void leptDebugSetHashId ( LDIAG_CTX spec, uint64_t hash_id );
 LEPT_DLL extern uint64_t leptDebugGetHashId ( LDIAG_CTX spec );
 
@@ -2911,12 +2917,14 @@ LEPT_DLL extern const char * leptDebugGetFilepathDefaultFormat ( LDIAG_CTX spec 
 
 LEPT_DLL extern const char * leptDebugGenFilename ( LDIAG_CTX spec, const char * filename_fmt_str, ... );
 LEPT_DLL extern const char * leptDebugGenFilepath ( LDIAG_CTX spec, const char * path_fmt_str , ... );
-LEPT_DLL extern const char * leptDebugGenFilenameEx ( const char * directory, LDIAG_CTX spec, const char * filename_fmt_str, ... );
 LEPT_DLL extern const char * leptDebugGenFilepathEx ( const char * directory, LDIAG_CTX spec, const char * path_fmt_str, ... );
 LEPT_DLL extern const char * leptDebugGetLastGenFilepath ( LDIAG_CTX spec );
 
 LEPT_DLL extern l_ok leptIsInDisplayMode ( LDIAG_CTX spec );
 LEPT_DLL extern void leptSetInDisplayMode ( LDIAG_CTX spec, l_ok activate );
+
+LEPT_DLL extern l_ok leptIsInDRegressionTestMode ( LDIAG_CTX spec );
+LEPT_DLL extern void leptSetInRegressionTestMode ( LDIAG_CTX spec, l_ok activate );
 
 LEPT_DLL extern l_ok leptIsDebugModeActive ( LDIAG_CTX spec );
 LEPT_DLL extern void leptActivateDebugMode ( LDIAG_CTX spec, l_ok activate );

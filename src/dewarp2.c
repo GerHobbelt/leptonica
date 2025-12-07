@@ -262,7 +262,7 @@ PTAA    *ptaa1, *ptaa2;
             pixDisplay(pix1, 1000, 0);
             pixDestroy(&pix1);
         }
-		const char *debugfile = leptDebugGenFilename(diagspec, "%s.%s", "page", "pdf");
+		const char *debugfile = leptDebugGenFilepath(diagspec, "page.pdf");
         convertFilesToPdf("/tmp/lept/dewmod", NULL, 135, 1.0, 0, 0,
                           "Dewarp Build Model", debugfile);
         lept_stderr("pdf file: %s\n", debugfile);
@@ -530,7 +530,8 @@ FPIX       *fpix;
 
         /* Save the result in a fpix at the specified subsampling  */
     fpix = fpixCreate(nx, ny);
-    for (i = 0; i < ny; i++) {
+	fpixSetDiagnosticsSpec(fpix, diagspec);
+	for (i = 0; i < ny; i++) {
         for (j = 0; j < nx; j++) {
             ptaaGetPt(ptaa5, j, i, NULL, &val);
             fpixSetPixel(fpix, j, i, val);
@@ -789,7 +790,8 @@ FPIX      *fpix;
 
         /* Save the result in a fpix at the specified subsampling  */
     fpix = fpixCreate(nx, ny);
-    for (i = 0; i < ny; i++) {
+	fpixSetDiagnosticsSpec(fpix, diagspec);
+	for (i = 0; i < ny; i++) {
         for (j = 0; j < nx; j++) {
             ptaaGetPt(ptaah, i, j, NULL, &val);
             fpixSetPixel(fpix, j, i, val);
@@ -1532,7 +1534,8 @@ FPIX      *fpix;
     if (!pixb || pixGetDepth(pixb) != 1)
         return ERROR_INT("pixb not defined or not 1 bpp", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(dew->diag_specX);
+	LDIAG_CTX diagspec = leptDebugGetDiagnosticsSpecFromAny(2, dew->diag_specX, pixGetDiagnosticsSpec(pixb));
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
 	if (debugflag) {
 		L_INFO("finding slope horizontal disparity\n", __func__);
@@ -1560,7 +1563,6 @@ FPIX      *fpix;
     }
     if (debugflag) {
         //lept_mkdir("lept/dew");
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixb);  // TODO: cleanup this mixup of diagspecs...
 		gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/dew/0091", NULL);
         lept_mv("/tmp/lept/dew/0091.png", "lept/dewmod", NULL, NULL);
         pixWriteDebug("/tmp/lept/dewmod/0090.png", pix1, IFF_PNG);
@@ -1606,7 +1608,6 @@ FPIX      *fpix;
     denom = L_MAX(1.0, (l_float32)(L_MIN(first, last)));
     fract = (l_float32)delta / denom;
     if (debugflag) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixb);
 		L_INFO("Slope-disparity: first = %d, last = %d, fract = %7.3f\n",
                __func__, first, last, fract);
         gplotSimple1(diagspec, na2, GPLOT_PNG, "/tmp/lept/dew/0092", NULL);
@@ -1631,7 +1632,6 @@ FPIX      *fpix;
     numaArithOp(na2, na2, na3, L_ARITH_DIVIDE);
     numaDestroy(&na3);
     if (debugflag) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixb);
 		L_INFO("Average background density: %5.1f\n", __func__, aveval);
         gplotSimple1(diagspec, na2, GPLOT_PNG, "/tmp/lept/dew/0093", NULL);
         lept_mv("/tmp/lept/dew/0093.png", "lept/dewmod", NULL, NULL);
@@ -1644,7 +1644,6 @@ FPIX      *fpix;
     ptaGetQuarticLSF(pta1, &ca, &cb, &cc, &cd, &ce, &na3);
     ptaGetArrays(pta1, &na4, NULL);
     if (debugflag) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixb);
 		gplot = gplotSimpleXY1(diagspec, na4, na3, GPLOT_LINES, GPLOT_PNG,
                               "/tmp/lept/dew/0094", NULL);
         gplotDestroy(&gplot);
@@ -1693,7 +1692,8 @@ FPIX      *fpix;
     nx = dew->nx;
     ny = dew->ny;
     fpix = fpixCreate(nx, ny);
-    del = (l_float32)w / (l_float32)nx;
+	fpixSetDiagnosticsSpec(fpix, diagspec);
+	del = (l_float32)w / (l_float32)nx;
     for (i = 0; i < ny; i++) {
         for (j = 0; j < nx; j++) {
             x = del * j;
@@ -1902,7 +1902,7 @@ PTAA    *ptaa1, *ptaa2;
             pixDisplay(pix1, 1000, 0);
             pixDestroy(&pix1);
         }
-		const char* debugfile = leptDebugGenFilename(diagspec, "%s.%s", "dewline", "pdf");
+		const char* debugfile = leptDebugGenFilepath(diagspec, "dewline.pdf");
 		convertFilesToPdf("/tmp/lept/dewline", NULL, 135, 1.0, 0, 0,
                           "Dewarp Build Line Model", debugfile);
         lept_stderr("pdf file: %s\n", debugfile);

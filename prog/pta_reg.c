@@ -77,7 +77,8 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
-    boxa = pixConnComp(pixs, NULL, 8);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	boxa = pixConnComp(pixs, NULL, 8);
     nbox = boxaGetCount(boxa);
     regTestCompareValues(rp, nbox, 464, 0);  /* 0 */
 
@@ -121,7 +122,8 @@ L_REGPARAMS* rp;
 
         /* Render the fg boundary pixels on top of pixs. */
     pixa = pixaCreate(4);
-    pixc = pixRenderRandomCmapPtaa(pixs, ptaafg, 0, 0, 0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixc = pixRenderRandomCmapPtaa(pixs, ptaafg, 0, 0, 0);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 7 */
     pixaAddPix(pixa, pixc, L_INSERT);
 
@@ -154,7 +156,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixb);
 
     pixd = pixaDisplayTiledInColumns(pixa, 1, 1.0, 30, 2);
-    pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 0, 0, NULL);
     ptaaDestroy(&ptaafg);
     ptaaDestroy(&ptaabg);
     pixDestroy(&pixs);
@@ -166,7 +168,8 @@ L_REGPARAMS* rp;
 
         /* Test rotation */
     pix1 = pixRead(DEMOPATH("feyn-word.tif"));
-    pix2 = pixAddBorderGeneral(pix1, 200, 200, 200, 200, 0);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixAddBorderGeneral(pix1, 200, 200, 200, 200, 0);
     pixa = pixaCreate(0);
     pix3 = PtaDisplayRotate(pix2, 0, 0);
     pixaAddPix(pixa, pix3, L_INSERT);
@@ -178,7 +181,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix3, L_INSERT);
     pix4 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 13 */
-    pixDisplayWithTitle(pix4, 450, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 450, 0, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix4);
@@ -186,7 +189,8 @@ L_REGPARAMS* rp;
 
         /* Test pta sort and pta equality */
     pix1 = pixRead(DEMOPATH("feyn-word.tif"));
-    pixGetDimensions(pix1, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixGetDimensions(pix1, &w, &h, NULL);
     pta1 = ptaGetPixelsFromPix(pix1, NULL);
     ptaGetIPt(pta1, 0, &x, &y);  /* add copy of first point */
     ptaAddPt(pta1, x, y);
@@ -229,8 +233,9 @@ L_REGPARAMS* rp;
                     (convex2 == 0) ? "no" : "yes",
                     (convex3 == 0) ? "no" : "yes");
     pixa = pixaCreate(3);
-    pix1 = pixCreate(100, 100, 1);
-    pixRenderPta(pix1, pta1, L_SET_PIXELS);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix1 = pixCreate(100, 100, 1);
+	pixRenderPta(pix1, pta1, L_SET_PIXELS);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix1 = pixCreate(100, 100, 1);
     pixRenderPta(pix1, pta2, L_SET_PIXELS);
@@ -240,7 +245,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixaDisplayTiledInColumns(pixa, 3, 5.0, 30, 3);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 19 */
-    pixDisplayWithTitle(pix2, 450, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 450, 800, NULL);
     pixDestroy(&pix2);
     pixaDestroy(&pixa);
     ptaDestroy(&pta1);
@@ -273,6 +278,7 @@ PTAA    *ptaa;
         /* Render them */
     pixGetDimensions(pixs, &w, &h, NULL);
     pix1 = pixCreate(w, h, 32);
+	pixCloneDiagnosticsSpec(pix1, pixs);
     pixSetAll(pix1);
     pta3 = generatePtaFilledCircle(4);
     pta4 = ptaTranslate(pta3, xc, yc);

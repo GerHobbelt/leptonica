@@ -80,11 +80,13 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixas = pixaCreate(11);
-    for (i = 0; i < 10; i++) {  /* this preserves any alpha */
+	pixaSetDiagnosticsSpec(pixas, rp->diag_spec);
+	for (i = 0; i < 10; i++) {  /* this preserves any alpha */
 		char filename[256];
 		snprintf(filename, sizeof(filename), "%s%s", DEMOPATH(""), fnames[i]);
 		pix1 = pixRead(filename);
-        pix2 = pixScaleBySamplingToSize(pix1, 250, 150);
+		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+		pix2 = pixScaleBySamplingToSize(pix1, 250, 150);
         pixaAddPix(pixas, pix2, L_INSERT);
         pixDestroy(&pix1);
     }
@@ -93,7 +95,8 @@ L_REGPARAMS* rp;
     pix1 = pixaGetPix(pixas, 8, L_COPY);
     pixGetDimensions(pix1, &w, &h, NULL);
     pix2 = pixCreate(w, h, 1);
-    for (i = 0; i < 5; i++) {
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	for (i = 0; i < 5; i++) {
         y = h * (i + 1) / 6;
         pixRenderLine(pix2, 0, y, w, y, 3, L_SET_PIXELS);
     }
@@ -112,10 +115,11 @@ L_REGPARAMS* rp;
         /* Display with and without removing alpha with white bg */
     pix1 = pixaDisplayTiledInRows(pixas, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixDestroy(&pix1);
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRemoveAlpha(pix1);
         pixaAddPix(pixa, pix2, L_INSERT);
@@ -123,7 +127,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 200, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 200, 0, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -131,7 +135,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
          /* Setting to gray */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pixSetAllGray(pix1, 170);
         pix2 = pixRemoveAlpha(pix1);
@@ -140,7 +145,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 400, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 400, 0, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -148,7 +153,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* General scaling */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixScaleToSize(pix1, 350, 650);
         pix3 = pixScaleToSize(pix2, 200, 200);
@@ -160,7 +166,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix1, 600, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 600, 0, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -168,7 +174,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Scaling by sampling */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixScaleBySamplingToSize(pix1, 350, 650);
         pix3 = pixScaleBySamplingToSize(pix2, 200, 200);
@@ -180,7 +187,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 800, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 800, 0, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -188,7 +195,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by area mapping; no embedding */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_AREA_MAP,
                          L_BRING_IN_WHITE, 0, 0);
@@ -202,7 +210,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix1, 1000, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1000, 0, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -210,7 +218,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by area mapping; with embedding */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_AREA_MAP,
                          L_BRING_IN_WHITE, 250, 150);
@@ -226,7 +235,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix1, 0, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 400, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -234,7 +243,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by 3-shear; no embedding */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_SHEAR,
                          L_BRING_IN_WHITE, 0, 0);
@@ -248,7 +258,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix1, 200, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 200, 400, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -256,7 +266,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by 3-shear; with embedding */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_SHEAR,
                          L_BRING_IN_WHITE, 250, 150);
@@ -272,7 +283,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 8 */
-    pixDisplayWithTitle(pix1, 400, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 400, 400, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -280,7 +291,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by 2-shear about the center */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pixGetDimensions(pix1, &w, &h, NULL);
         pix2 = pixRotate2Shear(pix1, w / 2, h / 2, 0.25, L_BRING_IN_WHITE);
@@ -293,7 +305,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pix1, 600, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 600, 400, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -301,7 +313,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by sampling; no embedding */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_SAMPLING,
                          L_BRING_IN_WHITE, 0, 0);
@@ -315,7 +328,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix1, 800, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 800, 400, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -323,7 +336,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by sampling; with embedding */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_SAMPLING,
                          L_BRING_IN_WHITE, 250, 150);
@@ -339,7 +353,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
-    pixDisplayWithTitle(pix1, 1000, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1000, 400, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -347,7 +361,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by area mapping at corner */
     pixa = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotateAMCorner(pix1, 0.25, L_BRING_IN_WHITE);
         pix3 = pixRotateAMCorner(pix2, -0.35, L_BRING_IN_WHITE);
@@ -359,7 +374,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix1, 0, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 800, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 #endif
@@ -367,7 +382,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Affine transform by interpolation */
     pixa = pixaCreate(n);
-    vc = Generate3PtTransformVector();
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	vc = Generate3PtTransformVector();
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixAffine(pix1, vc, L_BRING_IN_WHITE);
@@ -379,7 +395,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 13 */
-    pixDisplayWithTitle(pix1, 200, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 200, 800, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
     lept_free(vc);
@@ -388,7 +404,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Projective transform by sampling */
     pixa = pixaCreate(n);
-    vc = Generate4PtTransformVector(PROJECTIVE);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	vc = Generate4PtTransformVector(PROJECTIVE);
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixProjectiveSampled(pix1, vc, L_BRING_IN_WHITE);
@@ -399,7 +416,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 14 */
-    pixDisplayWithTitle(pix1, 400, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 400, 800, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
     lept_free(vc);
@@ -408,7 +425,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Projective transform by interpolation */
     pixa = pixaCreate(n);
-    vc = Generate4PtTransformVector(PROJECTIVE);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	vc = Generate4PtTransformVector(PROJECTIVE);
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixProjective(pix1, vc, L_BRING_IN_WHITE);
@@ -419,7 +437,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 15 */
-    pixDisplayWithTitle(pix1, 600, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 600, 800, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
     lept_free(vc);
@@ -428,7 +446,8 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Bilinear transform by interpolation */
     pixa = pixaCreate(n);
-    vc = Generate4PtTransformVector(BILINEAR);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	vc = Generate4PtTransformVector(BILINEAR);
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixBilinear(pix1, vc, L_BRING_IN_WHITE);
@@ -439,7 +458,7 @@ L_REGPARAMS* rp;
     }
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.0, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 16 */
-    pixDisplayWithTitle(pix1, 800, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 800, 800, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
     lept_free(vc);

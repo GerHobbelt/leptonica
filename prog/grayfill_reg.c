@@ -63,28 +63,32 @@ L_REGPARAMS* rp;
 
         /* Mask */
     pixm = pixCreate(200, 200, 8);
-    for (i = 0; i < 200; i++)
+	pixSetDiagnosticsSpec(pixm, rp->diag_spec);
+	for (i = 0; i < 200; i++)
         for (j = 0; j < 200; j++)
             pixSetPixel(pixm, j, i, 20 + L_ABS((100 - i) * (100 - j)) / 50);
     pixmi = pixInvert(NULL, pixm);
 
         /* Seed1 */
     pixs1 = pixCreate(200, 200, 8);
-    for (i = 99; i <= 101; i++)
+	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
+	for (i = 99; i <= 101; i++)
         for (j = 99; j <= 101; j++)
             pixSetPixel(pixs1, j, i, 50 - i/100 - j/100);
     pixs1_8 = pixCopy(NULL, pixs1);
 
         /* Seed2 */
     pixs2 = pixCreate(200, 200, 8);
-    for (i = 99; i <= 101; i++)
+	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
+	for (i = 99; i <= 101; i++)
         for (j = 99; j <= 101; j++)
             pixSetPixel(pixs2, j, i, 205 - i/100 - j/100);
     pixs2_8 = pixCopy(NULL, pixs2);
 
         /* Inverse grayscale fill */
     pixa = pixaCreate(0);
-    pixaAddPix(pixa, pixm, L_COPY);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pixm, L_COPY);
     regTestWritePixAndCheck(rp, pixm, IFF_PNG);  /* 0 */
     pixaAddPix(pixa, pixs1, L_COPY);
     regTestWritePixAndCheck(rp, pixs1, IFF_PNG);  /* 1 */
@@ -102,7 +106,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pixs1, IFF_PNG);  /* 5 */
     pix1 = pixaDisplayTiledInColumns(pixa, 6, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix1, 100, 0, "inverse gray fill", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 100, 0, "inverse gray fill");
     pixDestroy(&pixs1);
     pixDestroy(&pixs1_8);
     pixDestroy(&pixb1);
@@ -111,7 +115,8 @@ L_REGPARAMS* rp;
 
         /* Standard grayscale fill */
     pixa = pixaCreate(0);
-    pixaAddPix(pixa, pixmi, L_COPY);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pixmi, L_COPY);
     regTestWritePixAndCheck(rp, pixmi, IFF_PNG);  /* 7 */
     pixaAddPix(pixa, pixs2, L_COPY);
     regTestWritePixAndCheck(rp, pixs2, IFF_PNG);  /* 8 */
@@ -126,7 +131,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pixb2, L_INSERT);
     pix1 = pixaDisplayTiledInColumns(pixa, 5, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix1, 100, 200, "standard gray fill", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 100, 200, "standard gray fill");
     pixDestroy(&pixs2);
     pixDestroy(&pixs2_8);
     pixDestroy(&pix1);
@@ -134,7 +139,8 @@ L_REGPARAMS* rp;
 
         /* Basin fill from minima as seed */
     pixa = pixaCreate(0);
-    pixaAddPix(pixa, pixm, L_COPY);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pixm, L_COPY);
     regTestWritePixAndCheck(rp, pixm, IFF_PNG);  /* 13 */
     pixLocalExtrema(pixm, 0, 0, &pixmin, NULL);
     pixaAddPix(pixa, pixmin, L_COPY);
@@ -150,7 +156,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pixb3, L_INSERT);
     pix1 = pixaDisplayTiledInColumns(pixa, 5, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18 */
-    pixDisplayWithTitle(pix1, 100, 400, "gray fill form seed", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 100, 400, "gray fill form seed");
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 
@@ -202,8 +208,10 @@ PIX  *pixc11, *pixc12, *pixc21, *pixc22, *pixmi;
     regTestComparePix(rp, pixc21, pixc22);  /* '4' */
 
        /* Display the filling results */
-/*    pixDisplay(pixc11, 220 * (set - 1), 100);
-    pixDisplay(pixc21, 220 * (set - 1), 320); */
+#if 0
+	pixDisplay(pixc11, 220 * (set - 1), 100);
+    pixDisplay(pixc21, 220 * (set - 1), 320);
+#endif
 
     pixDestroy(&pixmi);
     pixDestroy(&pixc11);

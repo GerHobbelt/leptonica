@@ -52,10 +52,6 @@
 #include "monolithic_examples.h"
 
 
-    /* Control the display output */
-#define   DFLAG        0
-
-
 static l_int32 DoPageSegmentation(PIX *pixs, l_int32 which);
 
 
@@ -80,6 +76,7 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
     for (i = 1; i <= 4; i++)
         DoPageSegmentation(pixs, i);
@@ -131,6 +128,7 @@ l_int32   block_flag = 0;
         return ERROR_INT("invalid parameter: not in [1...4]", __func__, 1);
 
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
 
     //lept_mkdir("lept/livre");
 
@@ -255,7 +253,7 @@ l_int32   block_flag = 0;
     pixcmapResetColor(cmap, 0, 130, 130, 130);  /* set interior to gray */
     if (which == 1)
         pixWrite("/tmp/lept/livre/textblock3.300.png", pix1, IFF_PNG);
-    pixDisplayWithTitle(pix1, 480, 360, "textblock mask with outlines", DFLAG);
+    pixDisplayWithTitle(pix1, 480, 360, "textblock mask with outlines");
     ptaaDestroy(&ptaa);
     pixDestroy(&pix1);
 
@@ -265,7 +263,7 @@ l_int32   block_flag = 0;
     pixDestroy(&pix1);
     if (which == 1)
         pixWrite("/tmp/lept/livre/textmask.300.png", pixm3, IFF_PNG);
-    pixDisplayWithTitle(pixm3, 480, 360, "textline mask 4", DFLAG);
+    pixDisplayWithTitle(pixm3, 480, 360, "textline mask 4");
 
         /* Fill halftone mask (as seed) into the original */
     pix1 = pixSeedfillBinary(NULL, pixhm2, pixs, 8);
@@ -273,7 +271,7 @@ l_int32   block_flag = 0;
     pixDestroy(&pix1);
     if (which == 1)
         pixWrite("/tmp/lept/livre/htmask.300.png", pixhm2, IFF_PNG);
-    pixDisplayWithTitle(pixhm2, 520, 390, "halftonemask 2", DFLAG);
+    pixDisplayWithTitle(pixhm2, 520, 390, "halftonemask 2");
 
         /* Find objects that are neither text nor halftones */
     pix1 = pixSubtract(NULL, pixs, pixm3);  /* remove text pixels */
@@ -281,7 +279,7 @@ l_int32   block_flag = 0;
     pixDestroy(&pix1);
     if (which == 1)
         pixWrite("/tmp/lept/livre/other.300.png", pixnon, IFF_PNG);
-    pixDisplayWithTitle(pixnon, 540, 420, "other stuff", DFLAG);
+    pixDisplayWithTitle(pixnon, 540, 420, "other stuff");
 
         /* Write out b.b. for text line mask and halftone mask components */
     boxatm = pixConnComp(pixm3, NULL, 4);

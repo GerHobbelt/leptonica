@@ -81,7 +81,7 @@ PIX        *pix;
 PIXA       *pixa, *pixadb;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "words", TRUE, &rp))
+	if (regTestSetup(argc, argv, "words", &rp))
 		return 1;
 
     if (argc != 6 && argc != 8)

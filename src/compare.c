@@ -3684,8 +3684,10 @@ PIX       *pix3, *pix4;
 	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
 	l_ok debugflag = leptIsDebugModeActive(diagspec) /* || (ppixd != NULL) */;
 
-    if (debugflag > 0)
-        fpix = fpixCreate(2 * maxshift + 1, 2 * maxshift + 1);
+	if (debugflag > 0) {
+		fpix = fpixCreate(2 * maxshift + 1, 2 * maxshift + 1);
+		fpixSetDiagnosticsSpec(fpix, diagspec);
+	}
 
     if (!tab8)
         tab = makePixelSumTab8();

@@ -99,11 +99,13 @@ PTA          *ptas, *ptad;
 
         /* Gaussian kernel */
     pixa = pixaCreate(0);
-    kel = makeGaussianKernel(5, 5, 3.0, 4.0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	kel = makeGaussianKernel(5, 5, 3.0, 4.0);
     kernelGetSum(kel, &sum);
     if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Sum for 2d gaussian kernel = %f\n", sum);
     pix0 = kernelDisplayInPix(kel, 41, 2);
-    regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 0 */
+	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 0 */
     pixaAddPix(pixa, pix0, L_INSERT);
 
         /* Separable gaussian kernel */
@@ -115,10 +117,12 @@ PTA          *ptas, *ptad;
     if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Sum for x * y gaussian kernel = %f\n",
                          sumx * sumy);
     pix0 = kernelDisplayInPix(kelx, 41, 2);
-    regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 1 */
+	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 1 */
     pixaAddPix(pixa, pix0, L_INSERT);
     pix0 = kernelDisplayInPix(kely, 41, 2);
-    regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 2 */
+	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 2 */
     pixaAddPix(pixa, pix0, L_INSERT);
     pix0 = pixaDisplayTiledInColumns(pixa, 4, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 3 */
@@ -127,9 +131,12 @@ PTA          *ptas, *ptad;
 
         /* Use pixRasterop() to generate source image */
     pixa = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("test8.jpg"));
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("test8.jpg"));
     pixs2 = pixRead(DEMOPATH("karen8.jpg"));
-    pixRasterop(pixs, 150, 125, 150, 100, PIX_SRC, pixs2, 75, 100);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
+	pixRasterop(pixs, 150, 125, 150, 100, PIX_SRC, pixs2, 75, 100);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 4 */
 
         /* Convolution directly with pix */
@@ -177,7 +184,8 @@ PTA          *ptas, *ptad;
 
         /* Test arithmetic operations; add in a fraction rotated by 180 */
     pixa = pixaCreate(0);
-    pixs3 = pixRotate180(NULL, pixs);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixs3 = pixRotate180(NULL, pixs);
     regTestWritePixAndCheck(rp, pixs3, IFF_JFIF_JPEG);  /* 10 */
     pixaAddPix(pixa, pixs3, L_INSERT);
     fpixs3 = pixConvertToFPix(pixs3, 3);
@@ -194,14 +202,16 @@ PTA          *ptas, *ptad;
         /* Display results */
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 12 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 100, 100, NULL);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
         /* Test some more convolutions, with sampled output. First on pix */
     pixa = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("1555.007.jpg"));
-    pixg = pixConvertTo8(pixs, 0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("1555.007.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixg = pixConvertTo8(pixs, 0);
     l_setConvolveSampling(5, 5);
     pix1 = pixConvolve(pixg, kel, 8, 1);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 13 */
@@ -234,7 +244,7 @@ PTA          *ptas, *ptad;
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 21 */
-    pixDisplayWithTitle(pixd, 600, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 600, 100, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pixg);
     pixDestroy(&pixd);
@@ -244,7 +254,8 @@ PTA          *ptas, *ptad;
          * First, build a smooth vertical disparity array;
          * then extend and show the contours. */
     pixs = pixRead(DEMOPATH("cat.035.jpg"));
-    pixn = pixBackgroundNormSimple(pixs, NULL, NULL);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixn = pixBackgroundNormSimple(pixs, NULL, NULL);
     pixg = pixConvertRGBToGray(pixn, 0.5, 0.3, 0.2);
     pixb = pixThresholdToBinary(pixg, 130);
     dewa = dewarpaCreate(1, 30, 1, 15, 0);
@@ -266,14 +277,15 @@ PTA          *ptas, *ptad;
     pix3 = fpixRenderContours(fpixs3, 2.0, 0.2);
     pix4 = fpixRenderContours(fpixs4, 2.0, 0.2);
     pix5 = pixRead(DEMOPATH("karen8.jpg"));
-    dpix2 = pixConvertToDPix(pix5, 1);
+	pixSetDiagnosticsSpec(pix5, rp->diag_spec);
+	dpix2 = pixConvertToDPix(pix5, 1);
     pix6 = dpixConvertToPix(dpix2, 8, L_CLIP_TO_ZERO, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 22 */
-    pixDisplayWithTitle(pix1, 0, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 100, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 23 */
-    pixDisplayWithTitle(pix2, 470, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 470, 100, NULL);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 24 */
-    pixDisplayWithTitle(pix3, 1035, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 1035, 100, NULL);
     regTestComparePix(rp, pix3, pix4);  /* 25 */
     regTestComparePix(rp, pix5, pix6);  /* 26 */
     pixDestroy(&pixs);
@@ -295,16 +307,17 @@ PTA          *ptas, *ptad;
         /* Test affine and projective transforms on fpix */
     fpixWrite("/tmp/lept/regout/fpix1.fp", dew->fullvdispar);
     fpix1 = fpixRead("/tmp/lept/regout/fpix1.fp");
-    pix1 = fpixAutoRenderContours(fpix1, 40);
+	fpixSetDiagnosticsSpec(fpix1, rp->diag_spec);
+	pix1 = fpixAutoRenderContours(fpix1, 40);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 27 */
-    pixDisplayWithTitle(pix1, 0, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 500, NULL);
     pixDestroy(&pix1);
 
     MakePtasAffine(1, &ptas, &ptad);
     fpix2 = fpixAffinePta(fpix1, ptad, ptas, 200, 0.0);
     pix2 = fpixAutoRenderContours(fpix2, 40);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 28 */
-    pixDisplayWithTitle(pix2, 400, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 400, 500, NULL);
     fpixDestroy(&fpix2);
     pixDestroy(&pix2);
     ptaDestroy(&ptas);
@@ -314,7 +327,7 @@ PTA          *ptas, *ptad;
     fpix2 = fpixProjectivePta(fpix1, ptad, ptas, 200, 0.0);
     pix3 = fpixAutoRenderContours(fpix2, 40);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 29 */
-    pixDisplayWithTitle(pix3, 400, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 400, 500, NULL);
     fpixDestroy(&fpix1);
     fpixDestroy(&fpix2);
     pixDestroy(&pix3);

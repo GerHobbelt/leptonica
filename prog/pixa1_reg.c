@@ -62,10 +62,12 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
 	//lept_mkdir("lept/pixa");
 
     pixa = pixaCreate(2);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     /* ----------------  Remove small components --------------- */
     boxa = pixConnComp(pixs, NULL, 8);
@@ -168,7 +170,7 @@ L_REGPARAMS* rp;
     gplotDestroy(&gplot);
 
     pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-    pixDisplayWithTitle(pixd, 100, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 100, 0, NULL);
     pixWrite("/tmp/lept/pixa/root.png", pixd, IFF_PNG);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);

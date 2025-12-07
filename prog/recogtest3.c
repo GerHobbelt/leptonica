@@ -147,7 +147,7 @@ L_REGPARAMS* rp;
 
         /* Test recog serialization */
     recogWrite("/tmp/lept/recog/recog2.rec", recog2);
-    recog3 = recogRead("/tmp/lept/recog/recog2.rec");
+    recog3 = recogRead("/tmp/lept/recog/recog2.rec", rp->diag_spec);
     recogWrite("/tmp/lept/recog/recog3.rec", recog3);
     filesAreIdentical("/tmp/lept/recog/recog2.rec",
                       "/tmp/lept/recog/recog3.rec", &same);

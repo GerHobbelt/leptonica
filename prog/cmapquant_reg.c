@@ -65,6 +65,7 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("lucasta-frag.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Convert to 4 bpp with 6 levels and a colormap */
     pix1 = pixThresholdTo4bpp(pixs, 6, 1);
@@ -74,13 +75,13 @@ L_REGPARAMS* rp;
     box = boxCreate(120, 30, 200, 200);
     pixColorGray(pix1, box, L_PAINT_DARK, 220, 0, 0, 255);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
     boxDestroy(&box);
 
         /* Scale up by 1.5; losing the colormap */
     pix2 = pixScale(pix1, 1.5, 1.5);
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 1 */
-    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 0, NULL);
 
         /* Octcube quantize using the same colormap */
     startTimer();
@@ -89,7 +90,7 @@ L_REGPARAMS* rp;
                                    LEVEL, L_EUCLIDEAN_DISTANCE);
     lept_stderr("Time to re-quantize to cmap = %7.3f sec\n", stopTimer());
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix3, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0, 0, NULL);
 
         /* Convert the quantized image to rgb */
     pix4 = pixConvertTo32(pix3);
@@ -97,26 +98,26 @@ L_REGPARAMS* rp;
         /* Re-quantize using median cut */
     pix5 = pixMedianCutQuant(pix4, 0);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix5, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix5, 0, 0, NULL);
 
         /* Re-quantize to few colors using median cut */
     pix6 = pixFewColorsMedianCutQuantMixed(pix4, 30, 30, 100, 0, 0, 0);
     regTestWritePixAndCheck(rp, pix6, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix6, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix6, 0, 0, NULL);
 
         /* Octcube quantize mixed with gray */
     startTimer();
     pix7 = pixOctcubeQuantMixedWithGray(pix2, 4, 5, 5);
     lept_stderr("Time to re-quantize mixed = %7.3f sec\n", stopTimer());
     regTestWritePixAndCheck(rp, pix7, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix7, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix7, 0, 0, NULL);
 
         /* Fixed octcube quantization */
     startTimer();
     pix8 = pixFixedOctcubeQuant256(pix2, 0);
     lept_stderr("Time to re-quantize 256 = %7.3f sec\n", stopTimer());
     regTestWritePixAndCheck(rp, pix8, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix8, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix8, 0, 0, NULL);
 
         /* Remove unused colors */
     startTimer();
@@ -124,7 +125,7 @@ L_REGPARAMS* rp;
     pixRemoveUnusedColors(pix9);
     lept_stderr("Time to remove unused colors = %7.3f sec\n", stopTimer());
     regTestWritePixAndCheck(rp, pix9, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix8, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix8, 0, 0, NULL);
 
          /* Compare before and after colors removed */
     regTestComparePix(rp, pix8, pix9);  /* 8 */

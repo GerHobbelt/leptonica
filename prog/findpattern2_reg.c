@@ -75,6 +75,8 @@ L_REGPARAMS* rp;
 
     pixs = pixRead("asterisk.png");
     pixt = pixRead("one-asterisk.png");
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixt, rp->diag_spec);
 
     /********************************************************************
      *  Generate hit-miss SELs that work effectively to identify        *
@@ -90,7 +92,8 @@ L_REGPARAMS* rp;
           * for both hits and misses, hitskip and missskip can be
           * anything from 0 to 6. */
     pixa1 = pixaCreate(7);
-    for (i = 0; i <= 6; i++) {
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	for (i = 0; i <= 6; i++) {
         sel_ast = pixGenerateSelBoundary(pixt, 2, 2, i, i, 1, 0, 1, 1, &pix1);
         pixsel = pixDisplayHitMissSel(pix1, sel_ast, 7, HitColor, MissColor);
         pixaAddPix(pixa1, pixsel, L_INSERT);
@@ -98,7 +101,7 @@ L_REGPARAMS* rp;
     }
     pix2 = pixaDisplayTiledInColumns(pixa1, 7, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix2, 0, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 700, NULL);
     pixaDestroy(&pixa1);
     pixDestroy(&pix2);
 
@@ -106,7 +109,8 @@ L_REGPARAMS* rp;
           * min runlength, the number of horizontal and vertical lines
           * can be chosen between 9 and 16. */
     pixa1 = pixaCreate(7);
-    for (i = 9; i <= 16; i++) {
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	for (i = 9; i <= 16; i++) {
         sel_ast = pixGenerateSelWithRuns(pixt, i, i, 1, 3, 0, 0, 0, 0, &pix1);
         pixsel = pixDisplayHitMissSel(pix1, sel_ast, 7, HitColor, MissColor);
         pixaAddPix(pixa1, pixsel, L_INSERT);
@@ -114,7 +118,7 @@ L_REGPARAMS* rp;
     }
     pix2 = pixaDisplayTiledInColumns(pixa1, 8, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix2, 0, 850, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 850, NULL);
     pixaDestroy(&pixa1);
     pixDestroy(&pix2);
 
@@ -124,7 +128,7 @@ L_REGPARAMS* rp;
     sel_ast = pixGenerateSelRandom(pixt, 0.15, 0.10, 1, 3, 0, 3, 3, &pix1);
     pixsel = pixDisplayHitMissSel(pix1, sel_ast, 7, HitColor, MissColor);
     regTestWritePixAndCheck(rp, pixsel, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pixsel, 0, 950, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixsel, 0, 950, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pixsel);
     selDestroy(&sel_ast);
@@ -185,10 +189,10 @@ L_REGPARAMS* rp;
     pix3 = pixDilate(NULL, pix2, sel2);
     pixDilateBrick(pix3, pix3, 4, 4);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pix3, 850, 450, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 850, 450, NULL);
     pix4 = pixSubtract(NULL, pixs, pix3);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pix4, 1150, 850, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 1150, 850, NULL);
     selDestroy(&sel1);
     selDestroy(&sel2);
     pixDestroy(&pix1);

@@ -161,10 +161,8 @@
 #include <math.h>
 #include "allheaders.h"
 
-static l_int32 recogPrepareForDecoding(L_RECOG *recog, PIX *pixs,
-                                       l_int32 debug);
-static l_int32 recogMakeDecodingArray(L_RECOG *recog, l_int32 index,
-                                      l_int32 debug);
+static l_int32 recogPrepareForDecoding(L_RECOG *recog, PIX *pixs);
+static l_int32 recogMakeDecodingArray(L_RECOG *recog, l_int32 index);
 static l_int32 recogRunViterbi(L_RECOG *recog, PIX **ppixdb);
 static l_int32 recogRescoreDidResult(L_RECOG *recog, PIX **ppixdb);
 static PIX *recogShowPath(L_RECOG *recog, l_int32 select);
@@ -236,7 +234,7 @@ PIXA    *pixa;
         return (BOXA *)ERROR_PTR("nlevels != 2 (for now)", __func__, NULL);
 
     debug = (ppixdb) ? 1 : 0;
-    if (recogPrepareForDecoding(recog, pixs, debug))
+    if (recogPrepareForDecoding(recog, pixs))
         return (BOXA *)ERROR_PTR("error making arrays", __func__, NULL);
     recogSetChannelParams(recog, nlevels);
 
@@ -252,6 +250,7 @@ PIXA    *pixa;
     if (recogRunViterbi(recog, &pix1))
         return (BOXA *)ERROR_PTR("error in viterbi", __func__, NULL);
     pixa = pixaCreate(2);
+	pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
     pixaAddPix(pixa, pix1, L_INSERT);
     if (recogRescoreDidResult(recog, &pix1)) {
         pixaDestroy(&pixa);
@@ -291,8 +290,7 @@ PIXA    *pixa;
  */
 static l_int32
 recogPrepareForDecoding(L_RECOG  *recog,
-                        PIX      *pixs,
-                        l_int32   debug)
+                        PIX      *pixs)
 {
 l_int32  i;
 l_ok     ret;
@@ -307,7 +305,7 @@ L_RDID  *did;
         return ERROR_INT("training not finished", __func__, 1);
 
     if (!recog->ave_done) {
-        ret = recogAverageSamples(recog, 0);
+        ret = recogAverageSamples(recog);
         if (!ret)
             return ERROR_INT("averaging of samples failed", __func__, 1);
     }
@@ -330,7 +328,7 @@ L_RDID  *did;
 
         /* Generate the arrays */
     for (i = 0; i < recog->did->narray; i++)
-        recogMakeDecodingArray(recog, i, debug);
+        recogMakeDecodingArray(recog, i);
 
     pixDestroy(&pix1);
     return 0;
@@ -354,8 +352,7 @@ L_RDID  *did;
  */
 static l_int32
 recogMakeDecodingArray(L_RECOG  *recog,
-                       l_int32   index,
-                       l_int32   debug)
+                       l_int32   index)
 {
 l_int32   i, j, w1, h1, w2, h2, nx, ycent2, count, maxcount, maxdely;
 l_int32   sum, moment, dely, shifty;

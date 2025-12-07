@@ -84,19 +84,20 @@ BOXAA        *baa;
 
         /* Test quadtree stats generation */
     pixs = pixRead(DEMOPATH("rabi.png"));
-    pixg = pixScaleToGray4(pixs);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixg = pixScaleToGray4(pixs);
     pixDestroy(&pixs);
     pixQuadtreeMean(pixg, 8, NULL, &fpixam);
     pix1 = fpixaDisplayQuadtree(fpixam, 2, 10);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 100, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 100, 0, NULL);
     pixQuadtreeVariance(pixg, 8, NULL, NULL, &fpixav, &fpixarv);
     pix2 = fpixaDisplayQuadtree(fpixav, 2, 10);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix2, 100, 200, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 100, 200, NULL);
     pix3 = fpixaDisplayQuadtree(fpixarv, 2, 10);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix3, 100, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 100, 400, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -108,13 +109,13 @@ BOXAA        *baa;
     pix4 = pixGetAverageTiled(pixg, 5, 6, L_MEAN_ABSVAL);
     pix5 = pixExpandReplicate(pix4, 4);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix5, 800, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix5, 800, 0, NULL);
     pixDestroy(&pix4);
     pixDestroy(&pix5);
     pix4 = pixGetAverageTiled(pixg, 5, 6, L_STANDARD_DEVIATION);
     pix5 = pixExpandReplicate(pix4, 4);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix5, 800, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix5, 800, 400, NULL);
     pixDestroy(&pix4);
     pixDestroy(&pix5);
     pixDestroy(&pixg);

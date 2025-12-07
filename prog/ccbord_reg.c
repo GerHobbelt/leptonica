@@ -76,7 +76,9 @@ PIX      *pixs, *pixd, *pixd2, *pixd3;
 PIX      *pixt, *pixc, *pixc2;
 
     pixs = pixRead(fname);
-    disp = leptIsInDisplayMode(rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+
+	disp = leptIsInDisplayMode(rp->diag_spec);
 
     /*------------------------------------------------------------------*
      *        Get border representation and verify border pixels        *
@@ -89,8 +91,9 @@ PIX      *pixt, *pixc, *pixc2;
     ccbaGenerateGlobalLocs(ccba);
     if (disp) lept_stderr("display border representation...");
     pixd = ccbaDisplayBorder(ccba);
-    regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0,7 */
-    pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0,7 */
+    pixDisplayWithTitle(pixd, 0, 0, NULL);
     pixDestroy(&pixd);
 
         /* Get step chain code, then global coords, and display borders */
@@ -100,8 +103,9 @@ PIX      *pixt, *pixc, *pixc2;
     ccbaStepChainsToPixCoords(ccba, CCB_GLOBAL_COORDS);
     if (disp) lept_stderr("display border representation\n");
     pixd = ccbaDisplayBorder(ccba);
-    regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1,8 */
-    pixDisplayWithTitle(pixd, 200, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1,8 */
+    pixDisplayWithTitle(pixd, 200, 0, NULL);
 
         /* Check if border pixels are in original set */
     lept_stderr("Check if border pixels are in original set\n");
@@ -116,8 +120,9 @@ PIX      *pixt, *pixc, *pixc2;
         /* Display image */
     lept_stderr("Reconstruct image\n");
     pixc = ccbaDisplayImage2(ccba);
-    regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 2,9 */
-    pixDisplayWithTitle(pixc, 400, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixc, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 2,9 */
+    pixDisplayWithTitle(pixc, 400, 0, NULL);
 
         /* Check with original to see if correct */
     pixXor(pixc, pixc, pixs);
@@ -155,8 +160,9 @@ PIX      *pixt, *pixc, *pixc2;
     ccbaStepChainsToPixCoords(ccba2, CCB_GLOBAL_COORDS);
     if (disp) lept_stderr("display border representation\n");
     pixd2 = ccbaDisplayBorder(ccba2);
-    regTestWritePixAndCheck(rp, pixd2, IFF_PNG);  /* 3,10 */
-    pixDisplayWithTitle(pixd2, 600, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixd2, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pixd2, IFF_PNG);  /* 3,10 */
+    pixDisplayWithTitle(pixd2, 600, 0, NULL);
 
         /* Check if border pixels are same as first time */
     lept_stderr("Check border after write/read\n");
@@ -173,8 +179,9 @@ PIX      *pixt, *pixc, *pixc2;
     ccbaStepChainsToPixCoords(ccba2, CCB_LOCAL_COORDS);
     lept_stderr("Reconstruct image from file\n");
     pixc2 = ccbaDisplayImage2(ccba2);
-    regTestWritePixAndCheck(rp, pixc2, IFF_PNG);  /* 4,11 */
-    pixDisplayWithTitle(pixc2, 800, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixc2, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pixc2, IFF_PNG);  /* 4,11 */
+    pixDisplayWithTitle(pixc2, 800, 0, NULL);
 
         /* Check with original to see if correct */
     pixXor(pixc2, pixc2, pixs);
@@ -213,8 +220,9 @@ PIX      *pixt, *pixc, *pixc2;
         /* Display border pixels from single path */
     if (disp) lept_stderr("display border from single path\n");
     pixd3 = ccbaDisplaySPBorder(ccba);
-    regTestWritePixAndCheck(rp, pixd3, IFF_PNG);  /* 5,12 */
-    pixDisplayWithTitle(pixd3, 1000, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixd3, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pixd3, IFF_PNG);  /* 5,12 */
+    pixDisplayWithTitle(pixd3, 1000, 0, NULL);
 
         /* Check if border pixels are in original set */
     lept_stderr("Check if border pixels are in original set\n");

@@ -173,6 +173,7 @@ struct L_Recog {
     struct L_Rdid *did;          /*!< temp data used for image decoding      */
     struct L_Rch  *rch;          /*!< temp data used for holding best char   */
     struct L_Rcha *rcha;         /*!< temp data used for array of best chars */
+	LDIAG_CTX      diag_specX;   /*!< set if debug output requested          */
 };
 typedef struct L_Recog L_RECOG;
 

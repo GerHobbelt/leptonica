@@ -99,14 +99,18 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/regout");
 
     pixs = pixRead(DEMOPATH("tickets.tif"));
-    flag = leptIsInDisplayMode(rp->diag_spec);
-    boxa = LocateBarcodes(pixs, &pixd, flag);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+
+	flag = leptIsInDisplayMode(rp->diag_spec);
+
+	boxa = LocateBarcodes(pixs, &pixd, flag);
     regTestWritePixAndCheck(rp, pixd, IFF_TIFF_G4);  /* 0 */
     if (leptIsInDisplayMode(rp->diag_spec)) boxaWriteStderr(boxa);
     n = boxaGetCount(boxa);
     deg2rad = 3.14159265 / 180.;
     pixa = pixaCreate(9);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < n; i++) {
         box1 = boxaGetBox(boxa, i, L_CLONE);
             /* Use a larger adjustment to get entire skewed ticket */
         box2 = boxAdjustSides(NULL, box1, -266, 346, -1560, 182);
@@ -144,7 +148,7 @@ L_REGPARAMS* rp;
         /* Downscale by 2x and locate corners */
     pix1 = pixScale(pixd, 0.5, 0.5);
     regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 10 */
-    pixDisplayWithTitle(pix1, 100, 200, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 100, 200, NULL);
         /* Find corners and blit a cross onto each (4 to each barcode) */
     sela = GetCornerSela(rp);
     pix2 = pixUnionOfMorphOps(pix1, sela, L_MORPH_HMT);
@@ -152,7 +156,7 @@ L_REGPARAMS* rp;
     pix3 = pixDilate(NULL, pix2, sel);
     pixXor(pix3, pix3, pix1);
     regTestWritePixAndCheck(rp, pix3, IFF_TIFF_G4);  /* 11 */
-    pixDisplayWithTitle(pix3, 800, 200, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 800, 200, NULL);
 
     boxaDestroy(&boxa);
     pixDestroy(&pixs);

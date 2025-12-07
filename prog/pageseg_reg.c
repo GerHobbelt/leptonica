@@ -89,8 +89,10 @@ SARRAY       *sa;
 #if 1
         /* Test the generic page segmentation */
     pixs = pixRead(DEMOPATH("pageseg1.tif"));
-    pixadb = pixaCreate(0);
-    pixGetRegionsBinary(pixs, &pixhm, &pixtm, &pixtb, pixadb);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixadb = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pixGetRegionsBinary(pixs, &pixhm, &pixtm, &pixtb, pixadb);
     pixDestroy(&pixhm);
     pixDestroy(&pixtm);
     pixDestroy(&pixtb);
@@ -124,10 +126,11 @@ SARRAY       *sa;
     boxaInitFull(boxa, box);  /* Init to invalid boxes */
     boxDestroy(&box);
     pixac = pixacompCreate(n);
-    for (i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
         pix1 = pixRead(fname);
-        box = pixFindPageForeground(pix1, 170, 70, 30, 0, pixac);
+		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+		box = pixFindPageForeground(pix1, 170, 70, 30, 0, pixac);
         if (!box) {
             pixDestroy(&pix1);
             continue;
@@ -151,7 +154,7 @@ SARRAY       *sa;
     pix1 = pixScale(pixs, 0.5, 0.5);
     pixFindLargeRectangles(pix1, 0, 20, &boxa, &pixdb);
     regTestWritePixAndCheck(rp, pixdb, IFF_PNG);  /* 22 */
-    pixDisplayWithTitle(pixdb, 0, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixdb, 0, 700, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pixdb);
@@ -159,49 +162,57 @@ SARRAY       *sa;
 
         /* Test the table finder */
     pix1 = pixRead(DEMOPATH("table.15.tif"));
-    pixadb = pixaCreate(0);
-    pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixadb = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
     regTestCompareValues(rp, 1.0, istable, 0.0);  /* 23 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 2000, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 24 */
-    pixDisplayWithTitle(pix2, 620, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 620, 700, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
 
     pix1 = pixRead(DEMOPATH("table.27.tif"));
-    pixadb = pixaCreate(0);
-    pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixadb = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
     regTestCompareValues(rp, 1.0, istable, 0.0);  /* 25 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 2000, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 26 */
-    pixDisplayWithTitle(pix2, 1000, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1000, 700, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
 
     pix1 = pixRead(DEMOPATH("table.150.png"));
-    pixadb = pixaCreate(0);
-    pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixadb = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
     regTestCompareValues(rp, 1.0, istable, 0.0);  /* 27 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 2000, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 28 */
-    pixDisplayWithTitle(pix2, 1300, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1300, 700, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
 
     pix1 = pixRead(DEMOPATH("toc.99.tif"));  /* not a table */
-    pixadb = pixaCreate(0);
-    pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixadb = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
     regTestCompareValues(rp, 0.0, istable, 0.0);  /* 29 */
     pix2 = pixaDisplayTiledInRows(pixadb, 32, 2000, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 30 */
-    pixDisplayWithTitle(pix2, 1600, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1600, 700, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixaDestroy(&pixadb);
@@ -209,9 +220,11 @@ SARRAY       *sa;
 
         /* Tests of auto-inversion of text */
     pix1 = pixRead(DEMOPATH("zanotti-78.jpg"));
-    pix2 = pixConvertRGBToLuminance(pix1);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixConvertRGBToLuminance(pix1);
     pixadb = pixaCreate(0);
-    pixaAddPix(pixadb, pix2, L_COPY);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pixaAddPix(pixadb, pix2, L_COPY);
     pixGetDimensions(pix2, &w, &h, NULL);
     pixRasterop(pix2, 0.2 * w, 0.08 * h, 0.4 * w, 0.23 * h, PIX_NOT(PIX_DST),
                 NULL, 0, 0);
@@ -222,7 +235,7 @@ SARRAY       *sa;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 31 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 32 */
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 33 */
-    pixDisplayWithTitle(pix5, 1750, 200, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix5, 1750, 200, NULL);
     pixaDestroy(&pixadb);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -231,14 +244,16 @@ SARRAY       *sa;
     pixDestroy(&pix5);
 
     pix1 = pixRead(DEMOPATH("invertedtext.tif"));
-    pixadb = pixaCreate(0);
-    pixaAddPix(pixadb, pix1, L_COPY);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixadb = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pixaAddPix(pixadb, pix1, L_COPY);
     pix2 = pixAutoPhotoinvert(pix1, 128, &pix3, pixadb);
     pix4 = pixaDisplayTiledInColumns(pixadb, 5, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 34 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 35 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 36 */
-    pixDisplayWithTitle(pix4, 1750, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 1750, 0, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);

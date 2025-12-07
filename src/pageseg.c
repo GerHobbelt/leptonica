@@ -1300,6 +1300,8 @@ PIXA   *pixa1, *pixadb;
     if (!pixs || pixGetDepth(pixs) != 1)
         return ERROR_INT("pixs not defined or not 1 bpp", __func__, 1);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+
         /* Remove the small stuff */
     pix1 = pixSelectBySize(pixs, minw, minh, 8, L_SELECT_IF_BOTH,
                            L_SELECT_IF_GT, NULL);
@@ -1316,8 +1318,12 @@ PIXA   *pixa1, *pixadb;
         /* Split the components if obvious */
     ncomp = pixaGetCount(pixa1);
     boxa2 = boxaCreate(ncomp);
-    pixadb = (ppixdebug) ? pixaCreate(ncomp) : NULL;
-    for (i = 0; i < ncomp; i++) {
+    pixadb = NULL;
+	if (ppixdebug) {
+		pixadb = pixaCreate(ncomp);
+		pixaSetDiagnosticsSpec(pixadb, diagspec);
+	}
+	for (i = 0; i < ncomp; i++) {
         pix = pixaGetPix(pixa1, i, L_CLONE);
         if (ppixdebug) {
             boxat1 = pixSplitComponentWithProfile(pix, 10, 7, &pixdb);
@@ -1396,6 +1402,9 @@ PIX      *pix1, *pixdb;
     if (ppixdebug) *ppixdebug = NULL;
     if (!pixs || pixGetDepth(pixs) != 1)
         return (BOXA *)ERROR_PTR("pixa undefined or not 1 bpp", __func__, NULL);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+
     pixGetDimensions(pixs, &w, &h, NULL);
 
         /* Closing to consolidate characters vertically */
@@ -1420,7 +1429,9 @@ PIX      *pix1, *pixdb;
          * side.  firstmin is the index of first possible minimum. */
     array1 = numaGetIArray(na1);
     array2 = numaGetIArray(na2);
-    if (ppixdebug) numaWriteStderr(na2);
+	if (ppixdebug) {
+		numaWriteStderr(na2);
+	}
     firstmin = (array1[array2[0]] > array1[array2[1]]) ? 1 : 2;
     nasplit = numaCreate(n2);  /* will hold split locations */
     for (i = firstmin; i < n2 - 1; i+= 2) {
@@ -1439,12 +1450,10 @@ PIX      *pix1, *pixdb;
     }
     nsplit = numaGetCount(nasplit);
 
-#if 0
-    if (ppixdebug && nsplit > 0) {
+    if (ppixdebug && nsplit > 0 && leptIsDebugModeActive(diagspec)) {
         //lept_mkdir("lept/split");
-        gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/split/split", NULL);
+        gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/split/split", NULL);
     }
-#endif
 
     numaDestroy(&na1);
     numaDestroy(&na2);
@@ -1551,6 +1560,8 @@ PIXA    *pixa1, *pixa2, *pixa3;
 
     if (!pixs)
         return (PIXA *)ERROR_PTR("pixs not defined", __func__, NULL);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 
         /* Binarize carefully, if necessary */
     if (pixGetDepth(pixs) > 1) {

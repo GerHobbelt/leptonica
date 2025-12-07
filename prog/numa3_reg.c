@@ -78,7 +78,8 @@ PIXA         *pixa;
      * -------------------------------------------------------------------*/
         /* Rank extraction with interpolation */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-    nasy= pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	nasy = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     numaMakeRankFromHistogram(0.0, 1.0, nasy, 350, &nax, &nay);
     pix1 = gplotGeneralPix2(rp->diag_spec, nax, nay, GPLOT_LINES, "/tmp/lept/numa3/rank1",
                             "test rank extractor", "pix val", "rank val");
@@ -89,7 +90,8 @@ PIXA         *pixa;
 
         /* Rank extraction, point by point */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-    nap = numaCreate(200);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	nap = numaCreate(200);
     pixGetRankValueMasked(pixs, NULL, 0, 0, 2, 0.0, &val, &na);
     for (i = 0; i < 101; i++) {
       rank = 0.01 * i;
@@ -99,13 +101,14 @@ PIXA         *pixa;
     pix2 = gplotGeneralPix1(rp->diag_spec, nap, GPLOT_LINES, "/tmp/lept/numa3/rank2",
                             "rank value", NULL, NULL);
     pixa = pixaCreate(2);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 900, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 900, 0, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);
@@ -132,7 +135,8 @@ PIXA         *pixa;
     pix5 = gplotGeneralPix1(rp->diag_spec, na4, GPLOT_LINES, "/tmp/lept/numa3/lyra5",
                             "Closing", NULL, NULL);
     pixa = pixaCreate(2);
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaAddPix(pixa, pix3, L_INSERT);
     pixaAddPix(pixa, pix4, L_INSERT);
@@ -144,7 +148,7 @@ PIXA         *pixa;
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 6 */
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 1200, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 1200, 0, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa);
@@ -161,7 +165,8 @@ PIXA         *pixa;
     na1 = numaRead(DEMOPATH("two-peak-histo.na"));
     na4 = numaCreate(0);
     pixa = pixaCreate(0);
-    for (hw = 2; hw < 21; hw += 2) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (hw = 2; hw < 21; hw += 2) {
         na2 = numaWindowedMean(na1, hw);  /* smoothing */
         numaGetMax(na2, &maxval, NULL);
         na3 = numaTransform(na2, 0.0, 1.0 / maxval);
@@ -188,7 +193,8 @@ PIXA         *pixa;
     pixaDestroy(&pixa);
 
     pixs = pixRead(DEMOPATH("lyra.005.jpg"));
-    box1 = boxCreate(0, 173, 350, 580);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	box1 = boxCreate(0, 173, 350, 580);
     pix1 = pixClipRectangle(pixs, box1, 0);
     pix2 = pixRotateOrth(pix1, 1);
     pix3 = pixConvertTo8(pix2, 0);
@@ -200,7 +206,7 @@ PIXA         *pixa;
     pixaAddPix(pixa, pix5, L_INSERT);
     pixd = pixaDisplayTiledInColumns(pixa, 1,1.0, 25, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 10 */
-    pixDisplayWithTitle(pixd, 0, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 0, 500, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pixd);

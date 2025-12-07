@@ -75,11 +75,13 @@ PIXCMAP      *cmap;
 
         /* Generate a pdf of results when called with display */
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Generate colors by sampling hue with max sat and value.
          * This image has been saved as 19-colors.png.  */
     pixat = pixaCreate(19);
-    for (i = 0; i < 19; i++) {
+	pixaSetDiagnosticsSpec(pixat, rp->diag_spec);
+	for (i = 0; i < 19; i++) {
         convertHSVToRGB((240 * i / 18), 255, 255, &rval, &gval, &bval);
         composeRGBPixel(rval, gval, bval, &pixel);
         pix1 = pixCreate(50, 100, 32);
@@ -93,7 +95,8 @@ PIXCMAP      *cmap;
 
         /* Colorspace conversion in rgb */
     pixs = pixRead(DEMOPATH("wyom.jpg"));
-    pixaAddPix(pixa, pixs, L_INSERT);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_INSERT);
     pix3 = pixConvertRGBToHSV(NULL, pixs);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 1 */
     pixaAddPix(pixa, pix3, L_COPY);
@@ -195,7 +198,7 @@ PIXCMAP      *cmap;
     pix1 = pixaDisplayTiledAndScaled(pixat, 32, 250, 4, 0, 10, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 9 */
     pixaAddPix(pixa, pix1, L_INSERT);
-    pixDisplayWithTitle(pix1, 0, 100, "Color magnitude", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 100, "Color magnitude");
     pixaDestroy(&pixat);
     numaDestroy(&naseq);
     numaaDestroy(&naa1);

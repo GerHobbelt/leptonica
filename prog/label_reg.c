@@ -76,9 +76,10 @@ L_REGPARAMS* rp;
         /* Test connected component labelling */
     lept_stderr("Test c.c. labelling\n");
     pix1 = pixRead(DEMOPATH("feyn-fract.tif"));
-    pix2 = pixConnCompTransform(pix1, 8, 8);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixConnCompTransform(pix1, 8, 8);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 0, NULL);
     pix3 = pixConnCompTransform(pix1, 8, 16);
     pix4 = pixConvert16To8(pix3, L_LS_BYTE);
     regTestCompareSimilarPix(rp, pix2, pix4, 3, 0.001, 0);  /* 2 */
@@ -96,11 +97,11 @@ L_REGPARAMS* rp;
     pix2 = pixConnCompAreaTransform(pix1, 8);
     pix3 = pixConvert32To8(pix2, L_LS_TWO_BYTES, L_CLIP_TO_FF);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix3, 0, 350, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0, 350, NULL);
     pixMultConstantGray(pix2, 0.3);
     pix4 = pixConvert32To8(pix2, L_LS_TWO_BYTES, L_CLIP_TO_FF);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix4, 0, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 0, 700, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -109,7 +110,8 @@ L_REGPARAMS* rp;
         /* Test color transform: 4-fold symmetry */
     lept_stderr("Test color transform: 4-fold symmetry\n");
     pix1 = pixRead(DEMOPATH("form1.tif"));
-    pix2 = pixRotateOrth(pix1, 1);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixRotateOrth(pix1, 1);
     pix3 = pixRotateOrth(pix1, 2);
     pix4 = pixRotateOrth(pix1, 3);
     pix5 = pixLocToColorTransform(pix1);
@@ -150,12 +152,13 @@ L_REGPARAMS* rp;
         /* Test color transform: same form with translation */
     lept_stderr("Test color transform with translation\n");
     pix1 = pixRead(DEMOPATH("form1.tif"));
-    pix2 = pixLocToColorTransform(pix1);
-    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixLocToColorTransform(pix1);
+    pixDisplayWithTitle(pix2, 0, 0, NULL);
     pixTranslate(pix1, pix1, 10, 10, L_BRING_IN_WHITE);
     pix3 = pixLocToColorTransform(pix1);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 19 */
-    pixDisplayWithTitle(pix3, 470, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 470, 0, NULL);
     FindEMD(pix2, pix3, &distr, &distg, &distb);
     regTestCompareValues(rp, 1.76, distr, 0.01);  /* 20 */
     regTestCompareValues(rp, 2.65, distg, 0.01);  /* 21 */
@@ -169,11 +172,12 @@ L_REGPARAMS* rp;
         /* Test color transform: same form with small rotation */
     lept_stderr("Test color transform with small rotation\n");
     pix1 = pixRead(DEMOPATH("form1.tif"));
-    pix2 = pixLocToColorTransform(pix1);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixLocToColorTransform(pix1);
     pixRotateShearCenterIP(pix1, 0.1, L_BRING_IN_WHITE);
     pix3 = pixLocToColorTransform(pix1);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 23 */
-    pixDisplayWithTitle(pix3, 880, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 880, 0, NULL);
     FindEMD(pix2, pix3, &distr, &distg, &distb);
     regTestCompareValues(rp, 1.50, distr, 0.01);  /* 24 */
     regTestCompareValues(rp, 1.71, distg, 0.01);  /* 25 */
@@ -187,12 +191,14 @@ L_REGPARAMS* rp;
         /* Test color transform: 2 different forms */
     lept_stderr("Test color transform (2 forms)\n");
     pix1 = pixRead(DEMOPATH("form1.tif"));
-    pix2 = pixLocToColorTransform(pix1);
-    pixDisplayWithTitle(pix2, 0, 600, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixLocToColorTransform(pix1);
+    pixDisplayWithTitle(pix2, 0, 600, NULL);
     pix3 = pixRead(DEMOPATH("form2.tif"));
-    pix4 = pixLocToColorTransform(pix3);
+	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
+	pix4 = pixLocToColorTransform(pix3);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 27 */
-    pixDisplayWithTitle(pix4, 470, 600, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 470, 600, NULL);
     FindEMD(pix2, pix4, &distr, &distg, &distb);
     regTestCompareValues(rp, 6.10, distr, 0.02);  /* 28 */
     regTestCompareValues(rp, 11.13, distg, 0.01);  /* 29 */

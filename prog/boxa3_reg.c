@@ -99,8 +99,9 @@ PIX       *pix1;
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 0, 13, 26 */
     lept_free(data);
     pix1 = boxaDisplayTiled(boxa2, NULL, 0, -1, 2200, 2, 1.0, 0, 3, 2);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 1, 14, 27 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 1, 14, 27 */
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixDestroy(&pix1);
 
         /* Find the median sizes */
@@ -126,8 +127,9 @@ PIX       *pix1;
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 5, 18, 31 */
     lept_free(data);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 2200, 2, 1.0, 0, 3, 2);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 6, 19, 32 */
-    pixDisplayWithTitle(pix1, 500, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 6, 19, 32 */
+    pixDisplayWithTitle(pix1, 500, 0, NULL);
     if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("ratio median width/height = %6.3f\n", ratiowh);
     boxaDestroy(&boxa3);
@@ -140,8 +142,9 @@ PIX       *pix1;
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 7, 20, 33 */
     lept_free(data);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 2200, 2, 1.0, 0, 3, 2);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 8, 21, 34 */
-    pixDisplayWithTitle(pix1, 1000, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 8, 21, 34 */
+    pixDisplayWithTitle(pix1, 1000, 0, NULL);
     boxaDestroy(&boxa3);
     pixDestroy(&pix1);
 
@@ -152,8 +155,9 @@ PIX       *pix1;
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 9, 22, 35 */
     lept_free(data);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 2200, 2, 1.0, 0, 3, 2);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 10, 23, 36 */
-    pixDisplayWithTitle(pix1, 1500, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 10, 23, 36 */
+    pixDisplayWithTitle(pix1, 1500, 0, NULL);
     boxaDestroy(&boxa3);
     pixDestroy(&pix1);
     boxaDestroy(&boxa1);
@@ -181,7 +185,7 @@ PIXA  *pixa;
     pixaAddPix(pixa, pix2, L_INSERT);
     pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 39, 41, 43 */
-    pixDisplayWithTitle(pix3, 0 + 800 * index, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0 + 800 * index, 500, NULL);
     pixDestroy(&pix3);
     pixaDestroy(&pixa);
 
@@ -196,7 +200,7 @@ PIXA  *pixa;
     pixaAddPix(pixa, pix2, L_INSERT);
     pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 40, 42, 44 */
-    pixDisplayWithTitle(pix3, 0 + 800 * index, 920, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0 + 800 * index, 920, NULL);
     pixDestroy(&pix3);
     pixaDestroy(&pixa);
     boxaDestroy(&boxa1);

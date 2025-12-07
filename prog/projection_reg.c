@@ -61,10 +61,12 @@ L_REGPARAMS* rp;
 
         /* Use for input two different images */
     pixs = pixRead(DEMOPATH("projectionstats.jpg"));
-    pix1 = pixConvertTo8(pixs, 0);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix1 = pixConvertTo8(pixs, 0);
     pixDestroy(&pixs);
     pixs = pixRead(DEMOPATH("feyn.tif"));
-    pix2 = pixScaleToGray4(pixs);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix2 = pixScaleToGray4(pixs);
     pixDestroy(&pixs);
 
     TestProjection(rp, pix1);
@@ -131,7 +133,8 @@ PIXA    *pixa;
     regTestComparePix(rp, pix11, pix12);  /* 17, 36 */
 
     pixa = pixaCreate(0);
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaAddPix(pixa, pix3, L_INSERT);
     pixaAddPix(pixa, pix4, L_INSERT);
@@ -146,7 +149,7 @@ PIXA    *pixa;
 
     pix1 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18, 37 */
-    pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 100, 100, NULL);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 

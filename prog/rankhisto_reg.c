@@ -70,23 +70,25 @@ PIXA         *pixa;
 
 	/* Find the rank bin colors */
     pixs = pixRead(DEMOPATH("map1.jpg"));
-    pixGetDimensions(pixs, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixGetDimensions(pixs, &w, &h, NULL);
     factor = L_MAX(1, (l_int32)sqrt((l_float64)(w * h / 20000.0)));
     nbins = 10;
     pixa = pixaCreate(0);
-    pixGetRankColorArray(pixs, nbins, L_SELECT_MIN, factor, &array, pixa, 6);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixGetRankColorArray(pixs, nbins, L_SELECT_MIN, factor, &array, pixa, 6);
     if (!array)
         return ERROR_INT("\n\n\nFAILURE!\n\n\n", rp->testname, 1);
     pix1 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 1000, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1000, 100, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
     for (i = 0; i < nbins; i++)
         lept_stderr("%d: %x\n", i, array[i]);
     pix1 = pixDisplayColorArray(array, nbins, 200, 5, 6);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 0, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 100, NULL);
     pixDestroy(&pix1);
 
         /* Modify the rank bin colors by mapping them such
@@ -97,7 +99,7 @@ PIXA         *pixa;
                                     0xffffff00, &marray[i]);
     pix1 = pixDisplayColorArray(marray, nbins, 200, 5, 6);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 600, NULL);
     pixDestroy(&pix1);
     lept_free(marray);
 
@@ -105,14 +107,15 @@ PIXA         *pixa;
     pix1 = pixLinearMapToTargetColor(NULL, pixs, array[nbins - 1], 0xffffff00);
     pix2 = pixGammaTRC(NULL, pix1, 1.0, 0, 240);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix2, 1000, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1000, 100, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
 
         /* Now test the edge case where all the histo data is piled up
          * at one place.  We only require that the result be sensible. */
     pixa = pixaCreate(0);
-    for (i = 0; i < 3; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < 3; i++) {
         if (i == 0)
             spike = 1;
         else if (i == 1)
@@ -134,7 +137,7 @@ PIXA         *pixa;
     }
     pix1 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 1000, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1000, 800, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pix1);
 

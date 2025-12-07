@@ -80,7 +80,8 @@ PIXA         *pixa1, *pixa2, *pixaf;
     //lept_mkdir("lept/enhance");
 
     pix = pixRead(DEMOPATH("test24.jpg"));  /* rgb */
-    w = pixGetWidth(pix);
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	w = pixGetWidth(pix);
     scalefact = 150.0 / (l_float32)w;  /* scale to w = 150 */
     pixs = pixScale(pix, scalefact, scalefact);
     w = pixGetWidth(pixs);
@@ -89,43 +90,47 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* TRC: vary gamma */
     pixa1 = pixaCreate(20);
-    for (i = 0; i < 20; i++) {
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	for (i = 0; i < 20; i++) {
         pix0 = pixGammaTRC(NULL, pixs, 0.3 + 0.15 * i, 0, 255);
         pixaAddPix(pixa1, pix0, L_INSERT);
     }
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 100, "TRC Gamma", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 100, "TRC Gamma");
     pixaDestroy(&pixa1);
 
         /* TRC: vary black point */
     pixa1 = pixaCreate(20);
-    for (i = 0; i < 20; i++) {
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	for (i = 0; i < 20; i++) {
         pix0 = pixGammaTRC(NULL, pixs, 1.0, 5 * i, 255);
         pixaAddPix(pixa1, pix0, L_INSERT);
     }
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 300, 100, "TRC", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 300, 100, "TRC");
     pixaDestroy(&pixa1);
 
         /* Vary hue */
     pixa1 = pixaCreate(20);
-    for (i = 0; i < 20; i++) {
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	for (i = 0; i < 20; i++) {
         pix0 = pixModifyHue(NULL, pixs, 0.01 + 0.05 * i);
         pixaAddPix(pixa1, pix0, L_INSERT);
     }
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 600, 100, "Hue", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 600, 100, "Hue");
     pixaDestroy(&pixa1);
 
         /* Vary saturation */
     pixa1 = pixaCreate(20);
-    na1 = numaCreate(20);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	na1 = numaCreate(20);
     for (i = 0; i < 20; i++) {
         pix0 = pixModifySaturation(NULL, pixs, -0.9 + 0.1 * i);
         pixMeasureSaturation(pix0, 1, &sat);
@@ -137,39 +142,43 @@ PIXA         *pixa1, *pixa2, *pixaf;
     gplotSimple1(rp->diag_spec, na1, GPLOT_PNG, "/tmp/lept/regout/enhance.7",
                  "Average Saturation");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix1, 900, 100, "Saturation", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 900, 100, "Saturation");
     numaDestroy(&na1);
     pixaDestroy(&pixa1);
 
         /* Vary contrast */
     pixa1 = pixaCreate(20);
-    for (i = 0; i < 20; i++) {
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	for (i = 0; i < 20; i++) {
         pix0 = pixContrastTRC(NULL, pixs, 0.1 * i);
         pixaAddPix(pixa1, pix0, L_INSERT);
     }
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 0, 400, "Contrast", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 400, "Contrast");
     pixaDestroy(&pixa1);
 
         /* Vary sharpening */
     pixa1 = pixaCreate(20);
-    for (i = 0; i < 20; i++) {
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	for (i = 0; i < 20; i++) {
         pix0 = pixUnsharpMasking(pixs, 3, 0.01 + 0.15 * i);
         pixaAddPix(pixa1, pix0, L_INSERT);
     }
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix1, 300, 400, "Sharp", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 300, 400, "Sharp");
     pixaDestroy(&pixa1);
 
         /* Hue constant mapping to lighter background */
     pixa2 = pixaCreate(2);
-    bmf10 = bmfCreate(DEMOPATH("fonts"), 10);
+	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
+	bmf10 = bmfCreate(DEMOPATH("fonts"), 10);
     pix0 = pixRead(DEMOPATH("candelabrum.011.jpg"));
-    composeRGBPixel(230, 185, 144, &srcval);  /* select typical bg pixel */
+	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
+	composeRGBPixel(230, 185, 144, &srcval);  /* select typical bg pixel */
     for (k = 1; k > -2; k -= 2) {
         pixa1 = pixaCreate(11);
         for (i = 0; i <= 10; i++) {
@@ -187,7 +196,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     }
     pixd = pixaDisplayTiledInColumns(pixa2, 2, 0.5, 30, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 6 */
-    pixDisplayWithTitle(pixd, 600, 400, "Constant hue", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 600, 400, "Constant hue");
     pixaDestroy(&pixa2);
     bmfDestroy(&bmf10);
     pixDestroy(&pix0);
@@ -199,20 +208,21 @@ PIXA         *pixa1, *pixa2, *pixaf;
         /* Display results */
     pixd = pixaDisplayTiledInColumns(pixaf, 1, 1.0, 20, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 8 */
-    pixDisplayWithTitle(pixd, 100, 100, "All", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 100, 100, "All");
     pixDestroy(&pixd);
     pixaDestroy(&pixaf);
 
         /* Test color shifts */
     pixd = pixMosaicColorShiftRGB(pixs, -0.1, 0.0, 0.0, 0.0999, 1);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 9 */
-    pixDisplayWithTitle(pixd, 1000, 100, "Color shift", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 1000, 100, "Color shift");
     pixDestroy(&pixd);
     pixDestroy(&pixs);
 
         /* More trc testing */
     pix = pixRead(DEMOPATH("test24.jpg"));  /* rgb */
-    pixs = pixScale(pix, 0.3, 0.3);
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	pixs = pixScale(pix, 0.3, 0.3);
     pixDestroy(&pix);
     pixa1 = pixaCreate(5);
     pixaAddPix(pixa1, pixs, L_COPY);
@@ -266,7 +276,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
     pixd = pixaDisplayTiledInColumns(pixa1, 4, 1.0, 30, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 14 */
-    pixDisplayWithTitle(pixd, 100, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 100, 800, NULL);
     pixDestroy(&pixd);
     pixaDestroy(&pixa1);
 
@@ -275,7 +285,8 @@ PIXA         *pixa1, *pixa2, *pixaf;
      * -----------------------------------------------*/
         /* Make identical cmap and rgb images */
     pix = pixRead(DEMOPATH("wet-day.jpg"));
-    pixs1 = pixOctreeColorQuant(pix, 200, 0);
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	pixs1 = pixOctreeColorQuant(pix, 200, 0);
     pixs2 = pixRemoveColormap(pixs1, REMOVE_CMAP_TO_FULL_COLOR);
     regTestComparePix(rp, pixs1, pixs2);  /* 15 */
 

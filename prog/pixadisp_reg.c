@@ -65,9 +65,12 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixa = pixaCreate(0);
-    pix32 = pixRead(DEMOPATH("marge.jpg"));
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix32 = pixRead(DEMOPATH("marge.jpg"));
     pixs = pixRead(DEMOPATH("feyn.tif"));
-    box = boxCreate(683, 799, 970, 479);
+	pixSetDiagnosticsSpec(pix32, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	box = boxCreate(683, 799, 970, 479);
     pix1 = pixClipRectangle(pixs, box, NULL);
     boxDestroy(&box);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
@@ -85,14 +88,14 @@ L_REGPARAMS* rp;
         /* pixaDisplay() */
     pixGetDimensions(pixs, &ws, &hs, NULL);
     pix2 = pixaDisplay(pixa2, ws, hs);
-    pixDisplayWithTitle(pix2, 0, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 100, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     pixaAddPix(pixa, pix2, L_INSERT);
     pixDestroy(&pixs);
 
         /* pixaDisplayRandomCmap() */
     pix2 = pixaDisplayRandomCmap(pixa2, ws, hs);  /* black bg */
-    pixDisplayWithTitle(pix2, 200, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 200, 100, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 2 */
     pixaAddPix(pixa, pix2, L_COPY);
     pixcmapResetColor(pixGetColormap(pix2), 0, 255, 255, 255);  /* white bg */
@@ -102,7 +105,7 @@ L_REGPARAMS* rp;
 
         /* pixaDisplayOnLattice() */
     pix2 = pixaDisplayOnLattice(pixa3, 50, 50, &ncols, &boxa);
-    pixDisplayWithTitle(pix2, 400, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 400, 100, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 4 */
     pixaAddPix(pixa, pix2, L_INSERT);
     lept_stderr("Number of columns = %d; number of boxes: %d\n",
@@ -112,26 +115,26 @@ L_REGPARAMS* rp;
         /* pixaDisplayUnsplit() */
     pixa1 = pixaSplitPix(pix32, 5, 7, 10, 0x0000ff00);
     pix2 = pixaDisplayUnsplit(pixa1, 5, 7, 10, 0x00ff0000);
-    pixDisplayWithTitle(pix2, 600, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 600, 100, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 5 */
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaDestroy(&pixa1);
 
         /* pixaDisplayTiled() */
     pix2 = pixaDisplayTiled(pixa3, 1000, 0, 10);
-    pixDisplayWithTitle(pix2, 800, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 800, 100, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 6 */
     pixaAddPix(pixa, pix2, L_INSERT);
 
         /* pixaDisplayTiledInRows() */
     pix2 = pixaDisplayTiledInRows(pixa3, 1, 1000, 1.0, 0, 10, 2);
-    pixDisplayWithTitle(pix2, 1000, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1000, 100, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 7 */
     pixaAddPix(pixa, pix2, L_INSERT);
 
         /* pixaDisplayTiledAndScaled() */
     pix2 = pixaDisplayTiledAndScaled(pixa3, 1, 25, 20, 0, 5, 0);
-    pixDisplayWithTitle(pix2, 1200, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1200, 100, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 8 */
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaDestroy(&pixa3);
@@ -149,14 +152,15 @@ L_REGPARAMS* rp;
     pixDestroy(&pix3);
     pix2 = pixaDisplayTiledAndScaled(pixa1, 32, 500, 3, 0, 25, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 9 */
-    pixDisplayWithTitle(pix2, 1400, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1400, 100, NULL);
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaDestroy(&pixa1);
     pixDestroy(&pix32);
 
         /* pixaMakeFromTiledPix() and pixaDisplayOnLattice()  */
     pix1 = pixRead(DEMOPATH("sevens.tif"));
-    pixa1 = pixaMakeFromTiledPix(pix1, 20, 30, 0, 0, NULL);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixa1 = pixaMakeFromTiledPix(pix1, 20, 30, 0, 0, NULL);
     pix2 = pixaDisplayOnLattice(pixa1, 20, 30, NULL, NULL);
     regTestComparePix(rp, pix1, pix2);  /* 10 */
     pix3 = pixaDisplayOnLattice(pixa1, 20, 30, NULL, &boxa);
@@ -164,7 +168,7 @@ L_REGPARAMS* rp;
     pix4 = pixaDisplayOnLattice(pixa2, 20, 30, NULL, NULL);
     regTestComparePix(rp, pix2, pix4);  /* 11 */
     regTestWritePixAndCheck(rp, pix4, IFF_JFIF_JPEG);  /* 12 */
-    pixDisplayWithTitle(pix4, 1600, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 1600, 100, NULL);
     pixaAddPix(pixa, pixScale(pix4, 2.5, 2.5), L_INSERT);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -180,11 +184,14 @@ L_REGPARAMS* rp;
         sarrayAddString(sa1, DEMOPATH(files[i]), L_COPY);
     pixa1 = pixaCreate(7);
     pixa2 = pixaCreate(7);
-    sa2 = sarrayCreate(7);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
+	sa2 = sarrayCreate(7);
     for (i = 0; i < 7; i++) {
         fname = sarrayGetString(sa1, i, L_NOCOPY);
         pix1 = pixRead(fname);
-        pix2 = pixConvertTo8(pix1, 0);
+		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+		pix2 = pixConvertTo8(pix1, 0);
         pixaAddPix(pixa1, pix1, L_INSERT);
         pixaAddPix(pixa2, pix2, L_INSERT);
         sarrayAddString(sa2, fname, L_COPY);
@@ -193,7 +200,7 @@ L_REGPARAMS* rp;
                                          15, 15, 2, 2, 6, 0, sa2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 13 */
     pixaAddPix(pixa, pixScale(pix1, 2.0, 2.0), L_INSERT);
-    pixDisplayWithTitle(pix1, 1800, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1800, 100, NULL);
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
     pixDestroy(&pix1);

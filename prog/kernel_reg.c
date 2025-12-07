@@ -79,9 +79,11 @@ SARRAY       *sa;
 
         /* Test creating from a string */
     pixa = pixaCreate(0);
-    kel1 = kernelCreateFromString(5, 5, 2, 2, kdatastr);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	kel1 = kernelCreateFromString(5, 5, 2, 2, kdatastr);
     pixd = kernelDisplayInPix(kel1, 41, 2);
-    pixWrite("/tmp/lept/regout/pixkern.png", pixd, IFF_PNG);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	pixWrite("/tmp/lept/regout/pixkern.png", pixd, IFF_PNG);
     regTestCheckFile(rp, "/tmp/lept/regout/pixkern.png");  /* 0 */
     pixaAddPix(pixa, pixd, L_INSERT);
     pixaaAddPixa(paa, pixa, L_INSERT);
@@ -113,7 +115,8 @@ SARRAY       *sa;
     l_binaryWrite("/tmp/lept/regout/kernfile.kel", "w", str, strlen(str));
     kel2 = kernelCreateFromFile("/tmp/lept/regout/kernfile.kel");
     pixd = kernelDisplayInPix(kel2, 41, 2);
-    pixWrite("/tmp/lept/regout/ker1.png", pixd, IFF_PNG);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	pixWrite("/tmp/lept/regout/ker1.png", pixd, IFF_PNG);
     regTestCheckFile(rp, "/tmp/lept/regout/ker1.png");  /* 4 */
     pixaAddPix(pixa, pixd, L_INSERT);
     sarrayDestroy(&sa);
@@ -122,7 +125,8 @@ SARRAY       *sa;
 
         /* Test creating from a pix */
     pix1 = pixCreate(5, 3, 8);
-    pixSetPixel(pix1, 0, 0, 20);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixSetPixel(pix1, 0, 0, 20);
     pixSetPixel(pix1, 1, 0, 50);
     pixSetPixel(pix1, 2, 0, 80);
     pixSetPixel(pix1, 3, 0, 50);
@@ -139,7 +143,8 @@ SARRAY       *sa;
     pixSetPixel(pix1, 4, 2, 20);
     kel3 = kernelCreateFromPix(pix1, 1, 2);
     pixd = kernelDisplayInPix(kel3, 41, 2);
-    pixWrite("/tmp/lept/regout/ker2.png", pixd, IFF_PNG);
+	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
+	pixWrite("/tmp/lept/regout/ker2.png", pixd, IFF_PNG);
     regTestCheckFile(rp, "/tmp/lept/regout/ker2.png");  /* 5 */
     pixaAddPix(pixa, pixd, L_INSERT);
     pixaaAddPixa(paa, pixa, L_INSERT);
@@ -148,8 +153,10 @@ SARRAY       *sa;
 
         /* Test convolution with kel1 */
     pixa = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("test24.jpg"));
-    pixg = pixScaleRGBToGrayFast(pixs, 3, COLOR_GREEN);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("test24.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixg = pixScaleRGBToGrayFast(pixs, 3, COLOR_GREEN);
     pixaAddPix(pixa, pixg, L_INSERT);
     kel1 = kernelCreateFromString(5, 5, 2, 2, kdatastr);
     pixd = pixConvolve(pixg, kel1, 8, 1);
@@ -163,8 +170,10 @@ SARRAY       *sa;
         /* Test convolution with flat rectangular kel; also test
          * block convolution with tiling. */
     pixa = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("test24.jpg"));
-    pixg = pixScaleRGBToGrayFast(pixs, 3, COLOR_GREEN);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("test24.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixg = pixScaleRGBToGrayFast(pixs, 3, COLOR_GREEN);
     kel2 = makeFlatKernel(11, 11, 5, 5);
     pixd = pixConvolve(pixg, kel2, 8, 1);
     pixaAddPix(pixa, pixd, L_COPY);
@@ -213,12 +222,14 @@ SARRAY       *sa;
          * pixConvolve() gives the more accurate result; namely, 255 for
          * pixels at the edge. */
     pix = pixRead(DEMOPATH("pageseg1.tif"));
-    box = boxCreate(100, 100, 2260, 3160);
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	box = boxCreate(100, 100, 2260, 3160);
     pixb = pixClipRectangle(pix, box, NULL);
     pixs = pixScaleToGray4(pixb);
 
     pixa = pixaCreate(0);
-    kel3 = makeFlatKernel(7, 7, 3, 3);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	kel3 = makeFlatKernel(7, 7, 3, 3);
     startTimer();
     pix1 = pixConvolve(pixs, kel3, 8, 1);
     lept_stderr("Generic convolution time: %5.3f sec\n", stopTimer());
@@ -252,7 +263,8 @@ SARRAY       *sa;
         /* Do yet another set of flat rectangular tests, this time
          * on an RGB image */
     pixs = pixRead(DEMOPATH("test24.jpg"));
-    kel4 = makeFlatKernel(7, 7, 3, 3);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	kel4 = makeFlatKernel(7, 7, 3, 3);
     startTimer();
     pix1 = pixConvolveRGB(pixs, kel4);
     lept_stderr("Time 7x7 non-separable: %7.3f sec\n", stopTimer());
@@ -285,8 +297,10 @@ SARRAY       *sa;
 
         /* Test generation and convolution with gaussian kernel */
     pixa = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("test8.jpg"));
-    pixaAddPix(pixa, pixs, L_COPY);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("test8.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_COPY);
     kel1 = makeGaussianKernel(5, 5, 3.0, 5.0);
     kernelGetSum(kel1, &sum);
     lept_stderr("Sum for gaussian kernel = %f\n", sum);
@@ -299,15 +313,18 @@ SARRAY       *sa;
     regTestCheckFile(rp, "/tmp/lept/regout/ker6.png");  /* 18 */
 
     pix1 = kernelDisplayInPix(kel1, 25, 2);
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pixaaAddPixa(paa, pixa, L_INSERT);
     kernelDestroy(&kel1);
     pixDestroy(&pixs);
 
         /* Test generation and convolution with separable gaussian kernel */
     pixa = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("test8.jpg"));
-    pixaAddPix(pixa, pixs, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("test8.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_INSERT);
     makeGaussianKernelSep(5, 5, 3.0, 5.0, &kelx, &kely);
     kernelGetSum(kelx, &sum);
     lept_stderr("Sum for x gaussian kernel = %f\n", sum);
@@ -324,9 +341,11 @@ SARRAY       *sa;
     regTestCheckFile(rp, "/tmp/lept/regout/ker7.png");  /* 19 */
 
     pix1 = kernelDisplayInPix(kelx, 25, 2);
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pix1 = kernelDisplayInPix(kely, 25, 2);
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pixaaAddPixa(paa, pixa, L_INSERT);
     kernelDestroy(&kelx);
     kernelDestroy(&kely);
@@ -336,8 +355,10 @@ SARRAY       *sa;
     pixs = pixConvertRGBToLuminance(pix1);
     pixDestroy(&pix1); */
     pixa = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("test8.jpg"));
-    pixaAddPix(pixa, pixs, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("test8.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_INSERT);
     kel1 = makeDoGKernel(7, 7, 1.5, 2.7);
     kernelGetSum(kel1, &sum);
     lept_stderr("Sum for DoG kernel = %f\n", sum);
@@ -349,12 +370,13 @@ SARRAY       *sa;
     regTestCheckFile(rp, "/tmp/lept/regout/ker8.png");  /* 20 */
 
     pix1 = kernelDisplayInPix(kel1, 20, 2);
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pixaaAddPixa(paa, pixa, L_INSERT);
     kernelDestroy(&kel1);
 
     pixd = pixaaDisplayByPixa(paa, 10, 1.0, 20, 20, 0);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 100, 100, NULL);
     pixWrite("/tmp/lept/regout/kernel.jpg", pixd, IFF_JFIF_JPEG);
     pixDestroy(&pixd);
     pixaaDestroy(&paa);

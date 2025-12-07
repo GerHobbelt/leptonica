@@ -60,7 +60,7 @@ NUMA      *na, *nax;
 PIX       *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "contrast", TRUE, &rp))
+	if (regTestSetup(argc, argv, "contrast", &rp))
 		return 1;
 
     if (argc != 4)
@@ -74,6 +74,7 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
     na = numaContrastTRC(factor);
     gplotSimple1(rp->diag_spec, na, GPLOT_PNG, "/tmp/lept/contrast/trc1", "contrast trc");

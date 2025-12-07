@@ -106,6 +106,7 @@ SEL     *selhm;
         rp->success = FALSE;
         return ERROR_INT("pixs not made", __func__, 1);
     }
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Make a hit-miss sel at specified reduction factor */
     if (red == 4) {
@@ -125,19 +126,21 @@ SEL     *selhm;
         /* Display the sel */
     pixsel = pixDisplayHitMissSel(pixp, selhm, 7, HitColor, MissColor);
     pixa = pixaCreate(2);
-    pixaAddPix(pixa, pixs, L_CLONE);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixaAddPix(pixa, pixs, L_CLONE);
     pixaAddPix(pixa, pixsel, L_CLONE);
     width = (patno == 0) ? 1200 : 400;
     pixd = pixaDisplayTiledAndScaled(pixa, 32, width, 2, 0, 30, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);
     pixDisplayWithTitle(pixd, 100, 100 + 100 * (3 * patno + red / 4),
-                        NULL, rp->diag_spec);
+                        NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pixd);
 
         /* Use the sel to find all instances in the page */
     pix = pixRead(DEMOPATH("tribune-page-4x.png"));  /* 4x reduced */
-    if (red == 4)
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	if (red == 4)
         pixr = pixClone(pix);
     else if (red == 8)
         pixr = pixReduceRankBinaryCascade(pix, 2, 0, 0, 0);
@@ -154,7 +157,7 @@ SEL     *selhm;
     pixc1 = pixDisplayMatchedPattern(pixr, pixp, pixhmt,
                                      cx, cy, 0x0000ff00, 1.0, 5);
     regTestWritePixAndCheck(rp, pixc1, IFF_PNG);
-    pixDisplayWithTitle(pixc1, 500, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixc1, 500, 100, NULL);
 
         /* Color each instance at 0.5 scale */
     pixc2 = pixDisplayMatchedPattern(pixr, pixp, pixhmt,

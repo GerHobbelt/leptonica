@@ -248,8 +248,9 @@ PIXA     *pixa;
         return (L_RECOG *)ERROR_PTR("recs not defined", __func__, NULL);
 
     pixa = recogExtractPixa(recs);
-    recd = recogCreateFromPixa(pixa, scalew, scaleh, linew, threshold,
+	recd = recogCreateFromPixa(pixa, scalew, scaleh, linew, threshold,
                                maxyshift);
+
     pixaDestroy(&pixa);
     return recd;
 }
@@ -352,9 +353,10 @@ L_RECOG  *recog;
     if (ntext < n)
         L_ERROR("%d text strings < %d pix\n", __func__, ntext, n);
 
-	l_ok debugflag = pixaIsDebugModeActive(pixa);
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixa);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
-    recog = recogCreate(scalew, scaleh, linew, threshold, maxyshift);
+    recog = recogCreate(scalew, scaleh, linew, threshold, maxyshift, diagspec);
     if (!recog)
         return (L_RECOG *)ERROR_PTR("recog not made", __func__, NULL);
     for (i = 0; i < n; i++) {
@@ -365,7 +367,7 @@ L_RECOG  *recog;
             pixDestroy(&pix);
             continue;
         }
-        recogTrainLabeled(recog, pix, NULL, text, debugflag);
+        recogTrainLabeled(recog, pix, NULL, text);
         pixDestroy(&pix);
     }
 
@@ -404,11 +406,12 @@ L_RECOG  *recog;
  * </pre>
  */
 L_RECOG *
-recogCreate(l_int32  scalew,
-            l_int32  scaleh,
-            l_int32  linew,
-            l_int32  threshold,
-            l_int32  maxyshift)
+recogCreate(l_int32   scalew,
+            l_int32   scaleh,
+            l_int32   linew,
+            l_int32   threshold,
+            l_int32   maxyshift,
+	        LDIAG_CTX diagspec)
 {
 L_RECOG  *recog;
 
@@ -432,6 +435,7 @@ L_RECOG  *recog;
     }
 
     recog = (L_RECOG *)LEPT_CALLOC(1, sizeof(L_RECOG));
+	recog->diag_specX = leptCloneDiagnoticsSpecInstance(diagspec);
     recog->templ_use = L_USE_ALL_TEMPLATES;  /* default */
     recog->threshold = threshold;
     recog->scalew = scalew;
@@ -509,6 +513,7 @@ L_RECOG  *recog;
     rchDestroy(&recog->rch);
     rchaDestroy(&recog->rcha);
     recogDestroyDid(recog);
+	leptDestroyDiagnoticsSpecInstance(&recog->diag_specX);
     LEPT_FREE(recog);
     *precog = NULL;
 }
@@ -817,7 +822,8 @@ l_uint32  val;
  * </pre>
  */
 L_RECOG *
-recogRead(const char  *filename)
+recogRead(const char  *filename,
+	      LDIAG_CTX    diagspec)
 {
 FILE     *fp;
 L_RECOG  *recog;
@@ -828,7 +834,7 @@ L_RECOG  *recog;
         return (L_RECOG *)ERROR_PTR_1("stream not opened",
                                       filename, __func__, NULL);
 
-    if ((recog = recogReadStream(fp)) == NULL) {
+    if ((recog = recogReadStream(fp, diagspec)) == NULL) {
         fclose(fp);
         return (L_RECOG *)ERROR_PTR_1("recog not read",
                                       filename, __func__, NULL);
@@ -846,7 +852,8 @@ L_RECOG  *recog;
  * \return  recog, or NULL on error
  */
 L_RECOG *
-recogReadStream(FILE  *fp)
+recogReadStream(FILE     *fp,
+	            LDIAG_CTX diagspec)
 {
 l_int32   version, setsize, threshold, scalew, scaleh, linew;
 l_int32   maxyshift, nc;
@@ -875,7 +882,7 @@ SARRAY   *sa_text;
     if (fscanf(fp, "Normalized line width = %d\n", &linew) != 1)
         return (L_RECOG *)ERROR_PTR("line width not read", __func__, NULL);
     if ((recog = recogCreate(scalew, scaleh, linew, threshold,
-                             maxyshift)) == NULL)
+                             maxyshift, diagspec)) == NULL)
         return (L_RECOG *)ERROR_PTR("recog not made", __func__, NULL);
 
     if (fscanf(fp, "\nLabels for character set:\n") == -1) {
@@ -930,7 +937,8 @@ SARRAY   *sa_text;
  */
 L_RECOG *
 recogReadMem(const l_uint8  *data,
-             size_t          size)
+             size_t          size,
+	         LDIAG_CTX       diagspec)
 {
 FILE     *fp;
 L_RECOG  *recog;
@@ -940,7 +948,7 @@ L_RECOG  *recog;
     if ((fp = fopenReadFromMemory(data, size)) == NULL)
         return (L_RECOG *)ERROR_PTR("stream not opened", __func__, NULL);
 
-    recog = recogReadStream(fp);
+    recog = recogReadStream(fp, diagspec);
     fclose(fp);
     if (!recog) L_ERROR("recog not read\n", __func__);
     return recog;
@@ -1094,7 +1102,9 @@ recogExtractPixa(L_RECOG  *recog)
         return (PIXA *)ERROR_PTR("recog not defined", __func__, NULL);
 
     recogAddCharstrLabels(recog);
-    return pixaaFlattenToPixa(recog->pixaa_u, NULL, L_CLONE);
+    PIXA *pixad = pixaaFlattenToPixa(recog->pixaa_u, NULL, L_CLONE);
+	pixaSetDiagnosticsSpec(pixad, recog->diag_specX);
+	return pixad;
 }
 
 

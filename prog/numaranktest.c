@@ -58,7 +58,7 @@ NUMA      *na, *nah, *nar, *nav;
 PIX       *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "numa_rank", TRUE, &rp))
+	if (regTestSetup(argc, argv, "numa_rank", &rp))
 		return 1;
 
     if (argc != 3)
@@ -70,7 +70,8 @@ L_REGPARAMS* rp;
 
     if ((pix = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);
-    pixGetDimensions(pix, &w, &h, &d);
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	pixGetDimensions(pix, &w, &h, &d);
     if (d != 8)
         return ERROR_INT("d != 8 bpp", __func__, 1);
 

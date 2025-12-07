@@ -41,7 +41,7 @@
 #include "monolithic_examples.h"
 
 
-static PIX *DisplayBoxa(BOXA  *boxa);
+static PIX *DisplayBoxa(BOXA  *boxa, L_REGPARAMS* rp);
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -80,19 +80,18 @@ L_REGPARAMS* rp;
     boxaAddBox(boxa1, box, L_INSERT);
     box = boxCreate(117, 206, 26, 74);
     boxaAddBox(boxa1, box, L_INSERT);
-    pix1 = DisplayBoxa(boxa1);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+    pix1 = DisplayBoxa(boxa1, rp);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixDestroy(&pix1);
 
-    boxaCompareRegions(boxa1, boxa1, 100, &same, &diffarea, &diffxor, rp->diag_spec);
+    boxaCompareRegions(boxa1, boxa1, 100, &same, &diffarea, &diffxor, NULL, rp->diag_spec);
     regTestCompareValues(rp, 1, same, 0.0);  /* 1 */
     regTestCompareValues(rp, 0.0, diffarea, 0.0);  /* 2 */
     regTestCompareValues(rp, 0.0, diffxor, 0.0);  /* 3 */
 
     boxa2 = boxaTransform(boxa1, -13, -13, 1.0, 1.0);
-    boxaCompareRegions(boxa1, boxa2, 10, &same, &diffarea, &diffxor, rp->diag_spec);
+    boxaCompareRegions(boxa1, boxa2, 10, &same, &diffarea, &diffxor, NULL, rp->diag_spec);
     regTestCompareValues(rp, 1, same, 0.0);  /* 4 */
     regTestCompareValues(rp, 0.0, diffarea, 0.0);  /* 5 */
     regTestCompareValues(rp, 0.0, diffxor, 0.0);  /* 6 */
@@ -116,9 +115,11 @@ L_REGPARAMS* rp;
     boxa1 = boxaReadMem(data1, size1);
     boxaWriteMem(&data2, &size2, boxa1);
     boxa2 = boxaReadMem(data2, size2);
-    boxaWrite("/tmp/lept/boxa/boxa1.ba", boxa1);
-    boxaWrite("/tmp/lept/boxa/boxa2.ba", boxa2);
-    filesAreIdentical("/tmp/lept/boxa/boxa1.ba", "/tmp/lept/boxa/boxa2.ba",
+	const char* boxpath1 = leptDebugGenFilepath(rp->diag_spec, "boxa1.ba");
+	const char* boxpath2 = leptDebugGenFilepath(rp->diag_spec, "boxa2.ba");
+	boxaWrite(boxpath1, boxa1);
+    boxaWrite(boxpath2, boxa2);
+    filesAreIdentical(boxpath1, boxpath2,
                       &same);
     regTestCompareValues(rp, 1, same, 0.0);  /* 8 */
     boxaDestroy(&boxa1);
@@ -131,7 +132,7 @@ L_REGPARAMS* rp;
 
 
 static PIX *
-DisplayBoxa(BOXA  *boxa)
+DisplayBoxa(BOXA  *boxa, L_REGPARAMS* rp)
 {
 l_int32  w, h;
 BOX     *box;

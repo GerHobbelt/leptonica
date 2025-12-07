@@ -73,12 +73,14 @@ L_REGPARAMS* rp;
 
         /* Calculate projection profiles through images/drawings. */
     pixa1 = pixaCreate(2);
-    for (i = 0; i < 2; i++) {
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	for (i = 0; i < 2; i++) {
 		const char* fname = DEMOPATH(fnames[i]);
         pageno = extractNumberFromFilename(fname, 5, 0);
         lept_stderr("Page %d\n", pageno);
         pixs = pixRead(fname);
-        pixr = pixRotate90(pixs, (pageno % 2) ? 1 : -1);
+		pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+		pixr = pixRotate90(pixs, (pageno % 2) ? 1 : -1);
         pixg = pixConvertTo8(pixr, 0);
         pixGetDimensions(pixg, &w, &h, NULL);
 
@@ -112,13 +114,14 @@ L_REGPARAMS* rp;
 
             /* Output visuals */
         pixa2 = pixaCreate(3);
-        pixaAddPix(pixa2, pixr, L_INSERT);
+		pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
+		pixaAddPix(pixa2, pixr, L_INSERT);
         pixaAddPix(pixa2, pix1, L_INSERT);
         pixaAddPix(pixa2, pix2, L_INSERT);
         pixd = pixaDisplayTiledInColumns(pixa2, 2, 1.0, 25, 0);
         pixaDestroy(&pixa2);
         pixaAddPix(pixa1, pixd, L_INSERT);
-        pixDisplayWithTitle(pixd, 800 * i, 100, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 800 * i, 100, NULL);
         if (leptIsInDisplayMode(rp->diag_spec)) {
             lept_stderr("narl:");
             numaWriteStderr(narl);
@@ -142,7 +145,8 @@ L_REGPARAMS* rp;
 
         /* Calculate projection profiles from text lines */
     pixs = pixRead(DEMOPATH("1555.007.jpg"));
-    pixGetDimensions(pixs, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixGetDimensions(pixs, &w, &h, NULL);
     na1 = pixReversalProfile(pixs, 0.98, L_HORIZONTAL_LINE,
                                   0, h - 1, 40, 3, 3);
     pix1 = gplotSimplePix1(rp->diag_spec, na1, "lept/crop/reversals", "Reversals");
@@ -155,19 +159,21 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 5 */
     numaDestroy(&na1);
     pixa1 = pixaCreate(3);
-    pixaAddPix(pixa1, pixScale(pixs, 0.5, 0.5), L_INSERT);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixaAddPix(pixa1, pixScale(pixs, 0.5, 0.5), L_INSERT);
     pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix2, L_INSERT);
     pixd = pixaDisplayTiledInRows(pixa1, 32, 1000, 1.0, 0, 30, 2);
     pixWrite("/tmp/lept/crop/profiles.png", pixd, IFF_PNG);
-    pixDisplayWithTitle(pixd, 0, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 0, 700, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
     pixaDestroy(&pixa1);
 
         /* Test rectangle clipping with border */
     pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
-    pix2 = pixScale(pix1, 0.5, 0.5);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixScale(pix1, 0.5, 0.5);
     box1 = boxCreate(125, 50, 180, 230);  /* fully contained */
     pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);
     pixRenderBoxArb(pix2, box1, 2, 255, 0, 0);
@@ -177,7 +183,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa1, pix3, L_INSERT);
     pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix4, 325, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 325, 700, NULL);
     boxDestroy(&box1);
     boxDestroy(&box2);
     pixDestroy(&pix4);
@@ -193,7 +199,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa1, pix3, L_INSERT);
     pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 7 */
-    pixDisplayWithTitle(pix4, 975, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 975, 700, NULL);
     boxDestroy(&box1);
     boxDestroy(&box2);
     pixDestroy(&pix4);
@@ -209,7 +215,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa1, pix3, L_INSERT);
     pix4 = pixaDisplayTiledInColumns(pixa1, 2, 1.0, 15, 2);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 8 */
-    pixDisplayWithTitle(pix4, 1600, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 1600, 700, NULL);
     boxDestroy(&box1);
     boxDestroy(&box2);
     pixDestroy(&pix4);

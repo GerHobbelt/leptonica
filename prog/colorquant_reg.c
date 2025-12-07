@@ -91,7 +91,8 @@ PIXA      *pixa;
         rp->success = FALSE;
         return ERROR_INT_1("pix not made", buf, __func__, 1);
     }
-    pixGetDimensions(pix, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	pixGetDimensions(pix, &w, &h, NULL);
     if (w > MAX_WIDTH) {
         factor = (l_float32)MAX_WIDTH / (l_float32)w;
         pixs = pixScale(pix, factor, factor);
@@ -229,7 +230,7 @@ PIXA      *pixa;
     pixDestroy(&pixt);
 
     pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 25, 2);
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 100, 100, NULL);
     snprintf(buf, sizeof(buf), "/tmp/lept/regout/disp.%d.jpg", i);
     pixWrite(buf, pixd, IFF_JFIF_JPEG);
 

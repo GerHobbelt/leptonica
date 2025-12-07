@@ -79,14 +79,14 @@ L_REGPARAMS* rp;
     pixDestroy(&pixn);
     pixDestroy(&pixg);
     regTestWritePixAndCheck(rp, pixb, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixb, 0, 0, "page 7 binarized input", rp->diag_spec);
+    pixDisplayWithTitle(pixb, 0, 0, "page 7 binarized input");
 
         /* Get the textline centers */
     ptaa1 = dewarpGetTextlineCenters(pixb, rp->diag_spec);
     pixt1 = pixCreateTemplate(pixs);
     pixt2 = pixDisplayPtaa(pixt1, ptaa1);
     regTestWritePixAndCheck(rp, pixt2, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixt2, 0, 500, "textline centers", rp->diag_spec);
+    pixDisplayWithTitle(pixt2, 0, 500, "textline centers");
     pixDestroy(&pixt1);
 
         /* Remove short lines */
@@ -106,7 +106,7 @@ L_REGPARAMS* rp;
         numaDestroy(&nafit);
     }
     regTestWritePixAndCheck(rp, pixt2, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pixt2, 300, 500, "fitted lines superimposed", rp->diag_spec);
+    pixDisplayWithTitle(pixt2, 300, 500, "fitted lines superimposed");
     ptaaDestroy(&ptaa1);
     ptaaDestroy(&ptaa2);
     pixDestroy(&pixt2);
@@ -120,7 +120,7 @@ L_REGPARAMS* rp;
     dewarpBuildPageModel(dew1, NULL);
     dewarpaApplyDisparity(dewa1, 7, pixb, 200, 0, 0, &pixd, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pixd, 400, 0, "page 7 dewarped", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 400, 0, "page 7 dewarped");
     pixDestroy(&pixd);
 
         /* Read page 3, normalize background and binarize */
@@ -133,13 +133,13 @@ L_REGPARAMS* rp;
     pixDestroy(&pixn2);
     pixDestroy(&pixg2);
     regTestWritePixAndCheck(rp, pixb, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pixb, 0, 400, "binarized input (2)", rp->diag_spec);
+    pixDisplayWithTitle(pixb, 0, 400, "binarized input (2)");
 
         /* Minimize and re-apply page 7 disparity to this image */
     dewarpaInsertRefModels(dewa1, 0, 0);
     dewarpaApplyDisparity(dewa1, 3, pixb2, 200, 0, 0, &pixd, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pixd, 400, 400, "page 3 dewarped", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 400, 400, "page 3 dewarped");
     pixDestroy(&pixd);
 
         /* Write and read back minimized dewarp struct */
@@ -159,7 +159,7 @@ L_REGPARAMS* rp;
     dewarpaListPages(dewa2);  /* just for fun: should be 1, 3, 5, 7 */
     dewarpaApplyDisparity(dewa2, 3, pixb2, 200, 0, 0, &pixd, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pixd, 800, 400, "page 3 dewarped again", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 800, 400, "page 3 dewarped again");
     pixDestroy(&pixd);
 
         /* Minimize, re-populate disparity arrays, and apply again */
@@ -167,7 +167,7 @@ L_REGPARAMS* rp;
     dewarpaApplyDisparity(dewa2, 3, pixb2, 200, 0, 0, &pixd, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 10 */
     regTestCompareFiles(rp, 9, 10);  /* 11 */
-    pixDisplayWithTitle(pixd, 900, 400, "page 3 dewarped yet again", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 900, 400, "page 3 dewarped yet again");
     pixDestroy(&pixd);
 
         /* Test a few of the fpix functions */
@@ -180,7 +180,7 @@ L_REGPARAMS* rp;
     regTestCheckFile(rp, "/tmp/lept/regout/dewarp.12.fpix");  /* 12 */
 
     fpix2 = fpixRead("/tmp/lept/regout/dewarp.12.fpix");
-	fpixaSetDiagnosticsSpec(fpix2, rp->diag_spec);
+	fpixSetDiagnosticsSpec(fpix2, rp->diag_spec);
 
     fpixWrite("/tmp/lept/regout/dewarp.13.fpix", fpix2);
     regTestCheckFile(rp, "/tmp/lept/regout/dewarp.13.fpix");  /* 13 */
@@ -188,7 +188,7 @@ L_REGPARAMS* rp;
     fpix3 = fpixScaleByInteger(fpix2, 30);
     pix1 = fpixRenderContours(fpix3, 2.0, 0.2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 15 */
-    pixDisplayWithTitle(pix1, 0, 800, "v. disparity contours", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 800, "v. disparity contours");
     fpixDestroy(&fpix1);
     fpixDestroy(&fpix2);
     fpixDestroy(&fpix3);
@@ -207,7 +207,7 @@ L_REGPARAMS* rp;
     fpix3 = dpixConvertToFPix(dpix3);
     pixt1 = fpixRenderContours(fpix3, 2.0, 0.2);
     regTestWritePixAndCheck(rp, pixt1, IFF_PNG);  /* 19 */
-    pixDisplayWithTitle(pixt1, 400, 800, "v. disparity contours", rp->diag_spec);
+    pixDisplayWithTitle(pixt1, 400, 800, "v. disparity contours");
     regTestCompareSimilarPix(rp, pix1, pixt1, 1, 0.00001, 0);  /* 20 */
     dpixDestroy(&dpix1);
     dpixDestroy(&dpix2);

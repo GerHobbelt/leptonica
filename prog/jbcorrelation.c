@@ -86,7 +86,7 @@ PIX        *pix;
 PIXA       *pixa, *pixadb;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "correlation", TRUE, &rp))
+	if (regTestSetup(argc, argv, "correlation", &rp))
 		return 1;
 
     if (argc != 4 && argc != 6)
@@ -160,7 +160,8 @@ L_REGPARAMS* rp;
     PIX  *pix1, *pix2;
     fname = sarrayGetString(safiles, 0, L_NOCOPY);
     pix1 = pixRead(fname);
-    pix2 = pixaGetPix(pixa, 0, L_CLONE);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixaGetPix(pixa, 0, L_CLONE);
     pixXor(pix1, pix1, pix2);
     pixWrite("/tmp/lept/jb/output_diff.png", pix1, IFF_PNG);
     pixDestroy(&pix1);

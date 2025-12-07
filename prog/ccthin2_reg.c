@@ -70,7 +70,8 @@ SELA         *sela;
 	/* Clip to foreground to see if there are any boundary
          * artifacts from thinning and thickening.  (There are not.) */
     pix1 = pixRead(DEMOPATH("feyn.tif"));
-    box = boxCreate(683, 799, 970, 479);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	box = boxCreate(683, 799, 970, 479);
     pix2 = pixClipRectangle(pix1, box, NULL);
     pixClipToForeground(pix2, &pixs, NULL);
 
@@ -152,7 +153,7 @@ SELA         *sela;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
     if (leptIsInDisplayMode(rp->diag_spec)) {
         //lept_mkdir("lept/thin");
-        pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix1, 0, 0, NULL);
         lept_stderr("Writing to: /tmp/lept/thin/ccthin2-1.pdf");
         pixaConvertToPdf(pixa1, 0, 1.0, 0, 0, "Thin 2 Results",
                          "/tmp/lept/thin/ccthin2-1.pdf");
@@ -188,7 +189,7 @@ SELA         *sela;
     pix1 = pixaDisplayTiledInColumns(pixa5, 2, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18 */
     if (leptIsInDisplayMode(rp->diag_spec)) {
-        pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix1, 0, 0, NULL);
         lept_stderr("Writing to: /tmp/lept/thin/ccthin2-2.pdf");
         pixaConvertToPdf(pixa5, 0, 1.0, 0, 0, "Thin strokes",
                          "/tmp/lept/thin/ccthin2-2.pdf");

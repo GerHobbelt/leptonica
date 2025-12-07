@@ -70,16 +70,18 @@ PIXA         *pixa1;
 
 	/* Find the most populated colors */
     pix1 = pixRead(DEMOPATH("fish24.jpg"));
-    pixGetMostPopulatedColors(pix1, 2, 3, 10, &colors, NULL);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixGetMostPopulatedColors(pix1, 2, 3, 10, &colors, NULL);
     pix2 = pixDisplayColorArray(colors, 10, 200, 5, 6);
-    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	pixDisplayWithTitle(pix2, 0, 0, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
     lept_free(colors);
     pixDestroy(&pix2);
 
         /* Do a simple color quantization with sigbits = 2 */
     pix2 = pixSimpleColorQuantize(pix1, 2, 3, 10);
-    pixDisplayWithTitle(pix2, 0, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 400, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     pix3 = pixRemoveColormap(pix2, REMOVE_CMAP_TO_FULL_COLOR);
     regTestComparePix(rp, pix2, pix3);  /* 2 */
@@ -93,10 +95,11 @@ PIXA         *pixa1;
          * Roundoff from different jpeg decompression algorithms can
          * result in differing numbers of colors by a few percent.  */
     pix1 = pixRead(DEMOPATH("wyom.jpg"));
-    pixNumColors(pix1, 1, &ncolors);  /* >255, so should give 0 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixNumColors(pix1, 1, &ncolors);  /* >255, so should give 0 */
     regTestCompareValues(rp, ncolors, 132165, 10000.0);  /* 4 */
     pix2 = pixSimpleColorQuantize(pix1, 3, 3, 20);
-    pixDisplayWithTitle(pix2, 1000, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 1000, 0, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 5 */
     ncolors = pixcmapGetCount(pixGetColormap(pix2));
     regTestCompareValues(rp, ncolors, 20, 0.0);  /* 6 */
@@ -105,7 +108,8 @@ PIXA         *pixa1;
 
         /* Find the number of perceptually significant gray intensities */
     pix1 = pixRead(DEMOPATH("marge.jpg"));
-    pix2 = pixConvertTo8(pix1, 0);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixConvertTo8(pix1, 0);
     pixNumSignificantGrayColors(pix2, 20, 236, 0.0001, 1, &ncolors);
     regTestCompareValues(rp, ncolors, 219, 0.0);  /* 7 */
     pixDestroy(&pix1);
@@ -115,13 +119,14 @@ PIXA         *pixa1;
     pix1 = pixRead(DEMOPATH("map.057.jpg"));
     pixa1 = pixaCreate(0);
 	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 
     pixFindColorRegions(pix1, NULL, 4, 200, 70, 10, 90, 0.05,
                           &fcolor, &pix2, NULL, pixa1);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 8 */
     pix3 = pixaDisplayTiledInColumns(pixa1, 5, 0.3, 20, 2);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 9 */
-    pixDisplayWithTitle(pix3, 1000, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 1000, 500, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -129,7 +134,8 @@ PIXA         *pixa1;
 
         /* Show binary classification of RGB colors using a plane */
     pix1 = pixMakeGamutRGB(3);
-    pix2 = pixMakeArbMaskFromRGB(pix1, -0.5, -0.5, 1.0, 20);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixMakeArbMaskFromRGB(pix1, -0.5, -0.5, 1.0, 20);
     pixGetDimensions(pix1, &w, &h, NULL);
     pix3 = pixCreate(w, h, 32);
     pixSetAll(pix3);
@@ -137,7 +143,7 @@ PIXA         *pixa1;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 11 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix3, 0, 1300, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0, 1300, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -148,7 +154,8 @@ PIXA         *pixa1;
 	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
     pix1 = pixMakeGamutRGB(3);
-    pix2 = pixMakeArbMaskFromRGB(pix1, -0.5, -0.5, 1.0, 20);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixMakeArbMaskFromRGB(pix1, -0.5, -0.5, 1.0, 20);
     pix3 = pixMakeArbMaskFromRGB(pix1, 1.5, -0.5, -1.0, 0);
     pix4 = pixMakeArbMaskFromRGB(pix1, 0.4, 0.3, 0.3, 60);
     pixInvert(pix4, pix4);

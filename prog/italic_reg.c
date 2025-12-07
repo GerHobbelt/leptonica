@@ -69,6 +69,7 @@ PIXA         *pixadb;
 	//lept_mkdir("lept/ital");
 
     pixs = pixRead(DEMOPATH("italic.png"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Basic functionality with debug flag */
     pixItalicWords(pixs, NULL, NULL, &boxa1, rp->diag_spec);
@@ -76,31 +77,34 @@ PIXA         *pixadb;
     regTestCheckFile(rp, "/tmp/lept/ital/ital1.ba");  /* 0 */
     regTestCheckFile(rp, "/tmp/lept/ital/ital.3.pdf");  /* 1 */
     pix1 = pixRead("/tmp/lept/ital/ital.3.png");
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 0, 0, "Intermediate steps", rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
+    pixDisplayWithTitle(pix1, 0, 0, "Intermediate steps");
     pixDestroy(&pix1);
     pix1 = pixRead("/tmp/lept/ital/runhisto.png");
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix1, 400, 0, "Histogram of white runs", rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
+    pixDisplayWithTitle(pix1, 400, 0, "Histogram of white runs");
     pixDestroy(&pix1);
 
         /* Generate word mask */
     pixadb = pixaCreate(5);
-    pixWordMaskByDilation(pixs, NULL, &size, pixadb);
+	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
+	pixWordMaskByDilation(pixs, NULL, &size, pixadb);
     l_pdfSetDateAndVersion(0);
     pixaConvertToPdf(pixadb, 100, 1.0, L_FLATE_ENCODE, 0, "Word Mask",
                      "/tmp/lept/ital/wordmask.pdf");
     regTestCheckFile(rp, "/tmp/lept/ital/wordmask.pdf");  /* 4 */
     pix1 = pixaDisplayTiledInColumns(pixadb, 1, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix1, 1400, 0, "Intermediate mask step", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 1400, 0, "Intermediate mask step");
     pixDestroy(&pix1);
     pixaDestroy(&pixadb);
     L_INFO("dilation size = %d\n", rp->testname, size);
     snprintf(opstring, sizeof(opstring), "d1.5 + c%d.1", size);
     pixm = pixMorphSequence(pixs, opstring, 0);
     regTestWritePixAndCheck(rp, pixm, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pixm, 400, 550, "Word mask", rp->diag_spec);
+    pixDisplayWithTitle(pixm, 400, 550, "Word mask");
 
         /* Re-run italic finder using the word mask */
     pixItalicWords(pixs, NULL, pixm, &boxa2, rp->diag_spec);

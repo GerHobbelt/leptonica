@@ -55,23 +55,24 @@ L_REGPARAMS* rp;
 		return 1;
 
     pix = pixRead(DEMOPATH("test8.jpg"));
-    pixs = pixGammaTRC(NULL, pix, 1.3, 0, 255);  /* gamma of 1.3, for fun */
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	pixs = pixGammaTRC(NULL, pix, 1.3, 0, 255);  /* gamma of 1.3, for fun */
 
         /* Dither to 1 bpp */
     pix1 = pixDitherToBinary(pixs);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixDestroy(&pix1);
 
          /* Dither to 2 bpp, with colormap */
     pix1 = pixDitherTo2bpp(pixs, 1);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix1, 400, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 400, 0, NULL);
 
          /* Dither to 2 bpp, without colormap */
     pix2 = pixDitherTo2bpp(pixs, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix2, 800, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 800, 0, NULL);
     regTestComparePix(rp, pix1, pix2);   /* 3 */
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -79,13 +80,13 @@ L_REGPARAMS* rp;
         /* Dither 2x upscale to 1 bpp */
     pix1 = pixScaleGray2xLIDither(pixs);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix1, 0, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 400, NULL);
     pixDestroy(&pix1);
 
         /* Dither 4x upscale to 1 bpp */
     pix1 = pixScaleGray4xLIDither(pixs);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix1, 700, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 700, 400, NULL);
     pixDestroy(&pix1);
 
     pixDestroy(&pix);

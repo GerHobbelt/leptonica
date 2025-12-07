@@ -68,15 +68,16 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
     /* --------------------------------------------------------------- *
      *         Test pixConnComp() and pixCountConnComp(),              *
      *            with output to both boxa and pixa                    *
      * --------------------------------------------------------------- */
         /* First, test with 4-cc */
-    boxa1= pixConnComp(pixs, &pixa1, 4);
+    boxa1 = pixConnComp(pixs, &pixa1, 4);
     n1 = boxaGetCount(boxa1);
-    boxa2= pixConnComp(pixs, NULL, 4);
+    boxa2 = pixConnComp(pixs, NULL, 4);
     n2 = boxaGetCount(boxa2);
     pixCountConnComp(pixs, 4, &n3);
     lept_stderr("Number of 4 c.c.:  n1 = %d; n2 = %d, n3 = %d\n", n1, n2, n3);
@@ -152,8 +153,10 @@ L_REGPARAMS* rp;
      *  Test iterative covering of connected components by rectangles  *
      * --------------------------------------------------------------- */
     pixa1 = pixaCreate(0);
-    pix1 = pixRead(DEMOPATH("rabi.png"));
-    pix2 = pixReduceRankBinaryCascade(pix1, 1, 1, 1, 0);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pix1 = pixRead(DEMOPATH("rabi.png"));
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixReduceRankBinaryCascade(pix1, 1, 1, 1, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 12 -  */
     pixaAddPix(pixa1, pix2, L_INSERT);
     for (i = 1; i < 6; i++) {
@@ -163,7 +166,7 @@ L_REGPARAMS* rp;
     }
     pix3 = pixaDisplayTiledInRows(pixa1, 1, 2500, 1.0, 0, 30, 0);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 18 */
-    pixDisplayWithTitle(pix3, 100, 900, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 100, 900, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix3);
     pixaDestroy(&pixa1);

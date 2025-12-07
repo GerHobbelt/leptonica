@@ -197,7 +197,7 @@ L_REGPARAMS* rp;
         pixaAddPix(pixa1, pix1, L_INSERT);
         pix1 = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 30, 2);
         regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
-        pixDisplayWithTitle(pix1, 100, 100, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix1, 100, 100, NULL);
         pixDestroy(&pix1);
         pixaDestroy(&pixa1);
     }

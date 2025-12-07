@@ -97,14 +97,15 @@ PIXA        *pixa1;
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 3 */
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 4 */
     pixa1 = pixaCreate(5);
-    pixaAddPix(pixa1, pix1, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix2, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix4, L_INSERT);
     pixaAddPix(pixa1, pix5, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 0, 0, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -120,7 +121,8 @@ PIXA        *pixa1;
         /* First, make a pretty image */
     w = h = 200;
     pixs = pixCreate(w, h, 32);
-    wpls = pixGetWpl(pixs);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	wpls = pixGetWpl(pixs);
     datas = pixGetData(pixs);
     for (i = 0; i < 200; i++) {
         lines = datas + i * wpls;
@@ -134,7 +136,7 @@ PIXA        *pixa1;
     }
     pixg = pixConvertTo8(pixs, 0);  /* and a grayscale version */
     regTestWritePixAndCheck(rp, pixg, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pixg, 0, 300, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixg, 0, 300, NULL);
 
     na1 = pixExtractOnLine(pixg, 20, 20, 180, 20, 1);
     na2 = pixExtractOnLine(pixg, 40, 30, 40, 170, 1);
@@ -151,13 +153,14 @@ PIXA        *pixa1;
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 8 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 9 */
     pixa1 = pixaCreate(4);
-    pixaAddPix(pixa1, pix1, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix2, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix4, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 300, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 300, 0, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -173,7 +176,8 @@ PIXA        *pixa1;
      * -------------------------------------------------------------------*/
         /* Sum by columns in two halves (left and right) */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-    pixGetDimensions(pixs, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixGetDimensions(pixs, &w, &h, NULL);
     box1 = boxCreate(0, 0, w / 2, h);
     box2 = boxCreate(w / 2, 0, w - 2 / 2, h);
     na1 = pixAverageByColumn(pixs, box1, L_BLACK_IS_MAX);
@@ -205,7 +209,7 @@ PIXA        *pixa1;
                              0x00ff0000);
     pixRenderPlotFromNuma(&pix1, na3, L_PLOT_AT_RIGHT, 3, 80, 0x00ff0000);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 12 */
-    pixDisplayWithTitle(pix1, 0, 600, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 600, NULL);
     pixDestroy(&pix1);
     boxDestroy(&box1);
     boxDestroy(&box2);
@@ -271,11 +275,12 @@ PIXA        *pixa1;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 19 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 20 */
     pixa1 = pixaCreate(2);
-    pixaAddPix(pixa1, pix1, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix2, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 400, 600, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 400, 600, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -286,7 +291,8 @@ PIXA        *pixa1;
 
         /* Again on a different image */
     pix1 = pixRead(DEMOPATH("boxedpage.jpg"));
-    pix2 = pixConvertTo8(pix1, 0);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixConvertTo8(pix1, 0);
     pixGetDimensions(pix2, &w, &h, NULL);
     na1 = pixVarianceByRow(pix2, NULL);
     pix3 = pixConvertTo32(pix1);
@@ -310,11 +316,12 @@ PIXA        *pixa1;
                              0x00ff0000);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 22 */
     pixa1 = pixaCreate(2);
-    pixaAddPix(pixa1, pix3, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix5, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 800, 600, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 800, 600, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -328,7 +335,8 @@ PIXA        *pixa1;
      *                    Windowed variance along a line                  *
      * -------------------------------------------------------------------*/
     pix1 = pixRead(DEMOPATH("boxedpage.jpg"));
-    pix2 = pixConvertTo8(pix1, 0);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixConvertTo8(pix1, 0);
     pixGetDimensions(pix2, &w, &h, NULL);
     pix3 = pixCopy(NULL, pix1);
 
@@ -350,11 +358,12 @@ PIXA        *pixa1;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 23 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 24 */
     pixa1 = pixaCreate(2);
-    pixaAddPix(pixa1, pix1, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
-        pixDisplayWithTitle(pixd, 1200, 600, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 1200, 600, NULL);
         pixDestroy(&pixd);
     }
     pixaDestroy(&pixa1);
@@ -366,7 +375,8 @@ PIXA        *pixa1;
      *               Test pixel average function for gray                 *
      * -------------------------------------------------------------------*/
     pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
-    pix2 = pixConvertRGBToLuminance(pix1);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixConvertRGBToLuminance(pix1);
     box1 = boxCreate(20, 150, 700, 515);
     pix3 = pixClipRectangle(pix2, box1, NULL);
         /* No mask, no box, different subsampling */
@@ -435,7 +445,8 @@ PIXA        *pixa1;
      *               Test pixel average function for color                *
      * -------------------------------------------------------------------*/
     pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
-    box1 = boxCreate(20, 150, 700, 515);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	box1 = boxCreate(20, 150, 700, 515);
     pix2 = pixClipRectangle(pix1, box1, NULL);
     pixa1 = pixaCreate(0);
         /* No mask, no box, different subsampling */

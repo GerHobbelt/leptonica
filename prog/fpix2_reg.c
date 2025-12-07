@@ -59,27 +59,28 @@ L_REGPARAMS* rp;
 
         /* Test orthogonal rotations */
     pix1 = pixRead(DEMOPATH("marge.jpg"));
-    pix2 = pixConvertTo8(pix1, 0);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixConvertTo8(pix1, 0);
     fpix1 = pixConvertToFPix(pix2, 1);
 
     fpix2 = fpixRotateOrth(fpix1, 1);
     pix3 = fpixConvertToPix(fpix2, 8, L_CLIP_TO_ZERO, 0);
     pix4 = pixRotateOrth(pix2, 1);
     regTestComparePix(rp, pix3, pix4);  /* 0 */
-    pixDisplayWithTitle(pix3, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 100, 100, NULL);
 
     fpix3 = fpixRotateOrth(fpix1, 2);
     pix5 = fpixConvertToPix(fpix3, 8, L_CLIP_TO_ZERO, 0);
     pix6 = pixRotateOrth(pix2, 2);
     regTestComparePix(rp, pix5, pix6);  /* 1 */
-    pixDisplayWithTitle(pix5, 560, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix5, 560, 100, NULL);
 
     fpix4 = fpixRotateOrth(fpix1, 3);
     pix7 = fpixConvertToPix(fpix4, 8, L_CLIP_TO_ZERO, 0);
     pix8 = pixRotateOrth(pix2, 3);
     regTestComparePix(rp, pix7, pix8);  /* 2 */
-    pixDisplayWithTitle(pix7, 1170, 100, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix2, 560, 580, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix7, 1170, 100, NULL);
+    pixDisplayWithTitle(pix2, 560, 580, NULL);
 
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -96,20 +97,21 @@ L_REGPARAMS* rp;
 
         /* Test adding various borders */
     pix1 = pixRead(DEMOPATH("marge.jpg"));
-    pix2 = pixConvertTo8(pix1, 0);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixConvertTo8(pix1, 0);
     fpix1 = pixConvertToFPix(pix2, 1);
 
     fpix2 = fpixAddMirroredBorder(fpix1, 21, 21, 25, 25);
     pix3 = fpixConvertToPix(fpix2, 8, L_CLIP_TO_ZERO, 0);
     pix4 = pixAddMirroredBorder(pix2, 21, 21, 25, 25);
     regTestComparePix(rp, pix3, pix4);  /* 3 */
-    pixDisplayWithTitle(pix3, 100, 1000, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 100, 1000, NULL);
 
     fpix3 = fpixAddContinuedBorder(fpix1, 21, 21, 25, 25);
     pix5 = fpixConvertToPix(fpix3, 8, L_CLIP_TO_ZERO, 0);
     pix6 = pixAddContinuedBorder(pix2, 21, 21, 25, 25);
     regTestComparePix(rp, pix5, pix6);  /* 4 */
-    pixDisplayWithTitle(pix5, 750, 1000, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix5, 750, 1000, NULL);
 
     pixDestroy(&pix1);
     pixDestroy(&pix2);

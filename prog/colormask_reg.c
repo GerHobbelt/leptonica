@@ -73,7 +73,8 @@ PTA          *ptapk;
 
         /* Make a graded frame color */
     pixs = pixCreate(650, 900, 32);
-    for (i = 0; i < 900; i++) {
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	for (i = 0; i < 900; i++) {
         rval = 40 + i / 30;
         for (j = 0; j < 650; j++) {
             gval = 255 - j / 30;
@@ -85,11 +86,12 @@ PTA          *ptapk;
 
         /* Place an image inside the frame and convert to HSV */
     pix1 = pixRead(DEMOPATH("1555.003.jpg"));
-    pix2 = pixScale(pix1, 0.5, 0.5);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixScale(pix1, 0.5, 0.5);
     pixRasterop(pixs, 100, 100, 2000, 2000, PIX_SRC, pix2, 0, 0);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
-    pixDisplayWithTitle(pixs, 400, 0, "Input image", rp->diag_spec);
+    pixDisplayWithTitle(pixs, 400, 0, "Input image");
     pixa = pixaCreate(0);
 	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
@@ -100,22 +102,22 @@ PTA          *ptapk;
     pixg = pixMaxDynamicRange(pixh, L_LOG_SCALE);
     pixf = pixConvertGrayToFalseColor(pixg, 1.0);
     regTestWritePixAndCheck(rp, pixf, IFF_PNG);   /* 0 */
-    pixDisplayWithTitle(pixf, 100, 0, "False color HS histo", rp->diag_spec);
+    pixDisplayWithTitle(pixf, 100, 0, "False color HS histo");
     pixaAddPix(pixa, pixs, L_COPY);
     pixaAddPix(pixa, pixhsv, L_INSERT);
     pixaAddPix(pixa, pixg, L_INSERT);
     pixaAddPix(pixa, pixf, L_INSERT);
     pix3 = gplotSimplePix1(rp->diag_spec, nahue, "lept/regout/junkhue", "Histogram of hue values");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix3, 100, 300, "Histo of hue", rp->diag_spec);
+    pixDisplayWithTitle(pix3, 100, 300, "Histo of hue");
     pixaAddPix(pixa, pix3, L_INSERT);
 	pix3 = gplotSimplePix1(rp->diag_spec, nasat, "lept/regout/junksat", "Histogram of saturation values");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix3, 100, 800, "Histo of saturation", rp->diag_spec);
+    pixDisplayWithTitle(pix3, 100, 800, "Histo of saturation");
     pixaAddPix(pixa, pix3, L_INSERT);
     pixd = pixaDisplayTiledAndScaled(pixa, 32, 270, 7, 0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pixd, 0, 400, "Hue and Saturation Mosaic", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 0, 400, "Hue and Saturation Mosaic");
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
     numaDestroy(&nahue);
@@ -128,7 +130,7 @@ PTA          *ptapk;
     ptaWriteStream(stderr, ptapk, 1);
     pixd = pixaDisplayTiledInRows(pixapk, 32, 1400, 1.0, 0, 30, 2);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pixd, 0, 550, "Peaks in HS", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 0, 550, "Peaks in HS");
     pixDestroy(&pixh);
     pixDestroy(&pixd);
     pixaDestroy(&pixapk);
@@ -158,7 +160,7 @@ PTA          *ptapk;
     }
     pixd = pixaDisplayTiledAndScaled(pixa, 32, 225, 3, 0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 8 */
-    pixDisplayWithTitle(pixd, 600, 0, "Masks over peaks", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 600, 0, "Masks over peaks");
     pixDestroy(&pixs);
     pixDestroy(&pixr);
     pixDestroy(&pixd);

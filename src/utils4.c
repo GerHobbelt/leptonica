@@ -147,6 +147,25 @@
 #define REWRITE_TMP
 #endif
 
+
+/*
+ * The design/concept with the diagspec APIs is that those MUST tolerate NULL valued LDIAG_CTX arguments, 
+ * so that the rest of the code can use the simplest possible usage of these APIs: minimal cluttering of 
+ * other parts of the codebase is the intent. 
+ * 
+ * This preprocessor setting is set to 1 to allow extra *warnings* to be logged while we are still 
+ * debugging/trailing this API set.
+ */
+#define DEBUGGING              1
+
+
+#if DEBUGGING
+#define DBG_WARN(...)				L_WARNING(__VA_ARGS__)
+#else
+#define DBG_WARN(...)				/**/
+#endif
+
+
 /*--------------------------------------------------------------------*
  *         Image Debugging & Diagnostics Helper functions             *
  *--------------------------------------------------------------------*/
@@ -154,10 +173,16 @@
 
 typedef struct StepsArray {
 #define L_MAX_STEPS_DEPTH 10         // [batch:0, step:1, item:2, level:3, sublevel:4, ...]
-	uint16_t actual_depth;
+	unsigned int actual_depth;
 	l_atomic vals[L_MAX_STEPS_DEPTH];
 	// Note: the last depth level is permanently auto-incrementing and serves as a 'persisted' %item_id_is_forever_increasing counter.
 } StepsArray;
+
+typedef struct FilepathCache {
+#define L_PATH_CACHE_SIZE 16         // minimum requirement due to some regression test implementations in /prog/: 2
+	unsigned int active_index;
+	const char * path[L_PATH_CACHE_SIZE];
+} FilepathCache;
 
 struct l_diag_predef_parts {
 	const char* basepath;            //!< the base path within where every generated file must land.
@@ -169,11 +194,12 @@ struct l_diag_predef_parts {
 	unsigned int basepath_minlength; //!< minimum length of the basepath, i.e. append/remove/replace APIs are prohibited from editing the leading part of basepath that is shorter than this length.
 
 	uint64_t active_hash_id;         //!< derived from the originally specified %active_filename path, or set explicitly (if user-land code has a better idea about what value this should be).
-	const char* active_filename;     //!< the currently processed source file name. To be used (in reduced form) as a target filename prefix.
+	const char* filename_prefix;     //!< a file name prefix, NULL if unspecified. To be used (in reduced form) as a target filename prefix.
+	const char* filename_basename;   //!< a file name basename, NULL if unspecified. To be used (in reduced form) as a target filename base, after the prefix.
 	const char* process_name;        //!< the part which identifies what we are doing right now (at a high abstraction level)
 	const char* default_path_template_str; //!< you can customize the preferred file path formatting template.
 
-	char* last_generated_filepath;   //!< internal cache: stores the last generated file path (for re-use and reference)
+	FilepathCache last_generated_paths;  //!< internal cache: stores the last generated file path (for re-use and reference)
 	char* last_generated_step_id_string; //!< internal cache: stores the last generated steps[] id string (for re-use and reference)
 
 	l_atomic             refcount;   /*!< reference count (1 if no clones)  */
@@ -181,10 +207,14 @@ struct l_diag_predef_parts {
 	unsigned int must_regenerate : 1;		//!< set when l_filename_prefix changes mandate a freshly (re)generated target file prefix for subsequent requests.
 	unsigned int must_bump_step_id : 1;		//!< set when %step_id should be incremented before next use.
 	unsigned int step_id_is_forever_increasing : L_MAX_STEPS_DEPTH;
+	unsigned int step_width : 3;     //!< (width + 1): specifies the printed width of each step number at each steps level.
 
-	unsigned int display : 1;        /*!< 1 if in display mode; 0 otherwise                */
+	unsigned int regressiontest_mode : 1;  //!< 1 if in regression test mode; 0 otherwise; when active, this means the generated paths in /tmp/ and elsewhere WILL NOT be randomized.
+	unsigned int display : 1;        //!< 1 if in display mode; 0 otherwise                
 	unsigned int debugging : 1;		 //!< 1 if debugging mode is activated, resulting in several leptonica APIs producing debug/info messages and/or writing diagnostic plots and images to the basepath filesystem.
 };
+
+
 
 
 
@@ -197,6 +227,8 @@ leptCreateDiagnoticsSpecInstance(void)
 		return (LDIAG_CTX)ERROR_PTR("LDIAG_CTX not made", __func__, NULL);
 	}
 	dst->refcount = 1;
+
+	dst->step_width = 1;
 	return dst;
 }
 
@@ -205,7 +237,7 @@ void
 leptDestroyDiagnoticsSpecInstance(LDIAG_CTX* spec_ptr)
 {
 	if (!spec_ptr) {
-		L_WARNING("ptr address is null!\n", __func__);
+		DBG_WARN("LDIAG_CTX image diagnostics spec reference ptr address is not defined (NULL).\n", __func__);
 		return;
 	}
 
@@ -216,21 +248,38 @@ leptDestroyDiagnoticsSpecInstance(LDIAG_CTX* spec_ptr)
 	/* Decrement the ref count.  If it is 0, destroy the spec. */
 	if (--spec->refcount == 0) {
 		stringDestroy(&spec->basepath);
-		stringDestroy(&spec->active_filename);
+		stringDestroy(&spec->filename_prefix);
+		stringDestroy(&spec->filename_basename);
 		stringDestroy(&spec->process_name);
 		stringDestroy(&spec->default_path_template_str);
+
+		for (unsigned int i = 0; i < L_PATH_CACHE_SIZE; i++) {
+			stringDestroy(&spec->last_generated_paths.path[i]);
+		}
+
+		stringDestroy(&spec->last_generated_step_id_string);
+
 		LEPT_FREE(spec);
 	}
 	*spec_ptr = NULL;
 }
 
 
+static inline char*
+stringNewOrNull(const char* src)
+{
+	if (!src)
+		return NULL;
+	return stringNew(src);
+}
+
+
 LDIAG_CTX
 leptCopyDiagnoticsSpecInstance(LDIAG_CTX spec)
 {
-	if (!spec)
-	{
-		return (LDIAG_CTX)ERROR_PTR("image diagnostics spec not defined", __func__, NULL);
+	if (!spec) {
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
 	}
 	LDIAG_CTX dst = (LDIAG_CTX)LEPT_MALLOC(sizeof(*dst));
 	if (!dst)
@@ -242,10 +291,17 @@ leptCopyDiagnoticsSpecInstance(LDIAG_CTX spec)
 
 	dst->refcount = 1;
 
-	dst->basepath = stringNew(spec->basepath);
-	dst->active_filename = stringNew(spec->active_filename);
-	dst->process_name = stringNew(spec->process_name);
-	dst->default_path_template_str = stringNew(spec->default_path_template_str);
+	dst->basepath = stringNewOrNull(spec->basepath);
+	dst->filename_prefix = stringNewOrNull(spec->filename_prefix);
+	dst->filename_basename = stringNewOrNull(spec->filename_basename);
+	dst->process_name = stringNewOrNull(spec->process_name);
+	dst->default_path_template_str = stringNewOrNull(spec->default_path_template_str);
+
+	for (unsigned int i = 0; i < L_PATH_CACHE_SIZE; i++) {
+		dst->last_generated_paths.path[i] = stringNewOrNull(spec->last_generated_paths.path[i]);
+	}
+
+	dst->last_generated_step_id_string = stringNewOrNull(spec->last_generated_step_id_string);
 
 	return dst;
 }
@@ -256,7 +312,8 @@ leptCloneDiagnoticsSpecInstance(LDIAG_CTX spec)
 {
 	if (!spec)
 	{
-		return (LDIAG_CTX)ERROR_PTR("image diagnostics spec not defined", __func__, NULL);
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
 	}
 	spec->refcount++;
 	return spec;
@@ -268,7 +325,7 @@ leptReplaceDiagnoticsSpecInstance(LDIAG_CTX* specd, LDIAG_CTX specs)
 {
 	if (!specd)
 	{
-		L_ERROR("image diagnostics spec reference not defined", __func__);
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
 		return;
 	}
 
@@ -360,12 +417,8 @@ pixSetDiagnosticsSpec(PIX* pix, LDIAG_CTX spec)
 
 	leptDestroyDiagnoticsSpecInstance(&pix->diag_spec);
 
-	if (spec) {
-		pix->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
-	}
-	else {
-		pix->diag_spec = NULL;
-	}
+	pix->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+
 	return 0;
 }
 
@@ -381,12 +434,7 @@ pixCopyDiagnosticsSpec(PIX* pixd, const PIX* pixs)
 	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
 	LDIAG_CTX spec = pixd->diag_spec;
 
-	if (pixs->diag_spec) {
-		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
 
 	leptDestroyDiagnoticsSpecInstance(&spec);
 
@@ -407,12 +455,8 @@ pixCloneDiagnosticsSpec(PIX* pixd, const PIX* pixs)
 
 	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
 
-	if (pixs->diag_spec) {
-		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(pixs->diag_spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCloneDiagnoticsSpecInstance(pixs->diag_spec);
+
 	return 0;
 }
 
@@ -462,12 +506,8 @@ fpixSetDiagnosticsSpec(FPIX* pix, LDIAG_CTX spec)
 
 	leptDestroyDiagnoticsSpecInstance(&pix->diag_spec);
 
-	if (spec) {
-		pix->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
-	}
-	else {
-		pix->diag_spec = NULL;
-	}
+	pix->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+
 	return 0;
 }
 
@@ -483,12 +523,7 @@ fpixCopyDiagnosticsSpec(FPIX* pixd, const FPIX* pixs)
 	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
 	LDIAG_CTX spec = pixd->diag_spec;
 
-	if (pixs->diag_spec) {
-		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
 
 	leptDestroyDiagnoticsSpecInstance(&spec);
 
@@ -509,12 +544,8 @@ fpixCloneDiagnosticsSpec(FPIX* pixd, const FPIX* pixs)
 
 	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
 
-	if (pixs->diag_spec) {
-		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(pixs->diag_spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCloneDiagnoticsSpecInstance(pixs->diag_spec);
+
 	return 0;
 }
 
@@ -563,12 +594,8 @@ dpixSetDiagnosticsSpec(DPIX* pix, LDIAG_CTX spec)
 
 	leptDestroyDiagnoticsSpecInstance(&pix->diag_spec);
 
-	if (spec) {
-		pix->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
-	}
-	else {
-		pix->diag_spec = NULL;
-	}
+	pix->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+
 	return 0;
 }
 
@@ -584,12 +611,7 @@ dpixCopyDiagnosticsSpec(DPIX* pixd, const DPIX* pixs)
 	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
 	LDIAG_CTX spec = pixd->diag_spec;
 
-	if (pixs->diag_spec) {
-		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCopyDiagnoticsSpecInstance(pixs->diag_spec);
 
 	leptDestroyDiagnoticsSpecInstance(&spec);
 
@@ -610,12 +632,8 @@ dpixCloneDiagnosticsSpec(DPIX* pixd, const DPIX* pixs)
 
 	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
 
-	if (pixs->diag_spec) {
-		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(pixs->diag_spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCloneDiagnoticsSpecInstance(pixs->diag_spec);
+
 	return 0;
 }
 
@@ -671,12 +689,8 @@ pixaSetDiagnosticsSpec(PIXA* pixa, LDIAG_CTX spec)
 
 	leptDestroyDiagnoticsSpecInstance(&pixa->diag_spec);
 
-	if (spec) {
-		pixa->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
-	}
-	else {
-		pixa->diag_spec = NULL;
-	}
+	pixa->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+
 	return 0;
 }
 
@@ -694,12 +708,7 @@ pixaCopyDiagnosticsSpec(PIXA* pixd, const PIXA* pixs)
 	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
 	LDIAG_CTX old_spec = pixd->diag_spec;
 
-	if (spec) {
-		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCopyDiagnoticsSpecInstance(spec);
 
 	leptDestroyDiagnoticsSpecInstance(&old_spec);
 
@@ -722,12 +731,8 @@ pixaCloneDiagnosticsSpec(PIXA* pixd, const PIXA* pixs)
 
 	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
 
-	if (spec) {
-		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+
 	return 0;
 }
 
@@ -804,12 +809,8 @@ fpixaSetDiagnosticsSpec(FPIXA* pixa, LDIAG_CTX spec)
 
 	leptDestroyDiagnoticsSpecInstance(&pixa->diag_spec);
 
-	if (spec) {
-		pixa->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
-	}
-	else {
-		pixa->diag_spec = NULL;
-	}
+	pixa->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+
 	return 0;
 }
 
@@ -827,12 +828,7 @@ fpixaCopyDiagnosticsSpec(FPIXA* pixd, const FPIXA* pixs)
 	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
 	LDIAG_CTX old_spec = pixd->diag_spec;
 
-	if (spec) {
-		pixd->diag_spec = leptCopyDiagnoticsSpecInstance(spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCopyDiagnoticsSpecInstance(spec);
 
 	leptDestroyDiagnoticsSpecInstance(&old_spec);
 
@@ -855,12 +851,8 @@ fpixaCloneDiagnosticsSpec(FPIXA* pixd, const FPIXA* pixs)
 
 	leptDestroyDiagnoticsSpecInstance(&pixd->diag_spec);
 
-	if (spec) {
-		pixd->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
-	}
-	else {
-		pixd->diag_spec = NULL;
-	}
+	pixd->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+
 	return 0;
 }
 
@@ -929,12 +921,8 @@ gplotSetDiagnosticsSpec(GPLOT* gplot, LDIAG_CTX spec)
 
 	leptDestroyDiagnoticsSpecInstance(&gplot->diag_spec);
 
-	if (spec) {
-		gplot->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
-	}
-	else {
-		gplot->diag_spec = NULL;
-	}
+	gplot->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
+
 	return 0;
 }
 
@@ -950,12 +938,7 @@ gplotCopyDiagnosticsSpec(GPLOT* gplotd, const GPLOT* gplots)
 	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
 	LDIAG_CTX spec = gplotd->diag_spec;
 
-	if (gplots->diag_spec) {
-		gplotd->diag_spec = leptCopyDiagnoticsSpecInstance(gplots->diag_spec);
-	}
-	else {
-		gplotd->diag_spec = NULL;
-	}
+	gplotd->diag_spec = leptCopyDiagnoticsSpecInstance(gplots->diag_spec);
 
 	leptDestroyDiagnoticsSpecInstance(&spec);
 
@@ -976,12 +959,8 @@ gplotCloneDiagnosticsSpec(GPLOT* gplotd, const GPLOT* gplots)
 
 	leptDestroyDiagnoticsSpecInstance(&gplotd->diag_spec);
 
-	if (gplots->diag_spec) {
-		gplotd->diag_spec = leptCloneDiagnoticsSpecInstance(gplots->diag_spec);
-	}
-	else {
-		gplotd->diag_spec = NULL;
-	}
+	gplotd->diag_spec = leptCloneDiagnoticsSpecInstance(gplots->diag_spec);
+
 	return 0;
 }
 
@@ -1026,12 +1005,7 @@ boxaSetDiagnosticsSpec(BOXA* boxa, LDIAG_CTX spec)
 	if (boxa->diag_spec == spec)
 		return 0;
 	leptDestroyDiagnoticsSpecInstance(&boxa->diag_spec);
-	if (spec) {
-		boxa->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
-	}
-	else {
-		boxa->diag_spec = NULL;
-	}
+	boxa->diag_spec = leptCloneDiagnoticsSpecInstance(spec);
 	return 0;
 }
 
@@ -1047,12 +1021,7 @@ boxaCopyDiagnosticsSpec(BOXA* boxad, const BOXA* boxas)
 	// Copy before Destroy: both diagspecs MAY be the same and the cleaner-looking Destroy-then-Copy would invalidate the source spec! (race condition)
 	LDIAG_CTX old_spec = boxad->diag_spec;
 
-	if (boxas->diag_spec) {
-		boxad->diag_spec = leptCopyDiagnoticsSpecInstance(boxas->diag_spec);
-	}
-	else {
-		boxad->diag_spec = NULL;
-	}
+	boxad->diag_spec = leptCopyDiagnoticsSpecInstance(boxas->diag_spec);
 
 	leptDestroyDiagnoticsSpecInstance(&spec);
 
@@ -1070,12 +1039,7 @@ boxaCloneDiagnosticsSpec(BOXA* boxad, const BOXA* boxas)
 	if (boxad->diag_spec == boxas->diag_spec)
 		return 0;
 	leptDestroyDiagnoticsSpecInstance(&boxad->diag_spec);
-	if (boxas->diag_spec) {
-		boxad->diag_spec = leptCloneDiagnoticsSpecInstance(boxas->diag_spec);
-	}
-	else {
-		boxad->diag_spec = NULL;
-	}
+	boxad->diag_spec = leptCloneDiagnoticsSpecInstance(boxas->diag_spec);
 	return 0;
 }
 
@@ -1102,6 +1066,11 @@ leptDebugSetFileBasepath(LDIAG_CTX spec, const char* directory)
 {
 	if (!directory) {
 		directory = "";
+	}
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
 	}
 
 	if (spec->basepath)
@@ -1152,6 +1121,11 @@ leptDebugAppendFileBasepath(LDIAG_CTX spec, const char* directory)
 	if (!directory) {
 		directory = "";
 	}
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
 
 	if (directory[0]) {
 		if (spec->basepath) {
@@ -1192,6 +1166,11 @@ leptDebugAppendFilePathPart(LDIAG_CTX spec, const char* directory)
 	if (!directory) {
 		directory = "";
 	}
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
 
 	if (!spec->basepath) {
 		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
@@ -1218,6 +1197,11 @@ leptDebugReplaceEntireFilePathPart(LDIAG_CTX spec, const char* directory)
 	if (!directory) {
 		directory = "";
 	}
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
 
 	if (!spec->basepath) {
 		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
@@ -1240,6 +1224,11 @@ leptDebugReplaceOneFilePathPart(LDIAG_CTX spec, const char* directory)
 {
 	if (!directory) {
 		directory = "";
+	}
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
 	}
 
 	if (!spec->basepath) {
@@ -1274,6 +1263,12 @@ leptDebugReplaceOneFilePathPart(LDIAG_CTX spec, const char* directory)
 void
 leptDebugEraseFilePathPart(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	if (!spec->basepath) {
 		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
 		spec->basepath_minlength = strlen(spec->basepath);
@@ -1288,8 +1283,15 @@ leptDebugEraseFilePathPart(LDIAG_CTX spec)
 }
 
 
-void leptDebugEraseOneFilePathPart(LDIAG_CTX spec)
+void
+leptDebugEraseOneFilePathPart(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	if (!spec->basepath) {
 		spec->basepath = stringNew(leptDebugGetFileBasePath(spec));
 		spec->basepath_minlength = strlen(spec->basepath);
@@ -1316,6 +1318,12 @@ void leptDebugEraseOneFilePathPart(LDIAG_CTX spec)
 const char*
 leptDebugGetFilePathPart(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
+	}
+
 	const char* rv = spec->basepath + spec->basepath_minlength;
 	if (strchr("\\/", *rv))
 		rv++;
@@ -1355,16 +1363,22 @@ leptDebugGetFileBasePath(LDIAG_CTX spec)
 void
 leptDebugSetFilenameForPrefix(LDIAG_CTX spec, const char* source_filename, l_ok strip_off_extension)
 {
-	if (spec->active_filename)
-		stringDestroy(&spec->active_filename);
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
+	if (spec->filename_prefix)
+		stringDestroy(&spec->filename_prefix);
 	if (!source_filename) {
-		spec->active_filename = NULL;
+		spec->filename_prefix = NULL;
 	}
 	else {
 		// when a full path has been specified, strip off any directories: we assume the filename is
 		// pretty unique by itself. When it isn't, there's little loss, as we also have the batch run #
 		// and the process step # to help make the target uniquely named.
-		spec->active_filename = getPathBasename(source_filename, strip_off_extension);
+		spec->filename_prefix = getPathBasename(source_filename, strip_off_extension);
 	}
 
 	spec->must_regenerate = 1;
@@ -1374,11 +1388,11 @@ leptDebugSetFilenameForPrefix(LDIAG_CTX spec, const char* source_filename, l_ok 
 /*!
  * \brief   leptDebugGetFilenamePrefix()
  *
- * \return  the previously set source filename meant for use as part of the target prefix string.
+ * \return  the previously set source filename prefix meant for use as part of the target filepath.
  *
  * <pre>
  * Notes:
- *      (1) This source filename has NOT been sanitized yet: it may contain 'dangerous characters'
+ *      (1) This path element (string) has NOT been sanitized yet: it may contain 'dangerous characters'
  *          when used directly for any target file path construction.
  *      (2) Will return NULL when not yet set (or when RESET).
  *      (3) When you want to use the cleaned-up and preformatted filename prefix, use the
@@ -1388,7 +1402,81 @@ leptDebugSetFilenameForPrefix(LDIAG_CTX spec, const char* source_filename, l_ok 
 const char*
 leptDebugGetFilenameForPrefix(LDIAG_CTX spec)
 {
-	return spec->active_filename;
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
+	}
+
+	return spec->filename_prefix;
+}
+
+
+/*!
+ * \brief   leptDebugSetFilenameBasename()
+ *
+ * \param[in]    filename_fmt           the path to the file; may be relative or absolute or just the file name itself.
+ * \param[in]    ...
+ *
+ * <pre>
+ * Notes:
+ *      (1) The resulting, formatted filename will be added to every generated filename/path if the path format includes the @BASENAME@ macro.
+ *          This is useful when, for example, processing multiple files, all part of the same run, e.g. in a regression test.
+ *      (2) By passing NULL, the basename is erased.
+ * </pre>
+ */
+void
+leptDebugSetFilenameBasename(LDIAG_CTX spec, const char* filename_fmt, ...)
+{
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
+	if (spec->filename_basename)
+		stringDestroy(&spec->filename_basename);
+	if (!filename_fmt) {
+		spec->filename_basename = NULL;
+	}
+	else {
+		// when a full path has been specified, strip off any directories: we assume the filename is
+		// pretty unique by itself. When it isn't, there's little loss, as we also have the batch run #
+		// and the process step # to help make the target uniquely named.
+		va_list va;
+		va_start(va, filename_fmt);
+		spec->filename_basename = string_vasprintf(filename_fmt, va);
+		va_end(va);
+	}
+
+	spec->must_regenerate = 1;
+}
+
+
+/*!
+ * \brief   leptDebugGetFilenameBasename()
+ *
+ * \return  the previously set source filename basename meant for use as part of the target filepath.
+ *
+ * <pre>
+ * Notes:
+ *      (1) This path element (string) has NOT been sanitized yet: it may contain 'dangerous characters'
+ *          when used directly for any target file path construction.
+ *      (2) Will return NULL when not yet set (or when RESET).
+ *      (3) When you want to use the cleaned-up and preformatted filename prefix, use the
+ *          leptDebugGenFilename() API instead.
+ * </pre>
+ */
+const char*
+leptDebugGetFilenameBasename(LDIAG_CTX spec)
+{
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
+	}
+
+	return spec->filename_basename;
 }
 
 
@@ -1429,6 +1517,12 @@ steps_level_numeric_value_compares(uint16_t depth, unsigned int forever_increasi
 void
 leptDebugSetStepId(LDIAG_CTX spec, uint32_t numeric_id)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	// note: when we're at the maximum depth, we cannot change the step id any further, but for auto-incrementing (which is enforced at that level)
 	if (spec->steps.actual_depth == L_MAX_STEPS_DEPTH - 1) {
 		spec->must_bump_step_id = 0;
@@ -1459,6 +1553,12 @@ leptDebugSetStepId(LDIAG_CTX spec, uint32_t numeric_id)
 void
 leptDebugIncrementStepId(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	++spec->steps.vals[spec->steps.actual_depth];
 	spec->must_bump_step_id = 0;
 	spec->must_regenerate = 1;
@@ -1476,6 +1576,12 @@ leptDebugIncrementStepId(LDIAG_CTX spec)
 uint32_t
 leptDebugGetStepId(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return 0;
+	}
+
 	if (spec->must_bump_step_id) {
 		leptDebugIncrementStepId(spec);
 	}
@@ -1484,9 +1590,35 @@ leptDebugGetStepId(LDIAG_CTX spec)
 
 
 // returned string is kept in the cache, so no need to destroy/free by caller.
+static void
+printStepIdAsString(char *buf, size_t bufsize, l_ok exclude_last_steps_level, LDIAG_CTX spec)
+{
+	char* p = buf;
+	char* e = buf + bufsize;
+	uint16_t maxdepth = spec->steps.actual_depth + 1 - !!exclude_last_steps_level;
+	if (maxdepth == 0)
+		maxdepth = 1;
+	int w = spec->step_width + 1;
+	for (uint16_t i = 0; i < maxdepth; i++) {
+		unsigned int v = spec->steps.vals[i];    // MSVC complains about feeding a l_atomic into a variadic function like printf() (because I was compiling in forced C++ mode, anyway). This hotfixes that.
+		int n = snprintf(p, e - p, "%0*u.", w, v);
+		p += n;
+	}
+	p--;  // discard the trailing '.'
+	*p = 0;
+}
+
+
+// returned string is kept in the cache, so no need to destroy/free by caller.
 const char*
 leptDebugGetStepIdAsString(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return "0000";
+	}
+
 	if (spec->must_bump_step_id) {
 		leptDebugIncrementStepId(spec);
 	}
@@ -1496,15 +1628,7 @@ leptDebugGetStepIdAsString(LDIAG_CTX spec)
 		buf = (char*)LEPT_CALLOC(bufsize, sizeof(char));
 		spec->last_generated_step_id_string = buf;
 	}
-	char* p = buf;
-	char* e = buf + bufsize;
-	for (uint16_t i = 0; i <= spec->steps.actual_depth; i++) {
-		unsigned int v = spec->steps.vals[i];    // MSVC complains about feeding a l_atomic into a variadic function like printf() (because I was compiling in forced C++ mode, anyway). This hotfixes that.
-		int n = snprintf(p, e - p, "%u.", v);
-		p += n;
-	}
-	p--;  // discard the trailing '.'
-	*p = 0;
+	printStepIdAsString(buf, bufsize, FALSE, spec);
 
 	return buf;
 }
@@ -1513,6 +1637,12 @@ leptDebugGetStepIdAsString(LDIAG_CTX spec)
 void
 leptDebugMarkStepIdForIncrementing(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	spec->must_bump_step_id = 1;
 }
 
@@ -1520,6 +1650,12 @@ leptDebugMarkStepIdForIncrementing(LDIAG_CTX spec)
 void
 leptDebugSetStepLevelAsForeverIncreasing(LDIAG_CTX spec, l_ok enable)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	if (enable) {
 		unsigned int mask = 1U << spec->steps.actual_depth;
 		spec->step_id_is_forever_increasing |= mask;
@@ -1562,6 +1698,12 @@ steps_reset_sub_levels(StepsArray* steps, uint16_t depth, uint16_t max_depth, un
 void
 leptDebugSetStepIdAtDepth(LDIAG_CTX spec, int relative_depth, uint32_t numeric_id)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	// we can only address current or parent levels!
 	if (relative_depth > 0)
 		relative_depth = -relative_depth;
@@ -1607,6 +1749,12 @@ leptDebugSetStepIdAtDepth(LDIAG_CTX spec, int relative_depth, uint32_t numeric_i
 void
 leptDebugIncrementStepIdAtDepth(LDIAG_CTX spec, int relative_depth)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	// we can only address current or parent levels!
 	if (relative_depth > 0)
 		relative_depth = -relative_depth;
@@ -1634,6 +1782,12 @@ leptDebugIncrementStepIdAtDepth(LDIAG_CTX spec, int relative_depth)
 uint32_t
 leptDebugGetStepIdAtLevel(LDIAG_CTX spec, int relative_depth)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return 0;
+	}
+
 	// we can only address current or parent levels!
 	if (relative_depth > 0)
 		relative_depth = -relative_depth;
@@ -1656,6 +1810,12 @@ leptDebugGetStepIdAtLevel(LDIAG_CTX spec, int relative_depth)
 void
 leptDebugSetStepLevelAtLevelAsForeverIncreasing(LDIAG_CTX spec, int relative_depth, l_ok enable)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	// we can only address current or parent levels!
 	if (relative_depth > 0)
 		relative_depth = -relative_depth;
@@ -1685,6 +1845,11 @@ leptDebugSetStepLevelAtLevelAsForeverIncreasing(LDIAG_CTX spec, int relative_dep
 NUMA*
 leptDebugGetStepNuma(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		return (NUMA *)ERROR_PTR("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__, NULL);
+	}
+
 	NUMA* numa = numaCreate(L_MAX_STEPS_DEPTH);
 	for (uint16_t i = 0; i < spec->steps.actual_depth; i++) {
 		numaAddNumber(numa, spec->steps.vals[i]);
@@ -1696,12 +1861,24 @@ leptDebugGetStepNuma(LDIAG_CTX spec)
 uint16_t
 leptDebugGetStepDepth(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return 0;
+	}
+
 	return spec->steps.actual_depth;
 }
 
 
 uint16_t leptDebugAddStepLevel(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return 0;
+	}
+
 	if (spec->steps.actual_depth < L_MAX_STEPS_DEPTH - 2) {
 		++spec->steps.actual_depth;
 		spec->steps.vals[spec->steps.actual_depth] = 0;
@@ -1720,6 +1897,12 @@ uint16_t leptDebugAddStepLevel(LDIAG_CTX spec)
 uint32_t
 leptDebugPopStepLevel(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return 0;
+	}
+
 	uint32_t rv = spec->steps.vals[spec->steps.actual_depth];
 	if (spec->steps.actual_depth > 0) {
 		--spec->steps.actual_depth;
@@ -1731,8 +1914,44 @@ leptDebugPopStepLevel(LDIAG_CTX spec)
 
 
 void
+leptDebugSetStepDisplayWidth(LDIAG_CTX spec, unsigned int width_per_level)
+{
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
+	if (width_per_level < 1)
+		width_per_level = 1;
+	else if (width_per_level > 8)
+		width_per_level = 8;
+	spec->step_width = width_per_level - 1;  // value 1..8: fits in 3 bits. :-)
+}
+
+
+unsigned int
+leptDebugGetStepDisplayWidth(LDIAG_CTX spec)
+{
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return 1;
+	}
+
+	return spec->step_width + 1;
+}
+
+
+void
 leptDebugSetHashId(LDIAG_CTX spec, uint64_t hash_id)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	if (spec->active_hash_id != hash_id) {
 		spec->must_regenerate = 1;
 		spec->active_hash_id = hash_id;
@@ -1743,6 +1962,12 @@ leptDebugSetHashId(LDIAG_CTX spec, uint64_t hash_id)
 uint64_t
 leptDebugGetHashId(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return 0;
+	}
+
 	return spec->active_hash_id;
 }
 
@@ -1763,6 +1988,12 @@ leptDebugGetHashId(LDIAG_CTX spec)
 void
 leptDebugSetProcessName(LDIAG_CTX spec, const char* name)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	if (spec->process_name) {
 		stringDestroy(&spec->process_name);
 	}
@@ -1791,6 +2022,12 @@ leptDebugSetProcessName(LDIAG_CTX spec, const char* name)
 const char*
 leptDebugGetProcessName(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return "undefined";
+	}
+
 	return spec->process_name;
 }
 
@@ -1890,6 +2127,12 @@ leptDebugGetProcessName(LDIAG_CTX spec)
 void
 leptDebugSetFilepathDefaultFormat(LDIAG_CTX spec, const char* path_template_str)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
 	// TODO: parse format string and check for errors.
 
 	if (spec->default_path_template_str) {
@@ -1915,6 +2158,12 @@ leptDebugSetFilepathDefaultFormat(LDIAG_CTX spec, const char* path_template_str)
 const char*
 leptDebugGetFilepathDefaultFormat(LDIAG_CTX spec)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
+	}
+
 	return spec->default_path_template_str;
 }
 
@@ -1927,6 +2176,12 @@ leptDebugGetFilepathDefaultFormat(LDIAG_CTX spec)
 const char*
 leptDebugGenFilename(LDIAG_CTX spec, const char* filename_fmt_str, ...)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
+	}
+
 	va_list va;
 	va_start(va, filename_fmt_str);
 	const char* fn = string_vasprintf(filename_fmt_str, va);
@@ -1953,6 +2208,12 @@ leptDebugGenFilename(LDIAG_CTX spec, const char* filename_fmt_str, ...)
 const char*
 leptDebugGenFilepath(LDIAG_CTX spec, const char* path_fmt_str, ...)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
+	}
+
 	va_list va;
 	va_start(va, path_fmt_str);
 	const char *fn = string_vasprintf(path_fmt_str, va);
@@ -1961,21 +2222,7 @@ leptDebugGenFilepath(LDIAG_CTX spec, const char* path_fmt_str, ...)
 	const char* f = pathJoin(path, fn);
 	stringDestroy(&fn);
 	stringDestroy(&path);
-	return f;
-}
-
-
-const char*
-leptDebugGenFilenameEx(const char* directory, LDIAG_CTX spec, const char* filename_fmt_str, ...)
-{
-	va_list va;
-	va_start(va, filename_fmt_str);
-	const char* fn = string_vasprintf(filename_fmt_str, va);
-	va_end(va);
-	const char* path = leptDebugGetFileBasePath(spec);
-	const char* f = pathJoin(path, fn);
-	stringDestroy(&fn);
-	stringDestroy(&path);
+	// TODO: cache & cycle through about 16 filepath slots. AT LEAST 2 as boxa1_reg.c is assuming the last 2 generated paths remain valid for a while!
 	return f;
 }
 
@@ -1983,6 +2230,12 @@ leptDebugGenFilenameEx(const char* directory, LDIAG_CTX spec, const char* filena
 const char*
 leptDebugGenFilepathEx(const char* directory, LDIAG_CTX spec, const char* path_fmt_str, ...)
 {
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
+	}
+
 	va_list va;
 	va_start(va, path_fmt_str);
 	const char* fn = string_vasprintf(path_fmt_str, va);
@@ -2003,7 +2256,20 @@ leptDebugGenFilepathEx(const char* directory, LDIAG_CTX spec, const char* path_f
 const char*
 leptDebugGetLastGenFilepath(LDIAG_CTX spec)
 {
-	return spec->active_filename;
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return NULL;
+	}
+
+	int index = spec->last_generated_paths.active_index + L_PATH_CACHE_SIZE - 1;
+	index %= L_PATH_CACHE_SIZE;
+	const char* s = spec->last_generated_paths.path[index];
+	if (s == NULL) {
+		// no previous path has been generated, ever.
+		return (const char*)ERROR_PTR("no generated filepaths have been generated before: cannot comply with this request to produce the previously generated path.", __func__, NULL);
+	}
+	return s;
 }
 
 
@@ -2011,7 +2277,11 @@ l_ok
 leptIsInDisplayMode(LDIAG_CTX spec)
 {
 	if (!spec)
-		return ERROR_INT("spec not defined", __func__, 0);
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return 0;
+	}
+
 	return spec->display;
 }
 
@@ -2019,11 +2289,39 @@ leptIsInDisplayMode(LDIAG_CTX spec)
 void
 leptSetInDisplayMode(LDIAG_CTX spec, l_ok activate)
 {
-	if (!spec) {
-		L_ERROR("spec not defined", __func__);
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
 		return;
 	}
+
 	spec->display = !!activate;
+}
+
+
+l_ok
+leptIsInDRegressionTestMode(LDIAG_CTX spec)
+{
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return 0;
+	}
+
+	return spec->regressiontest_mode;
+}
+
+
+void
+leptSetInRegressionTestMode(LDIAG_CTX spec, l_ok activate)
+{
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
+		return;
+	}
+
+	spec->regressiontest_mode = !!activate;
 }
 
 
@@ -2037,10 +2335,12 @@ leptSetInDisplayMode(LDIAG_CTX spec, l_ok activate)
 l_ok
 leptIsDebugModeActive(LDIAG_CTX spec)
 {
-	if (!spec) {
-		//return ERROR_INT("spec not defined", __func__, 0);
+	if (!spec)
+	{
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
 		return 0;
 	}
+
 	return spec->debugging;
 }
 
@@ -2049,11 +2349,14 @@ void
 leptActivateDebugMode(LDIAG_CTX spec, l_ok activate)
 {
 	if (!spec && activate) {
-		L_ERROR("spec not defined", __func__);
+		L_ERROR("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
 		return;
 	}
 	if (spec) {
 		spec->debugging = !!activate;
+	}
+	else {
+		DBG_WARN("LDIAG_CTX image diagnostics spec is not defined (NULL).\n", __func__);
 	}
 }
 
@@ -2121,20 +2424,4 @@ pixaPassDiagIfDebugModeActive(PIXA* pixa)
 	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixa);
 	return leptPassIfDebugModeActive(diagspec);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -67,10 +67,13 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixac1 = pixaCreate(0);
-    pixac2 = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixac1, rp->diag_spec);
+	pixac2 = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixac2, rp->diag_spec);
 
     pixs = pixRead(DEMOPATH("lucasta.1.300.tif"));
-    pixGetDimensions(pixs, &w, &h, NULL);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixGetDimensions(pixs, &w, &h, NULL);
     boxa = pixConnComp(pixs, &pixas, 8);
     pixDestroy(&pixs);
     boxaDestroy(&boxa);
@@ -341,11 +344,11 @@ L_REGPARAMS* rp;
     pixDestroy(&pixd);
 
     pixd = pixaDisplayTiledInColumns(pixac1, 10, 0.5, 15, 2);
-    pixDisplayWithTitle(pixd, 0, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 0, 100, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 16 */
     pixDestroy(&pixd);
     pixd = pixaDisplayTiledInColumns(pixac2, 10, 0.5, 15, 2);
-    pixDisplayWithTitle(pixd, 800, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 800, 100, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 17 */
     pixDestroy(&pixd);
     pixaDestroy(&pixac1);
@@ -401,7 +404,8 @@ PIXA    *pixat;
                     imax, nactual);
 
     pixat = pixaCreate(imax + 1);
-    for (i = 0; i <= imax; i++) {
+	pixaSetDiagnosticsSpec(pixat, rp->diag_spec);
+	for (i = 0; i <= imax; i++) {
         pix = (PIX *)ptraRemove(papix, i, L_NO_COMPACTION);
         box = (BOX *)ptraRemove(pabox, i, L_NO_COMPACTION);
         if (pix) pixaAddPix(pixat, pix, L_INSERT);
@@ -437,7 +441,8 @@ PIXA    *pixat;
 
         /* Remove half */
     pixat = pixaCreate(imax + 1);
-    for (i = 0; i <= imax; i++) {
+	pixaSetDiagnosticsSpec(pixat, rp->diag_spec);
+	for (i = 0; i <= imax; i++) {
         if (i % 2 == 0) {
             pix = (PIX *)ptraRemove(papix, i, L_NO_COMPACTION);
             box = (BOX *)ptraRemove(pabox, i, L_NO_COMPACTION);

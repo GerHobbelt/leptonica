@@ -63,35 +63,35 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(6);
 	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
-    pixt = BlendTest("marge.jpg", "feyn-word.tif", 0.5);
+    pixt = BlendTest("marge.jpg", "feyn-word.tif", 0.5, rp);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 0 */
-    pixDisplayWithTitle(pixt, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixt, 0, 0, NULL);
 
-    pixt = BlendTest("marge.jpg", "weasel8.png", 0.3);
+    pixt = BlendTest("marge.jpg", "weasel8.png", 0.3, rp);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 1 */
-    pixDisplayWithTitle(pixt, 0, 200, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixt, 0, 200, NULL);
 
-    pixt = BlendTest("marge.jpg", "weasel8.240c.png", 0.3);
+    pixt = BlendTest("marge.jpg", "weasel8.240c.png", 0.3, rp);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 2 */
-    pixDisplayWithTitle(pixt, 0, 400, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixt, 0, 400, NULL);
 
-    pixt = BlendTest("test8.jpg", "feyn-word.tif", 0.5);
+    pixt = BlendTest("test8.jpg", "feyn-word.tif", 0.5, rp);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 3 */
-    pixDisplayWithTitle(pixt, 0, 600, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixt, 0, 600, NULL);
 
-    pixt = BlendTest("test8.jpg", "weasel8.png", 0.5);
+    pixt = BlendTest("test8.jpg", "weasel8.png", 0.5, rp);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 4 */
-    pixDisplayWithTitle(pixt, 0, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixt, 0, 800, NULL);
 
-    pixt = BlendTest("test8.jpg", "weasel8.240c.png", 0.6);
+    pixt = BlendTest("test8.jpg", "weasel8.240c.png", 0.6, rp);
     pixaAddPix(pixa, pixt, L_INSERT);
     regTestWritePixAndCheck(rp, pixt, IFF_JFIF_JPEG);  /* 5 */
-    pixDisplayWithTitle(pixt, 0, 1000, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixt, 0, 1000, NULL);
 
     pixd = pixaDisplayTiledInRows(pixa, 32, 1800, 1.0, 0, 20, 2);
     pixWrite("/tmp/lept/regout/blendall.jpg", pixd, IFF_JFIF_JPEG);

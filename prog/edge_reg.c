@@ -56,6 +56,7 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("test8.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Test speed: about 60 Mpix/sec/GHz */
     startTimer();
@@ -74,15 +75,15 @@ L_REGPARAMS* rp;
     pix2 = pixThresholdToBinary(pix1, 60);
     pixInvert(pix2, pix2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix2, 0, 50, "Horizontal edges", rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 50, "Horizontal edges");
     pix3 = pixSobelEdgeFilter(pixs, L_VERTICAL_EDGES);
     pix4 = pixThresholdToBinary(pix3, 60);
     pixInvert(pix4, pix4);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix4, 625, 50, "Vertical edges", rp->diag_spec);
+    pixDisplayWithTitle(pix4, 625, 50, "Vertical edges");
     pixOr(pix4, pix4, pix2);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix4, 1200, 50, "Horiz and vert edges", rp->diag_spec);
+    pixDisplayWithTitle(pix4, 1200, 50, "Horiz and vert edges");
     pixDestroy(&pix2);
     pixDestroy(&pix4);
 
@@ -90,7 +91,7 @@ L_REGPARAMS* rp;
     pixMinOrMax(pix1, pix1, pix3, L_CHOOSE_MAX);
     pixInvert(pix1, pix1);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 3 */
-    pixDisplayWithTitle(pix1, 0, 525, "8bpp Horiz and vert edges", rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 525, "8bpp Horiz and vert edges");
     pixDestroy(&pix1);
     pixDestroy(&pix3);
     pixDestroy(&pixs);

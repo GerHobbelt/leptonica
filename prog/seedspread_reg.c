@@ -84,7 +84,7 @@ L_REGPARAMS* rp;
     }
     pixaAddPix(pixa, pixc, L_INSERT);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixc, 100, 100, "4-cc", rp->diag_spec);
+    pixDisplayWithTitle(pixc, 100, 100, "4-cc");
     pixDestroy(&pixd);
 
     pixd = pixSeedspread(pixs, 8);  /* 8-cc */
@@ -96,7 +96,7 @@ L_REGPARAMS* rp;
     }
     pixaAddPix(pixa, pixc, L_INSERT);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixc, 410, 100, "8-cc", rp->diag_spec);
+    pixDisplayWithTitle(pixc, 410, 100, "8-cc");
     pixDestroy(&pixd);
     pixDestroy(&pixs);
 
@@ -117,7 +117,7 @@ L_REGPARAMS* rp;
     }
     pixaAddPix(pixa, pixc, L_INSERT);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pixc, 100, 430, "4-cc", rp->diag_spec);
+    pixDisplayWithTitle(pixc, 100, 430, "4-cc");
     pixDestroy(&pixd);
 
     pixd = pixSeedspread(pixs, 8);  /* 8-cc */
@@ -129,7 +129,7 @@ L_REGPARAMS* rp;
     }
     pixaAddPix(pixa, pixc, L_INSERT);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pixc, 310, 430, "8-cc", rp->diag_spec);
+    pixDisplayWithTitle(pixc, 310, 430, "8-cc");
     pixDestroy(&pixd);
     pixDestroy(&pixs);
 

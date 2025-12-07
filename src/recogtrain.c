@@ -217,8 +217,7 @@ l_ok
 recogTrainLabeled(L_RECOG  *recog,
                   PIX      *pixs,
                   BOX      *box,
-                  char     *text,
-                  l_ok      debugflag)
+                  char     *text)
 {
 l_int32  ret;
 PIX     *pix;
@@ -238,7 +237,7 @@ PIX     *pix;
         return 1;
     }
 
-    recogAddSample(recog, pix, debugflag);
+    recogAddSample(recog, pix);
     pixDestroy(&pix);
     return 0;
 }
@@ -351,8 +350,7 @@ PIX     *pix1, *pix2, *pix3, *pix4;
  */
 l_ok
 recogAddSample(L_RECOG  *recog,
-               PIX      *pix,
-               l_ok      debugflag)
+               PIX      *pix)
 {
 char    *text;
 l_int32  npa, charint, index;
@@ -366,6 +364,8 @@ PIXAA   *paa;
     if (recog->train_done)
         return ERROR_INT("not added: training has been completed", __func__, 1);
     paa = recog->pixaa_u;
+
+	l_ok debugflag = leptIsDebugModeActive(recog->diag_specX);
 
         /* Make sure the character is in the set */
     text = pixGetText(pix);
@@ -387,7 +387,8 @@ PIXAA   *paa;
             L_INFO("Adding new class and pixa: index = %d, text = %s\n",
                    __func__, index, text);
             pixa1 = pixaCreate(10);
-            pixaaAddPixa(paa, pixa1, L_INSERT);
+			pixaSetDiagnosticsSpec(pixa1, recog->diag_specX);
+			pixaaAddPixa(paa, pixa1, L_INSERT);
         }
     }
     if (debugflag) {
@@ -460,7 +461,6 @@ PIX     *pix1, *pix2;
  * \brief   recogAverageSamples()
  *
  * \param[in]   recog    addr of existing recog
- * \param[in]   debug
  * \return  0 on success, 1 on failure
  *
  * <pre>
@@ -481,8 +481,7 @@ PIX     *pix1, *pix2;
  * </pre>
  */
 l_ok
-recogAverageSamples(L_RECOG  *recog,
-                    l_ok      debugflag)
+recogAverageSamples(L_RECOG  *recog)
 {
 l_int32    i, nsamp, size, area, bx, by, badclass;
 l_float32  x, y, hratio;
@@ -493,6 +492,8 @@ PTA       *pta1;
 
     if (!recog)
         return ERROR_INT("recog not defined", __func__, 1);
+
+	l_ok debugflag = leptIsDebugModeActive(recog->diag_specX);
 
     if (recog->ave_done) {
         if (debugflag)  /* always do this if requested */
@@ -506,6 +507,7 @@ PTA       *pta1;
     ptaDestroy(&recog->pta_u);
     numaDestroy(&recog->nasum_u);
     recog->pixa_u = pixaCreate(size);
+	pixaSetDiagnosticsSpec(recog->pixa_u, recog->diag_specX);
     recog->pta_u = ptaCreate(size);
     recog->nasum_u = numaCreate(size);
 
@@ -513,7 +515,8 @@ PTA       *pta1;
     ptaDestroy(&recog->pta);
     numaDestroy(&recog->nasum);
     recog->pixa = pixaCreate(size);
-    recog->pta = ptaCreate(size);
+	pixaSetDiagnosticsSpec(recog->pixa, recog->diag_specX);
+	recog->pta = ptaCreate(size);
     recog->nasum = numaCreate(size);
 
         /* Unscaled bitmaps: compute averaged bitmap, centroid, and fg area.
@@ -797,7 +800,8 @@ L_RECOG   *recog;
     size = recog->maxarraysize;
     paa = pixaaCreate(size);
     pixa = pixaCreate(1);
-    pixaaInitFull(paa, pixa);
+	pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
+	pixaaInitFull(paa, pixa);
     pixaDestroy(&pixa);
     pixaaDestroy(&recog->pixaa);
     recog->pixaa = paa;
@@ -965,13 +969,16 @@ PIXAA     *paa;
     if (!pixas)
         return (PIXA *)ERROR_PTR("pixas not defined", __func__, NULL);
 
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixas);
+
     if ((paa = recogSortPixaByClass(pixas, setsize)) == NULL)
         return (PIXA *)ERROR_PTR("paa not made", __func__, NULL);
     nc = pixaaGetCount(paa, NULL);
     na = (pna) ? numaCreate(0) : NULL;
     if (pna) *pna = na;
     pixa5 = pixaCreate(0);
-    for (i = 0; i < nc; i++) {
+	pixaSetDiagnosticsSpec(pixa5, diagspec);
+	for (i = 0; i < nc; i++) {
         pixa1 = pixaaGetPixa(paa, i, L_CLONE);
         if ((n = pixaGetCount(pixa1)) == 0) {
             pixaDestroy(&pixa1);
@@ -982,7 +989,8 @@ PIXAA     *paa;
         j90 = (l_int32)(0.9 * n);
         pixaGetPixDimensions(pixa2, j90, NULL, &h90, NULL);
         pixa3 = pixaCreate(n);
-        for (j = 0; j < n; j++) {
+		pixaSetDiagnosticsSpec(pixa3, diagspec);
+		for (j = 0; j < n; j++) {
             pixaGetPixDimensions(pixa2, j, NULL, &hj, NULL);
             ratio = (l_float32)h90 / (l_float32)hj;
             if (ratio <= max_ht_ratio)
@@ -1165,17 +1173,22 @@ L_RECOG   *recog;
     recog = recogCreateFromPixa(pixas, 0, 40, 0, 128, 1);
     if (!recog)
         return (PIXA *)ERROR_PTR("bad pixas; recog not made", __func__, NULL);
-    if (recogAverageSamples(recog, debug) != 0) {
+    if (recogAverageSamples(recog) != 0) {
         recogDestroy(&recog);
         return (PIXA *)ERROR_PTR("bad templates", __func__, NULL);
     }
 
     nasave = (ppixsave) ? numaCreate(0) : NULL;
-    pixarem = (ppixrem) ? pixaCreate(0) : NULL;
-    narem = (ppixrem) ? numaCreate(0) : NULL;
+    pixarem = NULL;
+	if (ppixrem) {
+		pixarem = pixaCreate(0);
+		pixaSetDiagnosticsSpec(pixarem, recog->diag_specX);
+	}
+	narem = (ppixrem) ? numaCreate(0) : NULL;
 
     pixad = pixaCreate(0);
-    for (i = 0; i < recog->setsize; i++) {
+	pixaSetDiagnosticsSpec(pixad, recog->diag_specX);
+	for (i = 0; i < recog->setsize; i++) {
             /* Access the average template and values for scaled
              * images in this class */
         pix1 = pixaGetPix(recog->pixa, i, L_CLONE);
@@ -1339,7 +1352,7 @@ pixaRemoveOutliers2(PIXA      *pixas,
                     PIX      **ppixsave,
                     PIX      **ppixrem)
 {
-l_int32    i, j, k, n, area1, area2, maxk, debug;
+l_int32    i, j, k, n, area1, area2, maxk;
 l_float32  x1, y1, x2, y2, score, maxscore;
 NUMA      *nan, *nascore, *nasave;
 PIX       *pix1, *pix2, *pix3;
@@ -1357,20 +1370,27 @@ L_RECOG   *recog;
         minsize = DefaultMinSetSize;
 
         /* Make a special height-scaled recognizer with average templates */
-    debug = (ppixsave || ppixrem) ? 1 : 0;
+
+	// debug = (ppixsave || ppixrem) ? 1 : 0;
+
     recog = recogCreateFromPixa(pixas, 0, 40, 0, 128, 1);
     if (!recog)
         return (PIXA *)ERROR_PTR("bad pixas; recog not made", __func__, NULL);
-    if (recogAverageSamples(recog, debug) != 0) {
+    if (recogAverageSamples(recog) != 0) {
         recogDestroy(&recog);
         return (PIXA *)ERROR_PTR("bad templates", __func__, NULL);
     }
 
     nasave = (ppixsave) ? numaCreate(0) : NULL;
-    pixarem = (ppixrem) ? pixaCreate(0) : NULL;
+    pixarem = NULL;
+	if (ppixrem) {
+		pixarem = pixaCreate(0);
+		pixaSetDiagnosticsSpec(pixarem, recog->diag_specX);
+	}
 
     pixad = pixaCreate(0);
-    pixaaGetCount(recog->pixaa, &nan);  /* number of templates in each class */
+	pixaSetDiagnosticsSpec(pixad, recog->diag_specX);
+	pixaaGetCount(recog->pixaa, &nan);  /* number of templates in each class */
     for (i = 0; i < recog->setsize; i++) {
             /* Get the scores for each sample in the class, when comparing
              * with averages from all the classes. */
@@ -1483,7 +1503,8 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixad;
         pixa1 = pixaCopy(pixas, L_COPY);
     } else {
         pixa1 = pixaCreate(n);
-        for (i = 0; i < n; i++) {
+		pixaSetDiagnosticsSpec(pixa1, recogboot->diag_specX);
+		for (i = 0; i < n; i++) {
             pix1 = pixaGetPix(pixas, i, L_CLONE);
             pix2 = pixConvertTo1(pix1, threshold);
             pixaAddPix(pixa1, pix2, L_INSERT);
@@ -1495,7 +1516,8 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixad;
     scaleh = recogboot->scaleh;
     linew = recogboot->linew;
     pixa2 = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa2, recogboot->diag_specX);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
         pix2 = pixScaleToSize(pix1, 0, scaleh);
         pixaAddPix(pixa2, pix2, L_INSERT);
@@ -1513,7 +1535,8 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixad;
         /* Identify using recogboot */
     n = pixaGetCount(pixa3);
     pixad = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixad, recogboot->diag_specX);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa3, i, L_COPY);
         pixSetText(pix1, NULL);  /* remove any existing text or labelling */
         if (!debugflag) {
@@ -2028,8 +2051,7 @@ NUMA    *na;
  * </pre>
  */
 l_ok
-recogDebugAverages(L_RECOG  *recog,
-                   LDIAG_CTX diagspec)
+recogDebugAverages(L_RECOG  *recog)
 {
 l_int32    i, j, n, np, index;
 l_float32  score;
@@ -2040,11 +2062,11 @@ PIXAA     *paa1, *paa2;
     if (!recog)
         return ERROR_INT("recog not defined", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive(recog->diag_specX);
 
         /* Mark the training as finished if necessary, and make sure
          * that the average templates have been built. */
-    if (recogAverageSamples(recog, 0) != 0)
+    if (recogAverageSamples(recog) != 0)
         return ERROR_INT("averaging failed", __func__, 1);
 
         /* Save a pixa of all the training examples */
@@ -2059,7 +2081,8 @@ PIXAA     *paa1, *paa2;
     paa2 = pixaaCreate(n);
     for (i = 0; i < n; i++) {
         pixa = pixaCreate(0);
-        pixat = pixaaGetPixa(paa1, i, L_CLONE);
+		pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
+		pixat = pixaaGetPixa(paa1, i, L_CLONE);
         np = pixaGetCount(pixat);
         for (j = 0; j < np; j++) {
             pix1 = pixaaGetPix(paa1, i, j, L_CLONE);
@@ -2125,11 +2148,13 @@ PIXA      *pixat, *pixadb;
     pixr = pixCreate(3, 3, 32);  /* 3x3 red square for centroid location */
     pixSetAllArbitrary(pixr, 0xff000000);
     pixadb = pixaCreate(2);
+	pixaSetDiagnosticsSpec(pixadb, recog->diag_specX);
 
         /* Unscaled bitmaps */
     size = recog->setsize;
     pixat = pixaCreate(size);
-    for (i = 0; i < size; i++) {
+	pixaSetDiagnosticsSpec(pixat, recog->diag_specX);
+	for (i = 0; i < size; i++) {
         if ((pix1 = pixaGetPix(recog->pixa_u, i, L_CLONE)) == NULL)
             continue;
         pix2 = pixConvertTo32(pix1);
@@ -2146,7 +2171,8 @@ PIXA      *pixat, *pixadb;
 
         /* Scaled bitmaps */
     pixat = pixaCreate(size);
-    for (i = 0; i < size; i++) {
+	pixaSetDiagnosticsSpec(pixat, recog->diag_specX);
+	for (i = 0; i < size; i++) {
         if ((pix1 = pixaGetPix(recog->pixa, i, L_CLONE)) == NULL)
             continue;
         pix2 = pixConvertTo32(pix1);
@@ -2198,8 +2224,11 @@ PIXA      *pixa1;
     if (numaGetCount(nas) != n)
         return (PIX *)ERROR_PTR("pixas and nas sizes differ", __func__, NULL);
 
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixas);
+
     pixa1 = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa1, diagspec);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         pix2 = pixAddBlackOrWhiteBorder(pix1, 25, 25, 0, 0, L_GET_WHITE_VAL);
         text = pixGetText(pix1);
@@ -2251,7 +2280,8 @@ PIXA  *pixa;
     pix2 = pixaGetPix(recog->pixa, iclass, L_CLONE);
     pix3 = pixaGetPix(recog->pixa, maxclass, L_CLONE);
     pixa = pixaCreate(3);
-    pixaAddPix(pixa, pix1, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
+	pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaAddPix(pixa, pix3, L_INSERT);
     pix4 = pixaDisplayTiledInRows(pixa, 32, 400, 2.0, 0, 12, 2);
@@ -2309,7 +2339,8 @@ PIXA      *pixa1, *pixa2;
     nascore = numaCreate(n);
     naindex = numaCreate(n);
     pixa1 = pixaCreate(n);
-    for (i = 0; i < n; i++) {
+	pixaSetDiagnosticsSpec(pixa1, recog->diag_specX);
+	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa, i, L_CLONE);
         recogIdentifyPix(recog, pix1, &pix2);
         rchExtract(recog->rch, &index, &score, NULL, NULL, NULL, NULL, NULL);
@@ -2321,7 +2352,8 @@ PIXA      *pixa1, *pixa2;
 
         /* Filter the set and optionally add text to each */
     pixa2 = pixaCreate(n);
-    depth = 1;
+	pixaSetDiagnosticsSpec(pixa2, recog->diag_specX);
+	depth = 1;
     for (i = 0; i < n; i++) {
         numaGetFValue(nascore, i, &score);
         if (score < minscore || score > maxscore) continue;
@@ -2407,7 +2439,8 @@ PIXA   *pixa;
 
     if (pix2) {
         pixa = pixaCreate(2);
-        pixaAddPix(pixa, pix3, L_CLONE);
+		pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
+		pixaAddPix(pixa, pix3, L_CLONE);
         pixaAddPix(pixa, pix2, L_CLONE);
         pix4 = pixaDisplayTiledInRows(pixa, 1, 500, 1.0, 0, 15, 0);
         pixaDestroy(&pixa);

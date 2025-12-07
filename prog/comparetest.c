@@ -78,7 +78,7 @@ NUMA      *na1, *na2;
 PIX       *pixs1, *pixs2, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "compare", TRUE, &rp))
+	if (regTestSetup(argc, argv, "compare", &rp))
 		return 1;
 
     if (argc != 5)
@@ -100,7 +100,9 @@ L_REGPARAMS* rp;
         return ERROR_INT("pixs1 not made", __func__, 1);
     if ((pixs2 = pixRead(filein2)) == NULL)
         return ERROR_INT("pixs2 not made", __func__, 1);
-    d1 = pixGetDepth(pixs1);
+	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
+	d1 = pixGetDepth(pixs1);
     d2 = pixGetDepth(pixs2);
 
     if (d1 == 1 && d2 == 1) {
