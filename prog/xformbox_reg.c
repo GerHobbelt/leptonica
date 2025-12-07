@@ -83,6 +83,7 @@ L_REGPARAMS* rp;
      *                Test hash rendering in 3 modes               *
      * ----------------------------------------------------------- */
     pixs = pixRead(DEMOPATH("feyn.tif"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
     box = boxCreate(461, 429, 1393, 342);
     pix1 = pixClipRectangle(pixs, box, NULL);
     boxa = pixConnComp(pix1, NULL, 8);
@@ -103,9 +104,9 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pix1, 0, 0, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix2, 0, 300, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix3, 0, 570, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix1, 0, 0, NULL);
+    pixDisplayWithTitle(pix2, 0, 300, NULL);
+    pixDisplayWithTitle(pix3, 0, 570, NULL);
     boxaDestroy(&boxa);
     boxDestroy(&box);
     pixDestroy(&pixs);
@@ -117,13 +118,15 @@ L_REGPARAMS* rp;
      *        Test orthogonal box rotation and hash rendering      *
      * ----------------------------------------------------------- */
     pixs = pixRead(DEMOPATH("feyn.tif"));
-    box = boxCreate(461, 429, 1393, 342);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	box = boxCreate(461, 429, 1393, 342);
     pix1 = pixClipRectangle(pixs, box, NULL);
     pixc = pixConvertTo32(pix1);
     pixGetDimensions(pix1, &w, &h, NULL);
     boxa1 = pixConnComp(pix1, NULL, 8);
     pixa = pixaCreate(4);
-    for (i = 0; i < 4; i++) {
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	for (i = 0; i < 4; i++) {
         pix2 = pixRotateOrth(pixc, i);
         boxa2 = boxaRotateOrth(boxa1, w, h, i);
         rval = (1413 * (i + 4)) % 256;
@@ -135,7 +138,7 @@ L_REGPARAMS* rp;
     }
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1200, 0.7, 0, 30, 3);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 3 */
-    pixDisplayWithTitle(pix3, 0, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0, 800, NULL);
     boxDestroy(&box);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -152,7 +155,8 @@ L_REGPARAMS* rp;
      *    identical boxes.                                         *
      * ----------------------------------------------------------- */
     pix = pixRead(DEMOPATH("feyn.tif"));
-    box = boxCreate(420, 360, 1500, 465);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	box = boxCreate(420, 360, 1500, 465);
     pixt = pixClipRectangle(pix, box, NULL);
     pixs = pixAddBorderGeneral(pixt, 0, 200, 0, 0, 0);
     boxDestroy(&box);
@@ -161,6 +165,7 @@ L_REGPARAMS* rp;
     boxa = pixConnComp(pixs, NULL, 8);
     n = boxaGetCount(boxa);
     pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     pixt = pixConvertTo32(pixs);
     for (i = 0; i < 3; i++) {
@@ -224,7 +229,7 @@ L_REGPARAMS* rp;
 
     pixt = pixaDisplayTiledInColumns(pixa, 1, 0.5, 20, 0);
     regTestWritePixAndCheck(rp, pixt, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pixt, 1000, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixt, 1000, 0, NULL);
     pixDestroy(&pixt);
     pixDestroy(&pixs);
     boxaDestroy(&boxa);
@@ -237,8 +242,10 @@ L_REGPARAMS* rp;
      * ----------------------------------------------------------- */
         /* Set up pix and boxa */
     pixa = pixaCreate(0);
-    pix = pixRead(DEMOPATH("lucasta.1.300.tif"));
-    pixTranslate(pix, pix, 70, 0, L_BRING_IN_WHITE);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix = pixRead(DEMOPATH("lucasta.1.300.tif"));
+	pixSetDiagnosticsSpec(pix, rp->diag_spec);
+	pixTranslate(pix, pix, 70, 0, L_BRING_IN_WHITE);
     pixt = pixCloseBrick(NULL, pix, 14, 5);
     pixOpenBrick(pixt, pixt, 1, 2);
     boxa = pixConnComp(pixt, NULL, 8);
@@ -301,7 +308,7 @@ L_REGPARAMS* rp;
 
     pixt = pixaDisplayTiledInColumns(pixa, 2, 0.5, 20, 0);
     regTestWritePixAndCheck(rp, pixt, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pixt, 1000, 300, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixt, 1000, 300, NULL);
     pixDestroy(&pixt);
     pixDestroy(&pixs);
     boxaDestroy(&boxa);

@@ -72,44 +72,52 @@ L_REGPARAMS* rp;
 
     lept_stderr("Test binary image:\n");
     pixs = pixRead(BINARY_IMAGE);
-    RotateTest(pixs, 1.0, rp);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	RotateTest(pixs, 1.0, rp);
     pixDestroy(&pixs);
 
     lept_stderr("Test 2 bpp cmapped image with filled cmap:\n");
     pixs = pixRead(TWO_BPP_IMAGE);
-    RotateTest(pixs, 1.0, rp);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	RotateTest(pixs, 1.0, rp);
     pixDestroy(&pixs);
 
     lept_stderr("Test 4 bpp cmapped image with unfilled cmap:\n");
     pixs = pixRead(FOUR_BPP_IMAGE1);
-    RotateTest(pixs, 1.0, rp);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	RotateTest(pixs, 1.0, rp);
     pixDestroy(&pixs);
 
     lept_stderr("Test 4 bpp cmapped image with filled cmap:\n");
     pixs = pixRead(FOUR_BPP_IMAGE2);
-    RotateTest(pixs, 1.0, rp);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	RotateTest(pixs, 1.0, rp);
     pixDestroy(&pixs);
 
     lept_stderr("Test 8 bpp grayscale image:\n");
     pixs = pixRead(EIGHT_BPP_IMAGE);
-    RotateTest(pixs, 1.0, rp);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	RotateTest(pixs, 1.0, rp);
     pixDestroy(&pixs);
 
     lept_stderr("Test 8 bpp grayscale cmap image:\n");
     pixs = pixRead(EIGHT_BPP_CMAP_IMAGE1);
-    RotateTest(pixs, 1.0, rp);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	RotateTest(pixs, 1.0, rp);
     pixDestroy(&pixs);
 
     lept_stderr("Test 8 bpp color cmap image:\n");
     pixs = pixRead(EIGHT_BPP_CMAP_IMAGE2);
-    pixd = pixOctreeColorQuant(pixs, 200, 0);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixd = pixOctreeColorQuant(pixs, 200, 0);
     RotateTest(pixd, 0.5, rp);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
 
     lept_stderr("Test rgb image:\n");
     pixs = pixRead(RGB_IMAGE);
-    RotateTest(pixs, 0.25, rp);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	RotateTest(pixs, 0.25, rp);
     pixDestroy(&pixs);
 
     return regTestCleanup(rp);
@@ -129,7 +137,8 @@ PIXA     *pixa;
     outformat = (d == 8 || d == 32) ? IFF_JFIF_JPEG : IFF_PNG;
 
     pixa = pixaCreate(0);
-    pix1 = pixRotate(pixs, ANGLE1, L_ROTATE_SHEAR, L_BRING_IN_WHITE, w, h);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix1 = pixRotate(pixs, ANGLE1, L_ROTATE_SHEAR, L_BRING_IN_WHITE, w, h);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixRotate(pixs, ANGLE1, L_ROTATE_SHEAR, L_BRING_IN_BLACK, w, h);
     pixaAddPix(pixa, pix2, L_INSERT);
@@ -152,7 +161,8 @@ PIXA     *pixa;
     pixaDestroy(&pixa);
 
     pixa = pixaCreate(0);
-    pix1 = pixRotate(pixs, ANGLE2, L_ROTATE_SAMPLING, L_BRING_IN_WHITE, w, h);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pix1 = pixRotate(pixs, ANGLE2, L_ROTATE_SAMPLING, L_BRING_IN_WHITE, w, h);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixRotate(pixs, ANGLE2, L_ROTATE_SAMPLING, L_BRING_IN_BLACK, w, h);
     pixaAddPix(pixa, pix2, L_INSERT);

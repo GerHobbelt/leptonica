@@ -60,12 +60,15 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixsq = pixCreate(3, 3, 32);
-    pixSetAllArbitrary(pixsq, 0x00ff0000);
+	pixSetDiagnosticsSpec(pixsq, rp->diag_spec);
+	pixSetAllArbitrary(pixsq, 0x00ff0000);
     pixa = pixaCreate(6);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Moderately dense */
     pixs = pixCreate(300, 300, 8);
-    for (i = 0; i < 100; i++) {
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	for (i = 0; i < 100; i++) {
         x = (153 * i * i * i + 59) % 299;
         y = (117 * i * i * i + 241) % 299;
         val = (97 * i + 74) % 256;
@@ -99,7 +102,8 @@ L_REGPARAMS* rp;
 
         /* Regular lattice */
     pixs = pixCreate(200, 200, 8);
-    for (i = 5; i <= 195; i += 10) {
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	for (i = 5; i <= 195; i += 10) {
         for (j = 5; j <= 195; j += 10) {
             pixSetPixel(pixs, i, j, (7 * i + 17 * j) % 255);
         }
@@ -131,7 +135,8 @@ L_REGPARAMS* rp;
 
         /* Very sparse points */
     pixs = pixCreate(200, 200, 8);
-    pixSetPixel(pixs, 60, 20, 90);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixSetPixel(pixs, 60, 20, 90);
     pixSetPixel(pixs, 160, 40, 130);
     pixSetPixel(pixs, 80, 80, 205);
     pixSetPixel(pixs, 40, 160, 115);
@@ -143,7 +148,7 @@ L_REGPARAMS* rp;
     pixRasterop(pixc, 40 - 1, 160 - 1, 3, 3, PIX_SRC, pixsq, 0, 0);
     pixaAddPix(pixa, pixc, L_INSERT);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pixc, 100, 600, "4-cc", rp->diag_spec);
+    pixDisplayWithTitle(pixc, 100, 600, "4-cc");
     pixDestroy(&pixd);
 
     pixd = pixSeedspread(pixs, 8);  /* 8-cc */
@@ -154,14 +159,14 @@ L_REGPARAMS* rp;
     pixRasterop(pixc, 40 - 1, 160 - 1, 3, 3, PIX_SRC, pixsq, 0, 0);
     pixaAddPix(pixa, pixc, L_INSERT);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pixc, 310, 660, "8-cc", rp->diag_spec);
+    pixDisplayWithTitle(pixc, 310, 660, "8-cc");
     pixDestroy(&pixd);
     pixDestroy(&pixs);
     pixDestroy(&pixsq);
 
     pixd = pixaDisplayTiledInColumns(pixa, 2, scalefact, 20, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pixd, 720, 100, "Final", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 720, 100, "Final");
 
     pixaDestroy(&pixa);
     pixDestroy(&pixd);

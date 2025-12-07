@@ -65,7 +65,8 @@ L_REGPARAMS* rp;
         /* Generate and display all of the 4-cc sels */
     sela4 = sela4ccThin(NULL);
     pix1 = selaDisplayInPix(sela4, 35, 3, 15, 3);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     pixDisplayWithTitle(pix1, 400, 0, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela4);
@@ -73,7 +74,8 @@ L_REGPARAMS* rp;
         /* Generate and display all of the 8-cc sels */
     sela8 = sela8ccThin(NULL);
     pix1 = selaDisplayInPix(sela8, 35, 3, 15, 3);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
     pixDisplayWithTitle(pix1, 850, 0, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela8);
@@ -81,7 +83,8 @@ L_REGPARAMS* rp;
         /* Generate and display all of the 4 and 8-cc preserving sels */
     sela48 = sela4and8ccThin(NULL);
     pix1 = selaDisplayInPix(sela48, 35, 3, 15, 4);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     pixDisplayWithTitle(pix1, 1300, 0, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela48);
@@ -114,7 +117,8 @@ L_REGPARAMS* rp;
     selaAddSel(sela4, sel2, "sel_4_3_180", L_INSERT);
     selaAddSel(sela4, sel3, "sel_4_3_270", L_INSERT);
     pix1 = selaDisplayInPix(sela4, 35, 3, 15, 4);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
     pixDisplayWithTitle(pix1, 400, 500, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela);
@@ -156,7 +160,8 @@ L_REGPARAMS* rp;
     selaAddSel(sela8, sel2, "sel_8_6_180", L_INSERT);
     selaAddSel(sela8, sel3, "sel_8_6_270", L_INSERT);
     pix1 = selaDisplayInPix(sela8, 35, 3, 15, 4);
-    regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
     pixDisplayWithTitle(pix1, 1000, 500, NULL, rp->diag_spec);
     pixaAddPix(pixa, pix1, L_INSERT);
     selaDestroy(&sela);

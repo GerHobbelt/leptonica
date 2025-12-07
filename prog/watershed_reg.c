@@ -59,7 +59,9 @@ L_REGPARAMS* rp;
 
     pix1 = pixCreate(500, 500, 8);
     pix2 = pixCreate(500, 500, 8);
-    for (i = 0; i < 500; i++) {
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	for (i = 0; i < 500; i++) {
         for (j = 0; j < 500; j++) {
             f = 128.0 + 26.3 * sin(0.0438 * (l_float32)i);
             f += 33.4 * cos(0.0712 * (l_float32)i);
@@ -96,7 +98,8 @@ PTA       *pta;
 
         /* Find local extrema */
     pixa = pixaCreate(0);
-    pixGetDimensions(pixs, &w, &h, NULL);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixGetDimensions(pixs, &w, &h, NULL);
     regTestWritePixAndCheck(rp, pixs, IFF_PNG);  /* 0 */
     pixaAddPix(pixa, pixs, L_COPY);
     startTimer();
@@ -116,6 +119,7 @@ PTA       *pta;
         /* Generate seeds for watershed */
     pixSelectMinInConnComp(pixs, pix1, &pta, NULL);
     pix3 = pixGenerateFromPta(pta, w, h);
+	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 3 */
     pixaAddPix(pixa, pix3, L_COPY);
     pix4 = pixConvertTo32(pixs);
@@ -129,7 +133,7 @@ PTA       *pta;
     regTestCompareValues(rp, 1, empty, 0.0);  /* 6 */
 
         /* Make and display watershed */
-    wshed = wshedCreate(pixs, pix3, 10, 0);
+    wshed = wshedCreate(pixs, pix3, 10);
     startTimer();
     wshedApply(wshed);
     lept_stderr("Time for wshed: %7.3f\n", stopTimer());
@@ -148,7 +152,7 @@ PTA       *pta;
 
     pix9 = pixaDisplayTiledInColumns(pixa, 3, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pix9, IFF_PNG);  /* 11 */
-    pixDisplayWithTitle(pix9, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix9, 100, 100, NULL);
 
     lept_free(data);
     pixDestroy(&pix1);

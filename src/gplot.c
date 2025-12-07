@@ -778,6 +778,7 @@ GPLOT  *gplot;
 PIX *
 gplotSimplePix1(LDIAG_CTX    diagspec,
 				NUMA        *na,
+				const char  *outroot,
                 const char  *title)
 {
 char            buf[64];
@@ -789,8 +790,12 @@ PIX            *pix;
         return (PIX *)ERROR_PTR("na not defined", __func__, NULL);
 
     //lept_mkdir("lept/gplot/pix");
-    snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix1.%d", index++);
-    gplot = gplotSimpleXY1(diagspec, NULL, na, GPLOT_LINES, GPLOT_PNG, buf, title);
+	if (!outroot || !*outroot)
+		snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix1.%d", index++);
+	else
+		snprintf(buf, sizeof(buf), "%s-pix1.%d", outroot, index++);
+
+	gplot = gplotSimpleXY1(diagspec, NULL, na, GPLOT_LINES, GPLOT_PNG, buf, title);
     if (!gplot)
         return (PIX *)ERROR_PTR("failed to generate plot", __func__, NULL);
     pix = pixRead(gplot->outname);
@@ -821,6 +826,7 @@ PIX *
 gplotSimplePix2(LDIAG_CTX   diagspec,
 				NUMA        *na1,
                 NUMA        *na2,
+				const char  *outroot,
                 const char  *title)
 {
 char            buf[64];
@@ -832,8 +838,12 @@ PIX            *pix;
         return (PIX *)ERROR_PTR("both na1, na2 not defined", __func__, NULL);
 
     //lept_mkdir("lept/gplot/pix");
-    snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix2.%d", index++);
-    gplot = gplotSimpleXY2(diagspec, NULL, na1, na2, GPLOT_LINES, GPLOT_PNG, buf, title);
+	if (!outroot || !*outroot)
+		snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix2.%d", index++);
+	else
+		snprintf(buf, sizeof(buf), "%s-pix2.%d", outroot, index++);
+
+	gplot = gplotSimpleXY2(diagspec, NULL, na1, na2, GPLOT_LINES, GPLOT_PNG, buf, title);
     if (!gplot)
         return (PIX *)ERROR_PTR("failed to generate plot", __func__, NULL);
     pix = pixRead(gplot->outname);
@@ -863,6 +873,7 @@ PIX            *pix;
 PIX *
 gplotSimplePixN(LDIAG_CTX    diagspec,
 				NUMAA       *naa,
+				const char  *outroot,
                 const char  *title)
 {
 char            buf[64];
@@ -874,7 +885,11 @@ PIX            *pix;
         return (PIX *)ERROR_PTR("naa not defined", __func__, NULL);
 
     //lept_mkdir("lept/gplot/pix");
-    snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pixN.%d", index++);
+	if (!outroot || !*outroot)
+		snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pixN.%d", index++);
+	else
+		snprintf(buf, sizeof(buf), "%s-pixN.%d", outroot, index++);
+
     gplot = gplotSimpleXYN(diagspec, NULL, naa, GPLOT_LINES, GPLOT_PNG, buf, title);
     if (!gplot)
         return (PIX *)ERROR_PTR("failed to generate plot", __func__, NULL);

@@ -63,7 +63,9 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("stampede2.jpg"));
-    pixa = pixaCreate(0);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixa = pixaCreate(0);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     AddTestSet(pixa, pixs, L_SOBEL_EDGE, 18, 40, 40, 0.7, -25, 280, 128);
     AddTestSet(pixa, pixs, L_TWO_SIDED_EDGE, 18, 40, 40, 0.7, -25, 280, 128);
@@ -75,7 +77,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
     pixd = pixaDisplayTiledInColumns(pixa, 6, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 0 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 100, 100, NULL);
 
     pixDestroy(&pixd);
     pixaDestroy(&pixa);

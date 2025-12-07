@@ -96,7 +96,8 @@ L_REGPARAMS* rp;
     selaAddSel(sela, sel4, "textsel4", L_INSERT);
 
     pix1 = selaDisplayInPix(sela, 28, 3, 30, 4);
-    pixWrite("/tmp/lept/livre/orient.png", pix1, IFF_PNG);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixWrite("/tmp/lept/livre/orient.png", pix1, IFF_PNG);
     pixDisplay(pix1, 1200, 1200);
 
     pixDestroy(&pix1);

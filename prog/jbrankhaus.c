@@ -115,7 +115,7 @@ L_REGPARAMS* rp;
 
     /*--------------------------------------------------------------*/
 
-    jbRankHaus(dirin, size, rank, COMPONENTS, rootname, firstpage, npages, 1);
+    jbRankHaus(dirin, size, rank, COMPONENTS, rootname, firstpage, npages, 1, rp->diag_spec);
 
     /*--------------------------------------------------------------*/
 
@@ -141,7 +141,7 @@ L_REGPARAMS* rp;
 
         /* Render the pages from the classifier data.
          * Use debugflag == FALSE to omit outlines of each component. */
-    pixa = jbDataRender(data, FALSE);
+    pixa = jbDataRender(data, rp->diag_spec);
 
         /* Write the pages out */
     npages = pixaGetCount(pixa);
@@ -178,7 +178,7 @@ L_REGPARAMS* rp;
 
         /* Read the data back in and render the pages */
     newdata = jbDataRead(rootname);
-    newpixa = jbDataRender(newdata, FALSE);
+    newpixa = jbDataRender(newdata, rp->diag_spec);
     iofail = FALSE;
     for (i = 0; i < npages; i++) {
         pix = pixaGetPix(pixa, i, L_CLONE);

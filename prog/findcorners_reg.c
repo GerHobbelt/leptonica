@@ -215,7 +215,8 @@ SELA  *sela1, *sela2;
     selaDestroy(&sela1);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         pix = selaDisplayInPix(sela2, 21, 3, 10, 4);
-        pixDisplay(pix, 0, 0);
+		pixSetDiagnosticsSpec(pix, rp->diag_spec);
+		pixDisplay(pix, 0, 0);
         pixDestroy(&pix);
     }
     return sela2;

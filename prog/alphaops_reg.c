@@ -157,7 +157,7 @@ L_REGPARAMS* rp;
          * out as well. */
     pixSetRGBComponent(pixcs1, pixg2, L_ALPHA_CHANNEL);
     pixWrite("/tmp/lept/alpha/cs1.png", pixcs1, IFF_PNG);
-    pixcs2 = pixSetUnderTransparency(pixcs1, 0, 0);
+    pixcs2 = pixSetUnderTransparency(pixcs1, 0);
     pixWrite("/tmp/lept/alpha/cs2.png", pixcs2, IFF_PNG);
 
         /* What will this look like over a black background?

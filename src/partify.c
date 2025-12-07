@@ -85,8 +85,10 @@ PIXAC  *pixac;
     if (nparts < 0 || nparts > 10)
         return ERROR_INT("nparts not in [1 ... 10]", __func__, 1);
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     pixadb = NULL;
-	if (diagspec) {
+	if (debugflag) {
 		pixadb = pixaCreate(0);
 		pixaSetDiagnosticsSpec(pixadb, diagspec);
 	}

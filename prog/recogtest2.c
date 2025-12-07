@@ -110,10 +110,11 @@ L_REGPARAMS* rp;
     for (i = 0; i < 2; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
         pixa2 = pixaRead(fname);
+		pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
         pixaSetText(pixa2, NULL, NULL);
 
             /* Train a new recognizer from the boot and unlabeled samples */
-        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, rp->diag_spec);
+        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128);
         recog1 = recogCreateFromPixa(pixa3, 0, 40, linew, 128, 1);
         recogShowContent(stderr, recog1, 2, 1);
         if (i == 0)
@@ -141,10 +142,11 @@ L_REGPARAMS* rp;
     for (i = 0; i < 2; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
         pixa2 = pixaRead(fname);
+		pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
         pixaSetText(pixa2, NULL, NULL);
 
             /* Train a new recognizer from the boot and unlabeled samples */
-        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128, rp->diag_spec);
+        pixa3 = recogTrainFromBoot(recogboot, pixa2, 0.65, 128);
         recog1 = recogCreateFromPixa(pixa3, 0, 40, linew, 128, 1);
         recogShowContent(stderr, recog1, 4, 1);
         if (i == 0)

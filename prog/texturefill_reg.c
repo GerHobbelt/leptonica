@@ -78,6 +78,7 @@ L_REGPARAMS* rp;
 
         /* Find a mask for repainting pixels */
     pixs = pixRead(DEMOPATH("amoris.2.150.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
     pix1 = MakeReplacementMask(pixs);
     boxa = pixConnCompBB(pix1, 8);
     box1 = boxaGetBox(boxa, 0, L_COPY);
@@ -87,7 +88,7 @@ L_REGPARAMS* rp;
      *                Show the individual steps               *
      *--------------------------------------------------------*/
         /* Locate a good tile to use */
-    pixFindRepCloseTile(pixs, box1, L_VERT, 20, 30, 7, &box2, rp->diag_spec);
+    pixFindRepCloseTile(pixs, box1, L_VERT, 20, 30, 7, &box2);
     pix0 = pixCopy(NULL, pix1);
     pixRenderBox(pix0, box2, 2, L_SET_PIXELS);
 
@@ -95,17 +96,17 @@ L_REGPARAMS* rp;
     boxGetGeometry(box1, &bx, &by, &bw, &bh);
     pix2 = pixClipRectangle(pixs, box2, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix2, 400, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 400, 100, NULL);
     pix3 = pixMirroredTiling(pix2, bw, bh);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix3, 1000, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 1000, 0, NULL);
 
         /* Paint the patch through the mask */
     pixd = pixCopy(NULL, pixs);
     pixm = pixClipRectangle(pix1, box1, NULL);
     pixCombineMaskedGeneral(pixd, pix3, pixm, bx, by);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 2 */
-    pixDisplayWithTitle(pixd, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 0, 0, NULL);
     boxDestroy(&box2);
     pixDestroy(&pixm);
     pixDestroy(&pixd);
@@ -113,22 +114,22 @@ L_REGPARAMS* rp;
 
         /* Blend two patches and then overlay.  Use the previous
          * tile found vertically and a new one found horizontally. */
-    pixFindRepCloseTile(pixs, box1, L_HORIZ, 20, 30, 7, &box2, rp->diag_spec);
+    pixFindRepCloseTile(pixs, box1, L_HORIZ, 20, 30, 7, &box2);
     pixRenderBox(pix0, box2, 2, L_SET_PIXELS);
     regTestWritePixAndCheck(rp, pix0, IFF_TIFF_G4);  /* 3 */
-    pixDisplayWithTitle(pix0, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix0, 100, 100, NULL);
     pix2 = pixClipRectangle(pixs, box2, NULL);
     pix4 = pixMirroredTiling(pix2, bw, bh);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 4 */
-    pixDisplayWithTitle(pix4, 1100, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 1100, 0, NULL);
     pix5 = pixBlend(pix3, pix4, 0, 0, 0.5);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix5, 1200, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix5, 1200, 0, NULL);
     pix6 = pixClipRectangle(pix1, box1, NULL);
     pixd = pixCopy(NULL, pixs);
     pixCombineMaskedGeneral(pixd, pix5, pix6, bx, by);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 6 */
-    pixDisplayWithTitle(pixd, 700, 200, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 700, 200, NULL);
     boxDestroy(&box2);
     pixDestroy(&pixd);
     pixDestroy(&pix0);
@@ -142,12 +143,12 @@ L_REGPARAMS* rp;
      *          Show painting from a color near region        *
      *--------------------------------------------------------*/
     pix2 = pixCopy(NULL, pixs);
-    pixGetColorNearMaskBoundary(pix2, pix1, box1, 20, &pixval, 0);
+    pixGetColorNearMaskBoundary(pix2, pix1, box1, 20, &pixval);
     pix3 = pixClipRectangle(pix1, box1, NULL);
     boxGetGeometry(box1, &bx, &by, NULL, NULL);
     pixSetMaskedGeneral(pix2, pix3, pixval, bx, by);
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 7 */
-    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 0, NULL);
     boxDestroy(&box1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -165,16 +166,16 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 8 */
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 9 */
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 10 */
-    pixDisplayWithTitle(pix2, 300, 0, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix3, 500, 0, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pixs, 700, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 300, 0, NULL);
+    pixDisplayWithTitle(pix3, 500, 0, NULL);
+    pixDisplayWithTitle(pixs, 700, 0, NULL);
 
         /* Test with two components; */
     pix5 = pixFlipLR(NULL, pix1);
     pixOr(pix5, pix5, pix1);
     pixPaintSelfThroughMask(pix4, pix5, 0, 0, L_BOTH_DIRECTIONS, 50, 100, 5, 9);
     regTestWritePixAndCheck(rp, pix4, IFF_JFIF_JPEG);  /* 11 */
-    pixDisplayWithTitle(pix4, 900, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 900, 0, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

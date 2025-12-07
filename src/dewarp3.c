@@ -125,6 +125,8 @@ dewarpaApplyDisparity(L_DEWARPA   *dewa,
 L_DEWARP  *dew1, *dew;
 PIX       *pixv, *pixh;
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Initialize the output with the input, so we'll have that
          * in case we can't apply the page model. */
     if (!ppixd)
@@ -146,7 +148,7 @@ PIX       *pixv, *pixh;
     }
     pixDestroy(ppixd);
     *ppixd = pixv;
-    if (diagspec) {
+    if (debugflag) {
         pixDisplayWithTitle(pixv, 300, 0, "pixv");
         lept_rmdir("lept/dewapply");  /* remove previous images */
         //lept_mkdir("lept/dewapply");
@@ -162,7 +164,7 @@ PIX       *pixv, *pixh;
             if ((pixh = pixApplyHorizDisparity(dew, pixv, grayin)) != NULL) {
                 pixDestroy(ppixd);
                 *ppixd = pixh;
-                if (diagspec) {
+                if (debugflag) {
                     pixDisplayWithTitle(pixh, 600, 0, "pixh");
                     pixWriteDebug("/tmp/lept/dewapply/003.png", pixh, IFF_PNG);
                 }
@@ -173,7 +175,7 @@ PIX       *pixv, *pixh;
         }
     }
 
-    if (diagspec) {
+    if (debugflag) {
 		const char* debugfile = leptDebugGenFilepath(diagspec, "%s.pdf", __func__);
 		dew1 = dewarpaGetDewarp(dewa, pageno);
         dewarpDebug(dew1, "lept/dewapply", 0);

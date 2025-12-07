@@ -913,11 +913,11 @@ PIXA     *pixa;
         boxh = boxv = NULL;
         if (searchdir == L_HORIZ || searchdir == L_BOTH_DIRECTIONS) {
             pixFindRepCloseTile(pixd, box, L_HORIZ, mindist,
-                                L_MIN(minside, tilesize), ntiles, &boxh, 0);
+                                L_MIN(minside, tilesize), ntiles, &boxh);
         }
         if (searchdir == L_VERT || searchdir == L_BOTH_DIRECTIONS) {
             pixFindRepCloseTile(pixd, box, L_VERT, mindist,
-                                L_MIN(minside, tilesize), ntiles, &boxv, 0);
+                                L_MIN(minside, tilesize), ntiles, &boxv);
         }
         if (!boxh && !boxv) {
             L_WARNING("tile region not selected; paint color near boundary\n",
@@ -926,7 +926,7 @@ PIXA     *pixa;
             pix1 = pixaGetPix(pixa, i, L_CLONE);
             pixaGetBoxGeometry(pixa, i, &bx, &by, NULL, NULL);
             retval = pixGetColorNearMaskBoundary(pixd, pixm, box, distblend,
-                                                 &pixval, 0);
+                                                 &pixval);
             pixSetMaskedGeneral(pixd, pix1, pixval, bx, by);
             pixDestroy(&pix1);
             boxDestroy(&box);
@@ -1164,7 +1164,7 @@ PIX  *pix1, *pix2;
  *          * To convert all fully transparent pixels in a 4 component
  *            (rgba) png file to white:
  *              pixs = pixRead(<infile>);
- *              pixd = pixSetUnderTransparency(pixs, 0xffffff00, 0);
+ *              pixd = pixSetUnderTransparency(pixs, 0xffffff00);
  *          * To write pixd with the alpha component:
  *              pixWrite(<outfile>, pixd, IFF_PNG);
  *          * To write and rgba image without the alpha component, first do:
@@ -1190,8 +1190,7 @@ PIX  *pix1, *pix2;
  */
 PIX *
 pixSetUnderTransparency(PIX      *pixs,
-                        l_uint32  val,
-                        l_int32   debug)
+                        l_uint32  val)
 {
 PIX  *pixg, *pixm, *pixt, *pixd;
 
@@ -1203,6 +1202,8 @@ PIX  *pixg, *pixm, *pixt, *pixd;
         L_WARNING("no alpha channel; returning a copy\n", __func__);
         return pixCopy(NULL, pixs);
     }
+
+	l_ok debugflag = pixIsDebugModeActive(pixs);
 
         /* Make a mask from the alpha component with ON pixels
          * wherever the alpha component is fully transparent (0).
@@ -1217,7 +1218,7 @@ PIX  *pixg, *pixm, *pixt, *pixd;
     pixg = pixGetRGBComponent(pixs, L_ALPHA_CHANNEL);
     pixm = pixThresholdToBinary(pixg, 1);
 
-    if (debug) {
+    if (debugflag) {
         pixt = pixDisplayLayersRGBA(pixs, 0xffffff00, 600);
         pixDisplay(pixt, 0, 0);
         pixDestroy(&pixt);
@@ -1334,8 +1335,7 @@ pixGetColorNearMaskBoundary(PIX       *pixs,
                             PIX       *pixm,
                             BOX       *box,
                             l_int32    dist,
-                            l_uint32  *pval,
-                            l_int32    debug)
+                            l_uint32  *pval)
 {
 char       op[64];
 l_int32    empty, bx, by;
@@ -1354,6 +1354,9 @@ PIX       *pix1, *pix2, *pix3;
         return ERROR_INT("box not defined", __func__, 1);
     if (dist < 0)
         return ERROR_INT("dist must be >= 0", __func__, 1);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixm);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
         /* Clip mask piece, expanded beyond %box by (%dist + 5) on each side.
          * box1 is the region requested; box2 is the actual region retrieved,
@@ -1386,7 +1389,7 @@ PIX       *pix1, *pix2, *pix3;
         L_WARNING("no pixels found\n", __func__);
     }
 
-    if (debug) {
+    if (debugflag) {
         lept_rmdir("masknear");  /* erase previous images */
         //lept_mkdir("masknear");
 
@@ -3436,8 +3439,7 @@ pixFindRepCloseTile(PIX     *pixs,
                     l_int32  mindist,
                     l_int32  tsize,
                     l_int32  ntiles,
-                    BOX    **pboxtile,
-                    l_int32  debug)
+                    BOX    **pboxtile)
 {
 l_int32    w, h, i, n, bestindex;
 l_float32  var_of_mean, median_of_mean, median_of_stdev, mean_val, stdev_val;
@@ -3464,6 +3466,8 @@ PIXA      *pixa;
         L_WARNING("ntiles = %d; larger than suggested max of 7\n",
                   __func__, ntiles);
     }
+
+	l_ok debugflag = pixIsDebugModeActive(pixs);
 
         /* Locate tile regions */
     pixGetDimensions(pixs, &w, &h, NULL);
@@ -3514,7 +3518,7 @@ PIXA      *pixa;
         }
         if (delm < 1.01) {
             if (dels < mindels) {
-                if (debug) {
+                if (debugflag) {
                     lept_stderr("i = %d, mean = %7.3f, delm = %7.3f,"
                                 " stdev = %7.3f, dels = %7.3f\n",
                                 i, mean_val, delm, stdev_val, dels);
@@ -3527,7 +3531,7 @@ PIXA      *pixa;
     }
     *pboxtile = boxaGetBox(boxa, bestindex, L_COPY);
 
-    if (debug) {
+    if (debugflag) {
         L_INFO("median of mean = %7.3f\n", __func__, median_of_mean);
         L_INFO("standard dev of mean = %7.3f\n", __func__, sqrt(var_of_mean));
         L_INFO("median of stdev = %7.3f\n", __func__, median_of_stdev);

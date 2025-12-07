@@ -243,7 +243,9 @@ L_DEWARP    *dew;
     if (!dewa)
         return ERROR_INT("dewa not defined", __func__, 1);
 
-	if (diagspec) {
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
+	if (debugflag) {
 		//lept_mkdir("lept/dewarp");
 	}
 
@@ -348,12 +350,14 @@ L_DEWARP  *dew;
     if (!dewa)
         return ERROR_INT("dewa not defined", __func__, 1);
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     n = dewa->maxpage + 1;
     for (i = 0; i < n; i++) {
         if ((dew = dewarpaGetDewarp(dewa, i)) == NULL)
             continue;
 
-        if (diagspec) {
+        if (debugflag) {
             if (dew->hasref == 1) {
                 L_INFO("page %d: has only a ref model\n", __func__, i);
             } else if (dew->vsuccess == 0) {

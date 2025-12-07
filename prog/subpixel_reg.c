@@ -78,10 +78,12 @@ PIXA         *pixa;
 
 	/* ----------------- Test on 8 bpp grayscale ---------------------*/
     pixa = pixaCreate(5);
-    bmf = bmfCreate(DEMOPATH("fonts"), 6);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	bmf = bmfCreate(DEMOPATH("fonts"), 6);
     bmftop = bmfCreate(DEMOPATH("fonts"), 10);
     pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
-    pixg = pixScale(pixs, 0.4, 0.4);  /* 8 bpp grayscale */
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixg = pixScale(pixs, 0.4, 0.4);  /* 8 bpp grayscale */
     pix1 = pixConvertTo32(pixg);  /* 32 bpp rgb */
     AddTextAndSave(pixa, pix1, bmf, textstr[0], L_ADD_BELOW, 0xff000000);
     pix2 = pixConvertGrayToSubpixelRGB(pixs, 0.4, 0.4, L_SUBPIXEL_ORDER_RGB);
@@ -98,7 +100,7 @@ PIXA         *pixa;
                                  "Regression test for subpixel scaling: gray",
                                  0xff00ff00, L_ADD_ABOVE, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 0 */
-    pixDisplayWithTitle(pixd, 50, 50, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 50, 50, NULL);
     pixaDestroy(&pixa);
     pixDestroy(&pixs);
     pixDestroy(&pixg);

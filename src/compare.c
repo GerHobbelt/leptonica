@@ -2264,7 +2264,9 @@ PIXA      *pixa;
     }
 
 	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pix1, pix2);
-	if (diagspec) {
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
+	if (debugflag) {
         //lept_mkdir("lept/comp");
     }
 
@@ -2302,7 +2304,7 @@ PIXA      *pixa;
 
         /* Compare histograms */
 	pixa = NULL;
-	if (diagspec) {
+	if (debugflag) {
 		pixa = pixaCreate(0);
 		pixaSetDiagnosticsSpec(pixa, diagspec);
 	}

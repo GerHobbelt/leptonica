@@ -45,7 +45,7 @@
 /* ----------------------------------------------------------------------*/
 
 PIX * pixReadJp2k(const char *filename, l_uint32 reduction, BOX *box,
-                  l_int32 hint, l_int32 debug)
+                  l_int32 hint, l_ok debugflag)
 {
     return (PIX * )ERROR_PTR("function not present", __func__, NULL);
 }
@@ -53,7 +53,7 @@ PIX * pixReadJp2k(const char *filename, l_uint32 reduction, BOX *box,
 /* ----------------------------------------------------------------------*/
 
 PIX * pixReadStreamJp2k(FILE *fp, l_uint32 reduction, BOX *box,
-                        l_int32 hint, l_int32 debug)
+                        l_int32 hint, l_ok debugflag)
 {
     return (PIX * )ERROR_PTR("function not present", __func__, NULL);
 }
@@ -61,7 +61,7 @@ PIX * pixReadStreamJp2k(FILE *fp, l_uint32 reduction, BOX *box,
 /* ----------------------------------------------------------------------*/
 
 l_ok pixWriteJp2k(const char *filename, PIX *pix, l_int32 quality,
-                  l_int32 nlevels, l_int32 hint, l_int32 debug)
+                  l_int32 nlevels, l_int32 hint, l_ok debugflag)
 {
     return ERROR_INT("function not present", __func__, 1);
 }
@@ -70,7 +70,7 @@ l_ok pixWriteJp2k(const char *filename, PIX *pix, l_int32 quality,
 
 l_ok pixWriteStreamJp2k(FILE *fp, PIX *pix, l_int32 quality,
                         l_int32 nlevels, l_int32 codec,
-                        l_int32 hint, l_int32 debug)
+                        l_int32 hint, l_ok debugflag)
 {
     return ERROR_INT("function not present", __func__, 1);
 }
@@ -87,7 +87,7 @@ PIX * pixReadMemJp2k(const l_uint8 *data, size_t size, l_uint32 reduction,
 
 l_ok pixWriteMemJp2k(l_uint8 **pdata, size_t *psize, PIX *pix,
                      l_int32 quality, l_int32 nlevels, l_int32 hint,
-                     l_int32 debug)
+                     l_ok debugflag)
 {
     return ERROR_INT("function not present", __func__, 1);
 }

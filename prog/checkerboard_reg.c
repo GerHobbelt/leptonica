@@ -85,7 +85,8 @@ PTA     *pta1;
     pixDisplayWithTitle(pix3, 100 * (nsels - 2), 100, NULL, rp->diag_spec);
     pixGetDimensions(pix1, &w, &h, NULL);
     pix4 = pixGenerateFromPta(pta1, w, h);
-    pixDilateBrick(pix4, pix4, 5, 5);
+	pixSetDiagnosticsSpec(pix4, rp->diag_spec);
+	pixDilateBrick(pix4, pix4, 5, 5);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 2, 5 */
     pixDestroy(&pix1);
 

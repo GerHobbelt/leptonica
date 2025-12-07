@@ -102,7 +102,10 @@ L_REGPARAMS* rp;
     pixa2 = pixaCreate(0);   /* to generate a small BAR */
     pixa3 = pixaCreate(0);   /* for templates to be labeled and
                               * added to the BAR */
-    n = pixaGetCount(pixa1);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
+	pixaSetDiagnosticsSpec(pixa3, rp->diag_spec);
+	n = pixaGetCount(pixa1);
     for (i = 0; i < 10; i++)
         histo[i] = 0;
     for (i = 0; i < n; i++) {
@@ -131,7 +134,7 @@ L_REGPARAMS* rp;
     recogShowContent(stderr, recog1, 1, 1);
 
         /* Use the BAR/BSR to label the left-over templates from the book */
-    pixa4 = recogTrainFromBoot(recog1, pixa3, 0.75, 128, rp->diag_spec);
+    pixa4 = recogTrainFromBoot(recog1, pixa3, 0.75, 128);
 
         /* Join the two sets */
     pixaJoin(pixa1, pixa4, 0, 0);

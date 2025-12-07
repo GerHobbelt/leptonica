@@ -139,7 +139,7 @@ PIXA    *pixa;
     pix1 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 30, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);
     if (rp->index < 5)
-        pixDisplayWithTitle(pix1, 600, 600, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix1, 600, 600, NULL);
 
     pixaDestroy(&pixa);
     pixDestroy(&pix1);

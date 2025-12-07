@@ -935,7 +935,6 @@ pixDisplayWithTitle(PIX         *pixs,
 {
 char           *tempname;
 char            buffer[Bufsize];
-char            sani_id[40];
 static l_atomic index = 0;  /* caution: not .so safe */
 l_int32         w, h, d, spp, maxheight, opaque, threeviews;
 l_float32       ratw, rath, ratmin;

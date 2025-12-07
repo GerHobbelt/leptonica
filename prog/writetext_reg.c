@@ -96,7 +96,8 @@ SARRAY       *sa;
 	bmf = bmfCreate(DEMOPATH("fonts"), 6);
     bmftop = bmfCreate(DEMOPATH("fonts"), 10);
     pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
-    pix1 = pixScale(pixs, 0.4, 0.4);          /* 8 bpp grayscale */
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix1 = pixScale(pixs, 0.4, 0.4);          /* 8 bpp grayscale */
     pix2 = pixConvertTo32(pix1);              /* 32 bpp rgb */
     pix3 = pixThresholdOn8bpp(pix1, 12, 1);   /* 8 bpp cmapped */
     pix4 = pixThresholdTo4bpp(pix1, 10, 1);   /* 4 bpp cmapped */
@@ -107,7 +108,8 @@ SARRAY       *sa;
 
     for (i = 0; i < 4; i++) {
         pixa = pixaCreate(0);
-        AddTextAndSave(pixa, pix1, bmf, textstr[0], loc[i], 800);
+		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+		AddTextAndSave(pixa, pix1, bmf, textstr[0], loc[i], 800);
         AddTextAndSave(pixa, pix2, bmf, textstr[1], loc[i], 0xff000000);
         AddTextAndSave(pixa, pix3, bmf, textstr[2], loc[i], 0x00ff0000);
         AddTextAndSave(pixa, pix4, bmf, textstr[3], loc[i], 0x0000ff00);
@@ -119,7 +121,7 @@ SARRAY       *sa;
         pixd = pixAddSingleTextblock(pixt, bmftop, topstr[i],
                                      0xff00ff00, L_ADD_ABOVE, NULL);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /*  0 - 4 */
-        pixDisplayWithTitle(pixd, 50 * i, 50, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 50 * i, 50, NULL);
         pixDestroy(&pixt);
         pixDestroy(&pixd);
         pixaDestroy(&pixa);
@@ -140,12 +142,13 @@ SARRAY       *sa;
         /* Write multiple lines in different colors, filling up
          * the colormap and requesting even more colors. */
     pixs = pixRead(DEMOPATH("weasel4.11c.png"));
-    pix1 = pixConvertTo8(pixs, 0);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pix1 = pixConvertTo8(pixs, 0);
     pix2 = pixScale(pixs, 8.0, 8.0);
     pix3 = pixQuantFromCmap(pix2, pixGetColormap(pixs), 4, 5,
                             L_EUCLIDEAN_DISTANCE);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 5 */
-    pixDisplayWithTitle(pix3, 0, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 0, 500, NULL);
     bmf = bmfCreate(DEMOPATH("fonts"), 10);
     sa = sarrayCreate(6);
     for (i = 0; i < 6; i++) {
@@ -157,7 +160,7 @@ SARRAY       *sa;
                        colors[i], 50, 120 + 60 * i, NULL, NULL);
     }
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix3, 600, 500, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 600, 500, NULL);
     pixDestroy(&pixs);
     pixDestroy(&pix1);
     pixDestroy(&pix2);

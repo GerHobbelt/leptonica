@@ -142,8 +142,7 @@ SARRAY *
 pixProcessBarcodes(PIX      *pixs,
                    l_int32   format,
                    l_int32   method,
-                   SARRAY  **psaw,
-                   LDIAG_CTX diagspec)
+                   SARRAY  **psaw)
 {
 PIX     *pixg;
 PIXA    *pixa;
@@ -163,12 +162,12 @@ SARRAY  *sad;
     else
         pixg = pixConvertTo8(pixs, 0);
 
-    pixa = pixExtractBarcodes(pixg, diagspec);
+    pixa = pixExtractBarcodes(pixg);
     pixDestroy(&pixg);
     if (!pixa)
         return (SARRAY *)ERROR_PTR("no barcode(s) found", __func__, NULL);
 
-    sad = pixReadBarcodes(pixa, format, method, psaw, diagspec);
+    sad = pixReadBarcodes(pixa, format, method, psaw);
     pixaDestroy(&pixa);
     return sad;
 }
@@ -183,8 +182,7 @@ SARRAY  *sad;
  *                or on error
  */
 PIXA *
-pixExtractBarcodes(PIX     *pixs,
-                   l_int32  debugflag)
+pixExtractBarcodes(PIX      *pixs)
 {
 l_int32    i, n;
 l_float32  angle, conf;
@@ -195,6 +193,9 @@ PIXA      *pixa;
 
     if (!pixs || pixGetDepth(pixs) != 8 || pixGetColormap(pixs))
         return (PIXA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
         /* Locate them; use small threshold for edges. */
     boxa = pixLocateBarcodes(pixs, 20, &pix2, &pix1);
@@ -216,6 +217,7 @@ PIXA      *pixa;
 
         /* Deskew each barcode individually */
     pixa = pixaCreate(n);
+	pixaSetDiagnosticsSpec(pixa, diagspec);
     for (i = 0; i < n; i++) {
         box = boxaGetBox(boxa, i, L_CLONE);
         pix3 = pixDeskewBarcode(pixs, pix2, box, 15, 20, &angle, &conf);
@@ -258,8 +260,7 @@ SARRAY *
 pixReadBarcodes(PIXA     *pixa,
                 l_int32   format,
                 l_int32   method,
-                SARRAY  **psaw,
-                LDIAG_CTX diagspec)
+                SARRAY  **psaw)
 {
 char      *barstr, *data;
 char       emptystring[] = "";
@@ -276,19 +277,23 @@ SARRAY    *saw, *sad;
     if (method != L_USE_WIDTHS && method != L_USE_WINDOWS)
         return (SARRAY *)ERROR_PTR("invalid method", __func__, NULL);
 
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixa);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     n = pixaGetCount(pixa);
     saw = sarrayCreate(n);
     sad = sarrayCreate(n);
     for (i = 0; i < n; i++) {
             /* Extract the widths of the lines in each barcode */
         pix1 = pixaGetPix(pixa, i, L_CLONE);
+		pixSetDiagnosticsSpec(pix1, diagspec);
         pixGetDimensions(pix1, &w, &h, NULL);
         if (w < MIN_BC_WIDTH || h < MIN_BC_HEIGHT) {
             L_ERROR("pix is too small: w = %d, h = %d\n", __func__, w, h);
             pixDestroy(&pix1);
             continue;
         }
-        na = pixReadBarcodeWidths(pix1, method, diagspec);
+        na = pixReadBarcodeWidths(pix1, method);
         pixDestroy(&pix1);
         if (!na) {
             ERROR_INT("valid barcode widths not returned", __func__, 1);
@@ -306,7 +311,7 @@ SARRAY    *saw, *sad;
         numaDestroy(&na);
 
             /* Decode the width strings */
-        data = barcodeDispatchDecoder(barstr, format, !!diagspec);
+        data = barcodeDispatchDecoder(barstr, format, debugflag);
         if (!data) {
             ERROR_INT("barcode not decoded", __func__, 1);
             sarrayAddString(sad, emptystring, L_COPY);
@@ -340,8 +345,7 @@ SARRAY    *saw, *sad;
  */
 NUMA *
 pixReadBarcodeWidths(PIX     *pixs,
-                     l_int32  method,
-                     LDIAG_CTX diagspec)
+                     l_int32  method)
 {
 l_float32  winwidth;
 NUMA      *na;
@@ -353,15 +357,16 @@ NUMA      *na;
     if (method != L_USE_WIDTHS && method != L_USE_WINDOWS)
         return (NUMA *)ERROR_PTR("invalid method", __func__, NULL);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Extract the widths of the lines in each barcode */
     if (method == L_USE_WIDTHS)
-        na = pixExtractBarcodeWidths1(pixs, 120, 0.25, NULL, NULL,
-                                      diagspec);
+        na = pixExtractBarcodeWidths1(pixs, 120, 0.25, NULL, NULL);
     else  /* method == L_USE_WINDOWS */
-        na = pixExtractBarcodeWidths2(pixs, 120, &winwidth,
-                                      NULL, diagspec);
+        na = pixExtractBarcodeWidths2(pixs, 120, &winwidth, NULL);
 #if DEBUG_WIDTHS
-	if (diagspec) {
+	if (debugflag) {
 		if (method == L_USE_WINDOWS)
 			lept_stderr("Window width for barcode: %7.3f\n", winwidth);
 		numaWriteStderr(na);
@@ -632,8 +637,7 @@ pixExtractBarcodeWidths1(PIX      *pixs,
                         l_float32  thresh,
                         l_float32  binfract,
                         NUMA     **pnaehist,
-                        NUMA     **pnaohist,
-                        LDIAG_CTX  diagspec)
+                        NUMA     **pnaohist)
 {
 NUMA  *nac, *nad;
 
@@ -642,8 +646,11 @@ NUMA  *nac, *nad;
     if (!pixs || pixGetDepth(pixs) != 8)
         return (NUMA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Get the best estimate of the crossings, in pixel units */
-    if ((nac = pixExtractBarcodeCrossings(pixs, thresh, diagspec)) == NULL)
+    if ((nac = pixExtractBarcodeCrossings(pixs, thresh)) == NULL)
         return (NUMA *)ERROR_PTR("nac not made", __func__, NULL);
 
         /* Get the array of bar widths, starting with a black bar  */
@@ -685,8 +692,7 @@ NUMA *
 pixExtractBarcodeWidths2(PIX        *pixs,
                          l_float32   thresh,
                          l_float32  *pwidth,
-                         NUMA      **pnac,
-                         LDIAG_CTX   diagspec)
+                         NUMA      **pnac)
 {
 NUMA    *nacp, *nad;
 
@@ -695,13 +701,15 @@ NUMA    *nacp, *nad;
     if (!pixs || pixGetDepth(pixs) != 8)
         return (NUMA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Get the best estimate of the crossings, in pixel units */
-    if ((nacp = pixExtractBarcodeCrossings(pixs, thresh, diagspec)) == NULL)
+    if ((nacp = pixExtractBarcodeCrossings(pixs, thresh)) == NULL)
         return (NUMA *)ERROR_PTR("nacp not made", __func__, NULL);
 
         /* Quantize the crossings to get actual windowed data */
-    nad = numaQuantizeCrossingsByWindow(nacp, 2.0, pwidth, NULL,
-                                        pnac, diagspec);
+    nad = numaQuantizeCrossingsByWindow(nacp, 2.0, pwidth, NULL, pnac);
     numaDestroy(&nacp);
     return nad;
 }
@@ -723,8 +731,7 @@ NUMA    *nacp, *nad;
  */
 NUMA *
 pixExtractBarcodeCrossings(PIX       *pixs,
-                           l_float32  thresh,
-                           LDIAG_CTX  diagspec)
+                           l_float32  thresh)
 {
 l_int32    w;
 l_float32  bestthresh;
@@ -733,6 +740,9 @@ NUMA      *nas, *nax, *nay, *nad;
 
     if (!pixs || pixGetDepth(pixs) != 8)
         return (NUMA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
         /* Scan pixels horizontally and average results */
     if ((nas = pixAverageRasterScans(pixs, 50)) == NULL)
@@ -743,7 +753,7 @@ NUMA      *nas, *nax, *nay, *nad;
     numaInterpolateEqxInterval(0.0, 1.0, nas, L_QUADRATIC_INTERP, 0.0,
                                (l_float32)(w - 1), 4 * w + 1, &nax, &nay);
 
-    if (diagspec) {
+    if (debugflag) {
         //lept_mkdir("lept/barcode");
         gplot = gplotCreate(diagspec, "/tmp/lept/barcode/signal", GPLOT_PNG,
                             "Pixel values", "dist in pixels", "value");
@@ -870,6 +880,8 @@ NUMA      *naerange, *naorange, *naelut, *naolut, *nad;
     if (binfract <= 0.0)
         return (NUMA *)ERROR_PTR("binfract <= 0.0", __func__, NULL);
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Get even and odd crossing distances, and determine the rank
          * widths for rank 0.1 (minsize) and 0.9 (maxsize). */
     ret = numaGetCrossingDistances(nas, &naedist, &naodist, &minsize, &maxsize);
@@ -892,7 +904,7 @@ NUMA      *naerange, *naorange, *naelut, *naolut, *nad;
     naohist = numaMakeHistogramClipped(naodist, binfract * minsize,
                                        (1.25 / binfract) * maxsize);
 
-    if (diagspec) {
+    if (debugflag) {
         //lept_mkdir("lept/barcode");
         gplot = gplotCreate(diagspec, "/tmp/lept/barcode/histw", GPLOT_PNG,
                             "Raw width histogram", "Width", "Number");
@@ -947,7 +959,7 @@ NUMA      *naerange, *naorange, *naelut, *naolut, *nad;
     numaGetIValue(naelut, width, &iw);
     numaAddNumber(nad, iw);
 
-    if (diagspec) {
+    if (debugflag) {
         lept_stderr(" ---- Black bar widths (pixels) ------ \n");
         numaWriteStderr(naedist);
         lept_stderr(" ---- Histogram of black bar widths ------ \n");
@@ -1283,8 +1295,7 @@ numaQuantizeCrossingsByWindow(NUMA       *nas,
                               l_float32   ratio,
                               l_float32  *pwidth,
                               l_float32  *pfirstloc,
-                              NUMA      **pnac,
-                              l_int32     debugflag)
+                              NUMA      **pnac)
 {
 l_int32    i, nw, started, count, trans;
 l_float32  minsize, minwidth, minshift, xfirst;

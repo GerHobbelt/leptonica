@@ -323,7 +323,7 @@ PIXAC     *pixac1 = NULL;
         pixs = pixRead(fname);
         pix1 = pixCropImage(pixs, lr_clear, tb_clear, edgeclean,
                             lr_border, tb_border, maxwiden, printwiden,
-                            NULL, NULL);
+                            NULL);
         pixDestroy(&pixs);
         if (!pix1) {
             L_ERROR("pix1 not made for i = %d\n", __func__, i);

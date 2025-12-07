@@ -69,12 +69,14 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-word.tif"));
-    pixt = pixAddBorder(pixs, 25, 0);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixt = pixAddBorder(pixs, 25, 0);
     pixg = pixConvertTo8(pixt, 0);
 
     for (k = 0; k < size; k++) {
         pixac = pixaCreate(0);
-        for (i = 0; i < 50; i++) {
+		pixaSetDiagnosticsSpec(pixac, rp->diag_spec);
+		for (i = 0; i < 50; i++) {
             pixd = pixRandomHarmonicWarp(pixg, xmag[k], ymag[k], xfreq[k],
                                          yfreq[k], nx[k], ny[k], 7 * i, 255);
             newline = (i % 10 == 0) ? 1 : 0;
@@ -82,7 +84,7 @@ L_REGPARAMS* rp;
         }
         pixd = pixaDisplayTiledInColumns(pixac, 10, 1.0, 20, 0);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);
-        pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 100, 100, NULL);
         pixaDestroy(&pixac);
         pixDestroy(&pixd);
     }
@@ -92,13 +94,14 @@ L_REGPARAMS* rp;
 
     for (k = 1; k <= 4; k++) {
         pixac = pixaCreate(0);
-        for (i = 0; i < 50; i++) {
+		pixaSetDiagnosticsSpec(pixac, rp->diag_spec);
+		for (i = 0; i < 50; i++) {
             newline = (i % 10 == 0) ? 1 : 0;
             DisplayCaptcha(pixac, pixs, k, 7 * i, newline);
         }
         pixd = pixaDisplayTiledInColumns(pixac, 10, 1.0, 20, 0);
         regTestWritePixAndCheck(rp, pixd, IFF_PNG);
-        pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pixd, 100, 100, NULL);
         pixaDestroy(&pixac);
         pixDestroy(&pixd);
     }

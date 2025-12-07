@@ -64,7 +64,7 @@ BOXAA        *boxaa1;
 PIX          *pix1, *pix2, *pix3, *pix4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "word_boxes", &rp))
+	if (regTestSetup(argc, argv, "textboxes", &rp))
 		return 1;
 
 	//lept_mkdir("lept/testboxes");
@@ -73,28 +73,32 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Make word boxes using pixWordMaskByDilation() */
     pix1 = pixRead(DEMOPATH("lucasta.150.jpg"));
-    MakeWordBoxes1(pix1, 1.0, 140, 0, rp);  /* 0 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	MakeWordBoxes1(pix1, 1.0, 140, 0, rp);  /* 0 */
     MakeWordBoxes1(pix1, 0.6, 140, 1, rp);  /* 1 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
     pix1 = pixRead(DEMOPATH("zanotti-78.jpg"));
-    MakeWordBoxes1(pix1, 1.0, 140, 2, rp);  /* 2 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	MakeWordBoxes1(pix1, 1.0, 140, 2, rp);  /* 2 */
     MakeWordBoxes1(pix1, 0.6, 140, 3, rp);  /* 3 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
     pix1 = pixRead(DEMOPATH("words.15.tif"));
-    MakeWordBoxes1(pix1, 1.0, 140, 4, rp);  /* 4 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	MakeWordBoxes1(pix1, 1.0, 140, 4, rp);  /* 4 */
     MakeWordBoxes1(pix1, 0.6, 140, 5, rp);  /* 5 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
     pix1 = pixRead(DEMOPATH("words.44.tif"));
-    MakeWordBoxes1(pix1, 1.0, 140, 6, rp);  /* 6 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	MakeWordBoxes1(pix1, 1.0, 140, 6, rp);  /* 6 */
     MakeWordBoxes1(pix1, 0.6, 140, 7, rp);  /* 7 */
     pixDestroy(&pix1);
 #endif
@@ -104,37 +108,43 @@ L_REGPARAMS* rp;
          * pixGetWordsInTextlines() and pixGetWordBoxesInTextlines() */
 
     pix1 = pixRead(DEMOPATH("lucasta.150.jpg"));
-    MakeWordBoxes2(pix1, 0.7, 140, rp);  /* 8, 9 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	MakeWordBoxes2(pix1, 0.7, 140, rp);  /* 8, 9 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
     pix1 = pixRead(DEMOPATH("zanotti-78.jpg"));
-    MakeWordBoxes2(pix1, 0.7, 140, rp);  /* 10, 11 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	MakeWordBoxes2(pix1, 0.7, 140, rp);  /* 10, 11 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
         /* Test boxa adjacency function */
     pix1 = pixRead(DEMOPATH("lucasta.150.jpg"));
-    TestBoxaAdjacency(pix1, rp);  /* 12 - 15 */
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	TestBoxaAdjacency(pix1, rp);  /* 12 - 15 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
         /* Test word and character box finding */
     pix1 = pixRead(DEMOPATH("zanotti-78.jpg"));
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
     box1 = boxCreate(0, 0, 1500, 700);
     pix2 = pixClipRectangle(pix1, box1, NULL);
     box2 = boxCreate(150, 130, 1500, 355);
-    pixFindWordAndCharacterBoxes(pix2, box2, 130, &boxa1, &boxaa1,
-                                 "/tmp/lept/testboxes");
+    pixFindWordAndCharacterBoxes(pix2, box2, 130, &boxa1, &boxaa1);
     pix3 = pixRead("/tmp/lept/testboxes/words.png");
     pix4 = pixRead("/tmp/lept/testboxes/chars.png");
-    regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 16 */
+	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
+	pixSetDiagnosticsSpec(pix4, rp->diag_spec);
+	regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 16 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 17 */
-    pixDisplayWithTitle(pix3, 200, 1000, NULL, rp->diag_spec);
-    pixDisplayWithTitle(pix4, 200, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 200, 1000, NULL);
+    pixDisplayWithTitle(pix4, 200, 100, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -162,7 +172,8 @@ PIXA  *pixa1;
     pix1 = pixScale(pixs, scalefact, scalefact);
     pix2 = pixConvertTo1(pix1, thresh);
     pixa1 = pixaCreate(3);
-    pixWordMaskByDilation(pix2, &pix3, NULL, pixa1);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixWordMaskByDilation(pix2, &pix3, NULL, pixa1);
     pix4 = NULL;
     if (pix3) {
         boxa1 = pixConnComp(pix3, NULL, 8);
@@ -170,14 +181,14 @@ PIXA  *pixa1;
         pix4 = pixConvertTo32(pixs);
         pixRenderBoxaArb(pix4, boxa2, 2, 255, 0, 0);
         pix5 = pixaDisplayTiledInColumns(pixa1, 1, 1.0, 25, 2);
-        pixDisplayWithTitle(pix5, 200 * index, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix5, 200 * index, 0, NULL);
         boxaDestroy(&boxa1);
         boxaDestroy(&boxa2);
         pixDestroy(&pix3);
         pixDestroy(&pix5);
     }
     regTestWritePixAndCheck(rp, pix4, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix4, 200 * index, 800, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix4, 200 * index, 800, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix4);
@@ -216,7 +227,7 @@ PIXA    *pixa;
     pix3 = pixConvertTo32(pixs);
     pixRenderBoxaArb(pix3, boxa2, 2, 255, 0, 0);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix3, 900, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 900, 0, NULL);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
 
@@ -228,7 +239,7 @@ PIXA    *pixa;
     pixRenderBoxaArb(pix4, boxa2, 2, 255, 0, 0);
     if (regTestComparePix(rp, pix3, pix4)) {
         L_ERROR("pix not the same", "MakeWordBoxes2");
-        pixDisplayWithTitle(pix4, 1200, 0, NULL, rp->diag_spec);
+        pixDisplayWithTitle(pix4, 1200, 0, NULL);
     }
     pixDestroy(&pix1);
     pixDestroy(&pix2);
@@ -258,7 +269,7 @@ NUMAA   *naai, *naad;
     pix2 = pixConvertTo32(pixs);
     pixRenderBoxaArb(pix2, boxa1, 2, 255, 0, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix2, 600, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 600, 700, NULL);
     pixDestroy(&pix1);
 
         /* Find the adjacent boxes and their distances */
@@ -287,7 +298,7 @@ NUMAA   *naai, *naad;
         boxaDestroy(&boxa2);
     }
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);
-    pixDisplayWithTitle(pix3, 1100, 700, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 1100, 700, NULL);
 
     pixDestroy(&pix0);
     pixDestroy(&pix2);

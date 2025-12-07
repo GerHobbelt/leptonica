@@ -41,7 +41,7 @@
 #define   Y     40
 #define   ALL   1
 
-static PIX *BlendTest(const char *file1, const char *file2, l_float32 fract);
+static PIX *BlendTest(const char *file1, const char *file2, l_float32 fract, L_REGPARAMS* rp);
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -105,7 +105,8 @@ L_REGPARAMS* rp;
 static PIX *
 BlendTest(const char  *filename1,
           const char  *filename2,
-          l_float32    fract)
+          l_float32    fract,
+	      L_REGPARAMS* rp)
 {
 l_int32  d1, d2;
 PIX     *pixs1, *pixs2, *pix1, *pix2, *pix3, *pix4, *pix5, *pixd;
@@ -117,7 +118,9 @@ snprintf(file2, sizeof(file2), "%s%s", DEMOPATH(""), filename2);
 
     pixs1 = pixRead(file1);
     pixs2 = pixRead(file2);
-    d1 = pixGetDepth(pixs1);
+	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
+	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
+	d1 = pixGetDepth(pixs1);
     d2 = pixGetDepth(pixs2);
     pixa = pixaCreate(7);
 	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);

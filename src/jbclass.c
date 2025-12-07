@@ -2080,8 +2080,8 @@ SARRAY   *sa;
  *              NULL on error
  */
 PIXA *
-jbDataRender(JBDATA  *data,
-             l_ok     debugflag)
+jbDataRender(JBDATA   *data,
+             LDIAG_CTX diagspec)
 {
 l_int32   i, w, h, cellw, cellh, x, y, iclass, ipage;
 l_int32   npages, nclass, ncomp, wp, hp;
@@ -2097,6 +2097,8 @@ PTA      *ptaul;
 
     if (!data)
         return (PIXA *)ERROR_PTR("data not defined", __func__, NULL);
+
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
     npages = data->npages;
     w = data->w;
@@ -2188,6 +2190,8 @@ PTA      *ptaul;
         }
         boxaaDestroy(&baa);
     }
+
+	pixaSetDiagnosticsSpecPervasively(pixad, diagspec);
 
     pixaDestroy(&pixat);
     return pixad;

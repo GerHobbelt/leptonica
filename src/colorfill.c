@@ -46,7 +46,7 @@
  *         static void          pixGetVisitedNeighbors()
  *         static l_int32       findNextUnvisited()
  *         static l_int32       colorsAreSimilarForFill()
- *         static void          pixelColorIsValid()
+ *         static l_ok          pixelColorIsValid()
  *         static l_int32       pixelIsOnColorBoundary()
  *         static l_int32       evalColorfillData()
  *
@@ -82,7 +82,7 @@ static void pixGetVisitedNeighbors(PIX *pixs, l_int32 x, l_int32 y,
 static l_int32 findNextUnvisited(PIX *pixv, l_int32 *px, l_int32 *py);
 static l_int32 colorsAreSimilarForFill(l_uint32 val1, l_uint32 val2,
                                        l_int32 maxdiff);
-static l_int32 pixelColorIsValid(l_uint32 val, l_int32 minmax);
+static l_ok    pixelColorIsValid(l_uint32 val, l_int32 minmax);
 static l_int32 pixelIsOnColorBoundary(PIX *pixs, l_int32 x, l_int32 y);
 static l_int32 evalColorfillData(L_COLORFILL *cf, LDIAG_CTX diagspec);
 
@@ -245,6 +245,7 @@ PIXA      *pixas, *pixam;
          * and uses them if valid.  Use {0,0,0} to skip this operation. */
     if ((pix1 = pixColorShiftWhitePoint(cf->pixs, rref, gref, bref)) == NULL)
         return ERROR_INT("pix1 not returned", __func__, 1);
+	pixSetDiagnosticsSpec(pix1, diagspec);
     cf->pixst = pix1;
 
         /* Break the image up into small tiles */
@@ -258,7 +259,8 @@ PIXA      *pixas, *pixam;
 	cf->pixam = pixam;
     for (i = 0; i < n; i++) {
         pix2 = pixaGetPix(pixas, i, L_COPY);
-        pix3 = pixColorFill(pix2, minmax, maxdiff, smooth, minarea, debugflag);
+		pixSetDiagnosticsSpec(pix2, diagspec);
+		pix3 = pixColorFill(pix2, minmax, maxdiff, smooth, minarea);
         pixDestroy(&pix2);
         pixaAddPix(pixam, pix3, L_INSERT);
     }
@@ -297,8 +299,7 @@ pixColorFill(PIX     *pixs,
              l_int32  minmax,
              l_int32  maxdiff,
              l_int32  smooth,
-             l_int32  minarea,
-             l_ok     debugflag)
+             l_int32  minarea)
 {
 l_int32    x, y, w, h;
 l_uint32   val;
@@ -309,6 +310,9 @@ L_QUEUE   *lq;
 
     if (!pixs || pixGetDepth(pixs) != 32)
         return (PIX *)ERROR_PTR("pixs undefined or not 32 bpp", __func__, NULL);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
         /* Set the non-color pixels to 0; generate a mask representing them */
     pixGetDimensions(pixs, &w, &h, NULL);
@@ -359,7 +363,8 @@ L_QUEUE   *lq;
                              minarea, debugflag);
         if (pta1) {  /* erode and add the pixels to pixm */
             pixm1 = pixGenerateFromPta(pta1, w, h);
-            pixErodeBrick(pixm1, pixm1, 3, 3);
+			pixSetDiagnosticsSpec(pixm1, diagspec);
+			pixErodeBrick(pixm1, pixm1, 3, 3);
             pixOr(pixm, pixm, pixm1);
             pixDestroy(&pixm1);
             ptaDestroy(&pta1);
@@ -787,7 +792,7 @@ l_int32  v1[3], v2[3];
  * \param[in]       minmax    max component must be < %minmax to be valid
  * \return  0 if max component < %minmax; 1 otherwise
  */
-static l_int32
+static l_ok
 pixelColorIsValid(l_uint32  val,
                   l_int32   minmax)
 {
@@ -864,6 +869,8 @@ PIXA      *pixa1;
     if (!cf)
         return ERROR_INT("cf not defind", __func__, 1);
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     tab = makePixelSumTab8();
     n = cf->nx * cf->ny;
     for (i = 0; i < n; i++) {
@@ -876,7 +883,7 @@ PIXA      *pixa1;
         na = numaCreate(0);
         da = l_dnaCreate(0);
 		pixdb = NULL;
-		if (diagspec) {
+		if (debugflag) {
 			pixdb = pixCreate(w, h, 32);
 			pixSetDiagnosticsSpec(pixdb, diagspec);
 		}
@@ -891,8 +898,9 @@ PIXA      *pixa1;
             l_dnaAddNumber(da, pixel);
             pixCountPixels(pix2, &count, tab);
             numaAddNumber(na, count);
-            if (diagspec)
-                pixPaintThroughMask(pixdb, pix2, x, y, pixel);
+			if (debugflag) {
+				pixPaintThroughMask(pixdb, pix2, x, y, pixel);
+			}
             boxDestroy(&box1);
             pixDestroy(&pix2);
         }
@@ -904,7 +912,7 @@ PIXA      *pixa1;
         pixaDestroy(&pixa1);
     }
 
-    if (diagspec) {  /* first tile */
+    if (debugflag) {  /* first tile */
         na = numaaGetNuma(cf->naa, 0, L_CLONE);
         lept_stderr("Size of components in tile 0:");
         numaWriteStderr(na);

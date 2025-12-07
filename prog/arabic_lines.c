@@ -150,7 +150,8 @@ L_REGPARAMS* rp;
 
         /* Visual output */
     pix2 = selDisplayInPix(selsplit, 31, 2);
-    pixaAddPix(pixa, pix2, L_INSERT);
+	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
+	pixaAddPix(pixa, pix2, L_INSERT);
     pix3 = pixaDisplayTiledAndScaled(pixa, 32, 400, 3, 0, 35, 3);
     pixWrite("/tmp/lept/lineseg/result.png", pix3, IFF_PNG);
     pixDisplay(pix3, 100, 100);

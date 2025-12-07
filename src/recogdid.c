@@ -294,7 +294,8 @@ recogPrepareForDecoding(L_RECOG  *recog,
                         PIX      *pixs,
                         l_int32   debug)
 {
-l_int32  i, ret;
+l_int32  i;
+l_ok     ret;
 PIX     *pix1;
 L_RDID  *did;
 

@@ -644,7 +644,7 @@ PTA       *pta;
     }
 
 	LDIAG_CTX diagspec = pixPassDiagIfDebugModeActive(pixs);
-    if (diagspec) {
+    if (leptIsDebugModeActive(diagspec)) {
 		//lept_mkdir("lept/baseline");
         ptaGetArrays(pta, &nax, &nay);
         gplot = gplotCreate(diagspec, "/tmp/lept/baseline/skew", GPLOT_PNG,

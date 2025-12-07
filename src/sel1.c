@@ -2223,7 +2223,7 @@ PTA     *pta1, *pta2, *pta1t, *pta2t;
 
         /* Generate crossed lines for origin pattern */
     pixorig = pixCreate(size, size, 1);
-    width = size / 8;
+	width = size / 8;
     pixRenderLine(pixorig, size / 2, (l_int32)(0.12 * size),
                            size / 2, (l_int32)(0.88 * size),
                            width, L_SET_PIXELS);

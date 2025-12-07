@@ -109,7 +109,7 @@ L_REGPARAMS* rp;
 
         /* Render the pages from the classifier data.
          * Use debugflag == FALSE to omit outlines of each component. */
-    pixa1 = jbDataRender(data, FALSE);
+    pixa1 = jbDataRender(data, rp->diag_spec);
     for (i = 0; i < 2; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
         regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 1, 2 */
@@ -149,7 +149,7 @@ L_REGPARAMS* rp;
 
         /* Render the pages from the classifier data.
          * Use debugflag == FALSE to omit outlines of each component. */
-    pixa1 = jbDataRender(data, FALSE);
+    pixa1 = jbDataRender(data, rp->diag_spec);
     for (i = 0; i < 2; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
         regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 5, 6 */

@@ -357,6 +357,8 @@ l_uint32  val;
 l_int32  *neigh;
 PTA      *ptas, *ptad;
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     if (!pixs || pixGetDepth(pixs) != 32)
         return ERROR_INT("pixs not defined or not 32 bpp", __func__, 1);
     if (!ptaa)
@@ -402,7 +404,7 @@ PTA      *ptas, *ptad;
     ptaaAddPt(ptaa, neigh[0], x, y);
     if (nvals == 1) {
 		// TODO: should we re-do the debug level checks?
-        if (diagspec)
+        if (debugflag)
             lept_stderr("nvals = %d: neigh = (%d)\n", nvals, neigh[0]);
         LEPT_FREE(neigh);
         return 0;
@@ -417,19 +419,19 @@ PTA      *ptas, *ptad;
          *  (b) save the pixel locations in the pta for the first component. */
     if (nvals == 2) {
 		// TODO: should we re-do the debug level checks?
-		if (diagspec) {
+		if (debugflag) {
             lept_stderr("nvals = %d: neigh = (%d,%d)\n", nvals,
                         neigh[0], neigh[1]);
         }
     } else if (nvals == 3) {
 		// TODO: should we re-do the debug level checks?
-		if (diagspec) {
+		if (debugflag) {
 			lept_stderr("nvals = %d: neigh = (%d,%d,%d)\n", nvals,
                         neigh[0], neigh[1], neigh[2]);
         }
     } else {  /* nvals == 4 */
 		// TODO: should we re-do the debug level checks?
-		if (diagspec) {
+		if (debugflag) {
 			lept_stderr("nvals = %d: neigh = (%d,%d,%d,%d)\n", nvals,
                         neigh[0], neigh[1], neigh[2], neigh[3]);
         }

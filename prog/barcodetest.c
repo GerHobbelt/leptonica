@@ -70,30 +70,29 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
-    sad1 = pixProcessBarcodes(pixs, L_BF_ANY, L_USE_WIDTHS, &saw1, 0);
+    sad1 = pixProcessBarcodes(pixs, L_BF_ANY, L_USE_WIDTHS, &saw1);
     sarrayWrite("/tmp/lept/barc/saw1.sa", saw1);
     sarrayWrite("/tmp/lept/barc/sad1.sa", sad1);
     sarrayDestroy(&saw1);
     sarrayDestroy(&sad1);
 
     pixRotate180(pixs, pixs);
-    sad2 = pixProcessBarcodes(pixs, L_BF_ANY, L_USE_WIDTHS, &saw2, 0);
+    sad2 = pixProcessBarcodes(pixs, L_BF_ANY, L_USE_WIDTHS, &saw2);
     sarrayWrite("/tmp/lept/barc/saw2.sa", saw2);
     sarrayWrite("/tmp/lept/barc/sad2.sa", sad2);
     sarrayDestroy(&saw2);
     sarrayDestroy(&sad2);
 
-/*
 {
     SARRAY  *saw3, *sad3;
-    sad3 = pixProcessBarcodes(pixs, L_BF_ANY, L_USE_WINDOW, &saw3, 1);
+    sad3 = pixProcessBarcodes(pixs, L_BF_ANY, L_USE_WINDOWS, &saw3);
     sarrayWrite("/tmp/lept/barc/saw3.sa", saw3);
     sarrayWrite("/tmp/lept/barc/sad3.sa", sad3);
     sarrayDestroy(&saw3);
     sarrayDestroy(&sad3);
 }
-*/
 
     pixDestroy(&pixs);
     return 0;

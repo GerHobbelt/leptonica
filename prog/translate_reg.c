@@ -71,7 +71,8 @@ L_REGPARAMS* rp;
 
         /* Set up images */
     pix1 = pixRead(DEMOPATH("weasel2.4c.png"));
-    pix2 = pixScaleBySampling(pix1, 3.0, 3.0);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
+	pix2 = pixScaleBySampling(pix1, 3.0, 3.0);
     box = boxCreate(0, 0, 209, 214);
     pixs = pixClipRectangle(pix2, box, NULL);
     pixDestroy(&pix1);
@@ -86,27 +87,30 @@ L_REGPARAMS* rp;
     pix7 = pixRotateAM(pix2, +0.15, L_BRING_IN_WHITE);
 
     pixa = pixaCreate(0);
-    TranslateAndSave1(pixa, 32, pixs, 30, 30);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	TranslateAndSave1(pixa, 32, pixs, 30, 30);
     TranslateAndSave1(pixa, 32, pix1, 35, 20);
     TranslateAndSave1(pixa, 32, pix2, 20, 35);
     TranslateAndSave1(pixa, 32, pix3, 20, 35);
     pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixd, 0, 0, "trans0", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 0, 0, "trans0");
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
     pixa = pixaCreate(0);
-    TranslateAndSave1(pixa, 8, pix1, 35, 20);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	TranslateAndSave1(pixa, 8, pix1, 35, 20);
     TranslateAndSave1(pixa, 8, pix4, 35, 20);
     pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixd, 250, 0, "trans1", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 250, 0, "trans1");
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
     pixa = pixaCreate(0);
-    TranslateAndSave2(pixa, pixs, 30, 30);
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	TranslateAndSave2(pixa, pixs, 30, 30);
     TranslateAndSave2(pixa, pix1, 30, 30);
     TranslateAndSave2(pixa, pix2, 35, 20);
     TranslateAndSave2(pixa, pix3, 20, 35);
@@ -116,7 +120,7 @@ L_REGPARAMS* rp;
     TranslateAndSave2(pixa, pix7, 25, 25);
     pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 30, 3);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 2 */
-    pixDisplayWithTitle(pixd, 500, 0, "trans2", rp->diag_spec);
+    pixDisplayWithTitle(pixd, 500, 0, "trans2");
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 

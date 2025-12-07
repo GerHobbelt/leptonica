@@ -1459,7 +1459,7 @@ NUMA           *naw, *nah;
 BOXA *
 boxaFillSequence(BOXA    *boxas,
                  l_int32  useflag,
-                 l_int32  debugflag)
+                 l_ok     debugflag)
 {
 l_int32  n, nv;
 BOXA    *boxae, *boxao, *boxad;

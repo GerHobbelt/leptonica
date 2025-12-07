@@ -480,9 +480,9 @@ PIX     *pix1, *pix2;
  *      (3) Set debug = 1 to view the resulting templates and their centroids.
  * </pre>
  */
-l_int32
+l_ok
 recogAverageSamples(L_RECOG  *recog,
-                    l_int32   debug)
+                    l_ok      debugflag)
 {
 l_int32    i, nsamp, size, area, bx, by, badclass;
 l_float32  x, y, hratio;
@@ -495,7 +495,7 @@ PTA       *pta1;
         return ERROR_INT("recog not defined", __func__, 1);
 
     if (recog->ave_done) {
-        if (debug)  /* always do this if requested */
+        if (debugflag)  /* always do this if requested */
             recogShowAverageTemplates(recog);
         return 0;
     }
@@ -621,7 +621,7 @@ PTA       *pta1;
     recog->min_splitw = L_MAX(5, recog->minwidth_u - 5);
     recog->max_splith = recog->maxheight_u + 12;  /* allow for skew */
 
-    if (debug)
+    if (debugflag)
         recogShowAverageTemplates(recog);
 
     recog->ave_done = TRUE;
@@ -648,7 +648,7 @@ PTA       *pta1;
  *          to precompute the pta.
  * </pre>
  */
-l_int32
+l_ok
 pixaAccumulateSamples(PIXA       *pixa,
                       PTA        *pta,
                       PIX       **ppixd,
@@ -1460,8 +1460,7 @@ PIXA  *
 recogTrainFromBoot(L_RECOG   *recogboot,
                    PIXA      *pixas,
                    l_float32  minscore,
-                   l_int32    threshold,
-                   l_int32    debug)
+                   l_int32    threshold)
 {
 char      *text;
 l_int32    i, n, same, maxd, scaleh, linew;
@@ -1473,6 +1472,8 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixad;
         return (PIXA *)ERROR_PTR("recogboot not defined", __func__, NULL);
     if (!pixas)
         return (PIXA *)ERROR_PTR("pixas not defined", __func__, NULL);
+
+	l_ok debugflag = pixaIsDebugModeActive(pixas);
 
         /* Make sure all input pix are 1 bpp */
     if ((n = pixaGetCount(pixas)) == 0)
@@ -1515,7 +1516,7 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixad;
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa3, i, L_COPY);
         pixSetText(pix1, NULL);  /* remove any existing text or labelling */
-        if (!debug) {
+        if (!debugflag) {
             recogIdentifyPix(recogboot, pix1, NULL);
         } else {
             recogIdentifyPix(recogboot, pix1, &pixdb);
@@ -1847,6 +1848,8 @@ recogMakeBootDigitRecog(l_int32  nsamp,
 PIXA     *pixa;
 L_RECOG  *recog;
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Get the templates, extended by horizontal scaling */
     pixa = recogMakeBootDigitTemplates(nsamp, diagspec);
 
@@ -1854,7 +1857,7 @@ L_RECOG  *recog;
          * templates and optionally turn them into strokes of fixed width. */
     recog = recogCreateFromPixa(pixa, 0, scaleh, linew, 128, maxyshift);
     pixaDestroy(&pixa);
-    if (debug)
+    if (debugflag)
         recogShowContent(stderr, recog, 0, 1);
 
     return recog;
@@ -1874,16 +1877,19 @@ L_RECOG  *recog;
  * </pre>
  */
 PIXA  *
-recogMakeBootDigitTemplates(l_int32  nsamp,
-                            l_int32  debug)
+recogMakeBootDigitTemplates(l_int32   nsamp,
+                            LDIAG_CTX diagspec)
 {
 NUMA  *na1;
 PIX   *pix1, *pix2, *pix3;
 PIXA  *pixa1, *pixa2, *pixa3;
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     if (nsamp > 0) {
         pixa1 = l_bootnum_gen4(nsamp);
-        if (debug) {
+		pixaSetDiagnosticsSpec(pixa1, diagspec);
+        if (debugflag) {
             pix1 = pixaDisplayTiledWithText(pixa1, 1500, 1.0, 10,
                                             2, 6, 0xff000000);
             pixDisplay(pix1, 0, 0);
@@ -1896,7 +1902,10 @@ PIXA  *pixa1, *pixa2, *pixa3;
     pixa1 = l_bootnum_gen1();
     pixa2 = l_bootnum_gen2();
     pixa3 = l_bootnum_gen3();
-    if (debug) {
+	pixaSetDiagnosticsSpec(pixa1, diagspec);
+	pixaSetDiagnosticsSpec(pixa2, diagspec);
+	pixaSetDiagnosticsSpec(pixa3, diagspec);
+    if (debugflag) {
         pix1 = pixaDisplayTiledWithText(pixa1, 1500, 1.0, 10, 2, 6, 0xff000000);
         pix2 = pixaDisplayTiledWithText(pixa2, 1500, 1.0, 10, 2, 6, 0xff000000);
         pix3 = pixaDisplayTiledWithText(pixa3, 1500, 1.0, 10, 2, 6, 0xff000000);
@@ -2031,6 +2040,8 @@ PIXAA     *paa1, *paa2;
     if (!recog)
         return ERROR_INT("recog not defined", __func__, 1);
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Mark the training as finished if necessary, and make sure
          * that the average templates have been built. */
     if (recogAverageSamples(recog, 0) != 0)
@@ -2056,7 +2067,7 @@ PIXAA     *paa1, *paa2;
             rchExtract(recog->rch, &index, &score, NULL, NULL, NULL,
                        NULL, NULL);
 			// TODO: should we re-do the debug level checks?
-			if (diagspec)
+			if (debugflag)
                 lept_stderr("index = %d, score = %7.3f\n", index, score);
             pix3 = pixAddBorder(pix2, 2, 1);
             pixaAddPix(pixa, pix3, L_INSERT);
@@ -2068,7 +2079,7 @@ PIXAA     *paa1, *paa2;
     }
     recog->pixdb_ave = pixaaDisplayByPixa(paa2, 50, 1.0, 20, 20, 0);
 	// TODO: should we re-do the debug level checks?
-	if (diagspec) {
+	if (debugflag) {
         //lept_mkdir("lept/recog");
         pixWriteDebug("/tmp/lept/recog/templ_match.png", recog->pixdb_ave,
                       IFF_PNG);

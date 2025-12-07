@@ -71,8 +71,10 @@ L_REGPARAMS* rp;
 
         /* Generate and save 1 bpp masks */
     pixas = pixaCreate(0);
-    pixs = pixCreate(300, 250, 1);
-    pixSetAll(pixs);
+	pixaSetDiagnosticsSpec(pixas, rp->diag_spec);
+	pixs = pixCreate(300, 250, 1);
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixSetAll(pixs);
     box1 = boxCreate(50, 0, 140, 25);
     box2 = boxCreate(120, 100, 100, 25);
     box3 = boxCreate(75, 170, 80, 20);
@@ -106,11 +108,13 @@ L_REGPARAMS* rp;
 
         /* Do 5 splittings on each of the 8 masks */
     pixad = pixaCreate(0);
-    for (j = 0; j < 8; j++) {
+	pixaSetDiagnosticsSpec(pixad, rp->diag_spec);
+	for (j = 0; j < 8; j++) {
         pixt = pixaGetPix(pixas, j, L_CLONE);
         pixGetDimensions(pixt, &w, &h, NULL);
         pix32 = pixCreate(w, h, 32);
-        pixSetAll(pix32);
+		pixSetDiagnosticsSpec(pix32, rp->diag_spec);
+		pixSetAll(pix32);
         pixPaintThroughMask(pix32, pixt, 0, 0, 0xc0c0c000);
         pixaAddPix(pixad, pix32, L_INSERT);
         for (i = 0; i < 5; i++) {
@@ -130,13 +134,14 @@ L_REGPARAMS* rp;
         /* Display results */
     pixd = pixaDisplayTiledInColumns(pixad, 6, 1.0, 30, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pixd, 100, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 100, 100, NULL);
     pixDestroy(&pixd);
     pixaDestroy(&pixad);
 
         /* Put the 8 masks all together, and split 5 ways */
     pixad = pixaCreate(0);
-    pixs = pixaDisplayOnLattice(pixas, 325, 325, NULL, NULL);
+	pixaSetDiagnosticsSpec(pixad, rp->diag_spec);
+	pixs = pixaDisplayOnLattice(pixas, 325, 325, NULL, NULL);
     pixGetDimensions(pixs, &w, &h, NULL);
     pix32 = pixCreate(w, h, 32);
     pixSetAll(pix32);
@@ -158,7 +163,7 @@ L_REGPARAMS* rp;
         /* Display results */
     pixd = pixaDisplayTiledInColumns(pixad, 6, 1.0, 30, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pixd, 600, 100, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 600, 100, NULL);
     pixDestroy(&pixd);
     pixaDestroy(&pixad);
 

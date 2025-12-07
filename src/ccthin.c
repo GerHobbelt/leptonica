@@ -463,6 +463,7 @@ SELA  *sela1, *sela2, *sela3;
         PIX  *pix1;
         //lept_mkdir("/lept/sels");
         pix1 = selaDisplayInPix(sela2, 35, 3, 15, 4);
+		pixSetDiagnosticsSpec(pix1, diagspec);
 		const char* pixpath = leptDebugGenFilepath(diagspec, "sels-set%02d.png", index);
         pixWrite(pixpath, pix1, IFF_PNG);
         pixDisplay(pix1, 100, 100);

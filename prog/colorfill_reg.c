@@ -59,18 +59,22 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "color_fill", &rp))
 		return 1;
 
+	// TODO: run pixColorContentByLocation() both with debug mode ON and OFF to see the difference, because
+	//       evalColorfillData() will execute an extra pixPaintThroughMask() when debug mode is ON!
+
         /* Test on a small image */
     pix1 = makeSmallTestPix(0x3070A000, 0xA0703000);
+	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
     pix2 = pixExpandReplicate(pix1, 15);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
-    pixDisplayWithTitle(pix2, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix2, 0, 0, NULL);
     pixDestroy(&pix2);
     cf = l_colorfillCreate(pix1, 1, 1);
     pixColorContentByLocation(cf, 0, 0, 0, 70, 15, 3, 1, rp->diag_spec);
     pix2 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     pix3 = pixExpandReplicate(pix2, 10);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1 */
-    pixDisplayWithTitle(pix3, 300, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix3, 300, 0, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);

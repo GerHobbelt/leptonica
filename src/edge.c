@@ -396,6 +396,8 @@ PIXCMAP  *cmap;
         side != L_FROM_TOP && side != L_FROM_BOT)
         return (NUMA *)ERROR_PTR("invalid side", __func__, NULL);
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     pixGetDimensions(pixs, &w, &h, NULL);
     if (side == L_FROM_LEFT || side == L_FROM_RIGHT)
         na = numaCreate(h);
@@ -462,7 +464,7 @@ PIXCMAP  *cmap;
         }
     }
 
-    if (diagspec) {
+    if (debugflag) {
         pixt = pixConvertTo8(pixs, TRUE);
         cmap = pixGetColormap(pixt);
         pixcmapAddColor(cmap, 255, 0, 0);

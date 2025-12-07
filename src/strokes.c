@@ -167,7 +167,8 @@ PIX        *pix1;
     n = numaGetCount(na2);
     for (i = n - 1; i > 0; i--) {
         ratio = fa[i] / fa[1];
-        if (ratio > thresh) break;
+        if (ratio > thresh)
+			break;
     }
         /* Let the last skipped bucket contribute to the stop bucket.
          * This is the 'extra' term below.  The result may be a slight
@@ -207,8 +208,7 @@ PIX        *pix1;
 NUMA *
 pixaFindStrokeWidth(PIXA     *pixa,
                    l_float32  thresh,
-                   l_int32   *tab8,
-                   l_int32    debug)
+                   l_int32   *tab8)
 {
 l_int32    i, n, same, maxd;
 l_int32   *tab;
@@ -266,7 +266,7 @@ PIXA      *pixad;
     if (maxd > 1)
         return (PIXA *)ERROR_PTR("pix not all 1 bpp", __func__, NULL);
 
-    na = pixaFindStrokeWidth(pixas, 0.1f, NULL, 0);
+    na = pixaFindStrokeWidth(pixas, 0.1f, 0);
     n = pixaGetCount(pixas);
     pixad = pixaCreate(n);
     for (i = 0; i < n; i++) {

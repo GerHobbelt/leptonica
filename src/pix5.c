@@ -515,8 +515,7 @@ l_int32  *tab8;
  */
 NUMA *
 pixaFindAreaFractionMasked(PIXA    *pixa,
-                           PIX     *pixm,
-                           l_int32  debug)
+                           PIX     *pixm)
 {
 l_int32    i, n, full;
 l_int32   *tab;
@@ -529,6 +528,9 @@ PIX       *pix;
         return (NUMA *)ERROR_PTR("pixa not defined", __func__, NULL);
     if (!pixm || pixGetDepth(pixm) != 1)
         return (NUMA *)ERROR_PTR("pixm undefined or not 1 bpp", __func__, NULL);
+
+	LDIAG_CTX diagspec = leptDebugGetDiagnosticsSpecFromAny(2, pixaGetDiagnosticsSpec(pixa), pixGetDiagnosticsSpec(pixm));
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
     n = pixaGetCount(pixa);
     na = numaCreate(n);
@@ -546,7 +548,7 @@ PIX       *pix;
     }
     LEPT_FREE(tab);
 
-    if (debug) {
+    if (debugflag) {
         l_int32  w, h;
         PIX     *pix1, *pix2;
         pixGetDimensions(pixm, &w, &h, NULL);

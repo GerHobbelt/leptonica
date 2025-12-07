@@ -236,19 +236,25 @@ PIX       *pix1, *pixr, *pixg, *pixb;
 	pixGetDimensions(pix1, &w, &h, NULL);
     if (ppixr) {
         pixr = pixCreate(w, h, 8);
-        datar = pixGetData(pixr);
+		pixCopyResolution(pixr, pixs);
+		pixCloneDiagnosticsSpec(pixr, pixs);
+		datar = pixGetData(pixr);
         wplr = pixGetWpl(pixr);
         *ppixr = pixr;
     }
     if (ppixg) {
         pixg = pixCreate(w, h, 8);
-        datag = pixGetData(pixg);
+		pixCopyResolution(pixg, pixs);
+		pixCloneDiagnosticsSpec(pixg, pixs);
+		datag = pixGetData(pixg);
         wplg = pixGetWpl(pixg);
         *ppixg = pixg;
     }
     if (ppixb) {
         pixb = pixCreate(w, h, 8);
-        datab = pixGetData(pixb);
+		pixCopyResolution(pixb, pixs);
+		pixCloneDiagnosticsSpec(pixb, pixs);
+		datab = pixGetData(pixb);
         wplb = pixGetWpl(pixb);
         *ppixb = pixb;
     }
@@ -385,7 +391,9 @@ PIX       *pix1, *pixd;
 
     pixGetDimensions(pix1, &w, &h, NULL);
     pixd = pixCreate(w, h, 8);
-    datad = pixGetData(pixd);
+	pixCopyResolution(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     data1 = pixGetData(pix1);
     wpl1 = pixGetWpl(pix1);
@@ -614,6 +622,8 @@ PIXCMAP   *cmap;
         /* All white point ref values > 0; do transformation */
     pixGetDimensions(pix1, &w, &h, NULL);
     pix2 = pixCreate(w, h, 32);
+	pixCopyResolution(pix2, pixs);
+	pixCloneDiagnosticsSpec(pix2, pixs);
     data1 = pixGetData(pix1);
     wpl1 = pixGetWpl(pix1);
     data2 = pixGetData(pix2);
@@ -707,7 +717,9 @@ PIXCMAP   *cmap;
     }
 
     pixd = pixCreate(w, h, 1);
-    datad = pixGetData(pixd);
+	pixCopyResolution(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixc);
     wpls = pixGetWpl(pixc);
@@ -781,7 +793,9 @@ PIX       *pixd;
     wpls = pixGetWpl(pixs);
     if ((pixd = pixCreate(w, h, 1)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-    datad = pixGetData(pixd);
+	pixCopyResolution(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
     for (i = 0; i < h; i++) {
@@ -843,7 +857,9 @@ PIXCMAP   *cmap;
         pixc = pixClone(pixs);
 
     pixd = pixCreate(w, h, 1);
-    datad = pixGetData(pixd);
+	pixCopyResolution(pixd, pixs);
+	pixCloneDiagnosticsSpec(pixd, pixs);
+	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixc);
     wpls = pixGetWpl(pixc);

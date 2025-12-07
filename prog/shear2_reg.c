@@ -86,7 +86,8 @@ L_REGPARAMS* rp;
 
         /* Color, small pix */
     pixa = pixaCreate(0);
-    pixt = pixQuadraticVShear(pixs1, L_WARP_TO_LEFT,
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixt = pixQuadraticVShear(pixs1, L_WARP_TO_LEFT,
                                    60, -20, L_SAMPLED, L_BRING_IN_WHITE);
     PixSave(&pixt, pixa, 1, bmf, "sampled-left");
     pixt = pixQuadraticVShear(pixs1, L_WARP_TO_RIGHT,
@@ -100,14 +101,15 @@ L_REGPARAMS* rp;
     PixSave(&pixt, pixa, 0, bmf, "interpolated-right");
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);
-    pixDisplayWithTitle(pixd, 50, 50, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 50, 50, NULL);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
         /* Grayscale, small pix */
     pixg = pixConvertTo8(pixs1, 0);
     pixa = pixaCreate(0);
-    pixt = pixQuadraticVShear(pixg, L_WARP_TO_LEFT,
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixt = pixQuadraticVShear(pixg, L_WARP_TO_LEFT,
                                    60, -20, L_SAMPLED, L_BRING_IN_WHITE);
     PixSave(&pixt, pixa, 1, bmf, "sampled-left");
     pixt = pixQuadraticVShear(pixg, L_WARP_TO_RIGHT,
@@ -121,14 +123,15 @@ L_REGPARAMS* rp;
     PixSave(&pixt, pixa, 0, bmf, "interpolated-right");
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);
-    pixDisplayWithTitle(pixd, 250, 50, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 250, 50, NULL);
     pixDestroy(&pixg);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
         /* Color, larger pix */
     pixa = pixaCreate(0);
-    pixt = pixQuadraticVShear(pixs2, L_WARP_TO_LEFT,
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixt = pixQuadraticVShear(pixs2, L_WARP_TO_LEFT,
                               120, -40, L_SAMPLED, L_BRING_IN_WHITE);
     PixSave(&pixt, pixa, 1, bmf, "sampled-left");
     pixt = pixQuadraticVShear(pixs2, L_WARP_TO_RIGHT,
@@ -142,14 +145,15 @@ L_REGPARAMS* rp;
     PixSave(&pixt, pixa, 0, bmf, "interpolated-right");
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);
-    pixDisplayWithTitle(pixd, 550, 50, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 550, 50, NULL);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
 
         /* Grayscale, larger pix */
     pixg = pixConvertTo8(pixs2, 0);
     pixa = pixaCreate(0);
-    pixt = pixQuadraticVShear(pixg, L_WARP_TO_LEFT,
+	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
+	pixt = pixQuadraticVShear(pixg, L_WARP_TO_LEFT,
                               60, -20, L_SAMPLED, L_BRING_IN_WHITE);
     PixSave(&pixt, pixa, 1, bmf, "sampled-left");
     pixt = pixQuadraticVShear(pixg, L_WARP_TO_RIGHT,
@@ -163,7 +167,7 @@ L_REGPARAMS* rp;
     PixSave(&pixt, pixa, 0, bmf, "interpolated-right");
     pixd = pixaDisplayTiledInColumns(pixa, 2, 1.0, 20, 0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);
-    pixDisplayWithTitle(pixd, 850, 50, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pixd, 850, 50, NULL);
     pixDestroy(&pixg);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);

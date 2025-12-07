@@ -431,7 +431,7 @@ selaAddCrossJunctions(SELA      *sela,
                       l_float32  hlsize,
                       l_float32  mdist,
                       l_int32    norient,
-                      l_int32    debugflag)
+                      LDIAG_CTX  diagspec)
 {
 char       name[L_BUF_SIZE];
 l_int32    i, j, w, xc, yc;
@@ -446,6 +446,8 @@ SEL       *sel;
         return (SELA *)ERROR_PTR("hlsize not > 0", __func__, NULL);
     if (norient < 1 || norient > 8)
         return (SELA *)ERROR_PTR("norient not in [1, ... 8]", __func__, NULL);
+
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
     if (!sela) {
         if ((sela = selaCreate(0)) == NULL)
@@ -462,11 +464,13 @@ SEL       *sel;
     yc = w / 2;
 
     pixa = pixaCreate(norient);
+	pixaSetDiagnosticsSpec(pixa, diagspec);
     for (i = 0; i < norient; i++) {
 
             /* Set the don't cares */
         pixc = pixCreate(w, w, 32);
-        pixSetAll(pixc);
+		pixSetDiagnosticsSpec(pixc, diagspec);
+		pixSetAll(pixc);
 
             /* Add the green lines of hits */
         pixm = pixCreate(w, w, 1);
@@ -517,7 +521,8 @@ SEL       *sel;
         pixDisplay(pixt, 0, 100);
         pixDestroy(&pixt);
         pixt = selaDisplayInPix(sela, 15, 2, 20, 1);
-        pixWriteDebug("/tmp/lept/sel/xsel2.png", pixt, IFF_PNG);
+		pixSetDiagnosticsSpec(pixt, diagspec);
+		pixWriteDebug("/tmp/lept/sel/xsel2.png", pixt, IFF_PNG);
         pixDisplay(pixt, 500, 100);
         pixDestroy(&pixt);
         selaWriteStream(stderr, sela);
@@ -554,7 +559,7 @@ selaAddTJunctions(SELA      *sela,
                   l_float32  hlsize,
                   l_float32  mdist,
                   l_int32    norient,
-                  l_int32    debugflag)
+                  LDIAG_CTX  diagspec)
 {
 char       name[L_BUF_SIZE];
 l_int32    i, j, k, w, xc, yc;
@@ -569,6 +574,8 @@ SEL       *sel;
         return (SELA *)ERROR_PTR("hlsizel not > 1", __func__, NULL);
     if (norient < 1 || norient > 8)
         return (SELA *)ERROR_PTR("norient not in [1, ... 8]", __func__, NULL);
+
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
     if (!sela) {
         if ((sela = selaCreate(0)) == NULL)
@@ -585,7 +592,8 @@ SEL       *sel;
     yc = w / 2;
 
     pixa = pixaCreate(4 * norient);
-    for (i = 0; i < norient; i++) {
+	pixaSetDiagnosticsSpec(pixa, diagspec);
+	for (i = 0; i < norient; i++) {
         for (j = 0; j < 4; j++) {  /* 4 orthogonal orientations */
             jang = (l_float32)j * halfpi;
 
@@ -647,7 +655,8 @@ SEL       *sel;
         pixDisplay(pixt, 0, 100);
         pixDestroy(&pixt);
         pixt = selaDisplayInPix(sela, 15, 2, 20, 4);
-        pixWriteDebug("/tmp/lept/sel/tsel2.png", pixt, IFF_PNG);
+		pixSetDiagnosticsSpec(pixt, diagspec);
+		pixWriteDebug("/tmp/lept/sel/tsel2.png", pixt, IFF_PNG);
         pixDisplay(pixt, 500, 100);
         pixDestroy(&pixt);
         selaWriteStream(stderr, sela);

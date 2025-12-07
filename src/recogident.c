@@ -125,9 +125,8 @@ static L_RCHA *rchaCreate(void);
 static l_int32 transferRchToRcha(L_RCH *rch, L_RCHA *rcha);
 static PIX *recogPreSplittingFilter(L_RECOG *recog, PIX *pixs, l_int32 minh,
                                     l_float32 minaf, l_int32 debug);
-static l_int32 recogSplittingFilter(L_RECOG *recog, PIX *pixs, l_int32 min,
-                                    l_float32 minaf, l_int32 *premove,
-                                    l_int32 debug);
+static l_ok recogSplittingFilter(L_RECOG *recog, PIX *pixs, l_int32 min,
+                                    l_float32 minaf, l_int32 *premove);
 static void l_showIndicatorSplitValues(NUMA *na1, NUMA *na2, NUMA *na3,
                                        NUMA *na4, NUMA *na5, NUMA *na6);
 
@@ -404,8 +403,7 @@ recogCorrelationBestRow(L_RECOG  *recog,
                         BOXA    **pboxa,
                         NUMA    **pnascore,
                         NUMA    **pnaindex,
-                        SARRAY  **psachar,
-                        l_int32   debug)
+                        SARRAY  **psachar)
 {
 char      *charstr;
 l_int32    index, remove, w, h, bx, bw, bxc, bwc, w1, w2, w3;
@@ -434,6 +432,9 @@ l_int32    iter;
     if (!recog->train_done)
         return ERROR_INT("training not finished", __func__, 1);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Binarize and crop to foreground if necessary */
     pixb = recogProcessToIdentify(recog, pixs, 0);
 
@@ -442,7 +443,11 @@ l_int32    iter;
     nascoret = numaCreate(4);
     naindext = numaCreate(4);
     sachart = sarrayCreate(4);
-    pixadb = (debug) ? pixaCreate(4) : NULL;
+    pixadb = NULL;
+	if (debugflag) {
+		pixadb = pixaCreate(4);
+		pixaSetDiagnosticsSpec(pixadb, diagspec);
+	}
 
         /* Initialize the images remaining to be processed with the input.
          * These are stored in pixar, which is used here as a queue,
@@ -467,10 +472,11 @@ l_int32    iter;
             /* Pop one from the queue */
         pixaRemovePixAndSave(pixar, 0, &pixc, &boxc);
         boxGetGeometry(boxc, &bxc, NULL, &bwc, NULL);
+		pixSetDiagnosticsSpec(pixc, diagspec);
 
             /* This is a single component; if noise, remove it */
-        recogSplittingFilter(recog, pixc, 0, MinFillFactor, &remove, debug);
-        if (debug)
+        recogSplittingFilter(recog, pixc, 0, MinFillFactor, &remove);
+        if (debugflag)
             lept_stderr("iter = %d, removed = %d\n", iter, remove);
         if (remove) {
             pixDestroy(&pixc);
@@ -479,7 +485,7 @@ l_int32    iter;
         }
 
             /* Find the best character match */
-        if (debug) {
+        if (debugflag) {
             recogCorrelationBestChar(recog, pixc, &box, &score,
                                      &index, &charstr, &pixdb);
             pixaAddPix(pixadb, pixdb, L_INSERT);
@@ -502,10 +508,10 @@ l_int32    iter;
         w1 = bx;
         w2 = bw;
         w3 = bwc - bx - bw;
-        if (debug)
+        if (debugflag)
             lept_stderr(" w1 = %d, w2 = %d, w3 = %d\n", w1, w2, w3);
         if (w1 < recog->minwidth_u - 4) {
-            if (debug)
+            if (debugflag)
 				L_INFO("discarding width %d on left\n", __func__, w1);
         } else {  /* extract and save left region */
             boxl = boxCreate(0, 0, bx + 1, h);
@@ -516,7 +522,7 @@ l_int32    iter;
             boxDestroy(&boxl);
         }
         if (w3 < recog->minwidth_u - 4) {
-            if (debug)
+            if (debugflag)
 				L_INFO("discarding width %d on right\n", __func__, w3);
         } else {  /* extract and save left region */
             boxr = boxCreate(bx + bw - 1, 0, w3 + 1, h);
@@ -548,7 +554,7 @@ l_int32    iter;
     sarrayDestroy(&sachart);
 
         /* Final debug output */
-    if (debug) {
+    if (debugflag) {
         pixd = pixaDisplayTiledInRows(pixadb, 32, 2000, 1.0, 0, 15, 2);
         pixDisplay(pixd, 400, 400);
         pixaAddPix(recog->pixadb_split, pixd, L_INSERT);
@@ -971,7 +977,8 @@ recogIdentifyPix(L_RECOG  *recog,
                  PIX     **ppixdb)
 {
 char      *text;
-l_int32    i, j, n, bestindex, bestsample, area1, area2, ret;
+l_int32    i, j, n, bestindex, bestsample, area1, area2;
+l_ok       ret;
 l_int32    shiftx, shifty, bestdelx, bestdely, bestwidth, maxyshift;
 l_float32  x1, y1, x2, y2, delx, dely, score, maxscore;
 NUMA      *numa;
@@ -1510,13 +1517,12 @@ PIXA    *pixas;
  * \param[in]    debug    1 to output indicator arrays
  * \return  0 if OK, 1 on error
  */
-static l_int32
+static l_ok
 recogSplittingFilter(L_RECOG   *recog,
                      PIX       *pixs,
                      l_int32    minh,
                      l_float32  minaf,
-                     l_int32   *premove,
-                     l_int32    debug)
+                     l_int32   *premove)
 {
 l_int32    w, h;
 l_float32  aspratio, fract;
@@ -1530,33 +1536,35 @@ l_float32  aspratio, fract;
         return ERROR_INT("pixs not defined", __func__, 1);
     if (minh <= 0) minh = DefaultMinHeight;
 
+	l_ok debugflag = pixIsDebugModeActive(pixs);
+
         /* Remove from further consideration:
          *    small stuff
          *    components with large width/height ratio
          *    components with small area fill fraction */
     pixGetDimensions(pixs, &w, &h, NULL);
     if (w < recog->min_splitw) {
-        if (debug)
+        if (debugflag)
 			L_INFO("w = %d < %d\n", __func__, w, recog->min_splitw);
         *premove = 1;
         return 0;
     }
     if (h < minh) {
-        if (debug)
+        if (debugflag)
 			L_INFO("h = %d < %d\n", __func__, h, minh);
         *premove = 1;
         return 0;
     }
     aspratio = (l_float32)w / (l_float32)h;
     if (aspratio > recog->max_wh_ratio) {
-        if (debug)
+        if (debugflag)
 			L_INFO("w/h = %5.3f too large\n", __func__, aspratio);
         *premove = 1;
         return 0;
     }
     pixFindAreaFraction(pixs, recog->sumtab, &fract);
     if (fract < minaf) {
-        if (debug)
+        if (debugflag)
 			L_INFO("area fill fract %5.3f < %5.3f\n",
                           __func__, fract, minaf);
         *premove = 1;

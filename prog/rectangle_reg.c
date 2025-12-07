@@ -67,6 +67,8 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "rectangle", &rp))
 		return 1;
 
+	l_ok debugflag = leptIsDebugModeActive(rp->diag_spec);
+
 	//lept_mkdir("lept/rect");
 	//lept_mkdir("lept/regout");
 
@@ -81,7 +83,7 @@ L_REGPARAMS* rp;
         pixFindLargestRectangle(pixs, Polarity, &box1, NULL);
         boxGetGeometry(box1, &bx, &by, &bw, &bh);
         pixSetInRect(pixs, box1);
-        if (leptIsInDisplayMode(rp->diag_spec))
+        if (debugflag)
             lept_stderr("bx = %5d, by = %5d, bw = %5d, bh = %5d, area = %d\n",
                         bx, by, bw, bh, bw * bh);
         boxaAddBox(boxa, box1, L_INSERT);
@@ -107,82 +109,83 @@ L_REGPARAMS* rp;
 
     /* ----------- Rectangle(s) from connected component ----------- */
     pixs = pixRead(DEMOPATH("singlecc.tif"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
     pix1 = pixScale(pixs, 0.5, 0.5);
     boxa = pixConnCompBB(pix1, 8);
     box1 = boxaGetBox(boxa, 0, L_COPY);
 
         /* Do 4 cases with vertical scan */
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_VERTICAL,
-                                L_GEOMETRIC_UNION, rp->diag_spec);
+                                L_GEOMETRIC_UNION);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 2);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
     regTestCheckFile(rp, newpath);  /* 1 */
-    if (leptIsInDisplayMode(rp->diag_spec)) l_fileDisplay(newpath, 0, 500, 0.4);
+    if (debugflag) l_fileDisplay(newpath, 0, 500, 0.4);
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_VERTICAL,
-                                L_GEOMETRIC_INTERSECTION, rp->diag_spec);
+                                L_GEOMETRIC_INTERSECTION);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 3);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
     regTestCheckFile(rp, newpath);  /* 2 */
-    if (leptIsInDisplayMode(rp->diag_spec)) l_fileDisplay(newpath, 200, 500, 0.4);
+    if (debugflag) l_fileDisplay(newpath, 200, 500, 0.4);
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_VERTICAL,
-                                L_LARGEST_AREA, rp->diag_spec);
+                                L_LARGEST_AREA);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 4);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
     regTestCheckFile(rp, newpath);  /* 3 */
-    if (leptIsInDisplayMode(rp->diag_spec)) l_fileDisplay(newpath, 400, 500, 0.4);
+    if (debugflag) l_fileDisplay(newpath, 400, 500, 0.4);
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_VERTICAL,
-                                L_SMALLEST_AREA, rp->diag_spec);
+                                L_SMALLEST_AREA);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 5);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
     regTestCheckFile(rp, newpath);  /* 4 */
-    if (leptIsInDisplayMode(rp->diag_spec)) l_fileDisplay(newpath, 600, 500, 0.4);
+    if (debugflag) l_fileDisplay(newpath, 600, 500, 0.4);
     lept_free(newpath);
 
         /* Do 4 cases with horizontal scan */
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_HORIZONTAL,
-                                L_GEOMETRIC_UNION, rp->diag_spec);
+                                L_GEOMETRIC_UNION);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 6);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
     regTestCheckFile(rp, newpath);  /* 5 */
-    if (leptIsInDisplayMode(rp->diag_spec)) l_fileDisplay(newpath, 800, 500, 0.4);
+    if (debugflag) l_fileDisplay(newpath, 800, 500, 0.4);
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_HORIZONTAL,
-                                L_GEOMETRIC_INTERSECTION, rp->diag_spec);
+                                L_GEOMETRIC_INTERSECTION);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 7);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
     regTestCheckFile(rp, newpath);  /* 6 */
-    if (leptIsInDisplayMode(rp->diag_spec)) l_fileDisplay(newpath, 1000, 500, 0.4);
+    if (debugflag) l_fileDisplay(newpath, 1000, 500, 0.4);
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_HORIZONTAL,
-                                L_LARGEST_AREA, rp->diag_spec);
+                                L_LARGEST_AREA);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 8);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
     regTestCheckFile(rp, newpath);  /* 7 */
-    if (leptIsInDisplayMode(rp->diag_spec)) l_fileDisplay(newpath, 1200, 500, 0.4);
+    if (debugflag) l_fileDisplay(newpath, 1200, 500, 0.4);
     lept_free(newpath);
 
     box2 = pixFindRectangleInCC(pix1, box1, 0.75, L_SCAN_HORIZONTAL,
-                                L_SMALLEST_AREA, rp->diag_spec);
+                                L_SMALLEST_AREA);
     boxDestroy(&box2);
     snprintf(buf, sizeof(buf), "rectangle.%02d.png", 9);
     lept_cp("/tmp/lept/rect/fitrect.png", "lept/regout", buf, &newpath);
     regTestCheckFile(rp, newpath);  /* 8 */
-    if (leptIsInDisplayMode(rp->diag_spec)) l_fileDisplay(newpath, 1400, 500, 0.4);
+    if (debugflag) l_fileDisplay(newpath, 1400, 500, 0.4);
     lept_free(newpath);
 
     boxDestroy(&box1);

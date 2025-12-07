@@ -1624,6 +1624,9 @@ l_int32  i, n;
     for (i = 0; i < n; i++)
         pixDestroy(&pixa->pix[i]);
     pixa->n = 0;
+
+	leptDestroyDiagnoticsSpecInstance(&pixa->diag_spec);
+
     return boxaClear(pixa->boxa);
 }
 
@@ -1669,6 +1672,9 @@ PIX     *pix;
         iend = n - 1;
     if (istart > iend)
         return ERROR_INT("istart > iend; nothing to add", __func__, 1);
+
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpecFromAny(2, pixad, pixas);
+	pixaSetDiagnosticsSpec(pixad, diagspec);
 
     for (i = istart; i <= iend; i++) {
         pix = pixaGetPix(pixas, i, L_CLONE);
@@ -1718,6 +1724,7 @@ PIXA    *pixad;
         return (PIXA *)ERROR_PTR("pixa2 not defined", __func__, NULL);
     if (copyflag != L_COPY && copyflag != L_CLONE)
         return (PIXA *)ERROR_PTR("invalid copyflag", __func__, NULL);
+
     n1 = pixaGetCount(pixa1);
     n2 = pixaGetCount(pixa2);
     n = L_MIN(n1, n2);
@@ -1728,7 +1735,11 @@ PIXA    *pixad;
         L_WARNING("counts differ: %d != %d\n", __func__, n1, n2);
 
     pixad = pixaCreate(2 * n);
-    nb1 = pixaGetBoxaCount(pixa1);
+
+	LDIAG_CTX diagspec = pixaGetDiagnosticsSpecFromAny(2, pixa1, pixa2);
+	pixaSetDiagnosticsSpec(pixad, diagspec);
+
+	nb1 = pixaGetBoxaCount(pixa1);
     nb2 = pixaGetBoxaCount(pixa2);
     for (i = 0; i < n; i++) {
         pix = pixaGetPix(pixa1, i, copyflag);

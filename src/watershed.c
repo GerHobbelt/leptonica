@@ -171,7 +171,7 @@ static void popWSPixel(L_HEAP *lh, L_STACK *stack, l_int32 *pval,
                        l_int32 *px, l_int32 *py, l_int32 *pindex);
 
     /* Static debug print output */
-static void debugPrintLUT(l_int32 *lut, l_int32 size, l_int32 debug);
+static void debugPrintLUT(l_int32 *lut, l_int32 size, l_ok debugflag);
 
 static void debugWshedMerge(L_WSHED *wshed, char *descr, l_int32 x,
                             l_int32 y, l_int32 label, l_int32 index);
@@ -206,8 +206,7 @@ static void debugWshedMerge(L_WSHED *wshed, char *descr, l_int32 x,
 L_WSHED *
 wshedCreate(PIX     *pixs,
             PIX     *pixm,
-            l_int32  mindepth,
-            l_int32  debugflag)
+            l_int32  mindepth)
 {
 l_int32   w, h;
 L_WSHED  *wshed;
@@ -237,7 +236,8 @@ L_WSHED  *wshed;
     wshed->linem1 = pixGetLinePtrs(pixm, NULL);
     wshed->linelab32 = pixGetLinePtrs(wshed->pixlab, NULL);
     wshed->linet1 = pixGetLinePtrs(wshed->pixt, NULL);
-    wshed->debug = debugflag;
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixm);
+	wshed->diag_specX = leptCloneDiagnoticsSpecInstance(diagspec);
     return wshed;
 }
 
@@ -283,6 +283,7 @@ L_WSHED  *wshed;
             numaDestroy(&wshed->links[i]);
         LEPT_FREE(wshed->links);
     }
+	leptDestroyDiagnoticsSpecInstance(&wshed->diag_specX);
     LEPT_FREE(wshed);
     *pwshed = NULL;
 }
@@ -331,6 +332,9 @@ PTA      *ptas, *ptao;
     if (!wshed)
         return ERROR_INT("wshed not defined", __func__, 1);
 
+	LDIAG_CTX diagspec = leptDebugGetDiagnosticsSpecFromAny(3, wshed->diag_specX, pixGetDiagnosticsSpec(wshed->pixs), pixGetDiagnosticsSpec(wshed->pixm));
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     /* ------------------------------------------------------------ *
      *  Initialize priority queue and pixlab with seeds and minima  *
      * ------------------------------------------------------------ */
@@ -344,7 +348,8 @@ PTA      *ptas, *ptao;
         /* Identify seed (marker) pixels, 1 for each c.c. in pixm */
     pixSelectMinInConnComp(wshed->pixs, wshed->pixm, &ptas, &nash);
     pixsd = pixGenerateFromPta(ptas, w, h);
-    nseeds = ptaGetCount(ptas);
+	pixSetDiagnosticsSpec(pixsd, diagspec);
+	nseeds = ptaGetCount(ptas);
     for (i = 0; i < nseeds; i++) {
         ptaGetIPt(ptas, i, &x, &y);
         uval = GET_DATA_BYTE(lines8[y], x);
@@ -397,7 +402,7 @@ PTA      *ptas, *ptao;
      * ------------------------------------------------------------ */
 
     pixad = pixaCreate(nseeds);
-	pixaSetDiagnosticsSpec(pixad, pixGetDiagnosticsSpec(wshed->pixs));
+	pixaSetDiagnosticsSpec(pixad, diagspec);
 	wshed->pixad = pixad;  /* wshed owns this */
     nalevels = numaCreate(nseeds);
     wshed->nalevels = nalevels;  /* wshed owns this */
@@ -443,7 +448,7 @@ PTA      *ptas, *ptao;
                     hmin = hlabel;
                     hmax = hindex;
                 }
-                if (wshed->debug) {
+                if (debugflag) {
                     lept_stderr("clabel,hlabel = %d,%d\n", clabel, hlabel);
                     lept_stderr("hmin = %d, hmax = %d\n", hmin, hmax);
                     lept_stderr("cindex,hindex = %d,%d\n", cindex, hindex);
@@ -459,12 +464,12 @@ PTA      *ptas, *ptao;
                     numaSetValue(nasi, cindex, 0);
                     numaSetValue(nasi, clabel, 0);
 
-                    if (wshed->debug) lept_stderr("nindex = %d\n", nindex);
-                    debugPrintLUT(lut, nindex, wshed->debug);
+                    if (debugflag) lept_stderr("nindex = %d\n", nindex);
+                    debugPrintLUT(lut, nindex, debugflag);
                     mergeLookup(wshed, clabel, nindex);
-                    debugPrintLUT(lut, nindex, wshed->debug);
+                    debugPrintLUT(lut, nindex, debugflag);
                     mergeLookup(wshed, cindex, nindex);
-                    debugPrintLUT(lut, nindex, wshed->debug);
+                    debugPrintLUT(lut, nindex, debugflag);
                     nindex++;
                 } else  /* extraneous seed within seeded basin; absorb */ {
                     debugWshedMerge(wshed, seed_absorbed_into_seeded_basin,
@@ -635,7 +640,7 @@ L_QUEUE  *lq;
     ptaGetIPt(wshed->ptas, index, &x, &y);
     pixSetPixel(pixt, x, y, 1);
     pushNewPixel(lq, x, y, &minx, &maxx, &miny, &maxy);
-    if (wshed->debug) lept_stderr("prime: (x,y) = (%d, %d)\n", x, y);
+    if (leptIsDebugModeActive(wshed->diag_specX)) lept_stderr("prime: (x,y) = (%d, %d)\n", x, y);
 
         /* Each pixel in a spreading breadth-first search is inspected.
          * It is accepted as part of this watershed, and pushed on
@@ -976,11 +981,11 @@ L_WSPIXEL  *wsp;
 static void
 debugPrintLUT(l_int32  *lut,
               l_int32   size,
-              l_int32   debug)
+              l_ok      debugflag)
 {
 l_int32  i;
 
-    if (!debug) return;
+    if (!debugflag) return;
     lept_stderr("lut: ");
     for (i = 0; i < size; i++)
         lept_stderr( "%d ", lut[i]);
@@ -996,7 +1001,7 @@ debugWshedMerge(L_WSHED *wshed,
                 l_int32  label,
                 l_int32  index)
 {
-    if (!wshed || (wshed->debug == 0))
+    if (!wshed || !leptIsDebugModeActive(wshed->diag_specX))
          return;
     lept_stderr("%s:\n", descr);
     lept_stderr("   (x, y) = (%d, %d)\n", x, y);

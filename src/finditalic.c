@@ -133,6 +133,8 @@ SEL     *sel_ital1, *sel_ital2, *sel_ital3;
     if (boxaw && pixw)
         return ERROR_INT("both boxaw and pixw are defined", __func__, 1);
 
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
     sel_ital1 = selCreateFromString(str_ital1, 13, 6, NULL);
     sel_ital2 = selCreateFromString(str_ital2, 10, 6, NULL);
     sel_ital3 = selCreateFromString(str_ital3, 4, 2, NULL);
@@ -168,7 +170,7 @@ SEL     *sel_ital1, *sel_ital2, *sel_ital3;
     boxa = pixConnComp(pixd, NULL, 8);
     *pboxa = boxa;
 
-    if (diagspec) {
+    if (debugflag) {
             /* Save results at at 2x reduction */
         l_int32  res, upper;
         //lept_mkdir("lept/ital");

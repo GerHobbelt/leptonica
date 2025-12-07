@@ -294,8 +294,7 @@ PIX     *pixtb;    /* textblock mask */
 PIX *
 pixGenHalftoneMask(PIX      *pixs,
                    PIX     **ppixtext,
-                   l_int32  *phtfound,
-                   l_int32   debug)
+                   l_int32  *phtfound)
 {
     return pixGenerateHalftoneMask(pixs, ppixtext, phtfound, NULL);
 }
@@ -567,7 +566,6 @@ PIX     *pix1, *pix2, *pix3, *pixd;
  * \param[in]    tb_border   full res final "added" pixels on top and bottom
  * \param[in]    maxwiden    max fractional horizontal stretch allowed
  * \param[in]    printwiden  0 to skip, 1 for 8.5x11, 2 for A4
- * \param[in]   *debugfile   [optional] usually is NULL
  * \param[out]  *pcropbox    [optional] crop box at full resolution
  * \return  cropped pix, or NULL on error
  *
@@ -630,7 +628,6 @@ pixCropImage(PIX         *pixs,
              l_int32      tb_border,
              l_float32    maxwiden,
              l_int32      printwiden,
-             const char  *debugfile,
              BOX        **pcropbox)
 {
 char       cmd[64];
@@ -669,8 +666,18 @@ PIXA      *pixa1;
         L_WARNING("maxwiden = %f > 1.15; suggest between 1.0 and 1.15\n",
                   __func__, maxwiden);
     if (printwiden < 0 || printwiden > 2) printwiden = 0;
-    pixa1 = (debugfile) ? pixaCreate(5) : NULL;
-    if (pixa1) pixaAddPix(pixa1, pixs, L_COPY);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
+	pixa1 = NULL;
+	if (debugflag) {
+		pixa1 = pixaCreate(5);
+		pixaSetDiagnosticsSpec(pixa1, diagspec);
+	}
+	if (pixa1) {
+		pixaAddPix(pixa1, pixs, L_COPY);
+	}
 
         /* Binarize if necessary and 2x reduction */
     pix1 = pixBackgroundNormTo1MinMax(pixs, 1, 1);
@@ -679,7 +686,9 @@ PIXA      *pixa1;
         /* Clear out pixels near the image edges */
     pixSetOrClearBorder(pix2, lr_clear / 2, lr_clear / 2, tb_clear / 2,
                         tb_clear / 2, PIX_CLR);
-    if (pixa1) pixaAddPix(pixa1, pixScale(pix2, 2.0, 2.0), L_INSERT);
+	if (pixa1) {
+		pixaAddPix(pixa1, pixScale(pix2, 2.0, 2.0), L_INSERT);
+	}
 
         /* Choose one of three methods for extracting foreground pixels:
          * (1) Include all foreground pixels
@@ -762,8 +771,9 @@ PIXA      *pixa1;
         boxDestroy(&box2);
     if (pixa1) {
        pixaAddPix(pixa1, pix4, L_COPY);
-       lept_stderr("Writing debug file: %s\n", debugfile);
-       pixaConvertToPdf(pixa1, 0, 1.0, L_DEFAULT_ENCODE, 0, NULL, debugfile);
+	   const char* pdfpath = leptDebugGenFilepath(diagspec, "@PREFIX@.pdf");
+       lept_stderr("Writing debug file: %s\n", pdfpath);
+       pixaConvertToPdf(pixa1, 0, 1.0, L_DEFAULT_ENCODE, 0, NULL, pdfpath);
        pixaDestroy(&pixa1);
     }
     return pix4;
@@ -2769,8 +2779,7 @@ pixFindRectangleInCC(PIX       *pixs,
                      BOX       *boxs,
                      l_float32  fract,
                      l_int32    dir,
-                     l_int32    select,
-                     l_int32    debug)
+                     l_int32    select)
 {
 l_int32  x, y, i, w, h, w1, h1, w2, h2, found, res;
 l_int32  xfirst, xlast, xstart, yfirst, ylast, length;
@@ -2788,6 +2797,9 @@ PIXA    *pixadb;
         select != L_LARGEST_AREA && select != L_SMALLEST_AREA)
         return (BOX *)ERROR_PTR("invalid select", __func__, NULL);
 
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
+
         /* Extract the c.c. if necessary */
     x = y = 0;
     if (boxs) {
@@ -2804,8 +2816,12 @@ PIXA    *pixadb;
         pix2 = pixClone(pix1);
     pixGetDimensions(pix2, &w, &h, NULL);
 
-    pixadb = (debug) ? pixaCreate(0) : NULL;
-    pixdb1 = NULL;
+	pixadb = NULL;
+	if (debugflag) {
+		pixadb = pixaCreate(0);
+		pixaSetDiagnosticsSpec(pixadb, diagspec);
+	}
+	pixdb1 = NULL;
     if (pixadb) {
         //lept_mkdir("lept/rect");
         pixaAddPix(pixadb, pix1, L_CLONE);

@@ -72,8 +72,10 @@ L_REGPARAMS* rp;
 
         /*  Normalize for rapidly varying background */
     pixa1 = pixaCreate(0);
-    pixs = pixRead(DEMOPATH("w91frag.jpg"));
-    pixaAddPix(pixa1, pixs, L_INSERT);
+	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
+	pixs = pixRead(DEMOPATH("w91frag.jpg"));
+	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
+	pixaAddPix(pixa1, pixs, L_INSERT);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 0 */
     pix1 = pixBackgroundNormFlex(pixs, 7, 7, 1, 1, 10);
     pixaAddPix(pixa1, pix1, L_INSERT);
@@ -113,7 +115,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix9, IFF_PNG);  /* 7 */
 
     pix10 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 30, 2);
-    pixDisplayWithTitle(pix10, 0, 0, NULL, rp->diag_spec);
+    pixDisplayWithTitle(pix10, 0, 0, NULL);
     regTestWritePixAndCheck(rp, pix10, IFF_JFIF_JPEG);  /* 8 */
     selDestroy(&sel1);
     selDestroy(&sel2);

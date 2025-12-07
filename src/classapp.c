@@ -63,7 +63,7 @@ static const l_int32 JB_WORDS_MIN_HEIGHT = 3; /*!< min. word height in pixels */
     /* Static comparison functions */
 static l_int32 testLineAlignmentX(NUMA *na1, NUMA *na2, l_int32 shiftx,
                                   l_int32 delx, l_int32 nperline);
-static l_int32 countAlignedMatches(NUMA *nai1, NUMA *nai2, NUMA *nasx,
+static l_ok    countAlignedMatches(NUMA *nai1, NUMA *nai2, NUMA *nasx,
                                    NUMA *nasy, l_int32 n1, l_int32 n2,
                                    l_int32 delx, l_int32 dely,
                                    l_int32 nreq, l_int32 *psame,
@@ -103,7 +103,8 @@ jbCorrelation(const char  *dirin,
               const char  *rootname,
               l_int32      firstpage,
               l_int32      npages,
-              l_int32      renderflag)
+              l_int32      renderflag,
+	          LDIAG_CTX    diagspec)
 {
 char        filename[L_BUF_SIZE];
 l_int32     nfiles, i, numpages;
@@ -134,7 +135,7 @@ SARRAY     *safiles;
 
         /* Optionally, render pages using class templates */
     if (renderflag) {
-        pixa = jbDataRender(data, FALSE);
+        pixa = jbDataRender(data, diagspec);
         numpages = pixaGetCount(pixa);
         if (numpages != nfiles)
             lept_stderr("numpages = %d, nfiles = %d, not equal!\n",
@@ -183,7 +184,8 @@ jbRankHaus(const char  *dirin,
            const char  *rootname,
            l_int32      firstpage,
            l_int32      npages,
-           l_int32      renderflag)
+           l_int32      renderflag,
+	       LDIAG_CTX    diagspec)
 {
 char        filename[L_BUF_SIZE];
 l_int32     nfiles, i, numpages;
@@ -214,7 +216,7 @@ SARRAY     *safiles;
 
         /* Optionally, render pages using class templates */
     if (renderflag) {
-        pixa = jbDataRender(data, FALSE);
+        pixa = jbDataRender(data, diagspec);
         numpages = pixaGetCount(pixa);
         if (numpages != nfiles)
             lept_stderr("numpages = %d, nfiles = %d, not equal!\n",
@@ -517,11 +519,9 @@ pixFindWordAndCharacterBoxes(PIX         *pixs,
                              BOX         *boxs,
                              l_int32      thresh,
                              BOXA       **pboxaw,
-                             BOXAA      **pboxaac,
-                             const char  *debugdir)
+                             BOXAA      **pboxaac)
 {
-char      *debugfile, *subdir;
-l_int32    i, xs, ys, xb, yb, nb, loc;
+l_int32    i, xs, ys, xb, yb, nb;
 l_float32  scalefact;
 BOX       *box1, *box2;
 BOXA      *boxa1, *boxa1a, *boxa2, *boxa3, *boxa4, *boxa5, *boxaw;
@@ -536,6 +536,9 @@ PIX       *pix1, *pix2, *pix3, *pix3a, *pix4, *pix5;
         return ERROR_INT("pixs not defined or 1 bpp", __func__, 1);
     if (thresh > 150)
         L_WARNING("threshold is %d; may be too high\n", __func__, thresh);
+
+	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
+	l_ok debugflag = leptIsDebugModeActive(diagspec);
 
     if (boxs) {
         if ((pix1 = pixClipRectangle(pixs, boxs, NULL)) == NULL)
@@ -560,17 +563,12 @@ PIX       *pix1, *pix2, *pix3, *pix3a, *pix4, *pix5;
          * dots over the 'i' that weren't included in word boxes. */
     pixGetWordBoxesInTextlines(pix3a, 1, 4, 150, 40, &boxa1a, NULL);
     boxa1 = boxaTransform(boxa1a, 0, 0, 1.0 / scalefact, 1.0 / scalefact);
-    if (debugdir) {
-        //loc = 0;
-        //subdir = stringReplaceSubstr(debugdir, "/tmp/", "", &loc, NULL);
-        //lept_mkdir(subdir);
-        //LEPT_FREE(subdir);
+    if (debugflag) {
         pix4 = pixConvertTo32(pix2);
         pixRenderBoxaArb(pix4, boxa1, 2, 255, 0, 0);
-        debugfile = stringJoin(debugdir, "/words.png");
-        pixWrite(debugfile, pix4, IFF_PNG);
+		const char* pixpath = leptDebugGenFilepath(diagspec, "words.png");
+        pixWrite(pixpath, pix4, IFF_PNG);
         pixDestroy(&pix4);
-        LEPT_FREE(debugfile);
     }
 
         /* Now find the letters at 300 ppi */
@@ -617,18 +615,17 @@ PIX       *pix1, *pix2, *pix3, *pix3a, *pix4, *pix5;
     pixDestroy(&pix3a);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa1a);
-    if (debugdir) {
+    if (debugflag) {
         pix4 = pixConvertTo32(pixs);
         boxa2 = boxaaFlattenToBoxa(boxaac, NULL, L_COPY);
         pixRenderBoxaArb(pix4, boxa2, 2, 255, 0, 0);
         boxa3 = boxaAdjustSides(boxaw, -2, 2, -2, 2);
         pixRenderBoxaArb(pix4, boxa3, 2, 0, 255, 0);
-        debugfile = stringJoin(debugdir, "/chars.png");
-        pixWrite(debugfile, pix4, IFF_PNG);
+		const char* pixpath = leptDebugGenFilepath(diagspec, "chars.png");
+        pixWrite(pixpath, pix4, IFF_PNG);
         pixDestroy(&pix4);
         boxaDestroy(&boxa2);
         boxaDestroy(&boxa3);
-        LEPT_FREE(debugfile);
     }
     return 0;
 }

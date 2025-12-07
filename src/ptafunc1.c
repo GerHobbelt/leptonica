@@ -2433,8 +2433,10 @@ PTA      *pta;
     if (!pixp)
         return (PIX *)ERROR_PTR("pixp not defined", __func__, pixd);
 
-    if (!pixd)
-        pixd = pixConvertTo32(pixs);
+	if (!pixd) {
+		pixd = pixConvertTo32(pixs);
+		pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(2, pixs, pixp));
+	}
 
         /* Use 256 random colors */
     cmap = pixcmapCreateRandom(8, 0, 0);

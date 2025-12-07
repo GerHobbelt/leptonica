@@ -222,7 +222,7 @@ pixReadJp2k(const char  *filename,
             l_uint32     reduction,
             BOX         *box,
             l_int32      hint,
-            l_int32      debug)
+            l_ok         debugflag)
 {
 FILE     *fp;
 PIX      *pix;
@@ -233,7 +233,7 @@ PIX      *pix;
     if ((fp = fopenReadStream(filename)) == NULL)
         return (PIX *)ERROR_PTR_1("image file not found",
                                   filename, __func__, NULL);
-    pix = pixReadStreamJp2k(fp, reduction, box, hint, debug);
+    pix = pixReadStreamJp2k(fp, reduction, box, hint, debugflag);
     fclose(fp);
 
     if (!pix)
@@ -551,7 +551,7 @@ pixWriteJp2k(const char  *filename,
              l_int32      quality,
              l_int32      nlevels,
              l_int32      hint,
-             l_int32      debug)
+             l_ok         debugflag)
 {
 FILE  *fp;
 
@@ -564,7 +564,7 @@ FILE  *fp;
         return ERROR_INT_1("stream not opened", filename, __func__, 1);
 
     if (pixWriteStreamJp2k(fp, pix, quality, nlevels, L_JP2_CODEC,
-                           hint, debug)) {
+                           hint, debugflag)) {
         fclose(fp);
         return ERROR_INT_1("pix not written to stream", filename, __func__, 1);
     }
@@ -597,7 +597,7 @@ pixWriteOpjStreamJp2k(opj_stream_t  *l_stream,
                       l_int32        nlevels,
                       l_int32        codec,
                       l_int32        hint,
-                      l_int32        debugflag)
+                      l_ok           debugflag)
 {
 l_int32            i, w, h, d, depth, channels, success;
 l_float64          snr;
@@ -781,7 +781,7 @@ pixWriteStreamJp2k(FILE    *fp,
                    l_int32  nlevels,
                    l_int32  codec,
                    l_int32  hint,
-                   l_int32  debugflag)
+                   l_ok     debugflag)
 {
 l_ok           ok;
 opj_stream_t  *l_stream;
@@ -797,7 +797,7 @@ opj_stream_t  *l_stream;
         return ERROR_INT("failed to open l_stream\n", __func__, 1);
 
     ok = pixWriteOpjStreamJp2k(l_stream, pix, quality, nlevels,
-                               codec, hint, debug);
+                               codec, hint, debugflag);
 
         /* Clean up */
     opj_stream_destroy(l_stream);
@@ -951,7 +951,7 @@ pixWriteMemJp2k(l_uint8  **pdata,
                 l_int32    quality,
                 l_int32    nlevels,
                 l_int32    hint,
-                l_int32    debug)
+                l_ok       debugflag)
 {
 l_ok          ok;
 opj_stream_t *l_stream;
@@ -978,7 +978,7 @@ OpjBuffer     buffer;
     }
 
     ok = pixWriteOpjStreamJp2k(l_stream, pix, quality, nlevels, L_JP2_CODEC,
-                               hint, debug);
+                               hint, debugflag);
 
         /* Clean up */
     opj_stream_destroy(l_stream);

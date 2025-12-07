@@ -1083,7 +1083,7 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "thresholding", TRUE, &rp))
+	if (regTestSetup(argc, argv, "thresholding", &rp))
 		return 1;
 
 	if (argc >= 3)
@@ -1106,6 +1106,7 @@ L_REGPARAMS* rp;
 	}
 
 	pix[0] = pixRead(sourcefile);
+	pixSetDiagnosticsSpec(pix[0], rp->diag_spec);
 	if (!pix[0])
 	{
 		ret = 1;

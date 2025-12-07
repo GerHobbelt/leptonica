@@ -57,7 +57,7 @@ struct L_WShed
     l_int32       *lut;       /*!< lut for pixel indices                    */
     struct Numa  **links;     /*!< back-links into lut, for updates         */
     l_int32        arraysize; /*!< size of links array                      */
-    l_int32        debug;     /*!< set to 1 for debug output                */
+	LDIAG_CTX      diag_specX; /*!< set if debug output requested           */
 };
 typedef struct L_WShed L_WSHED;
 
