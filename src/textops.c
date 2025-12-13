@@ -1012,8 +1012,8 @@ l_int32  i, w, width, nchar;
  *                  or NULL on error.
  */
 SARRAY *
-splitStringToParagraphs(char    *textstr,
-                        l_int32  splitflag)
+splitStringToParagraphs(const char *textstr,
+                        l_int32     splitflag)
 {
 char    *linestr, *parastring;
 l_int32  nlines, i, allwhite, leadwhite;
@@ -1104,3 +1104,4 @@ stringLeadingWhitespace(char     *textstr,
 
     return 0;
 }
+

@@ -2341,6 +2341,8 @@ LEPT_DLL extern l_ok regTestCompareFiles ( L_REGPARAMS *rp, l_int32 index1, l_in
 LEPT_DLL extern l_ok regTestWritePixAndCheck ( L_REGPARAMS *rp, PIX *pix, l_int32 format );
 LEPT_DLL extern l_ok regTestWriteDataAndCheck ( L_REGPARAMS *rp, void *data, size_t nbytes, const char *ext );
 LEPT_DLL extern char * regTestGenLocalFilename ( L_REGPARAMS *rp, l_int32 index, l_int32 format );
+LEPT_DLL extern const char *regGetArg ( L_REGPARAMS* rp );
+LEPT_DLL extern void regMarkEndOfTestround ( L_REGPARAMS* rp );
 LEPT_DLL extern l_ok l_pdfRenderFile ( const char *filename, l_int32 res, SARRAY **psaout );
 LEPT_DLL extern l_ok l_pdfRenderFiles ( const char *dir, SARRAY *sain, l_int32 res, SARRAY **psaout );
 LEPT_DLL extern l_ok pixRasterop ( PIX *pixd, l_int32 dx, l_int32 dy, l_int32 dw, l_int32 dh, l_int32 op, PIX *pixs, l_int32 sx, l_int32 sy );
@@ -2390,23 +2392,25 @@ LEPT_DLL extern SARRAY * sarrayCreateInitialized ( l_int32 n, const char *initst
 LEPT_DLL extern SARRAY * sarrayCreateWordsFromString ( const char *string );
 LEPT_DLL extern SARRAY * sarrayCreateLinesFromString ( const char *string, l_int32 blankflag );
 LEPT_DLL extern void sarrayDestroy ( SARRAY **psa );
-LEPT_DLL extern SARRAY * sarrayCopy ( SARRAY *sa );
+LEPT_DLL extern SARRAY * sarrayCopy ( const SARRAY *sa );
 LEPT_DLL extern SARRAY * sarrayClone ( SARRAY *sa );
 LEPT_DLL extern l_ok sarrayAddString ( SARRAY *sa, const char *string, l_int32 copyflag );
+LEPT_DLL extern l_ok sarrayInsertString ( SARRAY* sa, l_int32 index, const char* string, l_int32 copyflag );
 LEPT_DLL extern char * sarrayRemoveString ( SARRAY *sa, l_int32 index );
 LEPT_DLL extern l_ok sarrayReplaceString ( SARRAY *sa, l_int32 index, char *newstr, l_int32 copyflag );
 LEPT_DLL extern l_ok sarrayClear ( SARRAY *sa );
 LEPT_DLL extern l_int32 sarrayGetCount ( const SARRAY *sa );
 LEPT_DLL extern char ** sarrayGetArray ( SARRAY *sa, l_int32 *pnalloc, l_int32 *pn );
-LEPT_DLL extern char * sarrayGetString ( SARRAY *sa, l_int32 index, l_int32 copyflag );
+LEPT_DLL extern char * sarrayGetString ( const SARRAY *sa, l_int32 index, l_int32 copyflag );
 LEPT_DLL extern char * sarrayToString ( SARRAY *sa, l_int32 addnlflag );
 LEPT_DLL extern char * sarrayToStringRange ( SARRAY *sa, l_int32 first, l_int32 nstrings, l_int32 addnlflag );
 LEPT_DLL extern SARRAY * sarrayConcatUniformly ( SARRAY *sa, l_int32 n, l_int32 addnlflag );
 LEPT_DLL extern l_ok sarrayJoin ( SARRAY *sa1, SARRAY *sa2 );
 LEPT_DLL extern l_ok sarrayAppendRange ( SARRAY *sa1, SARRAY *sa2, l_int32 start, l_int32 end );
+LEPT_DLL extern l_ok sarrayInsertRange ( SARRAY* sa1, l_int32 index, SARRAY* sa2, l_int32 start, l_int32 end );
 LEPT_DLL extern l_ok sarrayPadToSameSize ( SARRAY *sa1, SARRAY *sa2, const char *padstring );
 LEPT_DLL extern SARRAY * sarrayConvertWordsToLines ( SARRAY *sa, l_int32 linesize );
-LEPT_DLL extern l_int32 sarraySplitString ( SARRAY *sa, const char *str, const char *separators );
+LEPT_DLL extern l_ok sarraySplitString ( SARRAY *sa, const char *str, const char *separators );
 LEPT_DLL extern SARRAY * sarraySelectBySubstring ( SARRAY *sain, const char *substr );
 LEPT_DLL extern SARRAY * sarraySelectRange ( SARRAY *sain, l_int32 first, l_int32 last );
 LEPT_DLL extern l_int32 sarrayParseRange ( SARRAY *sa, l_int32 start, l_int32 *pactualstart, l_int32 *pend, l_int32 *pnewstart, const char *substr, l_int32 loc );
@@ -2632,7 +2636,7 @@ LEPT_DLL extern l_ok pixaAddPixWithText ( PIXA *pixa, PIX *pixs, l_int32 reducti
 LEPT_DLL extern SARRAY * bmfGetLineStrings ( L_BMF *bmf, const char *textstr, l_int32 maxw, l_int32 firstindent, l_int32 *ph );
 LEPT_DLL extern NUMA * bmfGetWordWidths ( L_BMF *bmf, const char *textstr, SARRAY *sa );
 LEPT_DLL extern l_ok bmfGetStringWidth ( L_BMF *bmf, const char *textstr, l_int32 *pw );
-LEPT_DLL extern SARRAY * splitStringToParagraphs ( char *textstr, l_int32 splitflag );
+LEPT_DLL extern SARRAY * splitStringToParagraphs ( const char *textstr, l_int32 splitflag );
 LEPT_DLL extern PIX * pixReadTiff ( const char *filename, l_int32 n );
 LEPT_DLL extern PIX * pixReadStreamTiff ( FILE *fp, l_int32 n );
 LEPT_DLL extern l_ok pixWriteTiff ( const char *filename, PIX *pix, l_int32 comptype, const char *modestring );
@@ -2753,6 +2757,7 @@ LEPT_DLL extern l_int32 callSystemDebug ( const char *cmd );
 LEPT_DLL extern l_ok splitPathAtDirectory ( const char *pathname, char **pdir, char **ptail );
 LEPT_DLL extern l_ok splitPathAtExtension ( const char *pathname, char **pbasename, char **pextension );
 LEPT_DLL extern char * pathJoin ( const char *dir, const char *fname );
+LEPT_DLL extern char * pathSafeJoin ( const char *dir, const char *fname );
 LEPT_DLL extern char * appendSubdirs ( const char *basedir, const char *subdirs );
 LEPT_DLL extern l_ok convertSepCharsInPath ( char *path, l_int32 type );
 LEPT_DLL extern l_int32 getPathRootLength ( const char* path );
@@ -2940,6 +2945,15 @@ LEPT_DLL extern LDIAG_CTX pixaPassDiagIfDebugModeActive ( PIXA* pixa );
 
 LEPT_DLL extern const char* string_asprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 1, 2)));
 LEPT_DLL extern const char* string_vasprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, va_list args );
+
+typedef enum l_LocateMode {
+	L_LOCATE_IN_FIRST_ONE = 0,		// only the very first hit is taken
+	L_LOCATE_IN_FIRST_ANY = 1,      // delivers all matches in the first search path that delivers a hit
+	L_LOCATE_IN_ALL = 2,            // collect *all* possible matches.
+	L_LOCATE_IGNORE_CURRENT_DIR_FLAG = 0x10,       // DO NOT consider checking the 'current working directory' as a last resort.
+} l_LocateMode_t;
+
+LEPT_DLL extern SARRAY* leptProcessResponsefileLines ( SARRAY* const lines, const SARRAY* const searchpath_set, l_LocateMode_t search_mode, const char *output_basedir, const char *stmt_prefix, const char *fail_marker, const char* ignore_marker );
 
 /* defined in morph.c */
 LEPT_DLL extern l_int32 MORPH_BC;

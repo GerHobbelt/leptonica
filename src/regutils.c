@@ -75,6 +75,17 @@
 
 static char *getRootNameFromArgv0(const char *argv0);
 
+// special helper to help display the trailing part of the commandline when something has happened...
+static const char* argstr(const char** argv, int index)
+{
+	// index > 0 MAY point *past* the end of argv, so we must check against that by walking there:
+	while (index > 0 && argv[index] != NULL) {
+		index--;
+	}
+	if (argv[index] == NULL)
+		return "";
+	return argv[index];
+}
 
 /*--------------------------------------------------------------------*
  *                      Regression test utilities                     *
@@ -123,22 +134,34 @@ regTestSetup(int argc,
 	const char* output_path_base,
 	L_REGPARAMS** prp)
 {
-	char* testname;
-	const char* vers;
+	char*         testname;
+	const char*   vers;
 	char          errormsg[64];
-	L_REGPARAMS* rp;
+	L_REGPARAMS*  rp;
 	l_ok          fail = FALSE;
 	int           opt;
 	int           longopt_index;
 	int           debug_mode = 1;
-	const char* help_mode = (argc <= 1 ? "?" : NULL);
-	const char* tmppath = NULL;
-	const char* outpath = NULL;
-	const char** inpaths = NULL;
-	unsigned int  inpaths_size = 0;
-	const char** srcfiles = NULL;
-	unsigned int  srcfiles_size = 0;
-	int           cmd_mode;
+
+	if (!prp)
+		return ERROR_INT("ptrs not all defined", __func__, 1);
+
+	rp = (L_REGPARAMS*)LEPT_CALLOC(1, sizeof(L_REGPARAMS));
+	*prp = rp;
+	if (!rp)
+		return ERROR_INT("rp could not be allocated", __func__, 1);
+
+	rp->cmd_mode = -1;
+	rp->testappmode = 0;
+	rp->help_mode = (argc <= 1 ? stringNew("?") : NULL);
+	rp->tmpdirpath = NULL;
+	rp->outpath = NULL;
+	rp->searchpaths = sarrayCreate(4);
+	if (!rp->searchpaths)
+		return ERROR_INT("searchpaths[] array could not be allocated.", __func__, 1);
+	rp->argvfiles = sarrayCreate(4);
+	if (!rp->argvfiles)
+		return ERROR_INT("argvfiles[] array could not be allocated.", __func__, 1);
 
 	const struct option options[] = {
 		{ "debug", optional_argument, &debug_mode, 1 },
@@ -147,60 +170,49 @@ regTestSetup(int argc,
 		{ "outpath", required_argument, NULL, 2 },
 		{ "inpath", required_argument, NULL, 3 },
 		{ "help", optional_argument, NULL, 'h' },
+		{ "testing", no_argument, &rp->testappmode, 1 },
+		{ "arg-stepping", optional_argument, NULL, 's' },				// how many argv[] elements to step forward per round. default: 0 represents 'all argv[] used in the current round.
+		{ "compare", no_argument, &rp->cmd_mode, L_REG_COMPARE },
+		{ "generate", no_argument, &rp->cmd_mode, L_REG_GENERATE },
+		{ "display", no_argument, &rp->cmd_mode, L_REG_DISPLAY },
 		{ 0 }
 	};
-
-	if (!prp)
-		return ERROR_INT("ptrs not all defined", __func__, 1);
 
 	// reset the getopt_long parser:
 	optind = 0;
 	longopt_index = -1;
 
 	for (;;) {
-		opt = getopt_long(argc, argv, "dh", options, &longopt_index);
+		opt = getopt_long(argc, argv, "s::d::h::", options, &longopt_index);
 		if (opt == -1)
 			break;
 
 		switch (opt) {
+		case 0:
+			// logopt assignment has been handled internally by getopt()
+			continue;
+
 		case 1:
-			if (tmppath) {
-				L_ERROR("Must not define tmppath twice on the command line.", __func__);
+			if (rp->tmpdirpath) {
+				L_ERROR("Must not define tmpdirpath twice on the command line.", __func__);
 				fail = TRUE;
 				continue;
 			}
-			tmppath = stringNew(optarg);
+			rp->tmpdirpath = stringNew(optarg);
 			continue;
 
 		case 2:
-			if (outpath) {
+			if (rp->outpath) {
 				L_ERROR("Must not define outpath twice on the command line.", __func__);
 				fail = TRUE;
 				continue;
 			}
-			outpath = stringNew(optarg);
+			rp->outpath = stringNew(optarg);
 			continue;
 
 		case 3:
-			if (!inpaths) {
-				inpaths_size = 4;
-				inpaths = LEPT_CALLOC(inpaths_size, sizeof(inpaths[0]));
-				if (!inpaths)
-					return ERROR_INT("inpaths[] array could not be allocated.", __func__, 1);
-			}
-			else if (inpaths[inpaths_size - 1] != NULL) {
-				inpaths = LEPT_REALLOC(inpaths, (inpaths_size + 4) * sizeof(inpaths[0]));
-				if (!inpaths)
-					return ERROR_INT("inpaths[] array could not be expanded.", __func__, 1);
-				for (int i = 0; i < 4; i++) {
-					inpaths[inpaths_size + i] = NULL;
-				}
-			}
-			for (int i = 0; ; i++) {
-				if (inpaths[i] != NULL)
-					continue;
-				inpaths[i] = stringNew(optarg);
-				break;
+			if (sarrayAddString(rp->searchpaths, optarg, L_COPY)) {
+				return ERROR_INT("searchpaths[] array could not be expanded.", __func__, 1);
 			}
 			continue;
 
@@ -208,78 +220,66 @@ regTestSetup(int argc,
 			debug_mode = (optarg != NULL ? atoi(optarg) : 1);
 			continue;
 
+		case 's':
+			rp->argv_step_size_per_round = (optarg != NULL ? atoi(optarg) : 1);
+			continue;
+
 		case 'h':
-			help_mode = (optarg != NULL ? optarg : "?");
+			rp->help_mode = stringNew(optarg != NULL ? optarg : "?");
 			continue;
 
 		default:
-			L_ERROR("Unknown command line option %c has been specified.", __func__, (opt > ' ' ? opt : '?'));
+			L_ERROR("Unknown/unsupported command line option %c has been specified: %s %s%s ...", __func__,
+				(opt > ' ' ? opt : '?'), argstr(argv, optind), argstr(argv, optind + 1), argstr(argv, optind + 2));
 			fail = TRUE;
 			continue;
 		}
 	}
 
 	// process the remaining non-options in argv[]:
-	for (cmd_mode = -1; optind < argc; optind++) {
+	for ( ; optind < argc; optind++) {
 		optarg = argv[optind];
 
-		if (cmd_mode == -1) {
+		if (rp->cmd_mode == -1) {
 			if (!strcmp(optarg, "compare")) {
-				cmd_mode = L_REG_COMPARE;
+				rp->cmd_mode = L_REG_COMPARE;
 				continue;
 			}
 			else if (!strcmp(optarg, "generate")) {
-				cmd_mode = L_REG_GENERATE;
+				rp->cmd_mode = L_REG_GENERATE;
 				continue;
 			}
 			else if (!strcmp(optarg, "display")) {
-				cmd_mode = L_REG_DISPLAY;
+				rp->cmd_mode = L_REG_DISPLAY;
 				continue;
 			}
 		}
 
-		if (!srcfiles) {
-			srcfiles_size = 4;
-			srcfiles = LEPT_CALLOC(srcfiles_size, sizeof(srcfiles[0]));
-			if (!srcfiles)
-				return ERROR_INT("srcfiles[] array could not be allocated.", __func__, 1);
-		}
-		else if (srcfiles[srcfiles_size - 1] != NULL) {
-			srcfiles = LEPT_REALLOC(srcfiles, (srcfiles_size + 4) * sizeof(srcfiles[0]));
-			if (!srcfiles)
-				return ERROR_INT("srcfiles[] array could not be expanded.", __func__, 1);
-			for (int i = 0; i < 4; i++) {
-				srcfiles[srcfiles_size + i] = NULL;
-			}
-		}
-		for (int i = 0; ; i++) {
-			if (srcfiles[i] != NULL)
-				continue;
-			srcfiles[i] = stringNew(optarg);
-			break;
-		}
+		// do we expand @xyz responsefiles? yes, we do:
+		sarrayAddString(rp->argvfiles, optarg, L_COPY);
 	}
 
-	if (cmd_mode == -1) {
-		cmd_mode = L_REG_BASIC_EXEC;
+	if (rp->cmd_mode == -1) {
+		rp->cmd_mode = L_REG_BASIC_EXEC;
 	}
 
 	if ((testname = getRootNameFromArgv0(argv[0])) == NULL)
 		return ERROR_INT("invalid root", __func__, 1);
 
 	if (fail) {
+		stringDestroy(&testname);
 		return ERROR_INT("Failed to parse the command line entirely. Run the application with -h or --help to get some general information.", __func__, 1);
 	}
 
-	if (help_mode) {
+	if (rp->help_mode) {
 		// TODO: advanced help
         snprintf(errormsg, sizeof(errormsg),
-            "Syntax: %s [ [compare] | generate | display ] ...", getRootNameFromArgv0(argv[0]));
+            "Syntax: %s [ [compare] | generate | display ] ...", testname);
         return ERROR_INT(errormsg, __func__, 1);
     }
 
 	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
-	if (cmd_mode == L_REG_BASIC_EXEC) {
+	if (rp->cmd_mode == L_REG_BASIC_EXEC) {
 		leptDebugSetFileBasepath(diagspec, "lept/regout");
 	}
 	else {
@@ -294,9 +294,6 @@ regTestSetup(int argc,
 
     setLeptDebugOK(1);  /* required for testing */
 
-    rp = (L_REGPARAMS *)LEPT_CALLOC(1, sizeof(L_REGPARAMS));
-    *prp = rp;
-	rp->mode = cmd_mode;
 	rp->testname = testname;
 	rp->diag_spec = diagspec;
 	rp->index = -1;  /* increment before each test */
@@ -311,28 +308,34 @@ regTestSetup(int argc,
 #endif
 
         /* Only open a stream to a temp file for the 'compare' case */
-    if (cmd_mode == L_REG_COMPARE) {
+	switch (rp->cmd_mode) {
+	case L_REG_COMPARE:
 		leptDebugSetFileBasepath(diagspec, "lept/regout");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
 		rp->tempfile = stringNew("/tmp/lept/regout/regtest_output.txt");
-        rp->fp = fopenWriteStream(rp->tempfile, "wb");
-        if (rp->fp == NULL) {
-            rp->success = FALSE;
-            return ERROR_INT_1("stream not opened for tempfile",
-                               rp->tempfile, __func__, 1);
-        }
-    } else if (cmd_mode == L_REG_GENERATE) {
+		rp->fp = fopenWriteStream(rp->tempfile, "wb");
+		if (rp->fp == NULL) {
+			rp->success = FALSE;
+			return ERROR_INT_1("stream not opened for tempfile", rp->tempfile, __func__, 1);
+		}
+		break;
+
+	case L_REG_GENERATE:
 		leptDebugSetFileBasepath(diagspec, "lept/golden");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
 		//lept_mkdir("lept/golden");
-    } else if (cmd_mode == L_REG_DISPLAY) {
+		break;
+
+	case L_REG_DISPLAY:
 		leptDebugSetFileBasepath(diagspec, "lept/display");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
 		leptSetInDisplayMode(rp->diag_spec, TRUE);
-    } else {
-		rp->mode = L_REG_BASIC_EXEC;
+		break;
+
+	default: // L_REG_BASIC_EXEC;
 		leptDebugSetFileBasepath(diagspec, "lept/prog");
 		leptDebugAppendFileBasepath(diagspec, output_path_base);
+		break;
 	}
 
 	/* Make sure the lept/regout subdirectory exists */
@@ -382,12 +385,18 @@ size_t   nbytes;
 
     lept_stderr("Time: %7.3f sec\n", stopTimerNested(rp->tstart));
 
-        /* If generating golden files or running in display mode, release rp */
+	retval = (rp->success) ? 0 : 1;
+
+		/* If generating golden files or running in display mode, release rp */
     if (!rp->fp) {
-        LEPT_FREE(rp->testname);
+		if (rp->success)
+			L_INFO("SUCCESS: %s\n", rp->testname);
+		else
+			L_INFO("FAILURE: %s\n", rp->testname);
+		LEPT_FREE(rp->testname);
         LEPT_FREE(rp->tempfile);
         LEPT_FREE(rp);
-        return 0;
+        return retval;
     }
 
         /* Compare mode: read back data from temp file */
@@ -403,14 +412,13 @@ size_t   nbytes;
 
         /* Prepare result message */
     if (rp->success)
-        snprintf(result, sizeof(result), "SUCCESS: %s_reg\n", rp->testname);
+        snprintf(result, sizeof(result), "SUCCESS: %s\n", rp->testname);
     else
-        snprintf(result, sizeof(result), "FAILURE: %s_reg\n", rp->testname);
+        snprintf(result, sizeof(result), "FAILURE: %s\n", rp->testname);
     message = stringJoin(text, result);
     LEPT_FREE(text);
     results_file = stringNew("/tmp/lept/reg_results.txt");
     fileAppendString(results_file, message);
-    retval = (rp->success) ? 0 : 1;
     LEPT_FREE(results_file);
     LEPT_FREE(message);
 
@@ -449,11 +457,11 @@ l_float32  diff;
     if (diff > delta) {
         if (rp->fp) {
             fprintf(rp->fp,
-                    "Failure in %s_reg: value comparison for index %d\n"
+                    "Failure in %s: value comparison for index %d\n"
                     "difference = %f but allowed delta = %f\n",
                     rp->testname, (int)rp->index, diff, delta);
         }
-        lept_stderr("Failure in %s_reg: value comparison for index %d\n"
+        lept_stderr("Failure in %s: value comparison for index %d\n"
                     "difference = %f but allowed delta = %f\n",
                     rp->testname, (int)rp->index, diff, delta);
         rp->success = FALSE;
@@ -503,10 +511,10 @@ char     buf[256];
         snprintf(buf, sizeof(buf), "/tmp/lept/regout/string*_%d_*", (int)rp->index);
         if (rp->fp) {
             fprintf(rp->fp,
-                    "Failure in %s_reg: string comp for index %d; "
+                    "Failure in %s: string comp for index %d; "
                     "written to %s\n", rp->testname, (int)rp->index, buf);
         }
-        lept_stderr("Failure in %s_reg: string comp for index %d; "
+        lept_stderr("Failure in %s: string comp for index %d; "
                     "written to %s\n", rp->testname, (int)rp->index, buf);
         rp->success = FALSE;
     }
@@ -548,10 +556,10 @@ l_int32  same;
         /* Record on failure */
     if (!same) {
         if (rp->fp) {
-            fprintf(rp->fp, "Failure in %s_reg: pix comparison for index %d\n",
+            fprintf(rp->fp, "Failure in %s: pix comparison for index %d\n",
                     rp->testname, (int)rp->index);
         }
-        lept_stderr("Failure in %s_reg: pix comparison for index %d\n",
+        lept_stderr("Failure in %s: pix comparison for index %d\n",
                     rp->testname, (int)rp->index);
         rp->success = FALSE;
     }
@@ -614,10 +622,10 @@ l_int32  w, h, factor, similar;
     if (!similar) {
         if (rp->fp) {
             fprintf(rp->fp,
-                    "Failure in %s_reg: pix similarity comp for index %d\n",
+                    "Failure in %s: pix similarity comp for index %d\n",
                     rp->testname, (int)rp->index);
         }
-        lept_stderr("Failure in %s_reg: pix similarity comp for index %d\n",
+        lept_stderr("Failure in %s: pix similarity comp for index %d\n",
                     rp->testname, (int)rp->index);
         rp->success = FALSE;
     }
@@ -666,15 +674,15 @@ PIX     *pix1, *pix2;
         rp->success = FALSE;
         return ERROR_INT("local name not defined", __func__, 1);
     }
-    if (rp->mode != L_REG_GENERATE && rp->mode != L_REG_COMPARE &&
-        rp->mode != L_REG_DISPLAY) {
+    if (rp->cmd_mode != L_REG_GENERATE && rp->cmd_mode != L_REG_COMPARE &&
+        rp->cmd_mode != L_REG_DISPLAY) {
         rp->success = FALSE;
         return ERROR_INT("invalid mode", __func__, 1);
     }
     rp->index++;
 
         /* If display mode, no generation and no testing */
-    if (rp->mode == L_REG_DISPLAY) return 0;
+    if (rp->cmd_mode == L_REG_DISPLAY) return 0;
 
         /* Generate the golden file name; used in 'generate' and 'compare' */
     splitPathAtExtension(localname, NULL, &ext);
@@ -683,7 +691,7 @@ PIX     *pix1, *pix2;
     LEPT_FREE(ext);
 
         /* Generate mode.  No testing. */
-    if (rp->mode == L_REG_GENERATE) {
+    if (rp->cmd_mode == L_REG_GENERATE) {
             /* Save the file as a golden file */
         ret = fileCopy(localname, namebuf);
 #if 0       /* Enable for details on writing of golden files */
@@ -727,9 +735,9 @@ PIX     *pix1, *pix2;
         filesAreIdentical(localname, namebuf, &same);
     }
     if (!same) {
-        fprintf(rp->fp, "Failure in %s_reg, index %d: comparing %s with %s\n",
+        fprintf(rp->fp, "Failure in %s, index %d: comparing %s with %s\n",
                 rp->testname, (int)rp->index, localname, namebuf);
-        lept_stderr("Failure in %s_reg, index %d: comparing %s with %s\n",
+        lept_stderr("Failure in %s, index %d: comparing %s with %s\n",
                     rp->testname, (int)rp->index, localname, namebuf);
         rp->success = FALSE;
     }
@@ -779,7 +787,7 @@ SARRAY  *sa;
     }
 
     rp->index++;
-    if (rp->mode != L_REG_COMPARE) return 0;
+    if (rp->cmd_mode != L_REG_COMPARE) return 0;
 
         /* Generate the golden file names */
     snprintf(namebuf, sizeof(namebuf), "%s_golden.%02d", rp->testname, index1);
@@ -809,9 +817,9 @@ SARRAY  *sa;
     filesAreIdentical(name1, name2, &same);
     if (!same) {
         fprintf(rp->fp,
-                "Failure in %s_reg, index %d: comparing %s with %s\n",
+                "Failure in %s, index %d: comparing %s with %s\n",
                 rp->testname, (int)rp->index, name1, name2);
-        lept_stderr("Failure in %s_reg, index %d: comparing %s with %s\n",
+        lept_stderr("Failure in %s, index %d: comparing %s with %s\n",
                     rp->testname, (int)rp->index, name1, name2);
         rp->success = FALSE;
     }
@@ -1038,3 +1046,37 @@ char    *root;
 
 	return root;
 }
+
+
+const char *
+regGetArg(L_REGPARAMS* rp)
+{
+	if (!rp)
+		return (char*)ERROR_PTR("rp not defined", __func__, NULL);
+
+	int idx = rp->argv_index_base + rp->argv_index;
+	if (idx >= sarrayGetCount(rp->argvfiles)) {
+		return NULL;
+	}
+	rp->argv_index++;
+
+	return sarrayGetString(rp->argvfiles, idx, L_NOCOPY);
+}
+
+
+void
+regMarkEndOfTestround(L_REGPARAMS* rp)
+{
+	if (!rp) {
+		L_ERROR("rp not defined", __func__);
+		return;
+	}
+
+	if (rp->argv_step_size_per_round <= 0) {
+		rp->argv_index_base += rp->argv_index;
+	}
+	else {
+		rp->argv_index_base += rp->argv_step_size_per_round;
+	}
+}
+

@@ -2986,7 +2986,7 @@ char   empty[4] = "";
  *          garbage in (e.g., /&%), garbage out.
  *      (7) "." and ".." directories are folded when possible, i.e. "abc/def/../xyz/./blub" --> "abc/xyz/blub"
  *      (8) "/tmp/" at the start of the resulting concatenated path is treated special, as are any 
- *          MSWindows drive nad (UNC) network drive / share name path elements: ".." will NOT fold these, i.e.
+ *          MSWindows drive and (UNC) network drive / share name path elements: ".." will NOT fold these, i.e.
  *            pathJoin("Z:/abc", "../../x") --> "Z:/x", NOT "/x" NOR "x".
  *          Ditto for "/tmp/": 
  *            pathJoin("/tmp/abc", "../../x") --> "/tmp/x"
@@ -2996,7 +2996,7 @@ char   empty[4] = "";
  *            pathJoin("/abc/", "Z:/x/y") --> "/abc/Z:/x/y", which is normalized to "/abc/drv_Z/x/y".
  *            pathJoin("/abc/", "//?/Z:/x/y") --> "/abc/?/Z:/x/y", which is normalized to "/abc/drv_Z/x/y".
  *            pathJoin("/abc/", "//?/$Server/$Share/x/y") --> "/abc/?/$Server/$Share/x/y", which is normalized to "/abc/$Server/$Share/x/y".
- *          where it should be noted that any MSWindows drive nad (UNC) network drive / share name path element
+ *          where it should be noted that any MSWindows drive and (UNC) network drive / share name path element
  *          that starts %fname WILL NOT be removed when folding any '../' element either: even while these are
  *          'normalized' into regular path elements following %dir, such elements are indestructible that way!
  *      (9) Examples:
@@ -3601,6 +3601,92 @@ l_int32  len, nret, num;
         return num;
     else
         return -1;  /* not found */
+}
+
+
+/*!
+ * \brief   pathSafeJoin()
+ *
+ * \param[in]    dir     [optional] can be null
+ * \param[in]    fname   [optional] can be null
+ * \return  specially concatenated path, or NULL on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) same behaviour as pathJoin(), with these caveats:
+ *          - both input paths have their UNIX/Windows-style paths converted to use unix-style pathname separators ('/').
+ *
+ *          - %fname MAY be a relative path, but CANNOT 'fold' over %dir, e.g.
+ *
+ *                pathSafeJoin("a/b/c", "../../d/e") --> "a/b/c/d/e" (NOT: "a/d/e")
+ *
+ *            will NOT consume 'b' and 'c' by the '../' elements in %fname.
+ *            Likewise for potentially agressive path attempts such as 
+ *
+ *                pathSafeJoin("/a/b/c", "d/../../../../../e") --> "/a/b/c/e" (NOT: "/e")
+ *
+ *          - %fname MAY NOT be an absolute path, e.g.
+ *
+ *                pathSafeJoin("/a/b/c", "/d/e") --> "/a/b/c/d/e" (NOT: "/d/e")
+ *
+ &      (2)   Most user-controlable input processing applications are best served using
+ *            pathSafeJoin() for their ath attack surfaces processing, rather than plain
+ *            pathJoin().
+ * </pre>
+ */
+char*
+pathSafeJoin(const char* dir,
+	         const char* fname)
+{
+	const char* s1 = dir;
+	const char* s2 = fname;
+	if (dir) {
+		char* s = stringNew(dir);
+		convertSepCharsInPath(s, UNIX_PATH_SEPCHAR);
+		s1 = s;
+	}
+	if (fname) {
+		char* s = stringNew(fname);
+		convertSepCharsInPath(s, UNIX_PATH_SEPCHAR);
+		size_t len = strlen(s);
+		if (len > 0)
+			len--;
+		int has_trailing_slash = (s[len] == '/');
+		int rootlen = getPathRootLength(s);
+		// nuke(=sanitize) any Windows/network-path style 'root' as absolute paths are NOT allowed in %fname:
+		if (rootlen > 0) {
+			for (int i = 0; i < rootlen - 1; i++) {
+				unsigned char c = s[i];
+				if (isalnum(c))
+					continue;
+				if (strchr("/_-.@#,", c))
+					continue;
+				s[i] = '_';
+			}
+			s[rootlen - 1] = '/';
+		}
+		const char* sa = stringConcatNew("/", s, "/", NULL);
+
+		// eat all the backscanning dir elements:
+		const char* sb = pathJoin(NULL, sa);
+		const char* sc;
+		for (sc = sb; 0 == strncmp("/../", sc, 4); sc += 3)
+			;
+		// we did not accept absolute paths in %fname -- which we just turned in one, forcibly --
+		// so we jump the initial 'root /' to obtain our cleaned-up *relative path*:
+		sc++;
+		sc = stringNew(sc);
+		LEPT_FREE(s);
+		stringDestroy(&sa);
+		stringDestroy(&sb);
+		s2 = sb;
+	}
+	char* dest = pathJoin(s1, s2);
+	if (s1 != dir)
+		stringDestroy(&s1);
+	if (s2 != fname)
+		stringDestroy(&s2);
+	return dest;
 }
 
 

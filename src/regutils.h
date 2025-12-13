@@ -119,11 +119,22 @@ struct L_RegParams
     FILE    *fp;        /*!< stream to temporary output file for compare mode */
     char    *testname;  /*!< name of test, without '_reg'                     */
     char    *tempfile;  /*!< name of temp file for compare mode output        */
-    l_int32  mode;      /*!< generate, compare or display                     */
-    l_atomic index;     /*!< index into saved files for this test; 0-based    */
-    l_int32  success;   /*!< overall result of the test                       */
+	l_atomic index;     /*!< index into saved files for this test; 0-based    */
+	int      argv_index;               /*!< index of the next argv[] element from argvfiles[] to produce via regGetArg() */
+	int      argv_index_base;          /*!< start-of-round index into argvfiles[]; 0 on the first round; incremented by %argv_step_size_per_round */
+	int      argv_step_size_per_round; /*!< number of argv[] elements to move forward per test round; default: -1/0 ~ all argv[] element consumed in the current round */
+	int      cmd_mode;  /*!< generate, compare or display                     */
+    int      success;   /*!< overall result of the test                       */
     //l_int32  display;   --> moved inside the diag_spec
-    L_TIMER  tstart;    /*!< marks beginning of the reg test                  */
+	int      testappmode;  /*!< !0: use deterministic, fixed, output and /tmp/ file paths; otherwise produce 'randomized' /tmp/ target paths to prevent tmp-path hijacking and other /tmp/-based CVEs. */
+	L_TIMER  tstart;    /*!< marks beginning of the reg test                  */
+
+	const char* help_mode;
+	const char* tmpdirpath;
+	const char* outpath;
+	SARRAY* searchpaths;
+	SARRAY* argvfiles;
+
 	LDIAG_CTX diag_spec; /*!< image diagnostics helper spec associated with pix & plots; used to help display/diagnose behaviour in the more complex algorithms */
 };
 typedef struct L_RegParams  L_REGPARAMS;

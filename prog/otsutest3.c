@@ -99,6 +99,9 @@ int main(int    argc,
 	leptDebugAddStepLevel(rp->diag_spec);
 
 	int argv_count = sarrayGetCount(sargv);
+	if (argv_count == 0) {
+		L_ERROR("no image files specified for processing: empty input set.", __func__);
+	}
 	for (int argidx = 0; argidx < argv_count; argidx++)
 	{
 		const char* filename = sarrayGetString(sargv, argidx, L_NOCOPY);

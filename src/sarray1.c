@@ -39,7 +39,7 @@
  *
  *      Add/Remove string
  *          l_int32    sarrayAddString()
- *          static l_int32  sarrayExtendArray()
+ *          static l_ok  sarrayExtendArray()
  *          char      *sarrayRemoveString()
  *          l_int32    sarrayReplaceString()
  *          l_int32    sarrayClear()
@@ -163,7 +163,7 @@ static const l_uint32  MaxPtrArraySize = 50000000;    /* 50 million */
 static const l_int32   InitialPtrArraySize = 50;      /*!< n'importe quoi */
 
     /* Static functions */
-static l_int32 sarrayExtendArray(SARRAY *sa);
+static l_ok sarrayExtendArray(SARRAY *sa);
 
 
 /*--------------------------------------------------------------------------*
@@ -393,7 +393,7 @@ SARRAY  *sa;
  * \return  copy of sarray, or NULL on error
  */
 SARRAY *
-sarrayCopy(SARRAY  *sa)
+sarrayCopy(const SARRAY  *sa)
 {
 l_int32  i;
 SARRAY  *csa;
@@ -471,6 +471,57 @@ l_int32  n;
 
 
 /*!
+ * \brief   sarrayInsertString()
+ *
+ * \param[in]    sa         string array
+ * \param[in]    index      of new string within sarray
+ * \param[in]    string     string to be added
+ * \param[in]    copyflag   L_INSERT, L_NOCOPY or L_COPY
+ * \return  0 if OK, 1 on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) See usage comments at the top of this file.  L_INSERT is
+ *          equivalent to L_NOCOPY.
+ * </pre>
+ */
+l_ok
+sarrayInsertString(SARRAY* sa,
+	l_int32      index,
+	const char* string,
+	l_int32      copyflag)
+{
+	l_int32  n;
+
+	if (!sa)
+		return ERROR_INT("sa not defined", __func__, 1);
+	if (!string)
+		return ERROR_INT("string not defined", __func__, 1);
+	if (copyflag != L_INSERT && copyflag != L_NOCOPY && copyflag != L_COPY)
+		return ERROR_INT("invalid copyflag", __func__, 1);
+
+	n = sarrayGetCount(sa);
+
+	if (index < 0 || index >= n)
+		return ERROR_INT("array index out of bounds", __func__, 1);
+
+	if (n >= sa->nalloc) {
+		if (sarrayExtendArray(sa))
+			return ERROR_INT("extension failed", __func__, 1);
+	}
+
+	memmove(sa->array + index + 1, sa->array + index, 1 * sizeof(sa->array[0]));
+
+	if (copyflag == L_COPY)
+		sa->array[index] = stringNew(string);
+	else  /* L_INSERT or L_NOCOPY */
+		sa->array[index] = (char*)string;
+	sa->n++;
+	return 0;
+}
+
+
+/*!
  * \brief   sarrayExtendArray()
  *
  * \param[in]    sa    string array
@@ -482,7 +533,7 @@ l_int32  n;
  *      (2) The max number of strings is 50M.
  * </pre>
  */
-static l_int32
+static l_ok
 sarrayExtendArray(SARRAY  *sa)
 {
 size_t  oldsize, newsize;
@@ -680,7 +731,7 @@ char  **array;
  * </pre>
  */
 char *
-sarrayGetString(SARRAY  *sa,
+sarrayGetString(const SARRAY  *sa,
                 l_int32  index,
                 l_int32  copyflag)
 {
@@ -972,6 +1023,83 @@ l_int32  n, i;
 }
 
 
+/*!
+ * \brief   sarrayInsertRange()
+ *
+ * \param[in]    sa1     to be inserted to
+ * \param[in]    index   insert the strings at this index of sa1
+ * \param[in]    sa2     insert specified range of strings in sa2
+ * \param[in]    start   index of first string of sa2 to insert
+ * \param[in]    end     index of last string of sa2 to insert;
+ *                       -1 to insert all until the end of array
+ * \return  0 if OK, 1 on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) Copies of the strings in sarray2 are inserted into sarray1.
+ *      (2) The [start ... end] range is truncated if necessary.
+ *      (3) Use end == -1 to insert all until the end of sa2.
+ * </pre>
+ */
+l_ok
+sarrayInsertRange(SARRAY* sa1,
+	l_int32  index,
+	SARRAY*  sa2,
+	l_int32  start,
+	l_int32  end)
+{
+	char* str;
+	l_int32  n1, n2, i, dst_count, offset, count2, pos1, pos2;
+
+	if (!sa1)
+		return ERROR_INT("sa1 not defined", __func__, 1);
+	if (!sa2)
+		return ERROR_INT("sa2 not defined", __func__, 1);
+
+	if (start < 0)
+		start = 0;
+	n2 = sarrayGetCount(sa2);
+	if (end < 0 || end >= n2)
+		end = n2 - 1;
+	if (start > end)
+		return ERROR_INT("start > end", __func__, 1);
+
+	if (start == end) {
+		// nothing to insert
+		return 0;
+	}
+
+	n1 = sarrayGetCount(sa1);
+	// treat any out-of-range %index as an 'append' operation, rather than an 'insert' op.
+	if (index < 0 || index > n1)
+		index = n1;
+
+	count2 = end - start;
+	dst_count = count2 + n1;
+	while (sa1->nalloc < dst_count) {
+		if (sarrayExtendArray(sa1))
+			break;
+	}
+
+	// make room for the new entries:
+	offset = index + count2;
+	memmove(sa1->array + offset, sa1->array + index, count2 * sizeof(sa1->array[0]));
+
+	for (i = 0; i < count2; i++) {
+		pos1 = index + i;
+		pos2 = start + i;
+		str = sa2->array[pos2];
+
+		// L_COPY
+		sa1->array[pos1] = stringNew(str);
+	}
+
+	sa1->n += count2;
+
+	return 0;
+}
+
+
 /*----------------------------------------------------------------------*
  *          Pad an sarray to be the same size as another sarray         *
  *----------------------------------------------------------------------*/
@@ -1117,7 +1245,7 @@ SARRAY  *sal, *saout;
  *      (1) This uses strtokSafe().  See the notes there in utils.c.
  * </pre>
  */
-l_int32
+l_ok
 sarraySplitString(SARRAY      *sa,
                   const char  *str,
                   const char  *separators)
