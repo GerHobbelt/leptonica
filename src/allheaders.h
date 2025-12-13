@@ -2669,7 +2669,8 @@ LEPT_DLL extern void * returnErrorPtr ( const char *msg, const char *procname, v
 LEPT_DLL extern l_int32 returnErrorInt1 ( const char *msg, const char *arg, const char *procname, l_int32 ival );
 LEPT_DLL extern l_float32 returnErrorFloat1 ( const char *msg, const char *arg, const char *procname, l_float32 fval );
 LEPT_DLL extern void * returnErrorPtr1 ( const char *msg, const char *arg, const char *procname, void *pval );
-LEPT_DLL extern void leptSetStderrHandler ( void  ( *handler ) ( const char * ) );
+typedef void (*leptStderrHandler_f) (const char *msg);
+LEPT_DLL extern leptStderrHandler_f leptSetStderrHandler ( leptStderrHandler_f );
 LEPT_DLL extern void lept_stderr ( const char *fmt, ... );
 LEPT_DLL extern l_ok filesAreIdentical ( const char *fname1, const char *fname2, l_int32 *psame );
 LEPT_DLL extern l_uint16 convertOnLittleEnd16 ( l_uint16 shortin );
@@ -2757,6 +2758,7 @@ LEPT_DLL extern l_int32 callSystemDebug ( const char *cmd );
 LEPT_DLL extern l_ok splitPathAtDirectory ( const char *pathname, char **pdir, char **ptail );
 LEPT_DLL extern l_ok splitPathAtExtension ( const char *pathname, char **pbasename, char **pextension );
 LEPT_DLL extern char * pathJoin ( const char *dir, const char *fname );
+LEPT_DLL extern char * pathJoinEx ( const char *dir, const char *fname, l_ok dotdotInFnameMayFoldIntoDir, l_ok dotdotAllowedInOutput, l_ok fnameMayBeARootedPath, l_ok *pBehavedBadly );
 LEPT_DLL extern char * pathSafeJoin ( const char *dir, const char *fname );
 LEPT_DLL extern char * appendSubdirs ( const char *basedir, const char *subdirs );
 LEPT_DLL extern l_ok convertSepCharsInPath ( char *path, l_int32 type );
@@ -2954,6 +2956,8 @@ typedef enum l_LocateMode {
 } l_LocateMode_t;
 
 LEPT_DLL extern SARRAY* leptProcessResponsefileLines ( SARRAY* const lines, const SARRAY* const searchpath_set, l_LocateMode_t search_mode, const char *output_basedir, const char *stmt_prefix, const char *fail_marker, const char* ignore_marker );
+
+LEPT_DLL extern l_ok lept_is_special_UNIX_directory ( const char* path, size_t pathlen );
 
 /* defined in morph.c */
 LEPT_DLL extern l_int32 MORPH_BC;

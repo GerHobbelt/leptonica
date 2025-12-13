@@ -3013,56 +3013,113 @@ char   empty[4] = "";
  *             NULL + NULL       -->  (empty string)
  *             "" + ""           -->  (empty string)
  *             "" + /            -->  /
- *             ".." + /etc/foo   -->  NULL
- *             /tmp + ".."       -->  NULL
+ *             ".." + /etc/foo   -->  ../etc/foo   (previously, leptonica would produce NULL here)
+ *             /tmp + ".."       -->  /tmp		   (previously, leptonica would produce NULL here)
  *             ".." + abc/def    -->  ../abc/def  
- *             abc + ".."        -->  NULL         (abc/.. will not be folded as it would translate to / (rootdir))
+ *             abc + ".."        -->  abc/..       -->   ""
  *             abc/def + ".."    -->  abc/def/..   -->   abc
+ *      (10) If you need a more restrictive and security-conscious alternative, see pathSafeJoin(),
+ *           where any '../' in %fname cannot ever fold with any path particle in %dir, i.e. %dir
+ *           will be kept intact/dominant.
+ *      (11) both input paths have their UNIX/Windows-style paths converted to use UNIX-style pathname separators ('/').
  * </pre>
  */
 char *
-pathJoin(const char  *dir,
-         const char  *fname)
+pathJoinEx(const char* restrict dir,
+		   const char* restrict fname,
+		   l_ok                 dotdotInFnameMayFoldIntoDir,
+		   l_ok                 dotdotAllowedInOutput,
+		   l_ok                 fnameMayBeARootedPath,
+		   l_ok                *pBehavedBadly)
 {
-const char *slash = "/";
-char       *str, *dest;
-l_int32     i, n1, emptydir;
-l_int32     fname_root_len, dir_root_len, ba_root_len;
-size_t      size;
-SARRAY     *sa1, *sa2;
-L_BYTEA    *ba;
+	if (pBehavedBadly)
+		*pBehavedBadly = 0;
 
-    if (!dir && !fname)
-        return stringNew("");
+	const char slash = '/';
+	char* restrict dest;
+	l_int32     i, n1, emptydir, ndir;
+	l_int32     fname_root_len, dir_root_len, dest_root_len, dir_len, fname_len;
+	int failed = 0;
+	l_ok fname_root_for_dest = FALSE;
+	SARRAY* sa1, * sa2;
+	L_BYTEA* ba;
+
+	if (!dir && !fname)
+		return stringNew("");
+	if (!dir)
+		dir = "";
+	if (!fname)
+		fname = "";
 	fname_root_len = getPathRootLength(fname);
-    if (dir && strlen(dir) >= 2 && dir[0] == '.' && dir[1] == '.' && fname_root_len > 0)
-        return (char *)ERROR_PTR("dir starts with '..'", __func__, NULL);
+	dir_len = strlen(dir);
+#if 0  // this check is useless, as it is circumventable by "/a/../../" input that has the same effect. Besides, such 'evil' paths should not return NULL but a sensible path instead. 
+	if (dir_len >= 2 && dir[0] == '.' && dir[1] == '.' && fname_root_len > 0)
+		return (char*)ERROR_PTR("dir starts with '..'", __func__, NULL);
+#endif
 	dir_root_len = getPathRootLength(dir);
-	if (fname && strlen(fname) >= 2 && fname[0] == '.' && fname[1] == '.' && dir && dir_root_len == strlen(dir))
-        return (char *)ERROR_PTR("fname starts with '..'", __func__, NULL);
+	fname_len = strlen(fname);
+#if 0
+	if (fname_len >= 2 && fname[0] == '.' && fname[1] == '.' && dir_root_len == dir_len)
+		return (char*)ERROR_PTR("fname starts with '..'", __func__, NULL);
+#endif
 
-    sa1 = sarrayCreate(0);
-    sa2 = sarrayCreate(0);
-    ba = l_byteaCreate(4);
+	sa1 = sarrayCreate(0);
+	sa2 = sarrayCreate(0);
+	size_t bufsize = fname_len + dir_len + 20;
+	ba = l_byteaCreate(3 * bufsize);
+	if (!ba)
+		return (char*)ERROR_PTR("cannot allocate scratch buffer", __func__, NULL);
 
-        /* Process %dir */
-    if (dir && strlen(dir) > 0) {
-        if (dir_root_len > 0)
-			l_byteaAppendData(ba, (const l_uint8 *)dir, dir_root_len); // slash
-        sarraySplitString(sa1, dir + dir_root_len, "/");  /* removes all slashes */
-    }
+	size_t dummy;
+	l_uint8* buffer = l_byteaGetData(ba, &dummy);
+	{
+		char* restrict str = (char*)buffer + bufsize;
+		memcpy(str, dir, dir_len + 1);
+		convertSepCharsInPath(str, UNIX_PATH_SEPCHAR);
+		dir = str;
+	}
+	emptydir = (dir[0] == 0);
 
-        /* Special case to add leading slash: dir NULL or empty string  */
-    emptydir = dir && strlen(dir) == 0;
-    if ((!dir || emptydir) && fname && strlen(fname) > 0 && fname_root_len > 0)
-		l_byteaAppendData(ba, (const l_uint8 *)fname, fname_root_len); // slash
+	{
+		char* restrict str = (char*)buffer + 2 * bufsize;
+		memcpy(str, fname, fname_len + 1);
+		convertSepCharsInPath(str, UNIX_PATH_SEPCHAR);
+		fname = str;
+	}
 
-        /* Process %fname */
-    if (fname && strlen(fname) > 0) {
-        sarraySplitString(sa2, fname + fname_root_len, "/");
-    }
+	/* Process %dir */
+	sarraySplitString(sa1, dir + dir_root_len, "/");  /* removes all slashes */
 
-	ba_root_len = l_byteaGetSize(ba);
+	/* Process %fname */
+	sarraySplitString(sa2, fname + fname_root_len, "/");
+
+	// Special case to add leading slash: dir NULL or empty string:
+	// only and only iff %dir is empty do we transport the %fname root
+	// to the output unmolested!
+	dest = (char*)buffer;
+
+	if (emptydir && fname_root_len > 0 && fnameMayBeARootedPath) {
+		memcpy(dest, fname, fname_root_len);
+		dest[fname_root_len] = 0;
+		dest_root_len = fname_root_len;
+		fname_root_for_dest = TRUE;
+	}
+	else if (dir_root_len > 0) {
+		memcpy(dest, dir, dir_root_len);
+		dest[dir_root_len] = 0;
+		dest_root_len = dir_root_len;
+	}
+	else {
+		dest[0] = 0;
+		dest_root_len = 0;
+	}
+
+	// may we fold %fname '../' elements into %dir?
+	ndir = sarrayGetCount(sa1);   // we don't
+	if (dotdotInFnameMayFoldIntoDir && (fname_root_for_dest || fname_root_len == 0)) {
+		// we do, when %fname isn't rooted itself (or when that root has already been used as the output root, so it isn't 'hidden' any more).
+		ndir = -1;
+	}
 
 	// append both arrays:
 	sarrayJoin(sa1, sa2);
@@ -3070,10 +3127,22 @@ L_BYTEA    *ba;
 	// fold '..' and '.' directories:
 	n1 = sarrayGetCount(sa1);
 	for (i = 0; i < n1; i++) {
-		str = sarrayGetString(sa1, i, L_NOCOPY);
-		// only keep the '.' directory when it's the first AND alone:
-		if (strcmp(str, ".") == 0 && (i != 0 || n1 > 1)) {
+		const char* restrict str = sarrayGetString(sa1, i, L_NOCOPY);
+		// empty directory '' is just an artifact of a 'xyz//' double-slashed input: discard it, before it can do any harm.
+		// The only double-slashed path element is the root (for network paths) and we handled that one separately already.
+		if (str[0] == 0) {
 			LEPT_FREE(sarrayRemoveString(sa1, i));
+			if (ndir > i)
+				ndir--;
+			n1--;
+			i--;
+			continue;
+		}
+		// only keep the '.' directory when it's the first AND alone:
+		if (strcmp(str, ".") == 0 && (n1 > 1 || dest_root_len > 0)) {
+			LEPT_FREE(sarrayRemoveString(sa1, i));
+			if (ndir > i)
+				ndir--;
 			n1--;
 			i--;
 			continue;
@@ -3081,37 +3150,217 @@ L_BYTEA    *ba;
 		// only keep the '..' directory when it's not preceeded by another (non-'..') directory:
 		if (strcmp(str, "..") == 0) {
 			if (i != 0) {
-				if (i == n1 - 1) {
-					return (char*)ERROR_PTR("combined path ends with '..'", __func__, NULL);
+				const char* prev_str = sarrayGetString(sa1, i - 1, L_NOCOPY);
+				// we treat /tmp/ as a special 'root' which you cannot escape from;
+				// here, we're a bit obnoxious by making *every* otherwise-rooted 'tmp/' a special root
+				// which you cannot fold/escape from by entering 'tmp/../':
+				if (i - 1 == 0 && lept_is_special_UNIX_directory(prev_str, strlen(prev_str))) {
+					if (!failed++) L_ERROR("combined path attempts to escape from '%s/' scratchpad root: '%s' + '%s'\n", __func__, prev_str, dir, fname);
+					// do not fold; discard the '../' element instead
+					LEPT_FREE(sarrayRemoveString(sa1, i));
+					if (ndir > i)
+						ndir--;
+					n1 -= 1;
+					i -= 1;
+					continue;
 				}
-				const char *prev_str = sarrayGetString(sa1, i - 1, L_NOCOPY);
 				if (strcmp(prev_str, "..") != 0) {
-					// fold with previous directory
+					// fold with previous directory?
+					if (i == ndir) {
+						// we're standing at the boundary between %dir and %fname. How to proceed...
+						if (!dotdotInFnameMayFoldIntoDir) {
+							if (!failed++) L_ERROR("combined path attempts to fold '../' into the base dir, while restrictions apply: '%s' + '%s'\n", __func__, dir, fname);
+							// do not fold; discard the '../' element instead
+							LEPT_FREE(sarrayRemoveString(sa1, i));
+							n1 -= 1;
+							i -= 1;
+							continue;
+						}
+						if (fname_root_len > 0) {
+							if (!failed++) L_ERROR("second path attempts to fold upon its own root, which is not allowed: '%s' + '%s'\n", __func__, dir, fname);
+							// do not fold; discard the '../' element instead
+							LEPT_FREE(sarrayRemoveString(sa1, i));
+							n1 -= 1;
+							i -= 1;
+							continue;
+						}
+					}
+
 					LEPT_FREE(sarrayRemoveString(sa1, i));
 					LEPT_FREE(sarrayRemoveString(sa1, i - 1));
+					if (ndir > i)
+						ndir -= 2;
 					n1 -= 2;
 					i -= 2;
+					continue;
+				}
+				if (i == n1 - 1 && dest_root_len > 0) {
+					if (!failed++) L_ERROR("combined path ends with '..' in an otherwise rooted path: '%s' + '%s'\n", __func__, dir, fname);
+					// do not fold or NULL the result; discard the '../' element instead
+					LEPT_FREE(sarrayRemoveString(sa1, i));
+					if (ndir > i)
+						ndir--;
+					n1 -= 1;
+					i -= 1;
+					continue;
+				}
+			}
+			else {
+				assert(i == 0);
+				if (dest_root_len > 0 || ndir == 0) {
+					if (!failed++) L_ERROR("combined path attempts to escape from rooted path: '%s' + '%s'\n", __func__, dir, fname);
+					// do not fold; discard the '../' element instead
+					LEPT_FREE(sarrayRemoveString(sa1, i));
+					n1 -= 1;
+					i -= 1;
+					continue;
 				}
 			}
 		}
 	}
 
-	n1 = sarrayGetCount(sa1);
-	for (i = 0; i < n1; i++) {
-		str = sarrayGetString(sa1, i, L_NOCOPY);
-		l_byteaAppendString(ba, str);
-		l_byteaAppendString(ba, slash);
+	assert(n1 == sarrayGetCount(sa1));
+	dest += dest_root_len;
+	if (fname_root_for_dest) {
+		fname_root_len = 0;
+		ndir = -1;
+	}
+	for (i = 0; i < n1 || fname_root_len > 0; i++) {
+		// nuke(=sanitize) any Windows/network-path style 'root' when it's not the output root:
+		assert(i <= n1);
+		if (ndir == i && fname_root_len > 0) {
+			// treat the %fname 'root' as yet another (b0rked) directory:
+			// we need to rewrite/cleanup that one while we do, though...
+			if (fname_root_len == 1) {
+				if (!failed++) L_ERROR("second part of combined path has a (UNIX) root of its own ('%.*s'): ignoring that one: '%s' + '%s'\n", __func__, (int)fname_root_len, fname, dir, fname);
+				// UNIX root '/': nothing to add here, chaps.
+			}
+			else if (fname_root_len == 3 && fname[1] == ':') {
+				if (!failed++) L_ERROR("second part of combined path has a (DOS/Windows) root of its own ('%.*s'): rewriting that one into a plain directory name as a substitute: '%s' + '%s'\n", __func__, (int)fname_root_len, fname, dir, fname);
+				// DOS/Win drive, e.g. 'Z:/'
+				memcpy(dest, "drv_", 4);
+				dest += 4;
+				*dest++ = *fname;
+				*dest++ = slash;
+			}
+			else if (fname_root_len == 7 && fname[5] == ':' && fname[0] == '/' && fname[1] == '/' && fname[3] == '/') {
+				if (!failed++) L_ERROR("second part of combined path has a (UNC DOS/Windows) root of its own ('%.*s'): rewriting that one into a plain directory name as a substitute: '%s' + '%s'\n", __func__, (int)fname_root_len, fname, dir, fname);
+				// UNC local drive, e.g. '//?/Z:/' or '//./Z:/'
+				memcpy(dest, "drv_", 4);
+				dest += 4;
+				*dest++ = fname[4];
+				*dest++ = slash;
+			}
+			else {
+				if (!failed++) L_ERROR("second part of combined path has an UNC network share root of its own ('%.*s'): rewriting that one into a plain directory name as a substitute: '%s' + '%s'\n", __func__, (int)fname_root_len, fname, dir, fname);
+				// other roots, e.g. '//server/share/' network roots: just flatten these bummers into a proper directory name...
+				// (luckily %fname is *editable* by now, so we can do *this*:)
+				((char*)fname)[fname_root_len - 1] = 0;  // punch out the tail '/' while we terminate at the end of the root element.
+				while (*fname == '/')
+					fname++;
+				memcpy(dest, "drv_", 4);
+				dest += 4;
+				uint32_t h = 0;
+				l_ok dropped_chars = 0;
+				while (*fname) {
+					unsigned char c = *fname++;
+					h *= 0x9E3779B1U;    // prime
+					h ^= c;
+					if (isalnum(c))
+						*dest++ = c;
+					else if (dest[-1] != '_')
+						*dest++ = '_';
+					else if (c != '/')
+						dropped_chars = 1;
+				}
+				// edge case: in case multiple 'weird' (or Unicode!) share/roots are used in multiple inputs: this should significantly reduce the number of collisions in the cleaned-up replacement dir/path.
+				if (dropped_chars) {
+					if (dest[-1] != '_')
+						*dest++ = '_';
+					h ^= h >> 12;
+					h ^= h >> 22;
+					static const char* const lu = "0123456789ABCDEFGHJKLMNPQRSTUVWZ";
+					assert(strlen(lu) == 32);
+					*dest++ = lu[h & 0x1F];
+					h >>= 5;
+					*dest++ = lu[h & 0x1F];
+				}
+				*dest++ = slash;
+			}
+			fname_root_len = 0;
+			if (i >= n1)
+				break;
+		}
+		assert(i < n1);
+		{
+			const char* restrict str = sarrayGetString(sa1, i, L_NOCOPY);
+			size_t len = strlen(str);
+			memcpy(dest, str, len);
+			dest += len;
+			*dest++ = slash;
+		}
+	}
+	*dest = 0;
+
+	/* Remove trailing slash */
+	if (dest > (char *)buffer + dest_root_len) {
+		dest[-1] = 0;
 	}
 
-    /* Remove trailing slash */
-    dest = (char *)l_byteaCopyData(ba, &size);
-    if (size > ba_root_len + 1 && dest[size - 1] == '/')
-        dest[size - 1] = '\0';
+	dest = stringNew((const char*)buffer);
 
-    sarrayDestroy(&sa1);
-    sarrayDestroy(&sa2);
-    l_byteaDestroy(&ba);
-    return dest;
+	sarrayDestroy(&sa1);
+	sarrayDestroy(&sa2);
+	l_byteaDestroy(&ba);
+
+	if (pBehavedBadly && failed)
+		*pBehavedBadly = 1;
+
+	return dest;
+}
+char *
+pathJoin(const char* restrict dir,
+		 const char* restrict fname)
+{
+	return pathJoinEx(dir, fname, TRUE /* dotdotInFnameMayFoldIntoDir */, TRUE /* dotdotAllowedInOutput */, TRUE /* fnameMayBeARootedPath */, NULL);
+}
+/*!
+ * \brief   pathSafeJoin()
+ *
+ * \param[in]    dir     [optional] can be null
+ * \param[in]    fname   [optional] can be null
+ * \return  specially concatenated path, or NULL on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) same behaviour as pathJoin(), with these caveats:
+ *          - %fname MAY be a relative path, but CANNOT 'fold' over %dir, e.g.
+ *
+ *                pathSafeJoin("a/b/c", "../../d/e") --> "a/b/c/d/e" (NOT: "a/d/e")
+ *
+ *            it will NOT consume 'b' and 'c' in %dir by the '../' elements in %fname.
+ *            Likewise for potentially agressive path attempts such as
+ *
+ *                pathSafeJoin("/a/b/c", "d/../../../../../e") --> "/a/b/c/e" (NOT: "/e")
+ *
+ *          - %fname MAY NOT be an absolute path, e.g.
+ *
+ *                pathSafeJoin("/a/b/c", "/d/e") --> "/a/b/c/d/e" (NOT: "/d/e")
+ *
+ *            This also goes for the %dir = NULL or "" (empty) cases:
+ *
+ *                pathSafeJoin(NULL, "/d/e") --> "d/e" (NOT: "/d/e")
+ *
+ &      (2)   Most user-controlable input processing applications are best served using
+ *            pathSafeJoin() for their ath attack surfaces processing, rather than plain
+ *            pathJoin().
+ * </pre>
+ */
+char*
+pathSafeJoin(const char* restrict dir,
+			 const char* restrict fname)
+{
+	return pathJoinEx(dir, fname, FALSE /* dotdotInFnameMayFoldIntoDir */, FALSE /* dotdotAllowedInOutput */, FALSE /* fnameMayBeARootedPath */, NULL /* cope with bad input; take it in stride */);
 }
 
 
@@ -3601,92 +3850,6 @@ l_int32  len, nret, num;
         return num;
     else
         return -1;  /* not found */
-}
-
-
-/*!
- * \brief   pathSafeJoin()
- *
- * \param[in]    dir     [optional] can be null
- * \param[in]    fname   [optional] can be null
- * \return  specially concatenated path, or NULL on error
- *
- * <pre>
- * Notes:
- *      (1) same behaviour as pathJoin(), with these caveats:
- *          - both input paths have their UNIX/Windows-style paths converted to use unix-style pathname separators ('/').
- *
- *          - %fname MAY be a relative path, but CANNOT 'fold' over %dir, e.g.
- *
- *                pathSafeJoin("a/b/c", "../../d/e") --> "a/b/c/d/e" (NOT: "a/d/e")
- *
- *            will NOT consume 'b' and 'c' by the '../' elements in %fname.
- *            Likewise for potentially agressive path attempts such as 
- *
- *                pathSafeJoin("/a/b/c", "d/../../../../../e") --> "/a/b/c/e" (NOT: "/e")
- *
- *          - %fname MAY NOT be an absolute path, e.g.
- *
- *                pathSafeJoin("/a/b/c", "/d/e") --> "/a/b/c/d/e" (NOT: "/d/e")
- *
- &      (2)   Most user-controlable input processing applications are best served using
- *            pathSafeJoin() for their ath attack surfaces processing, rather than plain
- *            pathJoin().
- * </pre>
- */
-char*
-pathSafeJoin(const char* dir,
-	         const char* fname)
-{
-	const char* s1 = dir;
-	const char* s2 = fname;
-	if (dir) {
-		char* s = stringNew(dir);
-		convertSepCharsInPath(s, UNIX_PATH_SEPCHAR);
-		s1 = s;
-	}
-	if (fname) {
-		char* s = stringNew(fname);
-		convertSepCharsInPath(s, UNIX_PATH_SEPCHAR);
-		size_t len = strlen(s);
-		if (len > 0)
-			len--;
-		int has_trailing_slash = (s[len] == '/');
-		int rootlen = getPathRootLength(s);
-		// nuke(=sanitize) any Windows/network-path style 'root' as absolute paths are NOT allowed in %fname:
-		if (rootlen > 0) {
-			for (int i = 0; i < rootlen - 1; i++) {
-				unsigned char c = s[i];
-				if (isalnum(c))
-					continue;
-				if (strchr("/_-.@#,", c))
-					continue;
-				s[i] = '_';
-			}
-			s[rootlen - 1] = '/';
-		}
-		const char* sa = stringConcatNew("/", s, "/", NULL);
-
-		// eat all the backscanning dir elements:
-		const char* sb = pathJoin(NULL, sa);
-		const char* sc;
-		for (sc = sb; 0 == strncmp("/../", sc, 4); sc += 3)
-			;
-		// we did not accept absolute paths in %fname -- which we just turned in one, forcibly --
-		// so we jump the initial 'root /' to obtain our cleaned-up *relative path*:
-		sc++;
-		sc = stringNew(sc);
-		LEPT_FREE(s);
-		stringDestroy(&sa);
-		stringDestroy(&sb);
-		s2 = sb;
-	}
-	char* dest = pathJoin(s1, s2);
-	if (s1 != dir)
-		stringDestroy(&s1);
-	if (s2 != fname)
-		stringDestroy(&s2);
-	return dest;
 }
 
 

@@ -37,7 +37,6 @@
  *       General file name operations
  *           l_int32    splitPathAtDirectory()
  *           l_int32    splitPathAtExtension()
- *           char      *pathJoin()
  *           char      *appendSubdirs()
  *
  *       Special file name operations

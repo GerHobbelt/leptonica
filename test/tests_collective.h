@@ -66,6 +66,7 @@
 #include <errno.h>     /* for errno */
 #include <string.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #include <gtest/gtest.h>
 
@@ -77,14 +78,29 @@
 
 #if defined(_CRTDBG_MAP_ALLOC)
 
+constexpr const int stdio_bufsize = 1024;
+
 class HeapLeakTestFixture: public testing::Test {
 	int tmpHeapDbgFlag;
 
 	_CrtMemState hs1;
+	static leptStderrHandler_f lept_old_err_handler;
+	static int error_count;
 
 protected:
 	virtual void SetUp() override
 	{
+#if 0
+		setvbuf(stderr, NULL, _IOLBF, stdio_bufsize);
+
+		// warm up the stderr streams, or we will face heap memory leaks reported for that one!
+		fputs("\n", stderr);
+		fflush(stderr);
+#endif
+
+		lept_old_err_handler = leptSetStderrHandler(test_lept_errormsg_handler);
+		error_count = 0;
+
 		tmpHeapDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_CHECK_CRT_DF);
 #if 01
@@ -113,13 +129,22 @@ protected:
 		_CrtMemState hs2;
 		_CrtMemCheckpoint(&hs2);
 
+		fflush(stderr);
+#if 0
+		setvbuf(stderr, NULL, _IONBF, 0);
+#endif
+
 		_CrtMemState hs3;
 		if (_CrtMemDifference(&hs3, &hs1, &hs2)) {
+			fputs("\nHeap memory leakage:\n", stderr);
 			_CrtMemDumpStatistics(&hs3);
+			fputs("\n", stderr);
+			_CrtMemDumpAllObjectsSince(&hs1);
+			fputs("\n", stderr);
+			fflush(stderr);
+
 			GTEST_EXPECT_TRUE_W_MSG(!&_CrtMemDifference, "heap memory leakage detected!");
 			GTEST_ASSERT_EQ(::testing::Test::HasFailure(), true);
-
-			_CrtMemDumpAllObjectsSince(&hs1);
 		}
 
 #if 0
@@ -132,6 +157,8 @@ protected:
 		_CrtSetReportHookW2(_CRT_RPTHOOK_REMOVE, crtdbgw_report_hook_func);
 
 		_CrtSetDbgFlag(tmpHeapDbgFlag);
+		leptSetStderrHandler(lept_old_err_handler);
+		lept_old_err_handler = nullptr;
 	}
 
 	static int crtdbg_report_hook_func(int reportType, char *message, int *returnValue)
@@ -156,6 +183,15 @@ protected:
 		return FALSE;
 	}
 
+	static void test_lept_errormsg_handler(const char *msg) {
+		if (0 != strncmp("Warning in ", msg, 11))
+			error_count++;
+
+		assert(lept_old_err_handler != test_lept_errormsg_handler);
+		if (lept_old_err_handler)
+			lept_old_err_handler(msg);
+	}
+
 	static int crtdbgw_report_hook_func(int reportType, wchar_t *message, int *returnValue)
 	{
 		switch (reportType) {
@@ -166,6 +202,11 @@ protected:
 			break;
 		}
 		return FALSE;
+	}
+
+public:
+	static int get_errormsg_count(void) {
+		return error_count;
 	}
 };
 
@@ -191,7 +232,7 @@ protected:
 
 
 template <typename T>
-class HeapLeakParameterizedTestFixture: public testing::Test, public testing::WithParamInterface<T> {
+class HeapLeakParameterizedTestFixture: public HeapLeakTestFixture, public testing::WithParamInterface<T> {
 public:
 	virtual ~HeapLeakParameterizedTestFixture() = default;
 };

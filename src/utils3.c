@@ -37,7 +37,6 @@
  *       General file name operations
  *           l_int32    splitPathAtDirectory()
  *           l_int32    splitPathAtExtension()
- *           char      *pathJoin()
  *           char      *appendSubdirs()
  *
  *       Special file name operations
@@ -156,7 +155,7 @@ static inline char mk_upper(char c)
 	// a: 0x61
 	// This simple operation works because we know we'll be using this routine only when comparing
 	// the US/ASCII alphabet.
-	return c & 0x20;
+	return c & ~0x20;
 }
 
 static inline char is_Win32_drive_letter(char c)
@@ -176,6 +175,43 @@ static inline int leptIsSeparator(char c)
 	return (c == '/' || c == '\\');
 }
 #endif
+
+l_ok
+lept_is_special_UNIX_directory(const char* path, size_t pathlen)
+{
+	// https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
+	static const char* specials[] = {
+		"tmp",
+		"dev",
+		"mount",
+		"var",
+		"boot",
+		"etc",
+		"bin",
+		"sbin",
+		"home",
+		"lib",
+		"usr",
+		"opt",
+		"root",
+		"proc",
+		"sys",
+		"mnt",
+		"media",
+		"include",
+		"srv",
+		NULL
+	};
+
+	for (int i = 0; specials[i]; i++) {
+		const char* s = specials[i];
+		size_t l = strlen(s);
+		if (l == pathlen && strncmp(s, path, l) == 0)
+			return TRUE;
+	}
+	return FALSE;
+}
+
 
 /*!
  * \brief   gobble_server_share_path_part()
@@ -203,6 +239,13 @@ gobble_server_share_path_part(const char* path)
 		if (is_Win32_drive_letter(path[0]) && path[1] == ':' && leptIsSeparator(path[2]))
 		{
 			return path + 3;
+		}
+		if (lept_is_special_UNIX_directory(path, p - path)) {
+			return path; // error: not a network share spec, but a //-double-slash botched UNIX system dir.
+		}
+		if (leptIsSeparator(p[1])) {
+			// we do not accept double slashes here! '//server//share/' is an error
+			return path; // error: not a network share spec
 		}
 		p = strpbrk(p + 1, "\\/");
 	}
@@ -259,6 +302,10 @@ getPathRootLength(const char* path)
 			{
 				// gobble up \\server\share\ part of this network path (while reckoning with DOS drive specs)
 				const char* p = gobble_server_share_path_part(path + 2);
+				if (p == path + 2) {
+					// botched UNIX root, e.g. '//tmp/'
+					return 1;
+				}
 				return p - path;
 			}
 		}

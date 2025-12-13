@@ -131,16 +131,16 @@ L_REGPARAMS* rp;
     TestGenPathname(rp, "what", "abc", "what/abc");  /* 36 */
     TestGenPathname(rp, NULL, "abc/def", "abc/def");  /* 37 */
     TestGenPathname(rp, "", "abc/def", "abc/def");  /* 38 */
-#ifndef _WIN32   /* unix only */
-    if (getenv("TMPDIR") == NULL) {
+//#ifndef _WIN32   /* unix only */
+//    if (getenv("TMPDIR") == NULL) {
         TestGenPathname(rp, "/tmp", NULL, "/tmp");  /* 39 */
         TestGenPathname(rp, "/tmp/", NULL, "/tmp");  /* 40 */
         TestGenPathname(rp, "/tmp/junk", NULL, "/tmp/junk");  /* 41 */
         TestGenPathname(rp, "/tmp/junk/abc", NULL, "/tmp/junk/abc");  /* 42 */
         TestGenPathname(rp, "/tmp/junk/", NULL, "/tmp/junk");  /* 43 */
         TestGenPathname(rp, "/tmp/junk", "abc", "/tmp/junk/abc");  /* 44 */
-    }
-#endif  /* !_WIN32 */
+//    }
+//#endif  /* !_WIN32 */
 
     return regTestCleanup(rp);
 }

@@ -357,12 +357,17 @@ static void (*stderr_handler)(const char *) = lept_default_stderr_handler;
  *      (2) If called with NULL, the output goes to stderr.
  * </pre>
  */
-void leptSetStderrHandler(void (*handler)(const char *))
+leptStderrHandler_f
+leptSetStderrHandler(leptStderrHandler_f handler)
 {
+	leptStderrHandler_f old_f = stderr_handler;
+
     if (handler)
         stderr_handler = handler;
     else
         stderr_handler = lept_default_stderr_handler;
+
+	return old_f;
 }
 
 
