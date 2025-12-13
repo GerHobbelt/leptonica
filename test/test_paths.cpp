@@ -94,8 +94,7 @@ TEST_P(PathJoinTestFixture, PathJoin) {
 	const char *s2 = stringNew(argv.in_p2);
 	const char *p1 = pathJoin(s1, s2);
 	std::string result{p1 ? p1 : "(nullptr)"};
-	std::string sollwert{argv.out_expected_normalized ? argv.out_expected_normalized :
-							str_or_null(argv.out_expected)};
+	std::string sollwert{argv.out_expected_normalized ? argv.out_expected_normalized : str_or_null(argv.out_expected)};
 	EXPECT_EQ(result, sollwert) << std::format(" for input paths join(\"{}\", \"{}\")", str_or_null(s1), str_or_null(s2));
 	stringDestroy(&s1);
 	stringDestroy(&s2);
