@@ -588,7 +588,7 @@ NUMA     *na;
     numaDestroy(&na);
     nrows = boxaGetCount(boxar);
 #if  DEBUG_FONT_GEN
-    L_INFO("For fontsize %s, have %d rows\n", __func__, fontsize, nrows);
+    L_INFO("For fontsize %d, have %d rows\n", __func__, fontsize, nrows);
 #endif  /* DEBUG_FONT_GEN */
     if (nrows != 3) {
         L_INFO("nrows = %d; skipping fontsize %d\n", __func__, nrows, fontsize);
