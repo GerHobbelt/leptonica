@@ -388,7 +388,7 @@ leptSetStderrHandler(leptStderrHandler_f handler)
         (3) This utility was provided by jbarlow83.
  * </pre>
  */
-void lept_stderr(const char *fmt, ...)
+void lept_stderr(_In_z_ _Printf_format_string_ const char * const fmt, ...)
 {
 va_list  args;
 char     msg[MAX_DEBUG_MESSAGE];

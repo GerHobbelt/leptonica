@@ -66,5 +66,8 @@
 #include "sudoku.h"
 #include "watershed.h"
 
+typedef void (*leptStderrHandler_f) (const char *msg);
+
+
 
 #endif /* LEPTONICA_ALLTYPES_H */

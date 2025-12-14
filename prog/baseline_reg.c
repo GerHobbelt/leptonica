@@ -76,7 +76,7 @@ PTA          *pta;
 	const char* sourcefilepath = DEMOPATH("keystone.png");
     pixs = pixRead(sourcefilepath);
 	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
-	leptDebugSetFilenameForPrefix(rp->diag_spec, sourcefilepath, TRUE);
+	leptDebugSetFilenameForPrefix(rp->diag_spec, sourcefilepath, -1);
 
         /* Test function for deskewing using projective transform
 	 * on linear approximation for local skew angle */

@@ -136,12 +136,12 @@ regTestSetup(int argc,
 {
 	char*         testname;
 	const char*   vers;
-	char          errormsg[64];
 	L_REGPARAMS*  rp;
 	l_ok          fail = FALSE;
 	int           opt;
 	int           longopt_index;
 	int           debug_mode = 1;
+	int           list_argv_mode = 0;
 
 	if (!prp)
 		return ERROR_INT("ptrs not all defined", __func__, 1);
@@ -153,6 +153,7 @@ regTestSetup(int argc,
 
 	rp->cmd_mode = -1;
 	rp->testappmode = 0;
+	rp->argv_search_mode = L_LOCATE_IN_FIRST_ANY;
 	rp->help_mode = (argc <= 1 ? stringNew("?") : NULL);
 	rp->tmpdirpath = NULL;
 	rp->outpath = NULL;
@@ -172,10 +173,11 @@ regTestSetup(int argc,
 		{ "help", optional_argument, NULL, 'h' },
 		{ "testing", no_argument, &rp->testappmode, 1 },
 		{ "arg-stepping", optional_argument, NULL, 's' },				// how many argv[] elements to step forward per round. default: 0 represents 'all argv[] used in the current round.
+		{ "search-mode", required_argument, NULL, 'q' },
 		{ "compare", no_argument, &rp->cmd_mode, L_REG_COMPARE },
 		{ "generate", no_argument, &rp->cmd_mode, L_REG_GENERATE },
 		{ "display", no_argument, &rp->cmd_mode, L_REG_DISPLAY },
-		{ 0 }
+		{ NULL }
 	};
 
 	// reset the getopt_long parser:
@@ -183,7 +185,7 @@ regTestSetup(int argc,
 	longopt_index = -1;
 
 	for (;;) {
-		opt = getopt_long(argc, argv, "s::d::h::", options, &longopt_index);
+		opt = getopt_long(argc, argv, "s::d::h::q:l", options, &longopt_index);
 		if (opt == -1)
 			break;
 
@@ -194,7 +196,7 @@ regTestSetup(int argc,
 
 		case 1:
 			if (rp->tmpdirpath) {
-				L_ERROR("Must not define tmpdirpath twice on the command line.", __func__);
+				L_ERROR("Must not define tmpdirpath twice on the command line.\n", __func__);
 				fail = TRUE;
 				continue;
 			}
@@ -203,7 +205,7 @@ regTestSetup(int argc,
 
 		case 2:
 			if (rp->outpath) {
-				L_ERROR("Must not define outpath twice on the command line.", __func__);
+				L_ERROR("Must not define outpath twice on the command line.\n", __func__);
 				fail = TRUE;
 				continue;
 			}
@@ -211,17 +213,50 @@ regTestSetup(int argc,
 			continue;
 
 		case 3:
-			if (sarrayAddString(rp->searchpaths, optarg, L_COPY)) {
-				return ERROR_INT("searchpaths[] array could not be expanded.", __func__, 1);
-			}
+			// process the searchpaths list: first, determine which separator has been used: | ;
+			char* sep_marker_p = strpbrk(optarg, "|;");
+			char sep_marker[2] = { (sep_marker_p ? *sep_marker_p : ';'), 0 };
+			SARRAY* srch_arr = sarrayCreate(1);
+			sarraySplitString(srch_arr, optarg, sep_marker);
+			// append to existing set:
+			sarrayJoin(rp->searchpaths, srch_arr);
+			sarrayDestroy(&srch_arr);
 			continue;
 
 		case 'd':
 			debug_mode = (optarg != NULL ? atoi(optarg) : 1);
 			continue;
 
+		case 'l':
+			list_argv_mode = 1;
+			break;
+
 		case 's':
-			rp->argv_step_size_per_round = (optarg != NULL ? atoi(optarg) : 1);
+			rp->argv_step_size_per_round = (optarg != NULL ? atoi(optarg) : 0);
+			continue;
+
+		case 'q':
+			int m = atoi(optarg);
+			switch (m) {
+			case L_LOCATE_IN_ALL:
+			case L_LOCATE_IN_FIRST_ANY:
+			case L_LOCATE_IN_FIRST_ONE:
+			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_ALL:
+			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ANY:
+			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ONE:
+				rp->argv_search_mode = m;
+				break;
+
+			default:
+				L_ERROR("Unknown/unsupported file arg locate/expand mode: %d. Supported modes are: %d (all), %d (all-in-first), %d (first one), %d (all, ignore cwd), %d (all-in-first, ignore cwd), %d (first one, ignore cwd)\n", __func__, m,
+					L_LOCATE_IN_ALL,
+					L_LOCATE_IN_FIRST_ANY,
+					L_LOCATE_IN_FIRST_ONE,
+					L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_ALL,
+					L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ANY,
+					L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ONE);
+				break;
+			}
 			continue;
 
 		case 'h':
@@ -229,7 +264,7 @@ regTestSetup(int argc,
 			continue;
 
 		default:
-			L_ERROR("Unknown/unsupported command line option %c has been specified: %s %s%s ...", __func__,
+			L_ERROR("Unknown/unsupported command line option %c has been specified: %s %s%s ...\n", __func__,
 				(opt > ' ' ? opt : '?'), argstr(argv, optind), argstr(argv, optind + 1), argstr(argv, optind + 2));
 			fail = TRUE;
 			continue;
@@ -255,7 +290,7 @@ regTestSetup(int argc,
 			}
 		}
 
-		// do we expand @xyz responsefiles? yes, we do:
+		// do we expand @xyz responsefiles? yes, we do; we deal with those at the end
 		sarrayAddString(rp->argvfiles, optarg, L_COPY);
 	}
 
@@ -273,9 +308,49 @@ regTestSetup(int argc,
 
 	if (rp->help_mode) {
 		// TODO: advanced help
-        snprintf(errormsg, sizeof(errormsg),
-            "Syntax: %s [ [compare] | generate | display ] ...", testname);
-        return ERROR_INT(errormsg, __func__, 1);
+		lept_stderr("Syntax: %s [ [compare] | generate | display ] ...\n", testname);
+		lept_stderr("\n"
+					"The following options are supported:\n"
+			        "-s [n]        argv[] step size per test round (default: 0 = all consumed)\n"
+			        "-d [n]        set debug mode (ON(1) by default; can be turned off with n=0\n"
+			        "              or passing --no-debug instead.\n"
+			        "-q n          set filespec expansion/location mode: ALL(0), all-in-first-dir(1)\n"
+			        "              first-in-first(2); default: ALL (which will expand wildcarded\n"
+			        "              expand into multiple lines iff possible)"
+			        "-l            (diagnostic) list the expanded set of argv lines (after response-\n"
+			        "              file processing) before proceeding with the application.\n"
+			        "-h [subject]  show some help info\n"
+		);
+		lept_stderr("\n"
+			        "The original leptonica regression test command modes can also be specified\n"
+			        "as long options instead of just the command words:\n"
+			        "--compare\n"
+			        "--generate\n"
+			        "--display\n"
+		);
+		lept_stderr("\n"
+			        "The following long options are supported:\n"
+		);
+		for (const struct option* opt = options; opt->name != NULL; opt++) {
+			static const char* argtypes[] = {
+				"",
+				"",			// no_argument
+				"arg",		// required_argument
+				"[arg]",	// optional_argument
+			};
+			assert(optional_argument == 3);
+			assert(no_argument == 1);
+			assert(required_argument == 2);
+			char cmd_chr = ' ';
+			const char* eqvmsg = "";
+			if (!opt->has_arg && isalnum(opt->val)) {
+				cmd_chr = opt->val;
+				eqvmsg = "    is equivalent to option -";
+			}
+			lept_stderr("--%s %s%s%c\n", opt->name, argtypes[opt->has_arg & 0x03], eqvmsg, cmd_chr);
+		}
+
+        return 1;
     }
 
 	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
@@ -338,8 +413,10 @@ regTestSetup(int argc,
 		break;
 	}
 
+#if 0
 	/* Make sure the lept/regout subdirectory exists */
 	lept_mkdir(leptDebugGetFileBasePath(diagspec));
+#endif
 
         /* Print out test name and both the leptonica and
          * image library versions */
@@ -354,7 +431,74 @@ regTestSetup(int argc,
     lept_stderr("%s\n", vers);
     stringDestroy(&vers);
 
-    rp->tstart = startTimerNested();
+	// post-work: clean up our search paths set (deduplicate, etc.)
+	{
+		char* cdir = getcwd(NULL, 0);
+		if (cdir == NULL) {
+			return ERROR_INT("no current dir found", __func__, 1);
+		}
+		SARRAY* lcl_arr = pathDeducePathSet(rp->searchpaths, cdir, !(rp->argv_search_mode & L_LOCATE_IGNORE_CURRENT_DIR_FLAG));
+		sarrayDestroy(&rp->searchpaths);
+		rp->searchpaths = lcl_arr;
+		free(cdir);
+	}
+
+	if (list_argv_mode) {
+		lept_stderr("\n========== CLI input 'lines' (a.k.a. argv[] set) ================\n");
+		int count = sarrayGetCount(rp->argvfiles);
+		int width = (int)ceil(log10(count + 0.1));
+		for (int i = 0; i < count; i++) {
+			const char* line = sarrayGetString(rp->argvfiles, i, L_NOCOPY);
+			lept_stderr("#%0*d: %s\n", width, i + 1, line);
+		}
+		if (count == 0) {
+			lept_stderr("(-- none --)\n");
+		}
+		lept_stderr("======================= search paths: ===========================\n");
+		int scount = sarrayGetCount(rp->searchpaths);
+		width = (int)ceil(log10(scount + 0.1));
+		for (int i = 0; i < scount; i++) {
+			const char* line = sarrayGetString(rp->searchpaths, i, L_NOCOPY);
+			lept_stderr("#%0*d: %s\n", width, i + 1, line);
+		}
+		if (scount == 0) {
+			lept_stderr("(-- none --)\n");
+		}
+		lept_stderr("================= (total: %3d input lines) =========================\n", count);
+	}
+
+	// now deal with the responsefiles (if any) and attempt to resolve every argv[] path we've got:
+	SARRAY* lcl_arr = leptProcessResponsefileLines(rp->argvfiles, rp->searchpaths, rp->argv_search_mode, rp->tmpdirpath, "\x01" /* stmt marker */, "\x02 FAIL: " /* fail marker */, "\x03# " /* ignore marker */);
+	sarrayDestroy(&rp->argvfiles);
+	rp->argvfiles = lcl_arr;
+
+
+	if (list_argv_mode) {
+		lept_stderr("\n========== EXPANDED CLI input 'lines' (a.k.a. argv[] set) ============\n");
+		int count = sarrayGetCount(rp->argvfiles);
+		int width = (int)ceil(log10(count + 0.1));
+		for (int i = 0; i < count; i++) {
+			const char* line = sarrayGetString(rp->argvfiles, i, L_NOCOPY);
+			// strip off the special marker bytes, but keep the rest of the marker to sees:
+			switch (line[0]) {
+			case 0x01:	/* stmt marker */
+				line += 1;
+				break;
+			case 0x02: /* fail marker: '\x02 FAIL: ' */
+				line += 2; // 8
+				break;
+			case 0x03: /* ignore marker: '\x03# ' */
+				line += 1; // 3
+				break;
+			default:
+				break;
+			}
+			lept_stderr("#%0*d: %s\n", width, i + 1, line);
+		}
+		lept_stderr("======================= (total: %3d lines) ===========================\n", count);
+	}
+
+	rp->tstart = startTimerNested();
     return 0;
 }
 
@@ -1049,18 +1193,95 @@ char    *root;
 
 
 const char *
-regGetArg(L_REGPARAMS* rp)
+regGetRawArgOrDefault(L_REGPARAMS* rp, const char *default_value)
 {
 	if (!rp)
 		return (char*)ERROR_PTR("rp not defined", __func__, NULL);
 
 	int idx = rp->argv_index_base + rp->argv_index;
 	if (idx >= sarrayGetCount(rp->argvfiles)) {
-		return NULL;
+		return default_value ? stringNew(default_value) : NULL;
 	}
 	rp->argv_index++;
 
-	return sarrayGetString(rp->argvfiles, idx, L_NOCOPY);
+	const char* line = sarrayGetString(rp->argvfiles, idx, L_NOCOPY);
+	switch (line ? line[0] : 0) {
+	case 0x01:	/* stmt marker */
+		return stringNew(line + 1);
+
+	case 0x02: /* fail marker: '\x02 FAIL: ' */
+		char *fstr = stringNew(line);
+		if (!fstr) {
+			return (char*)ERROR_PTR("line text cannot be allocated", __func__, NULL);
+		}
+		fstr[0] = ';';  // --> '; FAIL: xyz'
+		return fstr;
+
+	case 0x03: /* ignore marker: '\x03# ' */
+		return stringNew(line + 1);
+
+	default:
+		return stringNew(line ?  line : "");
+	}
+}
+
+
+const char*
+regGetFileArgOrDefault(L_REGPARAMS* rp, const char* default_filepath)
+{
+	if (!rp)
+		return (char*)ERROR_PTR("rp not defined", __func__, NULL);
+
+	for (;;) {
+		int idx = rp->argv_index_base + rp->argv_index;
+		if (idx >= sarrayGetCount(rp->argvfiles)) {
+			if (default_filepath) {
+				SARRAY* sa = sarrayCreateInitialized(1, default_filepath);
+				SARRAY* lcl_arr = leptProcessResponsefileLines(sa, rp->searchpaths, L_LOCATE_IN_FIRST_ONE, rp->tmpdirpath, "\x01" /* stmt marker */, "\x02 FAIL: " /* fail marker */, "\x03# " /* ignore marker */);
+				int n = sarrayGetCount(lcl_arr);
+				for (int i = 0; i < n; i++) {
+					const char* line = sarrayGetString(lcl_arr, i, L_NOCOPY);
+					switch (line ? line[0] : 0) {
+					case 0:
+					case 0x01:	/* stmt marker */
+					case 0x02: /* fail marker */
+					case 0x03: /* ignore marker */
+						continue;
+
+					default:
+						line = stringNew(line);
+						sarrayDestroy(&lcl_arr);
+						return line;
+					}
+				}
+			}
+
+			return default_filepath ? stringNew(default_filepath) : NULL;
+		}
+		rp->argv_index++;
+
+		const char* line = sarrayGetString(rp->argvfiles, idx, L_NOCOPY);
+		switch (line ? line[0] : 0) {
+		case 0:
+		case 0x01:	/* stmt marker */
+		case 0x02: /* fail marker */
+		case 0x03: /* ignore marker */
+			continue;
+
+		default:
+			return stringNew(line);
+		}
+	}
+}
+
+
+l_int32
+regGetArgCount(L_REGPARAMS* rp)
+{
+	if (!rp)
+		return ERROR_INT("rp not defined", __func__, 0);
+
+	return sarrayGetCount(rp->argvfiles);
 }
 
 
@@ -1068,7 +1289,7 @@ void
 regMarkEndOfTestround(L_REGPARAMS* rp)
 {
 	if (!rp) {
-		L_ERROR("rp not defined", __func__);
+		L_ERROR("rp not defined\n", __func__);
 		return;
 	}
 
@@ -1078,5 +1299,83 @@ regMarkEndOfTestround(L_REGPARAMS* rp)
 	else {
 		rp->argv_index_base += rp->argv_step_size_per_round;
 	}
+
+	if (rp->argv_fake_extra > 0) {
+		rp->argv_fake_extra--;
+	}
+}
+
+
+void
+regMarkStartOfFirstTestround(L_REGPARAMS* rp, l_int32 extra_rounds)
+{
+	if (!rp) {
+		L_ERROR("rp not defined\n", __func__);
+		return;
+	}
+
+	// don't revisit any args which have already been grabbed.
+	rp->argv_index_base = rp->argv_index;
+	rp->argv_index = 0;
+	rp->argv_fake_extra = extra_rounds;
+}
+
+
+l_ok
+regHasFileArgsAvailable(L_REGPARAMS* rp)
+{
+	if (!rp)
+		return ERROR_INT("rp not defined", __func__, 0);
+
+	for (int i = 0; ; i++) {
+		int idx = rp->argv_index_base + rp->argv_index + i;
+		if (idx >= sarrayGetCount(rp->argvfiles)) {
+			return (rp->argv_fake_extra > 0);   // time to start faking?
+		}
+
+		const char* line = sarrayGetString(rp->argvfiles, idx, L_NOCOPY);
+		switch (line ? line[0] : 0) {
+		case 0:
+		case 0x01:	/* stmt marker */
+		case 0x02: /* fail marker */
+		case 0x03: /* ignore marker */
+			continue;
+
+		default:
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+
+l_ok
+regHasAnyArgsAvailable(L_REGPARAMS* rp)
+{
+	if (!rp)
+		return ERROR_INT("rp not defined", __func__, 0);
+
+	int idx = rp->argv_index_base + rp->argv_index;
+	if (idx >= sarrayGetCount(rp->argvfiles)) {
+		return (rp->argv_fake_extra > 0);   // time to start faking?
+	}
+
+	return TRUE;
+}
+
+
+l_int32
+regGetCurrentArgIndex(L_REGPARAMS* rp)
+{
+	if (!rp)
+		return ERROR_INT("rp not defined", __func__, 0);
+
+	int idx = rp->argv_index_base + rp->argv_index;
+	if (idx >= sarrayGetCount(rp->argvfiles)) {
+		return INT_MAX;   
+	}
+
+	return idx;
 }
 

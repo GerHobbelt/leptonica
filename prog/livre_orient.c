@@ -82,7 +82,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "livre", &rp))
 		return 1;
 
-    lept_mkdir("lept/livre");
+    //lept_mkdir("lept/livre");
 
     sel1 = selCreateFromString(textsel1, 5, 6, NULL);
     sel2 = selCreateFromString(textsel2, 5, 6, NULL);

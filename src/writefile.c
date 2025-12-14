@@ -259,7 +259,7 @@ pixaWriteFiles(const char  *rootname,
                PIXA        *pixa,
                l_int32      format)
 {
-char     bigbuf[Bufsize];
+char    *destpath;
 l_int32  i, n, pixformat;
 PIX     *pix;
 
@@ -277,9 +277,10 @@ PIX     *pix;
             pixformat = pixChooseOutputFormat(pix);
         else
             pixformat = format;
-        snprintf(bigbuf, Bufsize, "%s%03d.%s", rootname, i,
+        destpath = string_asprintf("%s%03d.%s", rootname, i,
 			     getFormatExtension(pixformat));
-        pixWrite(bigbuf, pix, pixformat);
+        pixWrite(destpath, pix, pixformat);
+		stringDestroy(&destpath);
         pixDestroy(&pix);
     }
 

@@ -113,6 +113,13 @@
  *                      Regression test parameter packer                      *
  *----------------------------------------------------------------------------*/
 
+typedef enum l_LocateMode {
+	L_LOCATE_IN_FIRST_ONE = 0,		// only the very first hit is taken
+	L_LOCATE_IN_FIRST_ANY = 1,      // delivers all matches in the first search path that delivers a hit
+	L_LOCATE_IN_ALL = 2,            // collect *all* possible matches.
+	L_LOCATE_IGNORE_CURRENT_DIR_FLAG = 0x10,       // DO NOT consider checking the 'current working directory' as a last resort.
+} l_LocateMode_t;
+
 /*! Regression test parameter packer */
 struct L_RegParams
 {
@@ -123,10 +130,12 @@ struct L_RegParams
 	int      argv_index;               /*!< index of the next argv[] element from argvfiles[] to produce via regGetArg() */
 	int      argv_index_base;          /*!< start-of-round index into argvfiles[]; 0 on the first round; incremented by %argv_step_size_per_round */
 	int      argv_step_size_per_round; /*!< number of argv[] elements to move forward per test round; default: -1/0 ~ all argv[] element consumed in the current round */
+	int      argv_fake_extra;          /*!< !0: when no more argv[] are available, continue producing (fake, NULLed) argv[] answers until the first regMarkEndOfTestround() is hit */
 	int      cmd_mode;  /*!< generate, compare or display                     */
     int      success;   /*!< overall result of the test                       */
     //l_int32  display;   --> moved inside the diag_spec
 	int      testappmode;  /*!< !0: use deterministic, fixed, output and /tmp/ file paths; otherwise produce 'randomized' /tmp/ target paths to prevent tmp-path hijacking and other /tmp/-based CVEs. */
+	l_LocateMode_t   argv_search_mode; /*!< argv[] path resolve/expansion mode: l_LocateMode_t */
 	L_TIMER  tstart;    /*!< marks beginning of the reg test                  */
 
 	const char* help_mode;

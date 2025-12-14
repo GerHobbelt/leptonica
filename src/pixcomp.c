@@ -2343,8 +2343,8 @@ PIXC    *pixc;
     if (!pixac)
         return ERROR_INT("pixac not defined", __func__, 1);
 
-    if (lept_mkdir(subdir) > 0)
-        return ERROR_INT("invalid subdir", __func__, 1);
+    //if (lept_mkdir(subdir) > 0)
+    //    return ERROR_INT("invalid subdir", __func__, 1);
 
     n = pixacompGetCount(pixac);
     for (i = 0; i < n; i++) {

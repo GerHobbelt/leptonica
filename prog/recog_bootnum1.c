@@ -89,7 +89,7 @@ L_REGPARAMS* rp;
         return 1;
     }
 
-    lept_mkdir("lept/recog/digits");
+    //lept_mkdir("lept/recog/digits");
 
     /* ----------------------- Bootnum 1 --------------------- */
         /* Make the bootnum pixa from the images */

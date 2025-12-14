@@ -2617,7 +2617,7 @@ PIXA    *pixa;
         return ERROR_INT("pixa not made", __func__, 1);
 
     lept_rmdir(outdir);
-    lept_mkdir(outdir);
+    //lept_mkdir(outdir);
 
     pixaGetRenderingDepth(pixa, &d);
     format = (d == 1) ? IFF_TIFF_G4 : IFF_JFIF_JPEG;

@@ -101,7 +101,7 @@ void PixAddEdgeData(PIXA    *pixa,
 l_float32  jpl, jspl, rpl;
 PIX       *pixt1, *pixt2;
 
-	leptDebugSetFilenameForPrefix(rp->diag_spec, "junkedge.png", TRUE);
+	leptDebugSetFilenameForPrefix(rp->diag_spec, "junkedge.png", -1);
     pixMeasureEdgeSmoothness(pixs, side, minjump, minreversal, &jpl,
                              &jspl, &rpl, rp->diag_spec);
     lept_stderr("side = %d: jpl = %6.3f, jspl = %6.3f, rpl = %6.3f\n",

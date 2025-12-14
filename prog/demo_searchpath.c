@@ -195,17 +195,18 @@ char* locate_file_in_searchpath(const char* file, const SARRAY* searchpaths)
 				}
 
 				// wildcard applies to directory: get a list of viable subdirectories
-				SARRAY* raw_list = getFilenamesInDirectoryEx(basedir, TRUE /* get subdirs only */);
-				l_int32 nfiles = sarrayGetCount(raw_list);
-				l_int32 index = 0;
-				for (l_int32 i = 0; i < nfiles; i++) {
-					char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
-					char* fullname = genPathname(basedir, fname);
-					lept_stderr("name: %s\n", fullname);
+				SARRAY* raw_list = getFilenamesInDirectoryEx(basedir, TRUE /* get subdirs only */, FALSE);
+				if (raw_list) {
+					l_int32 nfiles = sarrayGetCount(raw_list);
+					for (l_int32 i = 0; i < nfiles; i++) {
+						char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
+						char* fullname = genPathname(basedir, fname);
+						lept_stderr("name: %s\n", fullname);
 
-					LEPT_FREE(fullname);
+						LEPT_FREE(fullname);
+					}
+					sarrayDestroy(&raw_list);
 				}
-				sarrayDestroy(&raw_list);
 			}
 		}
 		else if (file_exists(slot_path))
@@ -353,26 +354,26 @@ SARRAY* locate_matching_files_in_searchpath(SARRAY* sa, const char* line, const 
 					wildcard_end++;
 
 					// wildcard applies to directory: get a list of viable subdirectories
-					SARRAY* raw_list = getFilenamesInDirectoryEx(basedir, TRUE /* get subdirs only */);
-					l_int32 nfiles = sarrayGetCount(raw_list);
-					l_int32 index = 0;
-					for (l_int32 i = 0; i < nfiles; i++) {
-						char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
-						char* bname = pathJoin(basedir, fname);
-						char* fullname = pathJoin(bname, wildcard_end);
-						lept_stderr("name: %s\n", fullname);
+					SARRAY* raw_list = getFilenamesInDirectoryEx(basedir, TRUE /* get subdirs only */, FALSE);
+					if (raw_list) {
+						l_int32 nfiles = sarrayGetCount(raw_list);
+						for (l_int32 i = 0; i < nfiles; i++) {
+							char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
+							char* fullname = pathJoin3(basedir, fname, wildcard_end);
+#if defined(DEBUG)
+							lept_stderr("name: %s\n", fullname);
+#endif
+							sa = locate_matching_files_in_searchpath(sa, fullname, searchpaths);
 
-						sa = locate_matching_files_in_searchpath(sa, fullname, searchpaths);
-
-						stringDestroy(&fullname);
-						stringDestroy(&bname);
+							stringDestroy(&fullname);
+						}
+						sarrayDestroy(&raw_list);
 					}
-					sarrayDestroy(&raw_list);
 				}
 				else
 				{
 					// wildcard applies to last segment: the filename itself
-					SARRAY* raw_list = getFilenamesInDirectoryEx(basedir, FALSE);
+					SARRAY* raw_list = getFilenamesInDirectoryEx(basedir, FALSE /* get files only */, FALSE);
 					l_int32 nfiles = sarrayGetCount(raw_list);
 					l_int32 index = 0;
 					for (l_int32 i = 0; i < nfiles; i++) {

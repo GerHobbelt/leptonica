@@ -1100,7 +1100,7 @@ L_REGPARAMS* rp;
 		strrchr(dstpath, '/')[0] = 0;
 		
 		lept_rmdir(dstpath);
-		lept_mkdir(dstpath);
+		//lept_mkdir(dstpath);
 
 		index = 0;
 	}

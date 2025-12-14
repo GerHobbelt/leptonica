@@ -62,7 +62,7 @@ L_REGPARAMS* rp;
     if (argc != 1)
         return ERROR_INT("Syntax: renderfonts", __func__, 1);
 
-    lept_mkdir("lept/render");
+    //lept_mkdir("lept/render");
 
         /* Render a character of text */
     bmf = bmfCreate(DIRECTORY, 20);

@@ -50,7 +50,7 @@
 // return pointer to the terminating NUL sentinel
 static const char *strend(const char *str)
 {
-	return str + strlen(str) + 1;
+	return str + strlen(str);
 }
 
 static const char* strrpbrk(const char* str, const char* set)
@@ -74,7 +74,7 @@ static const char* strnrpbrk(const char* str, size_t srclen, const char* set)
 	return str;
 }
 
-static char *
+char *
 pathJoin3(const char* p1, const char* p2, const char* p3)
 {
 	char* r = pathJoin(p1, p2);
@@ -122,26 +122,32 @@ static int dir_exists(const char* path)
 }
 
 static SARRAY*
-get_dirlist_recursive(const char* basedir)
+get_dirlist_recursive(const char* basedir, l_ok reportDirNotExistErrors)
 {
-	SARRAY* raw_list = getFilenamesInDirectoryEx(basedir, TRUE /* get subdirs only */);
-	l_int32 nfiles = sarrayGetCount(raw_list);
-	l_int32 index = 0;
-	for (l_int32 i = 0; i < nfiles; i++) {
-		char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
+	SARRAY* raw_list = getFilenamesInDirectoryEx(basedir, TRUE /* get subdirs only */, reportDirNotExistErrors);
+	if (raw_list) {
+		SARRAY* rv_list = sarrayCreate(sarrayGetCount(raw_list) * 4 /* heuristic */);
+		for (l_int32 i = 0; i < sarrayGetCount(raw_list); i++) {
+			char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
 
-		char* p = pathJoin(basedir, fname);
-		SARRAY* subarr = get_dirlist_recursive(p);
-		sarrayJoin(raw_list, subarr);
-		nfiles = sarrayGetCount(raw_list);
-		stringDestroy(&p);
-		sarrayDestroy(&subarr);
+			assert(getPathRootLength(fname) == 0);
+			char* p = pathJoin(basedir, fname);
+			sarrayAddString(rv_list, p, L_NOCOPY);
+
+			SARRAY* subarr = get_dirlist_recursive(p, reportDirNotExistErrors);
+			if (subarr) {
+				sarrayJoin(rv_list, subarr);
+				sarrayDestroy(&subarr);
+			}
+		}
+		sarrayDestroy(&raw_list);
+		return rv_list;
 	}
-	return raw_list;
+	return NULL;
 }
 
 // expects a (potentially wildcarded) ABSOLUTE PATH as input.
-static char* locate_wildcarded_filepath(const char* abspath, SARRAY** accept_multiple_results)
+static char* locate_wildcarded_filepath(const char* abspath, l_ok reportDirNotExistErrors, SARRAY** accept_multiple_results)
 {
 	assert(!accept_multiple_results || *accept_multiple_results);
 
@@ -165,118 +171,124 @@ static char* locate_wildcarded_filepath(const char* abspath, SARRAY** accept_mul
 
 		dir1_end++;
 		char* wildcard_part = stringCopySegment(abspath, dir1_end - abspath, e - dir1_end);
-		char* remainder = stringCopySegment(abspath, e - abspath, strend(e) - e);
+		char* remainder = (e[0] != 0 ? stringCopySegment(abspath, e + 1 - abspath, -1) : NULL);
 
 		// check if the wildcard is '**': when it is, we also accept the EMPTY subdir, i.e. the directory itself.
 		// When the wildcard is '**' we also accept MULTIPLE nested directories, i.e. recursive dirscan is to be applied.
 		int is_starstar = (strcmp(wildcard_part, "**") == 0);
 		if (is_starstar) {
 			// when '**' is the last we ever saw in the input, it means we'll match ANY file in this subdir tree!
-			if (!remainder[0])
+			if (!remainder)
 				remainder = stringNew("*");
 
 			// wildcard '**' applies to directory: get a list of viable subdirectories
-			SARRAY* raw_list = get_dirlist_recursive(realparentdir);
-			l_int32 nfiles = sarrayGetCount(raw_list);
-			for (l_int32 i = 0; i < nfiles; i++) {
-				char* ppath = sarrayGetString(raw_list, i, L_NOCOPY);
-
-				char* testpath = pathJoin(ppath, remainder);
-				char* file = locate_wildcarded_filepath(testpath, accept_multiple_results);
-				if (file != NULL) {
-					if (!accept_multiple_results) {
-						sarrayDestroy(&raw_list);
-						stringDestroy(&realparentdir);
-						stringDestroy(&wildcard_part);
-						stringDestroy(&parentdir);
-						stringDestroy(&remainder);
-						stringDestroy(&testpath);
-						return file;
-					}
-					if (!rv)
-						rv = file;
-					else
-						stringDestroy(&file);
-				}
-				stringDestroy(&testpath);
-			}
-			sarrayDestroy(&raw_list);
-		}
-		else {
-			// another wildcard, not '**': use the wildcard matching library to match these against the set of directories / filenames.
-
-			// did the wildcard apply to a directory?
-			if (!remainder[0]) {
-				// the wildcard applied to the filename part itself.
-				SARRAY* raw_list = getFilenamesInDirectoryEx(parentdir, FALSE);
+			SARRAY* raw_list = get_dirlist_recursive(realparentdir, reportDirNotExistErrors);
+			if (raw_list) {
 				l_int32 nfiles = sarrayGetCount(raw_list);
-				l_int32 index = 0;
 				for (l_int32 i = 0; i < nfiles; i++) {
-					char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
+					char* ppath = sarrayGetString(raw_list, i, L_NOCOPY);
 
-					// in case the wildcards turn out NOT to be wildcards, but literal ()[]{}...
-					int chk = strcasecmp(wildcard_part, fname);
-					if (chk != 0) {
-						chk = (wildmatch(wildcard_part, fname, WM_PATHNAME | WM_PERIOD | WM_CASEFOLD | WM_KSH_BRACKETS | WM_BRACES | WM_ALT_SUBEXPR_SEPARATOR | WM_NEGATION) == WM_MATCH ? 0 : 1);
-					}
-					if (chk == 0) {
-						char* fullname = pathJoin(realparentdir, fname);
+					char* testpath = pathJoin(ppath, remainder);
+					char* file = locate_wildcarded_filepath(testpath, reportDirNotExistErrors, accept_multiple_results);
+					if (file != NULL) {
 						if (!accept_multiple_results) {
 							sarrayDestroy(&raw_list);
 							stringDestroy(&realparentdir);
 							stringDestroy(&wildcard_part);
 							stringDestroy(&parentdir);
 							stringDestroy(&remainder);
-							return fullname;
+							stringDestroy(&testpath);
+							return file;
 						}
-						else {
-							sarrayAddString(*accept_multiple_results, fullname, L_COPY);
-							if (!rv)
-								rv = fullname;
-							else
-								stringDestroy(&fullname);
-						}
+						if (!rv)
+							rv = file;
+						else
+							stringDestroy(&file);
 					}
+					stringDestroy(&testpath);
 				}
 				sarrayDestroy(&raw_list);
 			}
-			else {
-				// the wildcard applied to a directory part.
-				assert(remainder != NULL);
-				SARRAY* raw_list = getFilenamesInDirectoryEx(parentdir, TRUE);
-				l_int32 nfiles = sarrayGetCount(raw_list);
-				l_int32 index = 0;
-				for (l_int32 i = 0; i < nfiles; i++) {
-					char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
+		}
+		else {
+			// another wildcard, not '**': use the wildcard matching library to match these against the set of directories / filenames.
 
-					// in case the wildcards turn out NOT to be wildcards, but literal ()[]{}...
-					int chk = strcasecmp(wildcard_part, fname);
-					if (chk != 0) {
-						chk = (wildmatch(wildcard_part, fname, WM_PATHNAME | WM_PERIOD | WM_CASEFOLD | WM_KSH_BRACKETS | WM_BRACES | WM_ALT_SUBEXPR_SEPARATOR | WM_NEGATION) == WM_MATCH ? 0 : 1);
-					}
-					if (chk == 0) {
-						char* testpath = pathJoin3(realparentdir, fname, remainder);
-						char* file = locate_wildcarded_filepath(testpath, accept_multiple_results);
-						if (file != NULL) {
-							if (!accept_multiple_results)
-							{
+			// did the wildcard apply to a directory?
+			if (!remainder) {
+				// the wildcard applied to the filename part itself.
+				SARRAY* raw_list = getFilenamesInDirectoryEx(parentdir, FALSE, FALSE);
+				if (raw_list) {
+					l_int32 nfiles = sarrayGetCount(raw_list);
+					l_int32 index = 0;
+					for (l_int32 i = 0; i < nfiles; i++) {
+						char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
+
+						// in case the wildcards turn out NOT to be wildcards, but literal ()[]{}...
+						int chk = strcasecmp(wildcard_part, fname);
+						if (chk != 0) {
+							chk = (wildmatch(wildcard_part, fname, WM_PATHNAME | WM_PERIOD | WM_CASEFOLD | WM_KSH_BRACKETS | WM_BRACES | WM_ALT_SUBEXPR_SEPARATOR | WM_NEGATION) == WM_MATCH ? 0 : 1);
+						}
+						if (chk == 0) {
+							char* fullname = pathJoin(realparentdir, fname);
+							if (!accept_multiple_results) {
 								sarrayDestroy(&raw_list);
 								stringDestroy(&realparentdir);
 								stringDestroy(&wildcard_part);
 								stringDestroy(&parentdir);
-								stringDestroy(&remainder);
-								stringDestroy(&testpath);
-								return file;
+								//stringDestroy(&remainder);
+								return fullname;
 							}
-							if (!rv)
-								rv = file;
-							else
-								stringDestroy(&file);
+							else {
+								sarrayAddString(*accept_multiple_results, fullname, L_COPY);
+								if (!rv)
+									rv = fullname;
+								else
+									stringDestroy(&fullname);
+							}
 						}
-						stringDestroy(&testpath);
 					}
+					sarrayDestroy(&raw_list);
 				}
-				sarrayDestroy(&raw_list);
+			}
+			else {
+				// the wildcard applied to a directory part.
+				assert(remainder != NULL);
+				SARRAY* raw_list = getFilenamesInDirectoryEx(parentdir, TRUE, reportDirNotExistErrors);
+				if (raw_list) {
+					l_int32 nfiles = sarrayGetCount(raw_list);
+					l_int32 index = 0;
+					for (l_int32 i = 0; i < nfiles; i++) {
+						char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
+
+						// in case the wildcards turn out NOT to be wildcards, but literal ()[]{}...
+						int chk = strcasecmp(wildcard_part, fname);
+						if (chk != 0) {
+							chk = (wildmatch(wildcard_part, fname, WM_PATHNAME | WM_PERIOD | WM_CASEFOLD | WM_KSH_BRACKETS | WM_BRACES | WM_ALT_SUBEXPR_SEPARATOR | WM_NEGATION) == WM_MATCH ? 0 : 1);
+						}
+						if (chk == 0) {
+							char* testpath = pathJoin3(realparentdir, fname, remainder);
+							char* file = locate_wildcarded_filepath(testpath, reportDirNotExistErrors, accept_multiple_results);
+							if (file != NULL) {
+								if (!accept_multiple_results)
+								{
+									sarrayDestroy(&raw_list);
+									stringDestroy(&realparentdir);
+									stringDestroy(&wildcard_part);
+									stringDestroy(&parentdir);
+									stringDestroy(&remainder);
+									stringDestroy(&testpath);
+									return file;
+								}
+								if (!rv)
+									rv = file;
+								else
+									stringDestroy(&file);
+							}
+							stringDestroy(&testpath);
+						}
+					}
+					sarrayDestroy(&raw_list);
+				}
 			}
 		}
 		stringDestroy(&realparentdir);
@@ -289,6 +301,9 @@ static char* locate_wildcarded_filepath(const char* abspath, SARRAY** accept_mul
 		char *slot_path = resolve_path(abspath);
 		if (file_exists(slot_path))
 		{
+			if (accept_multiple_results) {
+				sarrayAddString(*accept_multiple_results, slot_path, L_COPY);
+			}
 			return slot_path;
 		}
 		stringDestroy(&slot_path);
@@ -310,7 +325,7 @@ leptLocateFileInSearchpath(const char* file, const SARRAY* searchpaths, l_ok ign
 	// when file already has an absolute path, we don't need to apply the search paths:
 	int file_root_len = getPathRootLength(file);
 	if (file_root_len > 0) {
-		return locate_wildcarded_filepath(file, NULL);
+		return locate_wildcarded_filepath(file, FALSE, NULL);
 	}
 
 	if (!searchpaths) {
@@ -325,8 +340,9 @@ leptLocateFileInSearchpath(const char* file, const SARRAY* searchpaths, l_ok ign
 			return ERROR_PTR("no current dir found", __func__, NULL);
 
 		char* p = pathJoin(cdir, file);
-		char* rv = locate_wildcarded_filepath(p, NULL);
+		char* rv = locate_wildcarded_filepath(p, FALSE, NULL);
 		stringDestroy(&p);
+		free(cdir);
 		return rv;
 	}
 
@@ -383,7 +399,7 @@ leptLocateAllMatchingFilesInAnySearchpath(const char* filespec, const SARRAY* se
 	// when file already has an absolute path, we don't need to apply the search paths:
 	int file_root_len = getPathRootLength(filespec);
 	if (file_root_len > 0) {
-		char* p = locate_wildcarded_filepath(filespec, &rv_arr);
+		char* p = locate_wildcarded_filepath(filespec, FALSE, &rv_arr);
 		stringDestroy(&p);
 		return rv_arr;
 	}
@@ -401,9 +417,10 @@ leptLocateAllMatchingFilesInAnySearchpath(const char* filespec, const SARRAY* se
 			return ERROR_PTR("no current dir found", __func__, NULL);
 
 		char* p = pathJoin(cdir, filespec);
-		char* rv = locate_wildcarded_filepath(p, &rv_arr);
+		char* rv = locate_wildcarded_filepath(p, FALSE, &rv_arr);
 		stringDestroy(&rv);
 		stringDestroy(&p);
+		free(cdir);
 		return rv_arr;
 	}
 
@@ -422,7 +439,7 @@ leptLocateAllMatchingFilesInAnySearchpath(const char* filespec, const SARRAY* se
 		// when file already has an absolute path, we don't need to apply the search paths:
 		file_root_len = getPathRootLength(slot_path);
 		if (file_root_len > 0) {
-			char* p = locate_wildcarded_filepath(slot_path, &lcl_arr);
+			char* p = locate_wildcarded_filepath(slot_path, FALSE, &lcl_arr);
 			stringDestroy(&p);
 		}
 		else {
@@ -432,9 +449,10 @@ leptLocateAllMatchingFilesInAnySearchpath(const char* filespec, const SARRAY* se
 				return ERROR_PTR("no current dir found", __func__, NULL);
 
 			char* p = pathJoin(cdir, slot_path);
-			char* rv = locate_wildcarded_filepath(p, &lcl_arr);
+			char* rv = locate_wildcarded_filepath(p, FALSE, &lcl_arr);
 			stringDestroy(&rv);
 			stringDestroy(&p);
+			free(cdir);
 		}
 		stringDestroy(&slot_path);
 
@@ -515,21 +533,46 @@ streq(const char* s1, const char* s2)
 */
 
 
-static SARRAY*
-pathDeducePathSet(const SARRAY *pathset, const char *abs_basefile_path)
+// turns %pathset into a set of de-duplicated UNIXified paths.
+// optionally, %abs_basedir_path is added as the very first entry:
+// this is useful when processing searchpath sets when we want 
+// f.e. the pwd/cwd to be an 'enforced' first slot in the
+// resulting search set.
+SARRAY*
+pathDeducePathSet(const SARRAY *pathset, const char *abs_basedir_path, l_ok add_basedir_itself_too)
 {
-	const char* respfile_dirname;
-	splitPathAtDirectory(abs_basefile_path, &respfile_dirname, NULL);
+	if (!pathset)
+		return (SARRAY*)ERROR_PTR("pathset not defined", __func__, NULL);
+
+	if (!abs_basedir_path)
+		return (SARRAY*)ERROR_PTR("abs_basedir_path not defined", __func__, NULL);
+
+	int rl = getPathRootLength(abs_basedir_path);
+	if (!rl) {
+		L_ERROR("abs_basedir_path is not an absolute path: '%s'\n", __func__, abs_basedir_path);
+		return NULL;
+	}
 
 	SARRAY* searchpaths = sarrayCopy(pathset);
-	sarrayInsertString(searchpaths, 0, respfile_dirname, L_INSERT);
-	// replace any './' relative path references with our new basedir, based of the responsefile path itself:
-	// all relative-path filespecs in a responsefile are *local* to the responsefile.
+
+	if (add_basedir_itself_too) {
+		char* newpath = pathJoin(abs_basedir_path, NULL);
+		convertSepCharsInPath(newpath, UNIX_PATH_SEPCHAR);
+		sarrayInsertString(searchpaths, 0, newpath, L_NOCOPY);
+	}
+
+	// replace any './' relative path references with our basedir.
 	for (int i = 1; i < sarrayGetCount(searchpaths); i++) {
 		const char* sp_entry = sarrayGetString(searchpaths, i, L_NOCOPY);
 		int rl = getPathRootLength(sp_entry);
 		if (rl <= 0) {
-			char* newpath = pathJoin(respfile_dirname, sp_entry);
+			char* newpath = pathJoin(abs_basedir_path, sp_entry);
+			convertSepCharsInPath(newpath, UNIX_PATH_SEPCHAR);
+			sarrayReplaceString(searchpaths, i, newpath, L_NOCOPY);
+		}
+		else {
+			char* newpath = pathJoin(sp_entry, NULL);
+			convertSepCharsInPath(newpath, UNIX_PATH_SEPCHAR);
 			sarrayReplaceString(searchpaths, i, newpath, L_NOCOPY);
 		}
 	}
@@ -626,25 +669,24 @@ SARRAY* leptProcessResponsefileLines(SARRAY* const lines, const SARRAY* const se
 	SARRAY* locatedSearchPaths = sarrayCreate(0);
 	if (!rv)
 		return ERROR_PTR("locatedSearchPaths[] cannot be allocated", __func__, NULL);
-	const char* active_responsefile = NULL;
+	const char* active_responsefile;
 	SARRAY* active_searchpaths;
-	if (!(search_mode & L_LOCATE_IGNORE_CURRENT_DIR_FLAG)) {
-		// as we will be using the 'local relative to respfile dirname path', this is
-		// the only time we MAY be requiring the CWD, so we better patch that one into
-		// the searchpath set, hence we can permanently flag the search_mode with
-		// the 'ignore CWD' flag.
-		char* cdir = getcwd(NULL, 0);
-		if (cdir == NULL) {
-			return ERROR_PTR("no current dir found", __func__, NULL);
-		}
-		const char* fake_respfile = pathJoin(cdir, "(dummy)");
-		active_searchpaths = pathDeducePathSet(searchpath_set, fake_respfile);
-		active_responsefile = fake_respfile;
-		search_mode |= L_LOCATE_IGNORE_CURRENT_DIR_FLAG;
+	int files_collected_via_lines_cnt = 0;
+
+	// as we will be using the 'local relative to respfile dirname path', this is
+	// the only time we MAY be requiring the CWD, so we better patch that one into
+	// the searchpath set, hence we can permanently flag the search_mode with
+	// the 'ignore CWD' flag.
+	char* cdir = getcwd(NULL, 0);
+	if (cdir == NULL) {
+		return ERROR_PTR("no current dir found", __func__, NULL);
 	}
-	else {
-		active_searchpaths = sarrayCopy(searchpath_set);
-	}
+	const char* fake_respfile = pathJoin(cdir, "(dummy)");
+	active_searchpaths = pathDeducePathSet(searchpath_set, cdir, !(search_mode & L_LOCATE_IGNORE_CURRENT_DIR_FLAG));
+	active_responsefile = fake_respfile;
+	free(cdir);
+	search_mode |= L_LOCATE_IGNORE_CURRENT_DIR_FLAG;
+
 	//
 	// the trick with the searchpaths stack is:
 	// - a @responsefile will PUSH before and POP after
@@ -703,9 +745,9 @@ copy_verbatim_with_fail:
 			;
 			// all the other lines can be either '='-carrying assignment statements or filespecs.
 			// Here we decide which and treat both types.
-			if (TRUE) {
+			{
 				int equ_offset = strcspn(entry, "=");
-				if (equ_offset) {
+				if (equ_offset && entry[equ_offset] != 0) {
 					// scan the keyword:
 					int pos;
 					for (pos = 0; pos < equ_offset; pos++) {
@@ -744,7 +786,7 @@ copy_verbatim_with_fail:
 			const char* filepath = leptLocateFileInSearchpath(entry + 1, active_searchpaths, !!(search_mode & L_LOCATE_IGNORE_CURRENT_DIR_FLAG), NULL);
 			if (!filepath)
 			{
-				L_WARNING("Failed to locate responsefile in the searchpath. File: %s", __func__, entry + 1);
+				L_ERROR("Failed to locate responsefile in the searchpath; skipping this one. File: %s", __func__, entry + 1);
 				// copy reponsefile line verbatim, i.e. including leading '@' marker:
 				goto copy_verbatim_with_fail;
 			}
@@ -777,15 +819,25 @@ copy_verbatim_with_fail:
 				return ERROR_PTR("SEARCHPATH=<paths> stack depth exhausted. You need to flatten/simplify your response files.", __func__, NULL);
 			}
 			else {
+#if 0
 				const char* l = stringJoin(ignore_marker, entry);
 				sarrayInsertString(sublines, 0, l, L_INSERT);
+#endif
 #if 0
 				sarrayInsertString(sublines, 0, "SEARCHPATH=\x0E", L_COPY);	// 'push' instruction: ASCII ShiftOut, and quite illegal as a filepath spec :-)
 #endif
 				sarrayAddString(sublines, "SEARCHPATH=\x0F", L_COPY);	// 'pop' instruction, ShiftIn, and quite illegal as a filepath spec. :-)
 
-				active_searchpaths = sp_stack[sp_stackpos].sp_base = pathDeducePathSet(active_searchpaths, filepath);
+				// replace any './' relative path references in the responsefile's lines with the basedir, based on the responsefile path itself:
+				// all relative-path filespecs in a responsefile are *local* to the responsefile.
+				const char* respfile_dirname;
+				splitPathAtDirectory(filepath, &respfile_dirname, NULL);
+
+				active_searchpaths = sp_stack[sp_stackpos].sp_base = pathDeducePathSet(active_searchpaths, respfile_dirname, TRUE);
+				sp_stack[sp_stackpos].sp_active = NULL;
 				active_responsefile = sp_stack[sp_stackpos].file = filepath;
+
+				stringDestroy(&respfile_dirname);
 
 				// inject expanded respfile content into lines[] via copy-on-write:
 				if (in == lines) {
@@ -816,9 +868,14 @@ copy_verbatim_with_fail:
 						return ERROR_PTR("SEARCHPATH=<paths> stack depth exhausted. You need to flatten/simplify your response files.", __func__, NULL);
 					}
 					else {
-						SARRAY* lcl_arr = pathDeducePathSet(active_searchpaths, active_responsefile);
-						sarrayDestroy(&sp_stack[sp_stackpos].sp_active);
-						active_searchpaths = sp_stack[sp_stackpos].sp_active = lcl_arr;
+						// all relative-path filespecs in a responsefile are *local* to the responsefile.
+						const char* respfile_dirname;
+						splitPathAtDirectory(active_responsefile, &respfile_dirname, NULL);
+
+						SARRAY* lcl_arr = pathDeducePathSet(active_searchpaths, respfile_dirname, TRUE);
+						stringDestroy(&respfile_dirname);
+						active_searchpaths = sp_stack[sp_stackpos].sp_base = lcl_arr;
+						sp_stack[sp_stackpos].sp_active = NULL;
 					}
 					continue;
 
@@ -860,11 +917,15 @@ copy_verbatim_with_fail:
 			SARRAY* srch_arr = sarrayCreate(1);
 			sarraySplitString(srch_arr, searchdir_list_str, sep_marker);
 
-			SARRAY* lcl_arr = pathDeducePathSet(srch_arr, active_responsefile);
+			// replace any './' relative path references with our new basedir, based of the responsefile path itself:
+			// all relative-path filespecs in a responsefile are *local* to the responsefile.
+			const char* respfile_dirname;
+			splitPathAtDirectory(active_responsefile, &respfile_dirname, NULL);
 
-			if (active_searchpaths == sp_stack[sp_stackpos].sp_active) {
-				sarrayDestroy(&sp_stack[sp_stackpos].sp_active);
-			}
+			SARRAY* lcl_arr = pathDeducePathSet(srch_arr, respfile_dirname, TRUE);
+			stringDestroy(&respfile_dirname);
+
+			sarrayDestroy(&sp_stack[sp_stackpos].sp_active);
 			active_searchpaths = sp_stack[sp_stackpos].sp_active = lcl_arr;
 
 			{

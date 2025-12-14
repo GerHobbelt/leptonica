@@ -483,6 +483,8 @@ l_int32  n;
  * Notes:
  *      (1) See usage comments at the top of this file.  L_INSERT is
  *          equivalent to L_NOCOPY.
+ *      (2) When %index points at the end of the array (%index == sarrayGetCount())
+ *          then this function is equivalent to sarrayAddString().
  * </pre>
  */
 l_ok
@@ -502,7 +504,7 @@ sarrayInsertString(SARRAY* sa,
 
 	n = sarrayGetCount(sa);
 
-	if (index < 0 || index >= n)
+	if (index < 0 || index > n)
 		return ERROR_INT("array index out of bounds", __func__, 1);
 
 	if (n >= sa->nalloc) {
@@ -510,7 +512,11 @@ sarrayInsertString(SARRAY* sa,
 			return ERROR_INT("extension failed", __func__, 1);
 	}
 
-	memmove(sa->array + index + 1, sa->array + index, 1 * sizeof(sa->array[0]));
+	int n2mv = n - index;
+	if (n2mv) {
+		memmove(sa->array + index + 1, sa->array + index, n2mv * sizeof(sa->array[0]));
+	}
+	// else:: insert behaves as the append operation @ (index == n)
 
 	if (copyflag == L_COPY)
 		sa->array[index] = stringNew(string);
@@ -790,7 +796,7 @@ sarrayToString(SARRAY  *sa,
  * \param[in]   sa          string array
  * \param[in]   first       index of first string to use; starts with 0
  * \param[in]   nstrings    number of strings to append into the result; use
- *                          0 to append to the end of the sarray
+ *                          0 / -1 to append to the end of the sarray
  * \param[in]   addnlflag   flag: 0 adds nothing to each substring
  *                                1 adds '\n' to each substring
  *                                2 adds ' ' to each substring
@@ -841,7 +847,7 @@ l_int32  n, i, last, size, index, len;
         /* Determine the range of string indices to be used */
     if (first < 0 || first >= n)
         return (char *)ERROR_PTR("first not valid", __func__, NULL);
-    if (nstrings == 0 || (nstrings > n - first))
+    if (nstrings <= 0 || (nstrings > n - first))
         nstrings = n - first;  /* no overflow */
     last = first + nstrings - 1;
 
@@ -1049,7 +1055,7 @@ sarrayInsertRange(SARRAY* sa1,
 	l_int32  end)
 {
 	char* str;
-	l_int32  n1, n2, i, dst_count, offset, count2, pos1, pos2;
+	l_int32  n1, n2, i, dst_count, offset, count2, count3, pos1, pos2;
 
 	if (!sa1)
 		return ERROR_INT("sa1 not defined", __func__, 1);
@@ -1059,13 +1065,18 @@ sarrayInsertRange(SARRAY* sa1,
 	if (start < 0)
 		start = 0;
 	n2 = sarrayGetCount(sa2);
-	if (end < 0 || end >= n2)
-		end = n2 - 1;
+	if (end < 0 || end > n2)
+		end = n2;
 	if (start > end)
 		return ERROR_INT("start > end", __func__, 1);
 
 	if (start == end) {
 		// nothing to insert
+		return 0;
+	}
+	if (start > end) {
+		// nothing to insert
+		L_WARNING("start >= end: is this negative distance intended?", __func__);
 		return 0;
 	}
 
@@ -1083,7 +1094,10 @@ sarrayInsertRange(SARRAY* sa1,
 
 	// make room for the new entries:
 	offset = index + count2;
-	memmove(sa1->array + offset, sa1->array + index, count2 * sizeof(sa1->array[0]));
+	count3 = n1 - index;
+	if (count3 > 0) {
+		memmove(sa1->array + offset, sa1->array + index, count3 * sizeof(sa1->array[0]));
+	}
 
 	for (i = 0; i < count2; i++) {
 		pos1 = index + i;
@@ -2016,13 +2030,13 @@ SARRAY  *saout;
 SARRAY*
 getFilenamesInDirectory(const char* dirname)
 {
-	return getFilenamesInDirectoryEx(dirname, FALSE);
+	return getFilenamesInDirectoryEx(dirname, FALSE, TRUE);
 }
 
 #ifndef _WIN32
 
 SARRAY *
-getFilenamesInDirectoryEx(const char  *dirname, int wantSubdirs)
+getFilenamesInDirectoryEx(const char  *dirname, l_ok wantSubdirs, l_ok reportDirNotExistErrors)
 {
 char           *gendir, *realdir, *stat_path;
 size_t          size;
@@ -2052,12 +2066,17 @@ struct stat     st;
     LEPT_FREE(gendir);
     if (realdir == NULL)
         return (SARRAY *)ERROR_PTR("realdir not made", __func__, NULL);
-    if ((pdir = opendir(realdir)) == NULL) {
-        L_ERROR("directory %s not opened: opendir() failed for the given path: probably a non-existent dir/path\n", __func__, realdir);
-        LEPT_FREE(realdir);
-        return NULL;
+	safiles = sarrayCreate(0);
+	if ((pdir = opendir(realdir)) == NULL) {
+		if (reportDirNotExistErrors) {
+			L_ERROR("directory %s not opened: opendir() failed for the given path: probably a non-existent dir/path\n", __func__, realdir);
+			LEPT_FREE(realdir);
+			return safiles;
+		}
+		LEPT_FREE(realdir);
+		sarrayDestroy(&safiles);
+		return NULL;
     }
-    safiles = sarrayCreate(0);
     while ((pdirentry = readdir(pdir))) {
 		if (strcmp(pdirentry->d_name, "..") == 0 || strcmp(pdirentry->d_name, ".") == 0)
 			continue;
@@ -2088,7 +2107,7 @@ struct stat     st;
 #include <windows.h>
 
 SARRAY *
-getFilenamesInDirectoryEx(const char  *dirname, int wantSubdirs)
+getFilenamesInDirectoryEx(const char  *dirname, l_ok wantSubdirs, l_ok reportDirNotExistErrors)
 {
 char             *pszDir;
 char             *realdir;
@@ -2115,8 +2134,11 @@ WIN32_FIND_DATAA  ffd;
 
     hFind = FindFirstFileA(pszDir, &ffd);
     if (INVALID_HANDLE_VALUE == hFind) {
-        sarrayDestroy(&safiles);
-		L_ERROR("FindFirstFile returned an error for the given path: probably a non-existent dir/path: \"%s\"\n", __func__, pszDir);
+		if (reportDirNotExistErrors) {
+			L_ERROR("FindFirstFile returned an error for the given path: probably a non-existent dir/path: \"%s\"\n", __func__, pszDir);
+			return safiles;
+		}
+		sarrayDestroy(&safiles);
 		LEPT_FREE(pszDir);
 		return (SARRAY*)NULL;
     }

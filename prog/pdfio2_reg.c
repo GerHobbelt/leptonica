@@ -356,7 +356,7 @@ PIXA  *pixa;
     pix3 = pixMorphSequence(pix2, "c20.1 + c1.20", 0);
     *pboxa = pixConnComp(pix3, NULL, 8);
     if (debugfile && rp->diag_spec) {
-		leptDebugSetFilenameForPrefix(rp->diag_spec, debugfile, TRUE);
+		leptDebugSetFilenameForPrefix(rp->diag_spec, debugfile, -1);
         pixa = pixaCreate(0);
 		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 		pixaAddPix(pixa, pixs, L_COPY);

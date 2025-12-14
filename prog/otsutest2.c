@@ -94,8 +94,7 @@ int main(int argc, const char** argv)
 	{
 		const char* filename = sarrayGetString(sargv, argidx, L_NOCOPY);
 		const char* filepath = DEMOPATH(filename);
-		const char *basename = getPathBasename(filepath, FALSE);
-		leptDebugSetFilenameForPrefix(rp->diag_spec, basename, FALSE);
+		leptDebugSetFilenameForPrefix(rp->diag_spec, filepath, -1);
 
 		leptDebugSetStepIdAtDepth(rp->diag_spec, -1, argidx + 1);   // inc parent level
 

@@ -83,42 +83,29 @@ int main(int    argc,
 
 	//lept_mkdir("lept/otsu3");
 
-	SARRAY* sargv = NULL;
-	if (argc <= 1)
-	{
-		// default:
-		sargv = sarrayCreate(0);
-		sarrayAddString(sargv, "1555.007.jpg", L_COPY);
-	}
-	else
-	{
-		sargv = lept_locate_all_files_in_searchpaths(argc - 1, argv + 1);
-	}
+		//sarrayAddString(sargv, "1555.007.jpg", L_COPY);
+		//sargv = lept_locate_all_files_in_searchpaths(argc - 1, argv + 1);
 
 	// every input file is treated as another round and represents the parent level in the step hierarchy:
 	leptDebugAddStepLevel(rp->diag_spec);
 
-	int argv_count = sarrayGetCount(sargv);
+	int argv_count = regGetArgCount(rp);
 	if (argv_count == 0) {
-		L_ERROR("no image files specified for processing: empty input set.", __func__);
+		L_WARNING("no image files specified on the command line for processing: assuming a default input set.\n", __func__);
 	}
-	for (int argidx = 0; argidx < argv_count; argidx++)
+	for (regMarkStartOfFirstTestround(rp, +1); regHasFileArgsAvailable(rp); regMarkEndOfTestround(rp))
 	{
-		const char* filename = sarrayGetString(sargv, argidx, L_NOCOPY);
-		const char* filepath = DEMOPATH(filename);
-		const char *basename = getPathBasename(filepath, FALSE);
-		leptDebugSetFilenameForPrefix(rp->diag_spec, basename, FALSE);
+		const char* filepath = regGetFileArgOrDefault(rp, "1555.007.jpg");
+		leptDebugSetFilenameForPrefix(rp->diag_spec, filepath, -2);
 
-		leptDebugSetStepIdAtDepth(rp->diag_spec, -1, argidx + 1);   // inc parent level
+		leptDebugSetStepIdAtDepth(rp->diag_spec, -1, regGetCurrentArgIndex(rp));   // inc parent level
 
-
-		lept_stderr("\n\n\nProcessing image #%d~#%d: %s = %s :: %s\n", argidx + 1, leptDebugGetStepIdAtLevel(rp->diag_spec, -1), filename, filepath, leptDebugGetFilenameForPrefix(rp->diag_spec));
-
+		lept_stderr("\n\n\nProcessing image #%d~#%d: %s :: %s\n", regGetCurrentArgIndex(rp), leptDebugGetStepIdAtLevel(rp->diag_spec, -1), filepath, leptDebugGetFilenameForPrefix(rp->diag_spec));
 
 		pixs = pixRead(filepath);
 		pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
-		snprintf(textstr, sizeof(textstr), "source: %s", filename);
+		snprintf(textstr, sizeof(textstr), "source: %s", filepath);
 		pixSetText(pixs, textstr);
 
 		pixg = pixConvertTo8(pixs, 0);
@@ -237,7 +224,7 @@ int main(int    argc,
 				pix1 = pixaDisplayTiledInColumnsWithText(pixa1, 3, 1.0, 20, 2, 6, 0x0f066700);
 
 				snprintf(textstr, sizeof(textstr),
-					"Scorefract = %1.1f\nGrid: %d x %d (cell #: %d x %d)\nH x W: %d x %d\nThresh = %d (%s)", scorefract, sx, sy, grid, grid, pixGetHeight(pixg), pixGetWidth(pixg), thresh, filename);
+					"Scorefract = %1.1f\nGrid: %d x %d (cell #: %d x %d)\nH x W: %d x %d\nThresh = %d (%s)", scorefract, sx, sy, grid, grid, pixGetHeight(pixg), pixGetWidth(pixg), thresh, filepath);
 				pix2 = pixAddSingleTextblock(pix1, bmf, textstr, 0x06670f00,
 					L_ADD_BELOW, NULL);
 
@@ -266,13 +253,10 @@ int main(int    argc,
 		pixDestroy(&pixg);
 		pixaDestroy(&pixad);
 
-		LEPT_FREE(filename);
 		LEPT_FREE(filepath);
 	}
 
 	leptDebugPopStepLevel(rp->diag_spec);
-
-	sarrayDestroy(&sargv);
 
 	return regTestCleanup(rp);
 }

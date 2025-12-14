@@ -270,13 +270,16 @@ void TestGenPathname(L_REGPARAMS  *rp,
                      const char   *fname,
                      const char   *result)
 {
-char  expect[512], localdir[256];
+	char  expect[512];
+	char *localdir;
 
     char *path = genPathname(dir, fname);
     if (!dir || dir[0] == '\0') {
-        if (!getcwd(localdir, sizeof(localdir)))
-            lept_stderr("bad bad bad -- no local directory!\n");
+		if ((localdir = getcwd(NULL, 0)) == NULL) {
+			L_ERROR("bad bad bad -- no local directory!\n", __func__);
+		}
         snprintf(expect, sizeof(expect), "%s/%s", localdir, result);
+		stringDestroy(&localdir);
 #ifdef _WIN32
         convertSepCharsInPath(expect, UNIX_PATH_SEPCHAR);
 #endif  /* _WIN32 */

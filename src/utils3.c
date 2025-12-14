@@ -332,8 +332,8 @@ getPathRootLength(const char* path)
  * \brief   getPathBasename()
  *
  * \param[in]    path
- * \param[in]    strip_off_extension
- * \return  the basename part of the given path, e.g. /a/b/ccc.x --> ccc.x (or ccc when strip_off_extension is TRUE)
+ * \param[in]    strip_off_parts_code
+ * \return  the basename part of the given path, e.g. /a/b/ccc.x --> ccc.x (or ccc when strip_off_parts_code is negative)
  *
  * <pre>
  * Notes:
@@ -341,22 +341,53 @@ getPathRootLength(const char* path)
  * </pre>
  */
 char *
-getPathBasename(const char* path, int strip_off_extension)
+getPathBasename(const char* path, l_int32 strip_off_parts_code)
 {
-	char* tail;
-
 	if (!path)
 		return (char *)ERROR_PTR("path not defined", __func__, NULL);
 
-	splitPathAtDirectory(path, NULL, &tail);
-	if (strip_off_extension) {
-		char* basename;
-		splitPathAtExtension(tail, &basename, NULL);
-		LEPT_FREE(tail);
-		tail = basename;
+	char *cpathname = stringNew(path);
+	convertSepCharsInPath(cpathname, UNIX_PATH_SEPCHAR);
+
+	SARRAY* sa = sarrayCreate(0);
+	if (sarraySplitString(sa, cpathname, "/"))
+		return (char*)ERROR_PTR("could not split input path into elements", __func__, NULL);
+	stringDestroy(&cpathname);
+
+	int n = sarrayGetCount(sa);
+	if (n > 0) {
+		if (strip_off_parts_code <= 0) {
+			// strip off filename extension. Special care is taken when running into compressed tar archives: .tar.gz, etc...
+			char* fname = sarrayGetString(sa, n - 1, L_NOCOPY);
+			char* ext = strrchr(fname, '.');
+			if (ext)
+				*ext = 0;
+			ext = strrchr(fname, '.');
+			if (ext && 0 == strcmp(ext + 1, "tar"))
+				*ext = 0;
+		}
+		int prefix_cnt = abs(strip_off_parts_code);
+		if (!prefix_cnt)
+			prefix_cnt = 1;
+		n = n - prefix_cnt;
+		if (n < 0)
+			n = 0;
+		char* rv = sarrayToStringRange(sa, n, -1, 1 /* '\n' */);
+		// now replace every '\n' with '/', except the very last one, which should be stripped off:
+		{
+			char* restrict s = rv;
+			for ( ; *s; s++) {
+				if (*s == '\n')
+					*s = '/';
+			}
+			*--s = 0;
+		}
+		sarrayDestroy(&sa);
+		return rv;
 	}
 
-	return tail;
+	sarrayDestroy(&sa);
+	return (char*)ERROR_PTR("input path could not be split into elements", __func__, NULL);
 }
 
 

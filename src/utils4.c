@@ -353,6 +353,22 @@ get_prevalent_diagspec(LDIAG_CTX spec1, LDIAG_CTX spec2)
 }
 
 
+// shortcut/optimization helper for large loops where we would otherwise be
+// cycling through all entries uselessly, once we got the best possible
+// diagspec already.
+//
+// This speeds up loops with get_prevalent_diagspec() checks.
+static inline int
+got_the_best_possible_diagspec_already(int count, LDIAG_CTX spec)
+{
+	// extra heuristic to break long-running loops:
+	if (count > 42)
+		return TRUE;
+
+	return (spec != NULL && leptIsDebugModeActive(spec));
+}
+
+
 LDIAG_CTX
 leptDebugGetDiagnosticsSpecFromAny(unsigned int arg_count, LDIAG_CTX spec1, LDIAG_CTX spec2, ...)
 {
@@ -361,7 +377,7 @@ leptDebugGetDiagnosticsSpecFromAny(unsigned int arg_count, LDIAG_CTX spec1, LDIA
 	va_start(ap, spec2);
 	if (arg_count < 2)
 		arg_count = 2;
-	for (arg_count--; arg_count > 0; arg_count--) {
+	for (arg_count--; arg_count > 0 && !got_the_best_possible_diagspec_already(arg_count, rv); arg_count--) {
 		rv = get_prevalent_diagspec(rv, spec2);
 
 		spec2 = va_arg(ap, LDIAG_CTX);
@@ -392,9 +408,10 @@ pixGetDiagnosticsSpecFromAny(unsigned int arg_count, const PIX* pix1, const PIX*
 	va_start(ap, pix2);
 	if (arg_count < 2)
 		arg_count = 2;
-	for (arg_count--; arg_count > 0; arg_count--) {
-		if (pix2)
+	for (arg_count--; arg_count > 0 && !got_the_best_possible_diagspec_already(arg_count, rv); arg_count--) {
+		if (pix2) {
 			rv = get_prevalent_diagspec(rv, pix2->diag_spec);
+		}
 
 		pix2 = va_arg(ap, const PIX *);
 	}
@@ -481,9 +498,10 @@ fpixGetDiagnosticsSpecFromAny(unsigned int arg_count, const FPIX* pix1, const FP
 	va_start(ap, pix2);
 	if (arg_count < 2)
 		arg_count = 2;
-	for (arg_count--; arg_count > 0; arg_count--) {
-		if (pix2)
+	for (arg_count--; arg_count > 0 && !got_the_best_possible_diagspec_already(arg_count, rv); arg_count--) {
+		if (pix2) {
 			rv = get_prevalent_diagspec(rv, pix2->diag_spec);
+		}
 
 		pix2 = va_arg(ap, const FPIX*);
 	}
@@ -570,9 +588,10 @@ dpixGetDiagnosticsSpecFromAny(unsigned int arg_count, const DPIX* pix1, const DP
 	va_start(ap, pix2);
 	if (arg_count < 2)
 		arg_count = 2;
-	for (arg_count--; arg_count > 0; arg_count--) {
-		if (pix2)
+	for (arg_count--; arg_count > 0 && !got_the_best_possible_diagspec_already(arg_count, rv); arg_count--) {
+		if (pix2) {
 			rv = get_prevalent_diagspec(rv, pix2->diag_spec);
+		}
 
 		pix2 = va_arg(ap, const DPIX*);
 	}
@@ -645,7 +664,7 @@ pixaGetDiagnosticsSpec(const PIXA* pixa)
 
 	LDIAG_CTX rv = pixa->diag_spec;
 	l_int32 cnt = pixaGetCount(pixa);
-	for (l_int32 i = 0; i < cnt; cnt++) {
+	for (l_int32 i = 0; i < cnt && !got_the_best_possible_diagspec_already(i, rv); cnt++) {
 		PIX* pix1 = pixaGetPix(pixa, i, L_CLONE);
 		rv = get_prevalent_diagspec(rv, pix1->diag_spec);
 		pixDestroy(&pix1);
@@ -665,9 +684,10 @@ pixaGetDiagnosticsSpecFromAny(unsigned int arg_count, const PIXA* pixa1, const P
 	va_start(ap, pixa2);
 	if (arg_count < 2)
 		arg_count = 2;
-	for (arg_count--; arg_count > 0; arg_count--) {
-		if (pixa2)
+	for (arg_count--; arg_count > 0 && !got_the_best_possible_diagspec_already(arg_count, rv); arg_count--) {
+		if (pixa2) {
 			rv = get_prevalent_diagspec(rv, pixaGetDiagnosticsSpec(pixa2));
+		}
 
 		pixa2 = va_arg(ap, const PIXA*);
 	}
@@ -765,7 +785,7 @@ fpixaGetDiagnosticsSpec(const FPIXA* pixa)
 
 	LDIAG_CTX rv = pixa->diag_spec;
 	l_int32 cnt = fpixaGetCount(pixa);
-	for (l_int32 i = 0; i < cnt; cnt++) {
+	for (l_int32 i = 0; i < cnt && !got_the_best_possible_diagspec_already(i, rv); cnt++) {
 		FPIX* pix1 = fpixaGetFPix(pixa, i, L_CLONE);
 		rv = get_prevalent_diagspec(rv, pix1->diag_spec);
 		fpixDestroy(&pix1);
@@ -785,9 +805,10 @@ fpixaGetDiagnosticsSpecFromAny(unsigned int arg_count, const FPIXA* pixa1, const
 	va_start(ap, pixa2);
 	if (arg_count < 2)
 		arg_count = 2;
-	for (arg_count--; arg_count > 0; arg_count--) {
-		if (pixa2)
+	for (arg_count--; arg_count > 0 && !got_the_best_possible_diagspec_already(arg_count, rv); arg_count--) {
+		if (pixa2) {
 			rv = get_prevalent_diagspec(rv, fpixaGetDiagnosticsSpec(pixa2));
+		}
 
 		pixa2 = va_arg(ap, const FPIXA*);
 	}
@@ -897,9 +918,10 @@ gplotGetDiagnosticsSpecFromAny(unsigned int arg_count, const GPLOT* gplot1, cons
 	va_start(ap, gplot2);
 	if (arg_count < 2)
 		arg_count = 2;
-	for (arg_count--; arg_count > 0; arg_count--) {
-		if (gplot2)
+	for (arg_count--; arg_count > 0 && !got_the_best_possible_diagspec_already(arg_count, rv); arg_count--) {
+		if (gplot2) {
 			rv = get_prevalent_diagspec(rv, gplot2->diag_spec);
+		}
 
 		gplot2 = va_arg(ap, const GPLOT*);
 	}
@@ -985,9 +1007,10 @@ boxaGetDiagnosticsSpecFromAny(const BOXA* boxa1, const BOXA* boxa2, ...)
 	va_start(ap, boxa2);
 	if (arg_count < 2)
 		arg_count = 2;
-	for (arg_count--; arg_count > 0; arg_count--) {
-		if (boxa2)
+	for (arg_count--; arg_count > 0 && !got_the_best_possible_diagspec_already(arg_count, rv); arg_count--) {
+		if (boxa2) {
 			rv = get_prevalent_diagspec(rv, boxa2->diag_spec);
+		}
 
 		boxa2 = va_arg(ap, const BOXA*);
 	}
@@ -1349,7 +1372,7 @@ leptDebugGetFileBasePath(LDIAG_CTX spec)
  * \brief   leptDebugSetFilenameForPrefix()
  *
  * \param[in]    source_filename           the path to the file; may be relative or absolute or just the file name itself.
- * \param[in]    strip_off_extension
+ * \param[in]    strip_off_parts_code
  *
  * <pre>
  * Notes:
@@ -1357,10 +1380,12 @@ leptDebugGetFileBasePath(LDIAG_CTX spec)
  *          This is useful when, for example, processing source images in bulk and you wish to quickly
  *          locate the relevant debug/diagnostics outputs for a given source image.
  *      (2) By passing NULL, the prefix is erased.
+ *      (3) %strip_off_parts_code is the number of path elements to keep for the prefix, where negative
+ *          counts indicate the filename extension should be stripped off. code 0 is treated the same as -1.
  * </pre>
  */
 void
-leptDebugSetFilenameForPrefix(LDIAG_CTX spec, const char* source_filename, l_ok strip_off_extension)
+leptDebugSetFilenameForPrefix(LDIAG_CTX spec, const char* source_filename, l_int32 strip_off_parts_code)
 {
 	if (!spec)
 	{
@@ -1377,7 +1402,7 @@ leptDebugSetFilenameForPrefix(LDIAG_CTX spec, const char* source_filename, l_ok 
 		// when a full path has been specified, strip off any directories: we assume the filename is
 		// pretty unique by itself. When it isn't, there's little loss, as we also have the batch run #
 		// and the process step # to help make the target uniquely named.
-		spec->filename_prefix = getPathBasename(source_filename, strip_off_extension);
+		spec->filename_prefix = getPathBasename(source_filename, strip_off_parts_code);
 	}
 
 	spec->must_regenerate = 1;
@@ -2185,10 +2210,8 @@ leptDebugGenFilename(LDIAG_CTX spec, const char* filename_fmt_str, ...)
 	va_start(va, filename_fmt_str);
 	const char* fn = string_vasprintf(filename_fmt_str, va);
 	va_end(va);
-	const char* path = leptDebugGetFileBasePath(spec);
-	const char* f = pathJoin(path, fn);
+	const char* f = pathJoin(leptDebugGetFileBasePath(spec), fn);
 	stringDestroy(&fn);
-	stringDestroy(&path);
 	return f;
 }
 
@@ -2217,10 +2240,8 @@ leptDebugGenFilepath(LDIAG_CTX spec, const char* path_fmt_str, ...)
 	va_start(va, path_fmt_str);
 	const char *fn = string_vasprintf(path_fmt_str, va);
 	va_end(va);
-	const char* path = leptDebugGetFileBasePath(spec);
-	const char* f = pathJoin(path, fn);
+	const char* f = pathJoin(leptDebugGetFileBasePath(spec), fn);
 	stringDestroy(&fn);
-	stringDestroy(&path);
 	// TODO: cache & cycle through about 16 filepath slots. AT LEAST 2 as boxa1_reg.c is assuming the last 2 generated paths remain valid for a while!
 	return f;
 }
@@ -2239,10 +2260,8 @@ leptDebugGenFilepathEx(const char* directory, LDIAG_CTX spec, const char* path_f
 	va_start(va, path_fmt_str);
 	const char* fn = string_vasprintf(path_fmt_str, va);
 	va_end(va);
-	const char* path = leptDebugGetFileBasePath(spec);
-	const char* f = pathJoin(path, fn);
+	const char* f = pathJoin(leptDebugGetFileBasePath(spec), fn);
 	stringDestroy(&fn);
-	stringDestroy(&path);
 	return f;
 }
 

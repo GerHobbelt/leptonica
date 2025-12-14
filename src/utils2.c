@@ -283,7 +283,9 @@ stringDestroy(const char **src_ref)
 		return;
 	}
 	if (!*src_ref) {
+#ifdef DEBUG
 		L_WARNING("src is NULL; is this a double free attempt?\n", __func__);
+#endif
 		return;
 	}
 
@@ -337,7 +339,7 @@ l_int32  i;
  *
  * \param[in]    src      string
  * \param[in]    start    byte position at start of segment
- * \param[in]    nbytes   number of bytes in the segment; use 0 to go to end
+ * \param[in]    nbytes   number of bytes in the segment; use 0/-1 to go to end
  * \return  copy of segment, or NULL on error
  *
  * <pre>
@@ -347,7 +349,7 @@ l_int32  i;
  *          by the starting position and the number of bytes.
  *      (2) The start location %start must be within the string %src.
  *      (3) The copy is truncated to the end of the source string.
- *          Use %nbytes = 0 to copy to the end of %src.
+ *          Use %nbytes = 0 or -1 to copy to the end of %src.
  * </pre>
  */
 char *
@@ -1977,6 +1979,7 @@ FILE  *fp;
         return (FILE *)ERROR_PTR("filename not defined", __func__, NULL);
 
     fname = genPathname(filename, NULL);
+	lept_mkdir_basedir(fname);
     fp = fopen(fname, modestring);
     if (!fp)
         fp = (FILE *)ERROR_PTR_1("stream not opened", fname, __func__, NULL);
@@ -2202,63 +2205,93 @@ lept_free(const void *ptr)
 l_int32
 lept_mkdir(const char  *subdir)
 {
-char     *dir, *tmpdir;
-l_int32   i, n;
+char     *dir;
+char     *realdir;
 l_int32   ret = 0;
-SARRAY   *sa;
+l_int32  exists;
 #ifdef  _WIN32
 l_uint32  attributes;
 #endif  /* _WIN32 */
 
-    if (!LeptDebugOK) {
+#if 0
+	if (!LeptDebugOK) {
         L_INFO("making named temp subdirectory %s is disabled\n",
                __func__, subdir);
         return 0;
     }
+#endif
 
-    if (!subdir)
-        return ERROR_INT("subdir not defined", __func__, 1);
-    if ((strlen(subdir) == 0) || (subdir[0] == '.') || (subdir[0] == '/'))
-        return ERROR_INT("subdir not an actual subdirectory", __func__, 1);
-
-	// make sure there's no /xyz/../../ path segments in subdir traveling outside the /tmp/ tree:
-	dir = pathJoin("/tmp", subdir);
+	if (!subdir)
+		return ERROR_INT("subdir not defined", __func__, 1);
+	if (subdir[0] == 0)
+		return ERROR_INT("subdir is empty & not an actual subdirectory", __func__, 1);
+	l_int32 root_len = getPathRootLength(subdir);
+	if (root_len == 0) {
+		// relative paths are assumed relative to /tmp/ while absolute paths are processed as-is.
+		//
+		// When you wanted cleaned-up paths, you should've called pathJoin() or pathSafeJoin()
+		// on the input path before calling this function!
+		dir = pathJoin("/tmp", subdir);
+	}
+	else {
+		//L_INFO("subdir is an absolute path and processed as such: '%s'", __func__, subdir);
+		dir = stringNew(subdir);
+	}
 	if (!dir)
-		return ERROR_INT("directory name not made", __func__, 1);
-	if (strncmp("/tmp/", dir, 5) != 0)
-		return ERROR_INT("subdir not an actual subdirectory", __func__, 1);
+		return ERROR_INT("directory path not constructed", __func__, 1);
+	realdir = genPathname(dir, NULL);
 	LEPT_FREE(dir);
+	dir = realdir;   // `dir` is now allocated and can be 'scratched' below, sans prejudice.
 
-    sa = sarrayCreate(0);
-    sarraySplitString(sa, subdir, "/");
-    n = sarrayGetCount(sa);
-    dir = genPathname("/tmp", NULL);
-       /* Make sure the tmp directory exists */
+	lept_dir_exists(dir, &exists);
+	if (exists) {  /* exit silently: this is an optimization, when the target already exists on the filesystem. */
+		LEPT_FREE(dir);
+		return 0;
+	}
+
+	root_len = getPathRootLength(dir);
+	assert(root_len > 0);
+
+	{
+		char* cursor = dir + root_len;
+		size_t offset = strcspn(cursor, "/");
+		cursor += offset;
+		char mark = *cursor;
+		*cursor = 0;
+
+		/* Make sure the tmp/base directory exists */
 #ifndef _WIN32
-    if (mkdir(dir, 0777) != 0 && errno != EEXIST) {
-        ++ret;
-    }
+		if (mkdir(dir, 0770) != 0 && errno != EEXIST) {
+			++ret;
+		}
 #else
-    attributes = GetFileAttributesA(dir);
-    if (attributes == INVALID_FILE_ATTRIBUTES)
-        ret = (CreateDirectoryA(dir, NULL) ? 0 : 1);
+		attributes = GetFileAttributesA(dir);
+		if (attributes == INVALID_FILE_ATTRIBUTES)
+			ret = (CreateDirectoryA(dir, NULL) ? 0 : 1);
 #endif
-        /* Make all the subdirectories */
-    for (i = 0; i < n; i++) {
-        tmpdir = pathJoin(dir, sarrayGetString(sa, i, L_NOCOPY));
+
+		/* Make all the subdirectories */
+		while (mark != 0) {
+			*cursor = mark;
+			cursor++;
+			offset = strcspn(cursor, "/");
+			cursor += offset;
+			mark = *cursor;
+			*cursor = 0;
+
 #ifndef _WIN32
-        if (mkdir(tmpdir, 0777) != 0 && errno != EEXIST) {
-            ++ret;
-        }
+			if (mkdir(dir, 0770) != 0 && errno != EEXIST) {
+				++ret;
+			}
 #else
-        if (CreateDirectoryA(tmpdir, NULL) == 0)
-            ret += (GetLastError() != ERROR_ALREADY_EXISTS);
+			attributes = GetFileAttributesA(dir);
+			if (attributes == INVALID_FILE_ATTRIBUTES)
+				if (CreateDirectoryA(dir, NULL) == 0)
+					ret += (GetLastError() != ERROR_ALREADY_EXISTS);
 #endif
-        LEPT_FREE(dir);
-        dir = tmpdir;
-    }
+		}
+	}
     LEPT_FREE(dir);
-    sarrayDestroy(&sa);
     if (ret > 0)
         L_ERROR("failure to create %d directories\n", __func__, ret);
     return ret;
@@ -2292,24 +2325,32 @@ lept_rmdir(const char  *subdir)
 char    *dir, *fname, *fullname;
 l_int32  exists, ret, i, nfiles;
 SARRAY  *sa;
-#ifdef _WIN32
-char    *newpath;
-#else
 char    *realdir;
-#endif  /* _WIN32 */
 
     if (!subdir)
         return ERROR_INT("subdir not defined", __func__, 1);
-    if ((strlen(subdir) == 0) || (subdir[0] == '.') || (subdir[0] == '/'))
-        return ERROR_INT("subdir not an actual subdirectory", __func__, 1);
-
-        /* Find the temp subdirectory */
-    dir = pathJoin("/tmp", subdir);
+    if (subdir[0] == 0)
+        return ERROR_INT("subdir is empty & not an actual subdirectory", __func__, 1);
+	l_int32 root_len = getPathRootLength(subdir);
+	if (root_len == 0) {
+		// relative paths are assumed relative to /tmp/ while absolute paths are processed as-is.
+		//
+		// When you wanted cleaned-up paths, you should've called pathJoin() or pathSafeJoin()
+		// on the input path before calling this function!
+		dir = pathJoin("/tmp", subdir);
+	}
+	else {
+		//L_INFO("subdir is an absolute path and processed as such: '%s'", __func__, subdir);
+		dir = stringNew(subdir);
+	}
     if (!dir)
-        return ERROR_INT("directory name not made", __func__, 1);
-	// make sure there's no /xyz/../../ path segments in subdir traveling outside the /tmp/ tree:
-	if (strncmp("/tmp/", dir, 5) != 0)
-		return ERROR_INT("subdir not an actual subdirectory", __func__, 1);
+        return ERROR_INT("directory path not constructed", __func__, 1);
+	realdir = genPathname(dir, NULL);
+	LEPT_FREE(dir);
+	dir = realdir;
+	if (!dir)
+		return ERROR_INT("real directory path not constructed", __func__, 1);
+	assert(getPathRootLength(dir) > 0);
 	lept_dir_exists(dir, &exists);
     if (!exists) {  /* fail silently */
         LEPT_FREE(dir);
@@ -2326,23 +2367,138 @@ char    *realdir;
 
     for (i = 0; i < nfiles; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
-        fullname = genPathname(dir, fname);
+        fullname = pathJoin(dir, fname);
         remove(fullname);
         LEPT_FREE(fullname);
     }
 
 #ifndef _WIN32
-    realdir = genPathname("/tmp", subdir);
-    ret = rmdir(realdir);
-    LEPT_FREE(realdir);
+    ret = rmdir(dir);
 #else
-    newpath = genPathname(dir, NULL);
-    ret = (RemoveDirectoryA(newpath) ? 0 : 1);
-    LEPT_FREE(newpath);
+    ret = (RemoveDirectoryA(dir) ? 0 : 1);
 #endif  /* !_WIN32 */
 
     sarrayDestroy(&sa);
     LEPT_FREE(dir);
+    return ret;
+}
+
+
+/*!
+ * \brief   lept_mkdir_basedir()
+ *
+ * \param[in]    filepath    of /tmp or its OS specific equivalent
+ * \return  0 on success, non-zero on failure
+ *
+ * <pre>
+ * Notes:
+ *      (1) %filepath is a partial path that can consist of one or more
+ *          directories, plus a filename. The path to the file will
+ *          be constructed a la `mkdir -p $( dirname $filepath )`
+ *      (2) This makes any subdirectories of /tmp that are required.
+ *      (3) The root temp directory is:
+ *            /tmp    (unix)  [default]
+ *            [Temp]  (Windows)
+ * </pre>
+ */
+l_int32
+lept_mkdir_basedir(const char *filepath)
+{
+char     *dir;
+char     *basedir;
+l_int32   ret;
+
+#if 0
+	if (!LeptDebugOK) {
+        L_INFO("making named temp subdirectory %s is disabled\n",
+               __func__, subdir);
+        return 0;
+    }
+#endif
+
+	if (!filepath)
+		return ERROR_INT("filepath not defined", __func__, 1);
+	if (filepath[0] == 0)
+		return ERROR_INT("filepath is empty & not an actual file path", __func__, 1);
+	l_int32 root_len = getPathRootLength(filepath);
+	if (root_len == 0) {
+		// relative paths are assumed relative to /tmp/ while absolute paths are processed as-is.
+		//
+		// When you wanted cleaned-up paths, you should've called pathJoin() or pathSafeJoin()
+		// on the input path before calling this function!
+		dir = pathJoin("/tmp", filepath);
+	}
+	else {
+		//L_INFO("subdir is an absolute path and processed as such: '%s'", __func__, subdir);
+		dir = stringNew(filepath);
+	}
+	if (!dir)
+		return ERROR_INT("directory path not constructed", __func__, 1);
+	if (splitPathAtDirectory(dir, &basedir, NULL))
+		return ERROR_INT("file path could not split off its directory part for processing", __func__, 1);
+	stringDestroy(&dir);
+
+	ret = lept_mkdir(basedir);
+
+	stringDestroy(&basedir);
+    return ret;
+}
+
+
+/*!
+ * \brief   lept_rmdir_basedir()
+ *
+ * \param[in]    filepath    of /tmp or its OS specific equivalent
+ * \return  0 on success, non-zero on failure
+ *
+ * <pre>
+ * Notes:
+ *      (1) %filepath is a partial path that can consist of one or more
+ *          directories, plus a filename. The path to the file will
+ *          be constructed a la `mkdir -p $( dirname $filepath )`
+ *      (2) This removes all files from the specified subdirectory of
+ *          the root temp directory:
+ *            /tmp    (unix)
+ *            [Temp]  (Windows)
+ *          and then removes the subdirectory.
+ *      (3) The combination
+ *            lept_rmdir(subdir);
+ *            lept_mkdir(subdir);
+ *          is guaranteed to give you an empty subdirectory.
+ * </pre>
+ */
+l_int32
+lept_rmdir_basedir(const char *filepath)
+{
+char    *dir;
+l_int32  ret;
+char    *basedir;
+
+	if (!filepath)
+		return ERROR_INT("filepath not defined", __func__, 1);
+	if (filepath[0] == 0)
+		return ERROR_INT("filepath is empty & not an actual file path", __func__, 1);
+	l_int32 root_len = getPathRootLength(filepath);
+	if (root_len == 0) {
+		// relative paths are assumed relative to /tmp/ while absolute paths are processed as-is.
+		//
+		// When you wanted cleaned-up paths, you should've called pathJoin() or pathSafeJoin()
+		// on the input path before calling this function!
+		dir = pathJoin("/tmp", filepath);
+	}
+	else {
+		//L_INFO("subdir is an absolute path and processed as such: '%s'", __func__, subdir);
+		dir = stringNew(filepath);
+	}
+	if (!dir)
+		return ERROR_INT("directory path not constructed", __func__, 1);
+	if (splitPathAtDirectory(dir, &basedir, NULL))
+		return ERROR_INT("file path could not split off its directory part for processing", __func__, 1);
+	stringDestroy(&dir);
+
+	ret = lept_rmdir(basedir);
+
+	stringDestroy(&basedir);
     return ret;
 }
 
@@ -2794,7 +2950,7 @@ callSystemDebug(const char *cmd)
         L_ERROR("cmd not defined\n", __func__);
         return 1;
     }
-    if (LeptDebugOK == FALSE) {
+    if (!LeptDebugOK) {
         L_INFO("'system' calls are disabled\n", __func__);
         return 1;
     }
@@ -3462,6 +3618,61 @@ size_t   len;
 }
 
 
+#if defined(_WIN32)
+static char* mkdtemp(char* path)
+{
+	static unsigned int prev_h = 0;
+
+	// see also https://stackoverflow.com/questions/6287475/creating-a-unique-temporary-directory-from-pure-c-in-windows
+	char* cursor = path + strlen(path) - 6; // start of XXXXXX part:
+	char* rv = NULL;
+
+	// max 5 attempts when things go badly wrong.
+	for (int i = 0; i < 5; i++) {
+		LARGE_INTEGER li = { 0 };
+		QueryPerformanceCounter(&li);
+		LONGLONG hh = li.QuadPart;
+		// remix all bits into the lower 30 bits, which will be used to fill XXXXXX name part
+		hh ^= hh >> 17;					
+		hh ^= hh >> (64 - 6 * 5);
+		unsigned int h = (unsigned int)hh;
+
+		// remix with previously stored value: this ensures the numbers keep changing no matter how fast/often you query that perf counter.
+		prev_h *= 0x9E3779B1U;    // prime
+		prev_h ^= h;
+		h = prev_h;
+
+		static const char* const lu = "0123456789ABCDEFGHJKLMNPQRSTUVWZ";
+		assert(strlen(lu) == 32);
+		cursor[0] = lu[h & 0x1F];
+		h >>= 5;
+		cursor[1] = lu[h & 0x1F];
+		h >>= 5;
+		cursor[2] = lu[h & 0x1F];
+		h >>= 5;
+		cursor[3] = lu[h & 0x1F];
+		h >>= 5;
+		cursor[4] = lu[h & 0x1F];
+		h >>= 5;
+		cursor[5] = lu[h & 0x1F];
+		if (CreateDirectoryA(path, NULL) == 0) {
+			if (GetLastError() != ERROR_ALREADY_EXISTS) {
+				L_ERROR("failed to create temporary directory in temp/scratch basedir: '%s', error 0x%08x\n", __func__, path, (unsigned int)GetLastError());
+				continue; // max rounds for bad happenings.
+			}
+			// when dir exists, that's not 'bad', so we retry ad nauseam:
+			i--;
+			continue;
+		}
+		rv = path;
+		break;
+	}
+
+	return rv;
+}
+#endif
+
+
 /*!
  * \brief   genPathname()
  *
@@ -3610,7 +3821,20 @@ size_t   size;
 		 * The quick fix for this is to always prefix all our /tmp/...
 		 * paths with a leptonica-specific path prefix:
 		 */
-		stringCat(pathout, size, "/lept-tmp");
+		if (!LeptDebugOK) {
+			// produce a randomized, unique directory name.
+			stringCat(pathout, size, "/lept-tmpXXXXXX");
+			char* dp = mkdtemp(pathout);
+			if (!dp) {
+				LEPT_FREE(pathout);
+				L_ERROR("mkdtemp failed: %s", __func__, strerror(errno));
+				return NULL;
+			}
+			assert(dp == pathout);
+		}
+		else {
+			stringCat(pathout, size, "/lept-tmp");
+		}
 
 		/* Add the rest of dir */
 		if (*dir != '\0') {
@@ -3689,7 +3913,7 @@ size_t   pathlen;
 
     memset(result, 0, nbytes);
 
-    dir = pathJoin("/tmp", subdir);
+    dir = pathSafeJoin("/tmp", subdir);
 	path = genPathname(dir, NULL);
 
 	pathlen = strlen(path);
@@ -3854,7 +4078,7 @@ l_int32  len, nret, num;
 
 
 const char*
-string_asprintf(_Printf_format_string_ const char* filename_fmt_str, ...) __attribute__((__format__(__printf__, 1, 2)))
+string_asprintf(_In_z_ _Printf_format_string_ const char* filename_fmt_str, ...) __attribute__((__format__(__printf__, 1, 2)))
 {
 	va_list args;
 	va_start(args, filename_fmt_str);

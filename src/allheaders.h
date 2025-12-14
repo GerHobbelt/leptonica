@@ -2341,8 +2341,15 @@ LEPT_DLL extern l_ok regTestCompareFiles ( L_REGPARAMS *rp, l_int32 index1, l_in
 LEPT_DLL extern l_ok regTestWritePixAndCheck ( L_REGPARAMS *rp, PIX *pix, l_int32 format );
 LEPT_DLL extern l_ok regTestWriteDataAndCheck ( L_REGPARAMS *rp, void *data, size_t nbytes, const char *ext );
 LEPT_DLL extern char * regTestGenLocalFilename ( L_REGPARAMS *rp, l_int32 index, l_int32 format );
-LEPT_DLL extern const char *regGetArg ( L_REGPARAMS* rp );
+LEPT_DLL extern const char *regGetRawArgOrDefault ( L_REGPARAMS* rp, const char *default_value );
+LEPT_DLL extern const char *regGetFileArgOrDefault ( L_REGPARAMS* rp, const char *default_value );
+LEPT_DLL extern l_int32 regGetArgCount ( L_REGPARAMS* rp );
+LEPT_DLL extern l_ok regHasAnyArgsAvailable ( L_REGPARAMS* rp );
+LEPT_DLL extern l_ok regHasFileArgsAvailable ( L_REGPARAMS* rp );
+LEPT_DLL extern l_int32 regGetCurrentArgIndex ( L_REGPARAMS* rp );
+LEPT_DLL extern void regMarkStartOfFirstTestround ( L_REGPARAMS* rp, l_int32 extra_rounds );
 LEPT_DLL extern void regMarkEndOfTestround ( L_REGPARAMS* rp );
+
 LEPT_DLL extern l_ok l_pdfRenderFile ( const char *filename, l_int32 res, SARRAY **psaout );
 LEPT_DLL extern l_ok l_pdfRenderFiles ( const char *dir, SARRAY *sain, l_int32 res, SARRAY **psaout );
 LEPT_DLL extern l_ok pixRasterop ( PIX *pixd, l_int32 dx, l_int32 dy, l_int32 dw, l_int32 dh, l_int32 op, PIX *pixs, l_int32 sx, l_int32 sy );
@@ -2426,7 +2433,7 @@ LEPT_DLL extern SARRAY * getNumberedPathnamesInDirectory ( const char *dirname, 
 LEPT_DLL extern SARRAY * getSortedPathnamesInDirectory ( const char *dirname, const char *substr, l_int32 first, l_int32 nfiles );
 LEPT_DLL extern SARRAY * convertSortedToNumberedPathnames ( SARRAY *sa, l_int32 numpre, l_int32 numpost, l_int32 maxnum );
 LEPT_DLL extern SARRAY * getFilenamesInDirectory ( const char *dirname );
-LEPT_DLL extern SARRAY * getFilenamesInDirectoryEx ( const char *dirname, int wantSubdirs );
+LEPT_DLL extern SARRAY * getFilenamesInDirectoryEx ( const char *dirname, l_ok wantSubdirs, l_ok reportDirNotExistErrors );
 LEPT_DLL extern SARRAY * sarraySort ( SARRAY *saout, SARRAY *sain, l_int32 sortorder );
 LEPT_DLL extern SARRAY * sarraySortByIndex ( SARRAY *sain, NUMA *naindex );
 LEPT_DLL extern l_int32 stringCompareLexical ( const char *str1, const char *str2 );
@@ -2669,9 +2676,8 @@ LEPT_DLL extern void * returnErrorPtr ( const char *msg, const char *procname, v
 LEPT_DLL extern l_int32 returnErrorInt1 ( const char *msg, const char *arg, const char *procname, l_int32 ival );
 LEPT_DLL extern l_float32 returnErrorFloat1 ( const char *msg, const char *arg, const char *procname, l_float32 fval );
 LEPT_DLL extern void * returnErrorPtr1 ( const char *msg, const char *arg, const char *procname, void *pval );
-typedef void (*leptStderrHandler_f) (const char *msg);
 LEPT_DLL extern leptStderrHandler_f leptSetStderrHandler ( leptStderrHandler_f );
-LEPT_DLL extern void lept_stderr ( const char *fmt, ... );
+LEPT_DLL extern void lept_stderr (_In_z_ _Printf_format_string_ const char * const fmt, ... ) __attribute__((__format__(__printf__, 1, 2)));
 LEPT_DLL extern l_ok filesAreIdentical ( const char *fname1, const char *fname2, l_int32 *psame );
 LEPT_DLL extern l_uint16 convertOnLittleEnd16 ( l_uint16 shortin );
 LEPT_DLL extern l_uint16 convertOnBigEnd16 ( l_uint16 shortin );
@@ -2747,6 +2753,8 @@ LEPT_DLL extern void * lept_calloc ( size_t nmemb, size_t size );
 LEPT_DLL extern void lept_free ( const void *ptr );
 LEPT_DLL extern l_int32 lept_mkdir ( const char *subdir );
 LEPT_DLL extern l_int32 lept_rmdir ( const char *subdir );
+LEPT_DLL extern l_int32 lept_mkdir_basedir ( const char *filepath );
+LEPT_DLL extern l_int32 lept_rmdir_basedir ( const char *filepath );
 LEPT_DLL extern void lept_dir_exists ( const char *dir, l_int32 *pexists );
 LEPT_DLL extern void lept_file_exists ( const char *dir, l_int32 *pexists );
 LEPT_DLL extern l_int32 lept_rm_match ( const char *subdir, const char *substr );
@@ -2760,10 +2768,12 @@ LEPT_DLL extern l_ok splitPathAtExtension ( const char *pathname, char **pbasena
 LEPT_DLL extern char * pathJoin ( const char *dir, const char *fname );
 LEPT_DLL extern char * pathJoinEx ( const char *dir, const char *fname, l_ok dotdotInFnameMayFoldIntoDir, l_ok dotdotAllowedInOutput, l_ok fnameMayBeARootedPath, l_ok *pBehavedBadly );
 LEPT_DLL extern char * pathSafeJoin ( const char *dir, const char *fname );
+LEPT_DLL extern char * pathJoin3 (const char* p1, const char* p2, const char* p3);
+LEPT_DLL extern SARRAY* pathDeducePathSet (const SARRAY *pathset, const char *abs_basedir_path, l_ok add_basedir_itself_too);
 LEPT_DLL extern char * appendSubdirs ( const char *basedir, const char *subdirs );
 LEPT_DLL extern l_ok convertSepCharsInPath ( char *path, l_int32 type );
 LEPT_DLL extern l_int32 getPathRootLength ( const char* path );
-LEPT_DLL extern char * getPathBasename ( const char* path, int strip_off_extension );
+LEPT_DLL extern char * getPathBasename ( const char* path, l_int32 strip_off_parts_code );
 LEPT_DLL extern uint64_t getPathHash ( const char* path );
 LEPT_DLL extern char * genPathname ( const char *dir, const char *fname );
 //LEPT_DLL extern char * sanitizePathToIdentifier ( char *dst, size_t dstsize, const char *str, const char *additional_acceptable_set );
@@ -2830,17 +2840,17 @@ LEPT_DLL extern void leptReplaceDiagnoticsSpecInstance ( LDIAG_CTX *specd, LDIAG
 
 LEPT_DLL extern LDIAG_CTX leptDebugGetDiagnosticsSpecFromAny ( unsigned int arg_count, LDIAG_CTX spec1, LDIAG_CTX spec2, ... );
 
-LEPT_DLL extern LDIAG_CTX pixGetDiagnosticsSpec(const PIX* pix);
-LEPT_DLL extern LDIAG_CTX pixGetDiagnosticsSpecFromAny(unsigned int arg_count, const PIX* pix1, const PIX* pix2, ... );
-LEPT_DLL extern l_ok pixSetDiagnosticsSpec( PIX* pix, LDIAG_CTX spec );
-LEPT_DLL extern l_ok pixCopyDiagnosticsSpec( PIX* pixd, const PIX* pixs );
-LEPT_DLL extern l_ok pixCloneDiagnosticsSpec( PIX* pixd, const PIX* pixs );
+LEPT_DLL extern LDIAG_CTX pixGetDiagnosticsSpec ( const PIX* pix );
+LEPT_DLL extern LDIAG_CTX pixGetDiagnosticsSpecFromAny ( unsigned int arg_count, const PIX* pix1, const PIX* pix2, ... );
+LEPT_DLL extern l_ok pixSetDiagnosticsSpec ( PIX* pix, LDIAG_CTX spec );
+LEPT_DLL extern l_ok pixCopyDiagnosticsSpec ( PIX* pixd, const PIX* pixs );
+LEPT_DLL extern l_ok pixCloneDiagnosticsSpec ( PIX* pixd, const PIX* pixs );
 
-LEPT_DLL extern LDIAG_CTX fpixGetDiagnosticsSpec(const FPIX* pix);
-LEPT_DLL extern LDIAG_CTX fpixGetDiagnosticsSpecFromAny(unsigned int arg_count, const FPIX* pix1, const FPIX* pix2, ...);
-LEPT_DLL extern l_ok fpixSetDiagnosticsSpec(FPIX* pix, LDIAG_CTX spec);
-LEPT_DLL extern l_ok fpixCopyDiagnosticsSpec(FPIX* pixd, const FPIX* pixs);
-LEPT_DLL extern l_ok fpixCloneDiagnosticsSpec(FPIX* pixd, const FPIX* pixs);
+LEPT_DLL extern LDIAG_CTX fpixGetDiagnosticsSpec ( const FPIX* pix );
+LEPT_DLL extern LDIAG_CTX fpixGetDiagnosticsSpecFromAny ( unsigned int arg_count, const FPIX* pix1, const FPIX* pix2, ... );
+LEPT_DLL extern l_ok fpixSetDiagnosticsSpec ( FPIX* pix, LDIAG_CTX spec );
+LEPT_DLL extern l_ok fpixCopyDiagnosticsSpec ( FPIX* pixd, const FPIX* pixs );
+LEPT_DLL extern l_ok fpixCloneDiagnosticsSpec ( FPIX* pixd, const FPIX* pixs );
 
 LEPT_DLL extern LDIAG_CTX dpixGetDiagnosticsSpec(const DPIX* pix);
 LEPT_DLL extern LDIAG_CTX dpixGetDiagnosticsSpecFromAny(unsigned int arg_count, const DPIX* pix1, const DPIX* pix2, ...);
@@ -2887,10 +2897,10 @@ LEPT_DLL extern void leptDebugEraseFilePathPart ( LDIAG_CTX spec );
 LEPT_DLL extern void leptDebugEraseOneFilePathPart ( LDIAG_CTX spec );
 LEPT_DLL extern const char * leptDebugGetFilePathPart ( LDIAG_CTX spec );
 
-LEPT_DLL extern void leptDebugSetFilenameForPrefix ( LDIAG_CTX spec, const char * source_filename, l_ok strip_off_extension );
+LEPT_DLL extern void leptDebugSetFilenameForPrefix ( LDIAG_CTX spec, const char * source_filename, l_int32 strip_off_parts_code );
 LEPT_DLL extern const char * leptDebugGetFilenameForPrefix ( LDIAG_CTX spec );
 
-LEPT_DLL extern void leptDebugSetFilenameBasename ( LDIAG_CTX spec, const char * filename_fmt, ... );
+LEPT_DLL extern void leptDebugSetFilenameBasename ( LDIAG_CTX spec, _In_z_ _Printf_format_string_ const char * filename_fmt, ... ) __attribute__((__format__(__printf__, 2, 3)));
 LEPT_DLL extern const char * leptDebugGetFilenameBasename ( LDIAG_CTX spec );
 
 LEPT_DLL extern void leptDebugSetStepId ( LDIAG_CTX spec, uint32_t numeric_id );
@@ -2922,9 +2932,9 @@ LEPT_DLL extern const char * leptDebugGetProcessName ( LDIAG_CTX spec );
 LEPT_DLL extern void leptDebugSetFilepathDefaultFormat ( LDIAG_CTX spec, const char * path_template_str );
 LEPT_DLL extern const char * leptDebugGetFilepathDefaultFormat ( LDIAG_CTX spec );
 
-LEPT_DLL extern const char * leptDebugGenFilename ( LDIAG_CTX spec, const char * filename_fmt_str, ... );
-LEPT_DLL extern const char * leptDebugGenFilepath ( LDIAG_CTX spec, const char * path_fmt_str , ... );
-LEPT_DLL extern const char * leptDebugGenFilepathEx ( const char * directory, LDIAG_CTX spec, const char * path_fmt_str, ... );
+LEPT_DLL extern const char * leptDebugGenFilename ( LDIAG_CTX spec, _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 2, 3)));
+LEPT_DLL extern const char * leptDebugGenFilepath ( LDIAG_CTX spec, _In_z_ _Printf_format_string_ const char * path_fmt_str , ... ) __attribute__((__format__(__printf__, 2, 3)));
+LEPT_DLL extern const char * leptDebugGenFilepathEx ( const char * directory, LDIAG_CTX spec, _In_z_ _Printf_format_string_ const char * path_fmt_str, ... ) __attribute__((__format__(__printf__, 2, 3)));
 LEPT_DLL extern const char * leptDebugGetLastGenFilepath ( LDIAG_CTX spec );
 
 LEPT_DLL extern l_ok leptIsInDisplayMode ( LDIAG_CTX spec );
@@ -2947,13 +2957,6 @@ LEPT_DLL extern LDIAG_CTX pixaPassDiagIfDebugModeActive ( PIXA* pixa );
 
 LEPT_DLL extern const char* string_asprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 1, 2)));
 LEPT_DLL extern const char* string_vasprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, va_list args );
-
-typedef enum l_LocateMode {
-	L_LOCATE_IN_FIRST_ONE = 0,		// only the very first hit is taken
-	L_LOCATE_IN_FIRST_ANY = 1,      // delivers all matches in the first search path that delivers a hit
-	L_LOCATE_IN_ALL = 2,            // collect *all* possible matches.
-	L_LOCATE_IGNORE_CURRENT_DIR_FLAG = 0x10,       // DO NOT consider checking the 'current working directory' as a last resort.
-} l_LocateMode_t;
 
 LEPT_DLL extern SARRAY* leptProcessResponsefileLines ( SARRAY* const lines, const SARRAY* const searchpath_set, l_LocateMode_t search_mode, const char *output_basedir, const char *stmt_prefix, const char *fail_marker, const char* ignore_marker );
 
