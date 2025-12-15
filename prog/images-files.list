@@ -14,8 +14,12 @@
 #
 SEARCHPATH=.;lept/demo-data;../../thirdparty/leptonica/prog;N:/image-4-ocr-corpus/**/;/tmp/lept/**/
 
-*.(jpg|jpeg|tif|tiff|webp|gif|bmp|jfif)
-10[0-9][0-9][0-9][0-9]-*.(jpg|jpeg|tif|tiff|webp|gif|bmp|jfif)
-issue[1-9][1-9][1-9]*.(jpg|jpeg|tif|tiff|webp|gif|bmp|jfif)
+# all/any | first/one/single | any-in-first/all-in-first     +      unique
+COLLECTMODE=all,unique
 
-scones-low-contrast-original.png
+*.(jpg|jpeg|tif|tiff|webp|gif|bmp|jfif|png)
+10[0-9][0-9][0-9][0-9]-*.(jpg|jpeg|tif|tiff|webp|gif|bmp|jfif|png)
+issue[1-9][1-9][1-9]*.(jpg|jpeg|tif|tiff|webp|gif|bmp|jfif|png)
+
+COLLECTMODE=^
+
