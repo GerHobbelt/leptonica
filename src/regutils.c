@@ -214,13 +214,15 @@ regTestSetup(int argc,
 
 		case 3:
 			// process the searchpaths list: first, determine which separator has been used: | ;
-			char* sep_marker_p = strpbrk(optarg, "|;");
+		{
+			const char* sep_marker_p = strpbrk(optarg, "|;");
 			char sep_marker[2] = { (sep_marker_p ? *sep_marker_p : ';'), 0 };
 			SARRAY* srch_arr = sarrayCreate(1);
 			sarraySplitString(srch_arr, optarg, sep_marker);
 			// append to existing set:
 			sarrayJoin(rp->searchpaths, srch_arr);
 			sarrayDestroy(&srch_arr);
+		}
 			continue;
 
 		case 'd':
@@ -236,6 +238,7 @@ regTestSetup(int argc,
 			continue;
 
 		case 'q':
+		{
 			int m = atoi(optarg);
 			switch (m) {
 			case L_LOCATE_IN_ALL:
@@ -244,7 +247,7 @@ regTestSetup(int argc,
 			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_ALL:
 			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ANY:
 			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ONE:
-				rp->argv_search_mode = m;
+				rp->argv_search_mode = (l_locateMode_t)m;
 				break;
 
 			default:
@@ -257,6 +260,7 @@ regTestSetup(int argc,
 					L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ONE);
 				break;
 			}
+		}
 			continue;
 
 		case 'h':
@@ -1210,12 +1214,14 @@ regGetRawArgOrDefault(L_REGPARAMS* rp, const char *default_value)
 		return stringNew(line + 1);
 
 	case 0x02: /* fail marker: '\x02 FAIL: ' */
-		char *fstr = stringNew(line);
+	{
+		char* fstr = stringNew(line);
 		if (!fstr) {
 			return (char*)ERROR_PTR("line text cannot be allocated", __func__, NULL);
 		}
 		fstr[0] = ';';  // --> '; FAIL: xyz'
 		return fstr;
+	}
 
 	case 0x03: /* ignore marker: '\x03# ' */
 		return stringNew(line + 1);

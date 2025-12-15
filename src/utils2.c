@@ -241,6 +241,10 @@
 #endif
 #endif
 
+#ifdef __cplusplus
+#define restrict  /**/
+#endif
+
 /*--------------------------------------------------------------------*
  *                       Safe string operations                       *
  *--------------------------------------------------------------------*/
@@ -2776,6 +2780,9 @@ char    *srcpath, *newpath, *dir, *srctail;
 char     newtemp[256];
 l_int32  ret;
 
+    if (pnewpath)
+        *pnewpath = NULL;
+
     if (!srcfile)
         return ERROR_INT("srcfile not defined", __func__, 1);
 
@@ -2871,6 +2878,9 @@ lept_cp(const char  *srcfile,
 char    *srcpath, *newpath, *dir, *srctail;
 char     newtemp[256];
 l_int32  ret;
+
+    if (pnewpath)
+        *pnewpath = NULL;
 
     if (!srcfile)
         return ERROR_INT("srcfile not defined", __func__, 1);
@@ -4077,12 +4087,12 @@ l_int32  len, nret, num;
 }
 
 
-const char*
+char*
 string_asprintf(_In_z_ _Printf_format_string_ const char* filename_fmt_str, ...) __attribute__((__format__(__printf__, 1, 2)))
 {
 	va_list args;
 	va_start(args, filename_fmt_str);
-	const char* result = string_vasprintf(filename_fmt_str, args);
+	char* result = string_vasprintf(filename_fmt_str, args);
 	va_end(args);
 	return result;
 }
@@ -4112,7 +4122,7 @@ vscprintf(const char* format, va_list ap)
 #endif
 
 
-const char*
+char*
 string_vasprintf(_In_z_ _Printf_format_string_ const char* filename_fmt_str, va_list args)
 {
 	int len = vscprintf(filename_fmt_str, args);

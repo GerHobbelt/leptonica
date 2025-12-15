@@ -229,7 +229,12 @@ char    *str, *results_file = NULL;
 char     command[256], buf[256];
 l_int32  i, ntests, dotest, nfail, ret, start, stop;
 SARRAY  *sa;
+L_REGPARAMS* rp;
 
+	if (regTestSetup(argc, argv, "all_tests", &rp))
+		return 1;
+
+	// TODO
     if (argc != 2)
         return ERROR_INT(" Syntax alltests_reg [generate | compare | display]",
                          __func__, 1);

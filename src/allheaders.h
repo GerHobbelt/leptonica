@@ -2955,8 +2955,8 @@ LEPT_DLL extern l_ok pixaIsDebugModeActive ( PIXA* pixa );
 LEPT_DLL extern void pixaActivateDebugMode ( PIXA* pixa, l_ok activate );
 LEPT_DLL extern LDIAG_CTX pixaPassDiagIfDebugModeActive ( PIXA* pixa );
 
-LEPT_DLL extern const char* string_asprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 1, 2)));
-LEPT_DLL extern const char* string_vasprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, va_list args );
+LEPT_DLL extern char* string_asprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 1, 2)));
+LEPT_DLL extern char* string_vasprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, va_list args );
 
 LEPT_DLL extern SARRAY* leptProcessResponsefileLines ( SARRAY* const lines, const SARRAY* const searchpath_set, l_LocateMode_t search_mode, const char *output_basedir, const char *stmt_prefix, const char *fail_marker, const char* ignore_marker );
 
@@ -2968,6 +2968,21 @@ LEPT_DLL extern l_int32 MORPH_BC;
 #ifdef __cplusplus
 }
 #endif  /* __cplusplus */
+
+// fixup for C++
+#ifdef __cplusplus
+static inline void stringDestroyPP(const char **src_ref)
+{
+	stringDestroy(src_ref);
+}
+static inline void stringDestroyPP(char **src_ref)
+{
+	const char **ptr = (const char **)src_ref;
+	stringDestroy(ptr);
+}
+#define stringDestroy(ptr)     stringDestroyPP(ptr)
+#endif  /* __cplusplus */
+
 #endif /* NO_PROTOS */
 
 // Accepts both Unix and Windows pathname separators, on any platform.
