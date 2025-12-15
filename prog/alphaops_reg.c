@@ -177,8 +177,8 @@ L_REGPARAMS* rp;
 	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixRead("/tmp/lept/alpha/cs2.png");  /* cleaned under transparent */
 	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
-	n1 = nbytesInFile("/tmp/lept/alpha/cs1.png");
-    n2 = nbytesInFile("/tmp/lept/alpha/cs2.png");
+	n1 = nbytesInFile("/tmp/lept/alpha/cs1.png", rp->diag_spec);
+    n2 = nbytesInFile("/tmp/lept/alpha/cs2.png", rp->diag_spec);
     lept_stderr(" Original: %d bytes\n Cleaned: %d bytes\n", n1, n2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 9 */
     regTestWritePixAndCheck(rp, pix2, IFF_JFIF_JPEG);  /* 10 */
@@ -293,11 +293,11 @@ L_REGPARAMS* rp;
     lept_free(data);
 
         /* Test ascii serialization/deserialization of colormap with alpha */
-    if ((fp = lept_fopen("/tmp/lept/alpha/cmap.4", "wb")) != NULL) {
+    if ((fp = lept_fopen("/tmp/lept/alpha/cmap.4", "wb", rp->diag_spec)) != NULL) {
         pixcmapWriteStream(fp, cmap);
         lept_fclose(fp);
     }
-    if ((fp = lept_fopen("/tmp/lept/alpha/cmap.4", "rb")) != NULL) {
+    if ((fp = lept_fopen("/tmp/lept/alpha/cmap.4", "rb", rp->diag_spec)) != NULL) {
         cmap2 = pixcmapReadStream(fp);
         lept_fclose(fp);
     }

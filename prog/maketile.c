@@ -93,7 +93,7 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(nfiles);
     for (i = 0; i < nfiles; i++) {
         fname = sarrayGetString(safiles, i, L_NOCOPY);
-        fullname = genPathname(dirin, fname);
+        fullname = genPathname(dirin, fname, rp->diag_spec);
         pix = pixRead(fullname);
         lept_free(fullname);
         if (!pix)

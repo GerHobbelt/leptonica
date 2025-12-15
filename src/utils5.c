@@ -86,7 +86,7 @@ pathJoin3(const char* p1, const char* p2, const char* p3)
 static char* resolve_path(const char* str)
 {
 	// resolve /tmp, clean up the path, etc...
-	char* gp = genPathname(str, NULL);
+	char* gp = genPathname(str, NULL, diagspec);
 
 	return gp;
 }

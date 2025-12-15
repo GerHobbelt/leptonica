@@ -226,7 +226,7 @@ GPLOT   *gplot;
 	gplot->diag_spec = leptCloneDiagnoticsSpecInstance(diagspec);
 
         /* Save title, labels, rootname, outformat, cmdname, outname */
-    newroot = genPathname(rootname, NULL);
+    newroot = genPathname(rootname, NULL, diagspec);
     gplot->rootname = newroot;
     gplot->outformat = outformat;
     snprintf(buf, Bufsize, "%s.cmd", rootname);
@@ -493,7 +493,7 @@ char    *cmdname;
 
     gplotGenCommandFile(gplot);
     gplotGenDataFiles(gplot);
-    cmdname = genPathname(gplot->cmdname, NULL);
+    cmdname = genPathname(gplot->cmdname, NULL, diagspec);
 
 #ifndef _WIN32
     snprintf(buf, Bufsize, "gnuplot %s", cmdname);

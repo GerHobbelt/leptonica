@@ -79,7 +79,7 @@ L_REGPARAMS* rp;
     for (i = 0; i < nfiles; i++) {
         infile = sarrayGetString(safiles, i, L_NOCOPY);
         splitPathAtDirectory(infile, NULL, &tail);
-        outfile = genPathname(dirout, tail);
+        outfile = genPathname(dirout, tail, rp->diag_spec);
         pixs = pixRead(infile);
         pixt1 = pixMorphSequence(pixs, "r11 + c10.40 + o5.5 + x4", 0);
         boxa1 = pixConnComp(pixt1, NULL, 8);

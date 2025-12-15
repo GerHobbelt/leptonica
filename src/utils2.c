@@ -241,6 +241,10 @@
 #endif
 #endif
 
+#ifdef __cplusplus
+#define restrict  /**/
+#endif
+
 /*--------------------------------------------------------------------*
  *                       Safe string operations                       *
  *--------------------------------------------------------------------*/
@@ -1369,7 +1373,8 @@ void    *newdata;
  */
 l_uint8 *
 l_binaryRead(const char  *filename,
-             size_t      *pnbytes)
+             size_t      *pnbytes,
+	         LDIAG_CTX    diagspec)
 {
 l_uint8  *data;
 FILE     *fp;
@@ -1380,7 +1385,7 @@ FILE     *fp;
     if (!filename)
         return (l_uint8 *)ERROR_PTR("filename not defined", __func__, NULL);
 
-    if ((fp = fopenReadStream(filename)) == NULL)
+    if ((fp = fopenReadStream(filename, diagspec)) == NULL)
         return (l_uint8 *)ERROR_PTR_1("file stream not opened",
                                       filename, __func__, NULL);
     data = l_binaryReadStream(fp, pnbytes);
@@ -1485,6 +1490,7 @@ l_uint8 *
 l_binaryReadSelect(const char  *filename,
                    size_t       start,
                    size_t       nbytes,
+	               LDIAG_CTX    diagspec,
                    size_t      *pnread)
 {
 l_uint8  *data;
@@ -1496,7 +1502,7 @@ FILE     *fp;
     if (!filename)
         return (l_uint8 *)ERROR_PTR("filename not defined", __func__, NULL);
 
-    if ((fp = fopenReadStream(filename)) == NULL)
+    if ((fp = fopenReadStream(filename, diagspec)) == NULL)
         return (l_uint8 *)ERROR_PTR_1("file stream not opened",
                                       filename, __func__, NULL);
     data = l_binaryReadSelectStream(fp, start, nbytes, pnread);
@@ -1582,7 +1588,8 @@ l_ok
 l_binaryWrite(const char  *filename,
               const char  *operation,
               const void  *data,
-              size_t       nbytes)
+              size_t       nbytes,
+	          LDIAG_CTX    diagspec)
 {
 char   actualOperation[20];
 FILE  *fp;
@@ -1604,7 +1611,7 @@ FILE  *fp;
     stringCopy(actualOperation, operation, 2);
     stringCat(actualOperation, 20, "b");
 
-    if ((fp = fopenWriteStream(filename, actualOperation)) == NULL)
+    if ((fp = fopenWriteStream(filename, actualOperation, diagspec)) == NULL)
         return ERROR_INT_1("stream not opened", filename, __func__, 1);
     fwrite(data, 1, nbytes, fp);
     fclose(fp);
@@ -1619,14 +1626,15 @@ FILE  *fp;
  * \return  nbytes in file; 0 on error
  */
 size_t
-nbytesInFile(const char  *filename)
+nbytesInFile(const char  *filename,
+	         LDIAG_CTX    diagspec)
 {
 size_t  nbytes;
 FILE   *fp;
 
     if (!filename)
         return ERROR_INT("filename not defined", __func__, 0);
-    if ((fp = fopenReadStream(filename)) == NULL)
+    if ((fp = fopenReadStream(filename, diagspec)) == NULL)
         return ERROR_INT_1("stream not opened", filename, __func__, 0);
     nbytes = fnbytesInFile(fp);
     fclose(fp);
@@ -1748,7 +1756,8 @@ l_int32  i;
  */
 l_ok
 fileCopy(const char  *srcfile,
-         const char  *newfile)
+         const char  *newfile,
+		 LDIAG_CTX    diagspec)
 {
 l_int32   ret;
 size_t    nbytes;
@@ -1759,9 +1768,9 @@ l_uint8  *data;
     if (!newfile)
         return ERROR_INT("newfile not defined", __func__, 1);
 
-    if ((data = l_binaryRead(srcfile, &nbytes)) == NULL)
+    if ((data = l_binaryRead(srcfile, &nbytes, diagspec)) == NULL)
         return ERROR_INT("data not returned", __func__, 1);
-    ret = l_binaryWrite(newfile, "w", data, nbytes);
+    ret = l_binaryWrite(newfile, "w", data, nbytes, diagspec);
     LEPT_FREE(data);
     return ret;
 }
@@ -1776,7 +1785,8 @@ l_uint8  *data;
  */
 l_ok
 fileConcatenate(const char  *srcfile,
-                const char  *destfile)
+                const char  *destfile,
+	            LDIAG_CTX    diagspec)
 {
 size_t    nbytes;
 l_uint8  *data;
@@ -1786,8 +1796,8 @@ l_uint8  *data;
     if (!destfile)
         return ERROR_INT("destfile not defined", __func__, 1);
 
-    data = l_binaryRead(srcfile, &nbytes);
-    l_binaryWrite(destfile, "a", data, nbytes);
+    data = l_binaryRead(srcfile, &nbytes, diagspec);
+    l_binaryWrite(destfile, "a", data, nbytes, diagspec);
     LEPT_FREE(data);
     return 0;
 }
@@ -1802,7 +1812,8 @@ l_uint8  *data;
  */
 l_ok
 fileAppendString(const char  *filename,
-                 const char  *str)
+                 const char  *str,
+	             LDIAG_CTX    diagspec)
 {
 FILE  *fp;
 
@@ -1811,7 +1822,7 @@ FILE  *fp;
     if (!str)
         return ERROR_INT("str not defined", __func__, 1);
 
-    if ((fp = fopenWriteStream(filename, "a")) == NULL)
+    if ((fp = fopenWriteStream(filename, "a", diagspec)) == NULL)
         return ERROR_INT_1("stream not opened", filename, __func__, 1);
     fprintf(fp, "%s", str);
     fclose(fp);
@@ -1853,7 +1864,8 @@ fileSplitLinesUniform(const char  *filename,
                       l_int32      n,
                       l_int32      save_empty,
                       const char  *rootpath,
-                      const char  *ext)
+                      const char  *ext,
+	                  LDIAG_CTX    diagspec)
 {
 l_int32   i, totlines, nlines, index;
 size_t    nbytes;
@@ -1873,7 +1885,7 @@ SARRAY   *sa;
         return ERROR_INT("save_empty not 0 or 1", __func__, 1);
 
         /* Make sarray of lines; the newlines are stripped off */
-    if ((data = l_binaryRead(filename, &nbytes)) == NULL)
+    if ((data = l_binaryRead(filename, &nbytes, diagspec)) == NULL)
         return ERROR_INT("data not read", __func__, 1);
     sa = sarrayCreateLinesFromString((const char *)data, save_empty);
     LEPT_FREE(data);
@@ -1896,7 +1908,7 @@ SARRAY   *sa;
             snprintf(outname, sizeof(outname), "%s_%d%s", rootpath, i, ext);
         numaGetIValue(na, i, &nlines);
         str = sarrayToStringRange(sa, index, nlines, 1);  /* add newlines */
-        l_binaryWrite(outname, "w", str, strlen(str));
+        l_binaryWrite(outname, "w", str, strlen(str), diagspec);
         LEPT_FREE(str);
         index += nlines;
     }
@@ -1924,7 +1936,8 @@ SARRAY   *sa;
  * </pre>
  */
 FILE *
-fopenReadStream(const char  *filename)
+fopenReadStream(const char  *filename,
+	            LDIAG_CTX    diagspec)
 {
 char  *fname, *tail;
 FILE  *fp;
@@ -1933,7 +1946,7 @@ FILE  *fp;
         return (FILE *)ERROR_PTR("filename not defined", __func__, NULL);
 
         /* Try input filename */
-    fname = genPathname(filename, NULL);
+    fname = genPathname(filename, NULL, diagspec);
 	if (fname == NULL)
 		return NULL;
 	fp = fopen(fname, "rb");
@@ -1970,7 +1983,8 @@ FILE  *fp;
  */
 FILE *
 fopenWriteStream(const char  *filename,
-                 const char  *modestring)
+                 const char  *modestring,
+	             LDIAG_CTX    diagspec)
 {
 char  *fname;
 FILE  *fp;
@@ -1978,8 +1992,8 @@ FILE  *fp;
     if (!filename)
         return (FILE *)ERROR_PTR("filename not defined", __func__, NULL);
 
-    fname = genPathname(filename, NULL);
-	lept_mkdir_basedir(fname);
+    fname = genPathname(filename, NULL, diagspec);
+	lept_mkdir_basedir(fname, diagspec);
     fp = fopen(fname, modestring);
     if (!fp)
         fp = (FILE *)ERROR_PTR_1("stream not opened", fname, __func__, NULL);
@@ -2003,7 +2017,8 @@ FILE  *fp;
  */
 FILE *
 fopenReadFromMemory(const l_uint8  *data,
-                    size_t          size)
+                    size_t          size,
+	                LDIAG_CTX       diagspec)
 {
 FILE  *fp;
 
@@ -2016,7 +2031,7 @@ FILE  *fp;
 #else  /* write to tmp file */
     L_INFO("no fmemopen API --> work-around: write to temp file\n", __func__);
   #ifdef _WIN32
-    if ((fp = fopenWriteWinTempfile()) == NULL)
+    if ((fp = fopenWriteWinTempfile(diagspec)) == NULL)
         return (FILE *)ERROR_PTR("tmpfile stream not opened", __func__, NULL);
   #else
     if ((fp = tmpfile()) == NULL)
@@ -2046,14 +2061,14 @@ FILE  *fp;
  * </pre>
  */
 FILE *
-fopenWriteWinTempfile(void)
+fopenWriteWinTempfile(LDIAG_CTX diagspec)
 {
 #ifdef _WIN32
 l_int32  handle;
 FILE    *fp;
 char    *filename;
 
-    if ((filename = l_makeTempFilename()) == NULL) {
+    if ((filename = l_makeTempFilename(diagspec)) == NULL) {
         L_ERROR("l_makeTempFilename failed, %s\n", __func__, strerror(errno));
         return NULL;
     }
@@ -2103,7 +2118,8 @@ char    *filename;
  */
 FILE *
 lept_fopen(const char  *filename,
-           const char  *mode)
+           const char  *mode,
+	       LDIAG_CTX    diagspec)
 {
     if (!filename)
         return (FILE *)ERROR_PTR("filename not defined", __func__, NULL);
@@ -2111,9 +2127,9 @@ lept_fopen(const char  *filename,
         return (FILE *)ERROR_PTR("mode not defined", __func__, NULL);
 
     if (stringFindSubstr(mode, "r", NULL))
-        return fopenReadStream(filename);
+        return fopenReadStream(filename, diagspec);
     else
-        return fopenWriteStream(filename, mode);
+        return fopenWriteStream(filename, mode, diagspec);
 }
 
 
@@ -2203,7 +2219,8 @@ lept_free(const void *ptr)
  * </pre>
  */
 l_int32
-lept_mkdir(const char  *subdir)
+lept_mkdir(const char  *subdir,
+	       LDIAG_CTX    diagspec)
 {
 char     *dir;
 char     *realdir;
@@ -2239,11 +2256,11 @@ l_uint32  attributes;
 	}
 	if (!dir)
 		return ERROR_INT("directory path not constructed", __func__, 1);
-	realdir = genPathname(dir, NULL);
+	realdir = genPathname(dir, NULL, diagspec);
 	LEPT_FREE(dir);
 	dir = realdir;   // `dir` is now allocated and can be 'scratched' below, sans prejudice.
 
-	lept_dir_exists(dir, &exists);
+	lept_dir_exists(dir, diagspec, &exists);
 	if (exists) {  /* exit silently: this is an optimization, when the target already exists on the filesystem. */
 		LEPT_FREE(dir);
 		return 0;
@@ -2320,7 +2337,8 @@ l_uint32  attributes;
  * </pre>
  */
 l_int32
-lept_rmdir(const char  *subdir)
+lept_rmdir(const char  *subdir,
+	       LDIAG_CTX    diagspec)
 {
 char    *dir, *fname, *fullname;
 l_int32  exists, ret, i, nfiles;
@@ -2345,13 +2363,13 @@ char    *realdir;
 	}
     if (!dir)
         return ERROR_INT("directory path not constructed", __func__, 1);
-	realdir = genPathname(dir, NULL);
+	realdir = genPathname(dir, NULL, diagspec);
 	LEPT_FREE(dir);
 	dir = realdir;
 	if (!dir)
 		return ERROR_INT("real directory path not constructed", __func__, 1);
 	assert(getPathRootLength(dir) > 0);
-	lept_dir_exists(dir, &exists);
+	lept_dir_exists(dir, diagspec, &exists);
     if (!exists) {  /* fail silently */
         LEPT_FREE(dir);
         return 0;
@@ -2402,7 +2420,8 @@ char    *realdir;
  * </pre>
  */
 l_int32
-lept_mkdir_basedir(const char *filepath)
+lept_mkdir_basedir(const char *filepath,
+	               LDIAG_CTX   diagspec)
 {
 char     *dir;
 char     *basedir;
@@ -2438,7 +2457,7 @@ l_int32   ret;
 		return ERROR_INT("file path could not split off its directory part for processing", __func__, 1);
 	stringDestroy(&dir);
 
-	ret = lept_mkdir(basedir);
+	ret = lept_mkdir(basedir, diagspec);
 
 	stringDestroy(&basedir);
     return ret;
@@ -2468,7 +2487,8 @@ l_int32   ret;
  * </pre>
  */
 l_int32
-lept_rmdir_basedir(const char *filepath)
+lept_rmdir_basedir(const char *filepath,
+	               LDIAG_CTX   diagspec)
 {
 char    *dir;
 l_int32  ret;
@@ -2496,7 +2516,7 @@ char    *basedir;
 		return ERROR_INT("file path could not split off its directory part for processing", __func__, 1);
 	stringDestroy(&dir);
 
-	ret = lept_rmdir(basedir);
+	ret = lept_rmdir(basedir, diagspec);
 
 	stringDestroy(&basedir);
     return ret;
@@ -2520,14 +2540,15 @@ char    *basedir;
  */
 void
 lept_dir_exists(const char  *dir,
-               l_int32     *pexists)
+	            LDIAG_CTX    diagspec,
+                l_int32     *pexists)
 {
 char  *realdir;
 
     if (!pexists) return;
     *pexists = 0;
     if (!dir) return;
-    if ((realdir = genPathname(dir, NULL)) == NULL)
+    if ((realdir = genPathname(dir, NULL, diagspec)) == NULL)
         return;
 
 #ifndef _WIN32
@@ -2568,14 +2589,15 @@ char  *realdir;
  */
 void
 lept_file_exists(const char* dir,
-	l_int32* pexists)
+	             LDIAG_CTX   diagspec,
+	             l_int32   * pexists)
 {
 	char* realdir;
 
 	if (!pexists) return;
 	*pexists = 0;
 	if (!dir) return;
-	if ((realdir = genPathname(dir, NULL)) == NULL)
+	if ((realdir = genPathname(dir, NULL, diagspec)) == NULL)
 		return;
 
 #ifndef _WIN32
@@ -2627,14 +2649,15 @@ lept_file_exists(const char* dir,
  */
 l_int32
 lept_rm_match(const char  *subdir,
-              const char  *substr)
+              const char  *substr,
+	          LDIAG_CTX    diagspec)
 {
 char    *path, *fname;
 char     tempdir[256];
 l_int32  i, n, ret;
 SARRAY  *sa;
 
-    makeTempDirname(tempdir, sizeof(tempdir), subdir);
+    makeTempDirname(tempdir, sizeof(tempdir), subdir, diagspec);
     if ((sa = getSortedPathnamesInDirectory(tempdir, substr, 0, 0)) == NULL)
         return ERROR_INT("sa not made", __func__, -1);
     n = sarrayGetCount(sa);
@@ -2647,8 +2670,8 @@ SARRAY  *sa;
     ret = 0;
     for (i = 0; i < n; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
-        path = genPathname(fname, NULL);
-        if (lept_rmfile(path) != 0) {
+        path = genPathname(fname, NULL, diagspec);
+        if (lept_rmfile(path, diagspec) != 0) {
             L_ERROR("failed to remove %s\n", __func__, path);
             ret++;
         }
@@ -2675,7 +2698,8 @@ SARRAY  *sa;
  */
 l_int32
 lept_rm(const char  *subdir,
-        const char  *tail)
+        const char  *tail,
+	    LDIAG_CTX    diagspec)
 {
 char    *path;
 char     newtemp[256];
@@ -2684,10 +2708,10 @@ l_int32  ret;
     if (!tail || strlen(tail) == 0)
         return ERROR_INT("tail undefined or empty", __func__, 1);
 
-    if (makeTempDirname(newtemp, sizeof(newtemp), subdir))
+    if (makeTempDirname(newtemp, sizeof(newtemp), subdir, diagspec))
         return ERROR_INT("temp dirname not made", __func__, 1);
-    path = genPathname(newtemp, tail);
-    ret = lept_rmfile(path);
+    path = genPathname(newtemp, tail, diagspec);
+    ret = lept_rmfile(path, diagspec);
     LEPT_FREE(path);
     return ret;
 }
@@ -2715,7 +2739,8 @@ l_int32  ret;
  * </pre>
  */
 l_int32
-lept_rmfile(const char  *filepath)
+lept_rmfile(const char  *filepath,
+	        LDIAG_CTX    diagspec)
 {
 l_int32  ret;
 
@@ -2770,17 +2795,21 @@ l_int32
 lept_mv(const char  *srcfile,
         const char  *newdir,
         const char  *newtail,
+	    LDIAG_CTX    diagspec,
         char       **pnewpath)
 {
 char    *srcpath, *newpath, *dir, *srctail;
 char     newtemp[256];
 l_int32  ret;
 
+    if (pnewpath)
+        *pnewpath = NULL;
+
     if (!srcfile)
         return ERROR_INT("srcfile not defined", __func__, 1);
 
         /* Require output pathname to be in /tmp/ or a subdirectory */
-    if (makeTempDirname(newtemp, sizeof(newtemp), newdir) == 1)
+    if (makeTempDirname(newtemp, sizeof(newtemp), newdir, diagspec) == 1)
         return ERROR_INT("newdir not NULL or a subdir of /tmp", __func__, 1);
 
         /* Get canonical src pathname */
@@ -2805,14 +2834,14 @@ l_int32  ret;
         LEPT_FREE(realpath);
     }
 #else
-    srcpath = genPathname(dir, srctail);
+    srcpath = genPathname(dir, srctail, diagspec);
     LEPT_FREE(dir);
 
         /* Generate output pathname */
     if (!newtail || newtail[0] == '\0')
-        newpath = genPathname(newtemp, srctail);
+        newpath = genPathname(newtemp, srctail, diagspec);
     else
-        newpath = genPathname(newtemp, newtail);
+        newpath = genPathname(newtemp, newtail, diagspec);
     LEPT_FREE(srctail);
 
         /* Overwrite any existing file at 'newpath' */
@@ -2866,17 +2895,21 @@ l_int32
 lept_cp(const char  *srcfile,
         const char  *newdir,
         const char  *newtail,
+	    LDIAG_CTX    diagspec,
         char       **pnewpath)
 {
 char    *srcpath, *newpath, *dir, *srctail;
 char     newtemp[256];
 l_int32  ret;
 
+    if (pnewpath)
+        *pnewpath = NULL;
+
     if (!srcfile)
         return ERROR_INT("srcfile not defined", __func__, 1);
 
         /* Require output pathname to be in /tmp or a subdirectory */
-    if (makeTempDirname(newtemp, sizeof(newtemp), newdir) == 1)
+    if (makeTempDirname(newtemp, sizeof(newtemp), newdir, diagspec) == 1)
         return ERROR_INT("newdir not NULL or a subdir of /tmp", __func__, 1);
 
        /* Get canonical src pathname */
@@ -2896,14 +2929,14 @@ l_int32  ret;
         /* Overwrite any existing file at 'newpath' */
     ret = fileCopy(srcpath, newpath);
 #else
-    srcpath = genPathname(dir, srctail);
+    srcpath = genPathname(dir, srctail, diagspec);
     LEPT_FREE(dir);
 
         /* Generate output pathname */
     if (!newtail || newtail[0] == '\0')
-        newpath = genPathname(newtemp, srctail);
+        newpath = genPathname(newtemp, srctail, diagspec);
     else
-        newpath = genPathname(newtemp, newtail);
+        newpath = genPathname(newtemp, newtail, diagspec);
     LEPT_FREE(srctail);
 
         /* Overwrite any existing file at 'newpath' */
@@ -3711,7 +3744,8 @@ static char* mkdtemp(char* path)
  */
 char *
 genPathname(const char  *dir,
-            const char  *fname)
+            const char  *fname,
+			LDIAG_CTX    diagspec)
 {
 #if defined(REWRITE_TMP) || defined(BUILD_MONOLITHIC)
 l_int32  rewrite_tmp = TRUE;
@@ -3742,7 +3776,7 @@ size_t   size;
 			/* must be an absolute path and it must exist! */
 			if (getPathRootLength(tmpDir) > 0) {
 				l_int32 exists = 0;
-				lept_dir_exists(tmpDir, &exists);
+				lept_dir_exists(tmpDir, diagspec, &exists);
 				if (exists) {
 					cdir = stringNew(tmpDir);
 				}
@@ -3900,7 +3934,8 @@ size_t   size;
 l_ok
 makeTempDirname(char        *result,
                 size_t       nbytes,
-                const char  *subdir)
+                const char  *subdir,
+	            LDIAG_CTX    diagspec)
 {
 char    *dir, *path;
 l_int32  ret = 0;
@@ -3914,7 +3949,7 @@ size_t   pathlen;
     memset(result, 0, nbytes);
 
     dir = pathSafeJoin("/tmp", subdir);
-	path = genPathname(dir, NULL);
+	path = genPathname(dir, NULL, diagspec);
 
 	pathlen = strlen(path);
     if (pathlen < nbytes - 1) {
@@ -3992,11 +4027,11 @@ size_t  len;
  * </pre>
  */
 char *
-l_makeTempFilename(void)
+l_makeTempFilename(LDIAG_CTX diagspec)
 {
 char  dirname[240];
 
-    if (makeTempDirname(dirname, sizeof(dirname), NULL) == 1)
+    if (makeTempDirname(dirname, sizeof(dirname), NULL, diagspec) == 1)
         return (char *)ERROR_PTR("failed to make dirname", __func__, NULL);
 
 #ifndef _WIN32
@@ -4077,12 +4112,12 @@ l_int32  len, nret, num;
 }
 
 
-const char*
+char*
 string_asprintf(_In_z_ _Printf_format_string_ const char* filename_fmt_str, ...) __attribute__((__format__(__printf__, 1, 2)))
 {
 	va_list args;
 	va_start(args, filename_fmt_str);
-	const char* result = string_vasprintf(filename_fmt_str, args);
+	char* result = string_vasprintf(filename_fmt_str, args);
 	va_end(args);
 	return result;
 }
@@ -4112,7 +4147,7 @@ vscprintf(const char* format, va_list ap)
 #endif
 
 
-const char*
+char*
 string_vasprintf(_In_z_ _Printf_format_string_ const char* filename_fmt_str, va_list args)
 {
 	int len = vscprintf(filename_fmt_str, args);

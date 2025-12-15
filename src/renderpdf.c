@@ -140,7 +140,7 @@ SARRAY  *sain;
  * <pre>
  * Notes:
  *      (1) Because this uses the "system" call, it is disabled by default
- *          on all platforms.  It is not supported and therefor3 disabled
+ *          on all platforms.  It is not supported and therefore disabled
  *          on iOS 11.
  *      (2) Input pdf file(s) are specified either by an input directory
  *          or an sarray with the paths.  Use the sarray if it is given;
@@ -197,7 +197,7 @@ SARRAY  *sa;
     lept_rmdir("lept/renderpdf");
     //lept_mkdir("lept/renderpdf");
 
-    imagedir = genPathname("/tmp/lept/renderpdf", NULL);
+    imagedir = genPathname("/tmp/lept/renderpdf", NULL, diagspec);
 
         /* Figure out the resolution to use with the image renderer.
            This first checks the media box sizes, which give the output

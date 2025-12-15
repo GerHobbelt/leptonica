@@ -258,7 +258,7 @@ SARRAY       *sa;
     npages = sarrayGetCount(sa);
     for (i = 0; i < npages; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
-        filename = genPathname(".", fname);
+        filename = genPathname(".", fname, rp->diag_spec);
         pix1 = pixRead(filename);
         if (!pix1) continue;
 		pixSetDiagnosticsSpec(pix1, rp->diag_spec);

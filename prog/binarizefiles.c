@@ -95,11 +95,11 @@ L_REGPARAMS* rp;
     n = sarrayGetCount(sa);
 
         /* Write the output files */
-    makeTempDirname(dirname, 256, subdirout);
+    makeTempDirname(dirname, 256, subdirout, rp->diag_spec);
     lept_stderr("dirname: %s\n", dirname);
 
-	lept_rmdir(subdirout);
-    //lept_mkdir(subdirout);
+	lept_rmdir(subdirout, rp->diag_spec);
+    //lept_mkdir(subdirout, rp->diag_spec);
 
 	for (i = 0; i < n; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);

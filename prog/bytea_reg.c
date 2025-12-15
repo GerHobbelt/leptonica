@@ -115,7 +115,7 @@ L_BYTEA      *lba1, *lba2, *lba3, *lba4;
          *   lba1 = l_byteaInitFromMem((l_uint8 *)str1, strlen(str1));
          */
 
-    data1 = l_binaryRead(DEMOPATH("kernel_reg.c"), &size1);
+    data1 = l_binaryRead(DEMOPATH("kernel_reg.c"), &size1, rp->diag_spec);
 #if 0
     str1 = (char *)arrayReplaceEachSequence(data1, size1, (l_uint8 *)"\r", 1,
                                             NULL, 0, &size2, NULL);
@@ -146,19 +146,19 @@ L_BYTEA      *lba1, *lba2, *lba3, *lba4;
 
         /* Test appending with binary data */
     slice = 1000;
-    total = nbytesInFile(DEMOPATH("breviar.38.150.jpg"));
+    total = nbytesInFile(DEMOPATH("breviar.38.150.jpg"), rp->diag_spec);
     lba1 = l_byteaCreate(100);
     n = 2 + total / slice;  /* using 1 is correct; using 2 gives two errors */
     lept_stderr("******************************************************\n");
     lept_stderr("* Testing error checking: ignore two reported errors *\n");
     for (i = 0, start = 0; i < n; i++, start += slice) {
-         data2 = l_binaryReadSelect(DEMOPATH("breviar.38.150.jpg"), start, slice, &size2);
+         data2 = l_binaryReadSelect(DEMOPATH("breviar.38.150.jpg"), start, slice, &size2, rp->diag_spec);
          l_byteaAppendData(lba1, data2, size2);
          lept_free(data2);
     }
     lept_stderr("******************************************************\n");
     data1 = l_byteaGetData(lba1, &size1);
-    data2 = l_binaryRead(DEMOPATH("breviar.38.150.jpg"), &size2);
+    data2 = l_binaryRead(DEMOPATH("breviar.38.150.jpg"), &size2, rp->diag_spec);
     regTestCompareStrings(rp, data1, size1, data2, size2);  /* 5 */
     l_byteaDestroy(&lba1);
     lept_free(data2);
@@ -176,7 +176,7 @@ L_BYTEA      *lba1, *lba2, *lba3, *lba4;
         /* Test write to file */
     lba1 = l_byteaInitFromFile(DEMOPATH("feyn.tif"));
     size1 = l_byteaGetSize(lba1);
-    fp = lept_fopen("/tmp/lept/bytea/feyn.dat", "wb");
+    fp = lept_fopen("/tmp/lept/bytea/feyn.dat", "wb", rp->diag_spec);
     for (start = 0; start < size1; start += 1000) {
          l_byteaWriteStream(fp, lba1, start, 1000);
     }

@@ -2118,7 +2118,7 @@ WIN32_FIND_DATAA  ffd;
     if (!dirname)
         return (SARRAY *)ERROR_PTR("dirname not defined", __func__, NULL);
 
-    realdir = genPathname(dirname, NULL);
+    realdir = genPathname(dirname, NULL, diagspec);
     pszDir = stringJoin(realdir, "\\*");
     LEPT_FREE(realdir);
 

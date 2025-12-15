@@ -198,7 +198,7 @@ SARRAY    *safiles, *sathumbs, *saviews, *sahtml, *salink;
     index = 0;
     for (i = 0; i < nfiles; i++) {
         fname = sarrayGetString(safiles, i, L_NOCOPY);
-        fullname = genPathname(dirin, fname);
+        fullname = genPathname(dirin, fname, rp->diag_spec);
         lept_stderr("name: %s\n", fullname);
         if ((pix = pixRead(fullname)) == NULL) {
             lept_stderr("file %s not a readable image\n", fullname);
@@ -213,7 +213,7 @@ SARRAY    *safiles, *sathumbs, *saviews, *sahtml, *salink;
         pixthumb = pixScale(pix, factor, factor);
         snprintf(buf, sizeof(buf), "%s_thumb_%03d", rootname, index);
         sarrayAddString(sathumbs, buf, L_COPY);
-        outname = genPathname(dirout, buf);
+        outname = genPathname(dirout, buf, rp->diag_spec);
         WriteFormattedPix(outname, pixthumb);
         lept_free(outname);
         pixDestroy(&pixthumb);
@@ -226,7 +226,7 @@ SARRAY    *safiles, *sathumbs, *saviews, *sahtml, *salink;
             pixview = pixScale(pix, factor, factor);
         snprintf(buf, sizeof(buf), "%s_view_%03d", rootname, index);
         sarrayAddString(saviews, buf, L_COPY);
-        outname = genPathname(dirout, buf);
+        outname = genPathname(dirout, buf, rp->diag_spec);
         WriteFormattedPix(outname, pixview);
         lept_free(outname);
         pixDestroy(&pixview);

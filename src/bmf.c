@@ -560,12 +560,15 @@ PIXA     *pixa;
 l_int32   n, w, inrow, top;
 l_int32  *ia;
 NUMA     *na;
+LDIAG_CTX diagspec;
 
     if (!pbl0 || !pbl1 || !pbl2)
         return (PIXA *)ERROR_PTR("&bl not all defined", __func__, NULL);
     *pbl0 = *pbl1 = *pbl2 = 0;
     if (!pixs)
         return (PIXA *)ERROR_PTR("pixs not defined", __func__, NULL);
+
+	diagspec = pixGetDiagnosticsSpec(pixs);
 
         /* Locate the 3 rows of characters */
     w = pixGetWidth(pixs);
@@ -599,8 +602,8 @@ NUMA     *na;
         /* Grab the character images and baseline data */
 
 #if DEBUG_BASELINE
-    lept_rmdir("baseline");
-    //lept_mkdir("baseline");
+    lept_rmdir("baseline", diagspec);
+    //lept_mkdir("baseline", diagspec);
 #endif  /* DEBUG_BASELINE */
 
     tab = makePixelSumTab8();

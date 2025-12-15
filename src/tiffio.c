@@ -2286,7 +2286,7 @@ TIFF  *tif;
     TIFFSetWarningHandler(NULL);  /* disable warnings */
     TIFFSetErrorHandler(NULL);  /* disable error messages */
 
-    fname = genPathname(filename, NULL);
+    fname = genPathname(filename, NULL, diagspec);
     tif = TIFFOpen(fname, modestring);
     LEPT_FREE(fname);
     return tif;

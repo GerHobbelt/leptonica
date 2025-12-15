@@ -66,17 +66,17 @@ L_REGPARAMS* rp;
     filein = argv[1];
     fileout = argv[2];
 
-    if ((array1 = l_binaryRead(filein, &nbytes)) == NULL)
+    if ((array1 = l_binaryRead(filein, &nbytes, rp->diag_spec)) == NULL)
         return ERROR_INT("array not made", __func__, 1);
     lept_stderr("Bytes read from file: %lu\n", (unsigned long)nbytes);
 
         /* Application of byte buffer ops: compress/decompress in memory */
 #if 1
     dataout = zlibCompress(array1, nbytes, &nout);
-    l_binaryWrite(fileout, "w", dataout, nout);
+    l_binaryWrite(fileout, "w", dataout, nout, rp->diag_spec);
 
     dataout2 = zlibUncompress(dataout, nout, &nout2);
-    l_binaryWrite("/tmp/dataout2", "w", dataout2, nout2);
+    l_binaryWrite("/tmp/dataout2", "w", dataout2, nout2, rp->diag_spec);
 
     filesAreIdentical(filein, "/tmp/dataout2", &same);
     if (same)
@@ -110,7 +110,7 @@ L_REGPARAMS* rp;
 
     bb2 = bbufferCreate(NULL, 0);
     bbufferRead(bb2, array1, nbytes);
-    fp = lept_fopen(fileout, "wb");
+    fp = lept_fopen(fileout, "wb", rp->diag_spec);
     bbufferWriteStream(bb2, fp, nbytes, &nout);
     lept_stderr(" bytes written out to fileout: %lu\n", (unsigned long)nout);
     lept_fclose(fp);

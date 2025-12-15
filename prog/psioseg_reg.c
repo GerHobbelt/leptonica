@@ -173,8 +173,8 @@ PIX          *pix4c, *pix8c, *pix8g, *pix32, *pixcs, *pixcs2;
     L_INFO("Output ps: /tmp/lept/regout/psioseg.5.ps\n", rp->testname);
 
         /* For convenience, also generate a pdf of this, using ps2pdf */
-    psname = genPathname("/tmp/lept/regout", "psioseg.5.ps");
-    pdfname = genPathname("/tmp/lept/regout", "psioseg.5.pdf");
+    psname = genPathname("/tmp/lept/regout", "psioseg.5.ps", rp->diag_spec);
+    pdfname = genPathname("/tmp/lept/regout", "psioseg.5.pdf", rp->diag_spec);
     snprintf(buf, sizeof(buf), "ps2pdf %s %s", psname, pdfname);
     ret = callSystemDebug(buf);  /* ps2pdf */
     lept_free(psname);

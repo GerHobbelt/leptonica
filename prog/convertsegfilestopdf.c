@@ -159,7 +159,7 @@ L_REGPARAMS* rp;
     if (maskdir)  /* use this; ignore any input boxaafile */
         baa = convertNumberedMasksToBoxaa(maskdir, masksubstr, 0, 0);
     else if (strcmp(boxaafile, "skip") != 0) {  /* use the boxaafile */
-        boxaapath = genPathname(boxaafile, NULL);
+        boxaapath = genPathname(boxaafile, NULL, rp->diag_spec);
         baa = boxaaRead(boxaapath);
         lept_free(boxaapath);
     }

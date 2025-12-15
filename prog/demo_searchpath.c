@@ -110,7 +110,7 @@ static char* concat_paths_and_resolve(const char* p1, const char* p2)
 	str = cs;
 
 	// resolve /tmp, clean up the path, etc...
-	char* gp = genPathname(str, NULL);
+	char* gp = genPathname(str, NULL, rp->diag_spec);
 	stringDestroy(&str);
 
 	return gp;
@@ -200,7 +200,7 @@ char* locate_file_in_searchpath(const char* file, const SARRAY* searchpaths)
 					l_int32 nfiles = sarrayGetCount(raw_list);
 					for (l_int32 i = 0; i < nfiles; i++) {
 						char* fname = sarrayGetString(raw_list, i, L_NOCOPY);
-						char* fullname = genPathname(basedir, fname);
+						char* fullname = genPathname(basedir, fname, rp->diag_spec);
 						lept_stderr("name: %s\n", fullname);
 
 						LEPT_FREE(fullname);

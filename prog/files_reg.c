@@ -106,13 +106,13 @@ L_REGPARAMS* rp;
     lept_stderr("\n ===================================================\n");
     lept_stderr(" ======= Test lept_rmdir() and lept_mkdir()) =======\n");
     lept_stderr(" ===================================================\n");
-    lept_rmdir("junkfiles");
-    lept_dir_exists("/tmp/junkfiles", &exists);
+    lept_rmdir("junkfiles", rp->diag_spec);
+    lept_dir_exists("/tmp/junkfiles", rp->diag_spec, &exists);
     if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("directory removed?: %d\n", !exists);
     regTestCompareValues(rp, 0, exists, 0.0);  /* 17 */
 
-    lept_mkdir("junkfiles");
-    lept_dir_exists("/tmp/junkfiles", &exists);
+    lept_mkdir("junkfiles", rp->diag_spec);
+    lept_dir_exists("/tmp/junkfiles", rp->diag_spec, &exists);
     if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("directory made?: %d\n", exists);
     regTestCompareValues(rp, 1, exists, 0.0);  /* 18 */
 
@@ -194,7 +194,7 @@ SARRAY  *sa;
         /* Remove old version if it exists */
     realtail = (newtail) ? stringNew(newtail) : stringNew(srctail);
     lept_rm(newdir, realtail);
-    makeTempDirname(realnewdir, 256, newdir);
+    makeTempDirname(realnewdir, 256, newdir, rp->diag_spec);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("\nInput: srctail = %s, newdir = %s, newtail = %s\n",
                     srctail, newdir, newtail);
@@ -205,7 +205,7 @@ SARRAY  *sa;
     sarrayDestroy(&sa);
 
         /* Copy */
-    lept_cp(srctail, newdir, newtail, &fname);
+    lept_cp(srctail, newdir, newtail, &fname, rp->diag_spec);
     sa = getFilenamesInDirectory(realnewdir);
     nfiles2 = sarrayGetCount(sa);
     if (leptIsInDisplayMode(rp->diag_spec)) {
@@ -229,23 +229,23 @@ SARRAY  *sa;
     sarrayDestroy(&sa);
 
         /* Copy it again ... */
-    lept_cp(srctail, newdir, newtail, &fname);
+    lept_cp(srctail, newdir, newtail, &fname, rp->diag_spec);
     if (leptIsInDisplayMode(rp->diag_spec))
         lept_stderr("  File copied to: %s\n", fname);
     lept_free(fname);
 
         /* move it elsewhere ... */
-    lept_rmdir("junko");  /* clear out this directory */
-    lept_mkdir("junko");
+    lept_rmdir("junko", rp->diag_spec);  /* clear out this directory */
+    lept_mkdir("junko", rp->diag_spec);
     newsrc = pathJoin(realnewdir, realtail);
-    lept_mv(newsrc, "junko", NULL, &fname);
+    lept_mv(newsrc, "junko", NULL, &fname, rp->diag_spec);
     if (leptIsInDisplayMode(rp->diag_spec)) {
         lept_stderr("  Move file at: %s\n", newsrc);
         lept_stderr("  ... to: %s\n", fname);
     }
     lept_free(fname);
     lept_free(newsrc);
-    makeTempDirname(newnewdir, 256, "junko");
+    makeTempDirname(newnewdir, 256, "junko", rp->diag_spec);
     if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  In this directory: %s\n", newnewdir);
     sa = getFilenamesInDirectory(newnewdir);  /* check if it landed ok */
     nfiles3 = sarrayGetCount(sa);
@@ -273,7 +273,7 @@ void TestGenPathname(L_REGPARAMS  *rp,
 	char  expect[512];
 	char *localdir;
 
-    char *path = genPathname(dir, fname);
+    char *path = genPathname(dir, fname, rp->diag_spec);
     if (!dir || dir[0] == '\0') {
 		if ((localdir = getcwd(NULL, 0)) == NULL) {
 			L_ERROR("bad bad bad -- no local directory!\n", __func__);

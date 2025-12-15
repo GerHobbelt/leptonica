@@ -121,7 +121,7 @@ L_REGPARAMS* rp;
         /* ~~Also save the plot to png~~  <-- this SHOULD NOT happen as we should catch this in the custom handler! */
 
     gplot1->outformat = GPLOT_PNG;
-    pngname = genPathname("/tmp/lept/plot", "set1.png");
+    pngname = genPathname("/tmp/lept/plot", "set1.png", rp->diag_spec);
     stringReplace(&gplot1->outname, pngname);
     gplotMakeOutput(gplot1);
     l_fileDisplay("/tmp/lept/plot/set1.png", 100, 100, 1.0);

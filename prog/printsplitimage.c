@@ -132,7 +132,7 @@ L_REGPARAMS* rp;
         pixGetDimensions(pixt, &w, &h, NULL);
         scale = L_MIN(FILL_FACTOR * 2550 / w, FILL_FACTOR * 3300 / h);
         snprintf(buf, sizeof(buf), "image%d.ps", i);
-        fname = genPathname("/tmp/lept/split", buf);
+        fname = genPathname("/tmp/lept/split", buf, rp->diag_spec);
         lept_stderr("fname: %s\n", fname);
         sarrayAddString(sa, fname, L_INSERT);
 #if USE_COMPRESSED

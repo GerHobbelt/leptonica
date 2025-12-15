@@ -133,7 +133,7 @@ L_REGPARAMS* rp;
         pix1 = pixClone(pixs);
     }
     scale = L_MIN(FILL_FACTOR * 2550 / w, FILL_FACTOR * 3300 / h);
-    fname = genPathname("/tmp", "print_image.ps");
+    fname = genPathname("/tmp", "print_image.ps", rp->diag_spec);
 #if USE_COMPRESSED
     index = 0;
     pixWriteCompressedToPS(pix1, fname, (l_int32)(300. / scale), 3, &index);

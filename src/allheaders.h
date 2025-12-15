@@ -2730,38 +2730,38 @@ LEPT_DLL extern l_uint8 * arrayReplaceEachSequence ( const l_uint8 *datas, size_
 LEPT_DLL extern L_DNA * arrayFindEachSequence ( const l_uint8 *data, size_t datalen, const l_uint8 *sequence, size_t seqlen );
 LEPT_DLL extern l_ok arrayFindSequence ( const l_uint8 *data, size_t datalen, const l_uint8 *sequence, size_t seqlen, l_int32 *poffset, l_int32 *pfound );
 LEPT_DLL extern void * reallocNew ( void **pindata, size_t oldsize, size_t newsize );
-LEPT_DLL extern l_uint8 * l_binaryRead ( const char *filename, size_t *pnbytes );
+LEPT_DLL extern l_uint8 * l_binaryRead ( const char *filename, size_t *pnbytes, LDIAG_CTX diagspec );
 LEPT_DLL extern l_uint8 * l_binaryReadStream ( FILE *fp, size_t *pnbytes );
-LEPT_DLL extern l_uint8 * l_binaryReadSelect ( const char *filename, size_t start, size_t nbytes, size_t *pnread );
+LEPT_DLL extern l_uint8 * l_binaryReadSelect ( const char *filename, size_t start, size_t nbytes, LDIAG_CTX diagspec, size_t *pnread );
 LEPT_DLL extern l_uint8 * l_binaryReadSelectStream ( FILE *fp, size_t start, size_t nbytes, size_t *pnread );
-LEPT_DLL extern l_ok l_binaryWrite ( const char *filename, const char *operation, const void *data, size_t nbytes );
-LEPT_DLL extern size_t nbytesInFile ( const char *filename );
+LEPT_DLL extern l_ok l_binaryWrite ( const char *filename, const char *operation, const void *data, size_t nbytes, LDIAG_CTX diagspec );
+LEPT_DLL extern size_t nbytesInFile ( const char *filename, LDIAG_CTX diagspec );
 LEPT_DLL extern size_t fnbytesInFile ( FILE *fp );
 LEPT_DLL extern l_uint8 * l_binaryCopy ( const l_uint8 *datas, size_t size );
 LEPT_DLL extern l_ok l_binaryCompare ( const l_uint8 *data1, size_t size1, const l_uint8 *data2, size_t size2, l_int32 *psame );
-LEPT_DLL extern l_ok fileCopy ( const char *srcfile, const char *newfile );
-LEPT_DLL extern l_ok fileConcatenate ( const char *srcfile, const char *destfile );
-LEPT_DLL extern l_ok fileAppendString ( const char *filename, const char *str );
-LEPT_DLL extern l_ok fileSplitLinesUniform ( const char *filename, l_int32 n, l_int32 save_empty, const char *rootpath, const char *ext );
-LEPT_DLL extern FILE * fopenReadStream ( const char *filename );
-LEPT_DLL extern FILE * fopenWriteStream ( const char *filename, const char *modestring );
-LEPT_DLL extern FILE * fopenReadFromMemory ( const l_uint8 *data, size_t size );
-LEPT_DLL extern FILE * fopenWriteWinTempfile ( void );
-LEPT_DLL extern FILE * lept_fopen ( const char *filename, const char *mode );
+LEPT_DLL extern l_ok fileCopy ( const char *srcfile, const char *newfile, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok fileConcatenate ( const char *srcfile, const char *destfile, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok fileAppendString ( const char *filename, const char *str, LDIAG_CTX diagspec );
+LEPT_DLL extern l_ok fileSplitLinesUniform ( const char *filename, l_int32 n, l_int32 save_empty, const char *rootpath, const char *ext, LDIAG_CTX diagspec );
+LEPT_DLL extern FILE * fopenReadStream ( const char *filename, LDIAG_CTX diagspec );
+LEPT_DLL extern FILE * fopenWriteStream ( const char *filename, const char *modestring, LDIAG_CTX diagspec );
+LEPT_DLL extern FILE * fopenReadFromMemory ( const l_uint8 *data, size_t size, LDIAG_CTX diagspec );
+LEPT_DLL extern FILE * fopenWriteWinTempfile ( LDIAG_CTX diagspec );
+LEPT_DLL extern FILE * lept_fopen ( const char *filename, const char *mode, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok lept_fclose ( FILE *fp );
 LEPT_DLL extern void * lept_calloc ( size_t nmemb, size_t size );
 LEPT_DLL extern void lept_free ( const void *ptr );
-LEPT_DLL extern l_int32 lept_mkdir ( const char *subdir );
-LEPT_DLL extern l_int32 lept_rmdir ( const char *subdir );
-LEPT_DLL extern l_int32 lept_mkdir_basedir ( const char *filepath );
-LEPT_DLL extern l_int32 lept_rmdir_basedir ( const char *filepath );
-LEPT_DLL extern void lept_dir_exists ( const char *dir, l_int32 *pexists );
-LEPT_DLL extern void lept_file_exists ( const char *dir, l_int32 *pexists );
-LEPT_DLL extern l_int32 lept_rm_match ( const char *subdir, const char *substr );
-LEPT_DLL extern l_int32 lept_rm ( const char *subdir, const char *tail );
-LEPT_DLL extern l_int32 lept_rmfile ( const char *filepath );
-LEPT_DLL extern l_int32 lept_mv ( const char *srcfile, const char *newdir, const char *newtail, char **pnewpath );
-LEPT_DLL extern l_int32 lept_cp ( const char *srcfile, const char *newdir, const char *newtail, char **pnewpath );
+LEPT_DLL extern l_int32 lept_mkdir ( const char *subdir, LDIAG_CTX diagspec );
+LEPT_DLL extern l_int32 lept_rmdir ( const char *subdir, LDIAG_CTX diagspec );
+LEPT_DLL extern l_int32 lept_mkdir_basedir ( const char *filepath, LDIAG_CTX diagspec );
+LEPT_DLL extern l_int32 lept_rmdir_basedir ( const char *filepath, LDIAG_CTX diagspec );
+LEPT_DLL extern void lept_dir_exists ( const char *dir, LDIAG_CTX diagspec, l_int32 *pexists );
+LEPT_DLL extern void lept_file_exists ( const char *dir, LDIAG_CTX diagspec, l_int32 *pexists );
+LEPT_DLL extern l_int32 lept_rm_match ( const char *subdir, const char *substr, LDIAG_CTX diagspec );
+LEPT_DLL extern l_int32 lept_rm ( const char *subdir, const char *tail, LDIAG_CTX diagspec );
+LEPT_DLL extern l_int32 lept_rmfile ( const char *filepath, LDIAG_CTX diagspec );
+LEPT_DLL extern l_int32 lept_mv ( const char *srcfile, const char *newdir, const char *newtail, LDIAG_CTX diagspec, char **pnewpath );
+LEPT_DLL extern l_int32 lept_cp ( const char *srcfile, const char *newdir, const char *newtail, LDIAG_CTX diagspec, char **pnewpath );
 LEPT_DLL extern l_int32 callSystemDebug ( const char *cmd );
 LEPT_DLL extern l_ok splitPathAtDirectory ( const char *pathname, char **pdir, char **ptail );
 LEPT_DLL extern l_ok splitPathAtExtension ( const char *pathname, char **pbasename, char **pextension );
@@ -2775,11 +2775,11 @@ LEPT_DLL extern l_ok convertSepCharsInPath ( char *path, l_int32 type );
 LEPT_DLL extern l_int32 getPathRootLength ( const char* path );
 LEPT_DLL extern char * getPathBasename ( const char* path, l_int32 strip_off_parts_code );
 LEPT_DLL extern uint64_t getPathHash ( const char* path );
-LEPT_DLL extern char * genPathname ( const char *dir, const char *fname );
+LEPT_DLL extern char * genPathname ( const char *dir, const char *fname, LDIAG_CTX diagspec );
 //LEPT_DLL extern char * sanitizePathToIdentifier ( char *dst, size_t dstsize, const char *str, const char *additional_acceptable_set );
-LEPT_DLL extern l_ok makeTempDirname ( char *result, size_t nbytes, const char *subdir );
+LEPT_DLL extern l_ok makeTempDirname ( char *result, size_t nbytes, const char *subdir, LDIAG_CTX diagspec );
 LEPT_DLL extern l_ok modifyTrailingSlash ( char *path, size_t nbytes, l_int32 flag );
-LEPT_DLL extern char * l_makeTempFilename ( void );
+LEPT_DLL extern char * l_makeTempFilename ( LDIAG_CTX diagspec );
 LEPT_DLL extern l_int32 extractNumberFromFilename ( const char *fname, l_int32 numpre, l_int32 numpost );
 LEPT_DLL extern PIX * pixSimpleCaptcha ( PIX *pixs, l_int32 border, l_int32 nterms, l_uint32 seed, l_uint32 color, l_int32 cmapflag );
 LEPT_DLL extern PIX * pixRandomHarmonicWarp ( PIX *pixs, l_float32 xmag, l_float32 ymag, l_float32 xfreq, l_float32 yfreq, l_int32 nx, l_int32 ny, l_uint32 seed, l_int32 grayval );
@@ -2955,8 +2955,8 @@ LEPT_DLL extern l_ok pixaIsDebugModeActive ( PIXA* pixa );
 LEPT_DLL extern void pixaActivateDebugMode ( PIXA* pixa, l_ok activate );
 LEPT_DLL extern LDIAG_CTX pixaPassDiagIfDebugModeActive ( PIXA* pixa );
 
-LEPT_DLL extern const char* string_asprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 1, 2)));
-LEPT_DLL extern const char* string_vasprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, va_list args );
+LEPT_DLL extern char* string_asprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 1, 2)));
+LEPT_DLL extern char* string_vasprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, va_list args );
 
 LEPT_DLL extern SARRAY* leptProcessResponsefileLines ( SARRAY* const lines, const SARRAY* const searchpath_set, l_LocateMode_t search_mode, const char *output_basedir, const char *stmt_prefix, const char *fail_marker, const char* ignore_marker );
 
@@ -2968,6 +2968,21 @@ LEPT_DLL extern l_int32 MORPH_BC;
 #ifdef __cplusplus
 }
 #endif  /* __cplusplus */
+
+// fixup for C++
+#ifdef __cplusplus
+static inline void stringDestroyPP(const char **src_ref)
+{
+	stringDestroy(src_ref);
+}
+static inline void stringDestroyPP(char **src_ref)
+{
+	const char **ptr = (const char **)src_ref;
+	stringDestroy(ptr);
+}
+#define stringDestroy(ptr)     stringDestroyPP(ptr)
+#endif  /* __cplusplus */
+
 #endif /* NO_PROTOS */
 
 // Accepts both Unix and Windows pathname separators, on any platform.

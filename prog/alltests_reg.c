@@ -229,7 +229,12 @@ char    *str, *results_file = NULL;
 char     command[256], buf[256];
 l_int32  i, ntests, dotest, nfail, ret, start, stop;
 SARRAY  *sa;
+L_REGPARAMS* rp;
 
+	if (regTestSetup(argc, argv, "all_tests", &rp))
+		return 1;
+
+	// TODO
     if (argc != 2)
         return ERROR_INT(" Syntax alltests_reg [generate | compare | display]",
                          __func__, 1);
@@ -241,7 +246,7 @@ SARRAY  *sa;
             "This currently tests %d regression test\n"
             "programs in the /prog directory.\n", ntests);
 
-	results_file = genPathname("/tmp/lept", "reg_results.txt");
+	results_file = genPathname("/tmp/lept", "reg_results.txt", rp->diag_spec);
 
         /* Clear the output file if we're doing the set of reg tests */
     dotest = strcmp(argv[1], "compare") ? 0 : 1;
@@ -252,7 +257,7 @@ SARRAY  *sa;
         sarrayAddString(sa, getImagelibVersions(), L_INSERT);
         str = sarrayToString(sa, 1);
         sarrayDestroy(&sa);
-        l_binaryWrite(results_file, "w", str, strlen(str));
+        l_binaryWrite(results_file, "w", str, strlen(str), rp->diag_spec);
         lept_free(str);
     }
 
@@ -288,7 +293,7 @@ SARRAY  *sa;
             snprintf(buf, sizeof(buf), "Failed to complete %s_reg\n", tests[i]);
             if (dotest) {
                 l_binaryWrite(results_file, "a",
-                              buf, strlen(buf));
+                              buf, strlen(buf), rp->diag_spec);
                 nfail++;
             }
             else

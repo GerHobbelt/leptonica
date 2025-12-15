@@ -94,7 +94,7 @@ L_REGPARAMS* rp;
          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n");
 
     (void)lept_rm(NULL, TEMP_PS);
-    tempfile = genPathname("/tmp", TEMP_PS);
+    tempfile = genPathname("/tmp", TEMP_PS, rp->diag_spec);
     convertTiffMultipageToPS(filein, tempfile, FILL_FACTOR);
 
     if (argc == 3) {

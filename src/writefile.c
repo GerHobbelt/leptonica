@@ -1052,7 +1052,7 @@ size_t         fullpathsize;
 		pixpath = leptDebugGenFilepath(diagspec, "disp/%s.%05d.jpg", __func__, (int)index);
         pixWrite(pixpath, pix2, IFF_JFIF_JPEG);
     }
-    tempname = genPathname(pixpath, NULL);
+    tempname = genPathname(pixpath, NULL, diagspec);
 
 #ifndef _WIN32
 
@@ -1094,7 +1094,7 @@ size_t         fullpathsize;
 #else  /* _WIN32 */
 
         /* Windows: L_DISPLAY_WITH_IV || L_DISPLAY_WITH_OPEN */
-	pathname = genPathname(tempname, NULL);
+	pathname = genPathname(tempname, NULL, diagspec);
 	fullpathsize = strlen(pathname) + L_MAX(Bufsize, _MAX_PATH);
 	fullpath = (char *)LEPT_MALLOC(fullpathsize);
 	
