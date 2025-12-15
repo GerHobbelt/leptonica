@@ -62,12 +62,10 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
 	//lept_mkdir("lept/pixa");
 
     pixa = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     /* ----------------  Remove small components --------------- */
     boxa = pixConnComp(pixs, NULL, 8);
@@ -77,7 +75,7 @@ L_REGPARAMS* rp;
     nay2 = numaCreate(51);
     boxaDestroy(&boxa);
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("\n Select Large if Both\n");
         lept_stderr("Iter 0: n = %d\n", n0);
     }
@@ -89,12 +87,12 @@ L_REGPARAMS* rp;
         boxa = pixConnComp(pixd, NULL, 8);
         n = boxaGetCount(boxa);
         numaAddNumber(nay1, n);
-        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Iter %d: n = %d\n", i, n);
+        if (leptIsInDisplayMode()) lept_stderr("Iter %d: n = %d\n", i, n);
         boxaDestroy(&boxa);
         pixDestroy(&pixd);
     }
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("\n Select Large if Either\n");
         lept_stderr("Iter 0: n = %d\n", n0);
     }
@@ -106,12 +104,12 @@ L_REGPARAMS* rp;
         boxa = pixConnComp(pixd, NULL, 8);
         n = boxaGetCount(boxa);
         numaAddNumber(nay2, n);
-        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Iter %d: n = %d\n", i, n);
+        if (leptIsInDisplayMode()) lept_stderr("Iter %d: n = %d\n", i, n);
         boxaDestroy(&boxa);
         pixDestroy(&pixd);
     }
 
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/pixa/root1", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/pixa/root1", GPLOT_PNG,
                         "Select large: number of cc vs size removed",
                         "min size", "number of c.c.");
     gplotAddPlot(gplot, nax, nay1, GPLOT_LINES, "select if both");
@@ -125,7 +123,7 @@ L_REGPARAMS* rp;
     numaEmpty(nay1);
     numaEmpty(nay2);
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("\n Select Small if Both\n");
         lept_stderr("Iter 0: n = %d\n", 0);
     }
@@ -137,12 +135,12 @@ L_REGPARAMS* rp;
         boxa = pixConnComp(pixd, NULL, 8);
         n = boxaGetCount(boxa);
         numaAddNumber(nay1, n);
-        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Iter %d: n = %d\n", i, n);
+        if (leptIsInDisplayMode()) lept_stderr("Iter %d: n = %d\n", i, n);
         boxaDestroy(&boxa);
         pixDestroy(&pixd);
     }
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("\n Select Small if Either\n");
         lept_stderr("Iter 0: n = %d\n", 0);
     }
@@ -154,12 +152,12 @@ L_REGPARAMS* rp;
         boxa = pixConnComp(pixd, NULL, 8);
         n = boxaGetCount(boxa);
         numaAddNumber(nay2, n);
-        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Iter %d: n = %d\n", i, n);
+        if (leptIsInDisplayMode()) lept_stderr("Iter %d: n = %d\n", i, n);
         boxaDestroy(&boxa);
         pixDestroy(&pixd);
     }
 
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/pixa/root2", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/pixa/root2", GPLOT_PNG,
                         "Remove large: number of cc vs size removed",
                         "min size", "number of c.c.");
     gplotAddPlot(gplot, nax, nay1, GPLOT_LINES, "select if both");

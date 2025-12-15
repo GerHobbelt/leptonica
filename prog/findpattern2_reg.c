@@ -75,8 +75,6 @@ L_REGPARAMS* rp;
 
     pixs = pixRead("asterisk.png");
     pixt = pixRead("one-asterisk.png");
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixt, rp->diag_spec);
 
     /********************************************************************
      *  Generate hit-miss SELs that work effectively to identify        *
@@ -92,7 +90,6 @@ L_REGPARAMS* rp;
           * for both hits and misses, hitskip and missskip can be
           * anything from 0 to 6. */
     pixa1 = pixaCreate(7);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	for (i = 0; i <= 6; i++) {
         sel_ast = pixGenerateSelBoundary(pixt, 2, 2, i, i, 1, 0, 1, 1, &pix1);
         pixsel = pixDisplayHitMissSel(pix1, sel_ast, 7, HitColor, MissColor);
@@ -109,7 +106,6 @@ L_REGPARAMS* rp;
           * min runlength, the number of horizontal and vertical lines
           * can be chosen between 9 and 16. */
     pixa1 = pixaCreate(7);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	for (i = 9; i <= 16; i++) {
         sel_ast = pixGenerateSelWithRuns(pixt, i, i, 1, 3, 0, 0, 0, 0, &pix1);
         pixsel = pixDisplayHitMissSel(pix1, sel_ast, 7, HitColor, MissColor);

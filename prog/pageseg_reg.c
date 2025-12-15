@@ -89,9 +89,7 @@ SARRAY       *sa;
 #if 1
         /* Test the generic page segmentation */
     pixs = pixRead(DEMOPATH("pageseg1.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixadb = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pixGetRegionsBinary(pixs, &pixhm, &pixtm, &pixtb, pixadb);
     pixDestroy(&pixhm);
     pixDestroy(&pixtm);
@@ -105,7 +103,7 @@ SARRAY       *sa;
     }
 
         /* Display intermediate images and final segmentation */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix1 = pixaDisplayTiledAndScaled(pixadb, 32, 400, 4, 0, 20, 3);
         pixDisplay(pix1, 0, 0);
         pixDestroy(&pix1);
@@ -129,7 +127,6 @@ SARRAY       *sa;
 	for (i = 0; i < n; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
         pix1 = pixRead(fname);
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		box = pixFindPageForeground(pix1, 170, 70, 30, 0, pixac);
         if (!box) {
             pixDestroy(&pix1);
@@ -162,9 +159,7 @@ SARRAY       *sa;
 
         /* Test the table finder */
     pix1 = pixRead(DEMOPATH("table.15.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixadb = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
     regTestCompareValues(rp, 1.0, istable, 0.0);  /* 23 */
@@ -176,9 +171,7 @@ SARRAY       *sa;
     pixaDestroy(&pixadb);
 
     pix1 = pixRead(DEMOPATH("table.27.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixadb = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
     regTestCompareValues(rp, 1.0, istable, 0.0);  /* 25 */
@@ -190,9 +183,7 @@ SARRAY       *sa;
     pixaDestroy(&pixadb);
 
     pix1 = pixRead(DEMOPATH("table.150.png"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixadb = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
     regTestCompareValues(rp, 1.0, istable, 0.0);  /* 27 */
@@ -204,9 +195,7 @@ SARRAY       *sa;
     pixaDestroy(&pixadb);
 
     pix1 = pixRead(DEMOPATH("toc.99.tif"));  /* not a table */
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixadb = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pixDecideIfTable(pix1, NULL, L_PORTRAIT_MODE, &score, pixadb);
     istable = (score >= 2) ? 1 : 0;
     regTestCompareValues(rp, 0.0, istable, 0.0);  /* 29 */
@@ -220,10 +209,8 @@ SARRAY       *sa;
 
         /* Tests of auto-inversion of text */
     pix1 = pixRead(DEMOPATH("zanotti-78.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixConvertRGBToLuminance(pix1);
     pixadb = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pixaAddPix(pixadb, pix2, L_COPY);
     pixGetDimensions(pix2, &w, &h, NULL);
     pixRasterop(pix2, 0.2 * w, 0.08 * h, 0.4 * w, 0.23 * h, PIX_NOT(PIX_DST),
@@ -244,9 +231,7 @@ SARRAY       *sa;
     pixDestroy(&pix5);
 
     pix1 = pixRead(DEMOPATH("invertedtext.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixadb = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pixaAddPix(pixadb, pix1, L_COPY);
     pix2 = pixAutoPhotoinvert(pix1, 128, &pix3, pixadb);
     pix4 = pixaDisplayTiledInColumns(pixadb, 5, 1.0, 20, 2);

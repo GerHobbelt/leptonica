@@ -146,6 +146,8 @@ regTestSetup(int argc,
 	if (!prp)
 		return ERROR_INT("ptrs not all defined", __func__, 1);
 
+	leptCreateDiagnoticsSpecInstance();
+
 	rp = (L_REGPARAMS*)LEPT_CALLOC(1, sizeof(L_REGPARAMS));
 	*prp = rp;
 	if (!rp)
@@ -247,7 +249,7 @@ regTestSetup(int argc,
 			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_ALL:
 			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ANY:
 			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ONE:
-				rp->argv_search_mode = (l_locateMode_t)m;
+				rp->argv_search_mode = (l_LocateMode_t)m;
 				break;
 
 			default:
@@ -357,24 +359,22 @@ regTestSetup(int argc,
         return 1;
     }
 
-	LDIAG_CTX diagspec = leptCreateDiagnoticsSpecInstance();
 	if (rp->cmd_mode == L_REG_BASIC_EXEC) {
-		leptDebugSetFileBasepath(diagspec, "lept/regout");
+		leptDebugSetFileBasepath("lept/regout");
 	}
 	else {
-		leptDebugSetFileBasepath(diagspec, "lept");
-		leptDebugAppendFileBasepath(diagspec, output_path_base);
+		leptDebugSetFileBasepath("lept");
+		leptDebugAppendFileBasepath(output_path_base);
 	}
-	leptDebugSetStepLevelAsForeverIncreasing(diagspec, FALSE);
-	leptDebugSetProcessName(diagspec, testname);
-	leptDebugSetFilepathDefaultFormat(diagspec, "{R}-{p}.{i}");
+	leptDebugSetStepLevelAsForeverIncreasing(FALSE);
+	leptDebugSetProcessName(testname);
+	leptDebugSetFilepathDefaultFormat("{R}-{p}.{i}");
 
-	leptActivateDebugMode(diagspec, !!debug_mode);
+	leptActivateDebugMode(!!debug_mode, 0);
 
     setLeptDebugOK(1);  /* required for testing */
 
 	rp->testname = testname;
-	rp->diag_spec = diagspec;
 	rp->index = -1;  /* increment before each test */
 
         /* Initialize to true.  A failure in any test is registered
@@ -383,14 +383,14 @@ regTestSetup(int argc,
 
 #if 0
 	/* Make sure the lept/regout subdirectory exists */
-    lept_mkdir(leptDebugGetFileBasePath(diagspec));
+    lept_mkdir(leptDebugGetFileBasePath());
 #endif
 
         /* Only open a stream to a temp file for the 'compare' case */
 	switch (rp->cmd_mode) {
 	case L_REG_COMPARE:
-		leptDebugSetFileBasepath(diagspec, "lept/regout");
-		leptDebugAppendFileBasepath(diagspec, output_path_base);
+		leptDebugSetFileBasepath("lept/regout");
+		leptDebugAppendFileBasepath(output_path_base);
 		rp->tempfile = stringNew("/tmp/lept/regout/regtest_output.txt");
 		rp->fp = fopenWriteStream(rp->tempfile, "wb");
 		if (rp->fp == NULL) {
@@ -400,26 +400,26 @@ regTestSetup(int argc,
 		break;
 
 	case L_REG_GENERATE:
-		leptDebugSetFileBasepath(diagspec, "lept/golden");
-		leptDebugAppendFileBasepath(diagspec, output_path_base);
+		leptDebugSetFileBasepath("lept/golden");
+		leptDebugAppendFileBasepath(output_path_base);
 		//lept_mkdir("lept/golden");
 		break;
 
 	case L_REG_DISPLAY:
-		leptDebugSetFileBasepath(diagspec, "lept/display");
-		leptDebugAppendFileBasepath(diagspec, output_path_base);
-		leptSetInDisplayMode(rp->diag_spec, TRUE);
+		leptDebugSetFileBasepath("lept/display");
+		leptDebugAppendFileBasepath(output_path_base);
+		leptSetInDisplayMode(TRUE);
 		break;
 
 	default: // L_REG_BASIC_EXEC;
-		leptDebugSetFileBasepath(diagspec, "lept/prog");
-		leptDebugAppendFileBasepath(diagspec, output_path_base);
+		leptDebugSetFileBasepath("lept/prog");
+		leptDebugAppendFileBasepath(output_path_base);
 		break;
 	}
 
 #if 0
 	/* Make sure the lept/regout subdirectory exists */
-	lept_mkdir(leptDebugGetFileBasePath(diagspec));
+	lept_mkdir(leptDebugGetFileBasePath());
 #endif
 
         /* Print out test name and both the leptonica and
@@ -570,7 +570,7 @@ size_t   nbytes;
     LEPT_FREE(results_file);
     LEPT_FREE(message);
 
-	leptDestroyDiagnoticsSpecInstance(&rp->diag_spec);
+	leptDestroyDiagnoticsSpecInstance();
     LEPT_FREE(rp->testname);
     LEPT_FREE(rp);
     return retval;

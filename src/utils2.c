@@ -227,6 +227,7 @@
 #include <stdio.h>  
 #include <stdlib.h> 
 #include <stdarg.h>
+#include <stdint.h>
 
 #include "allheaders.h"
 
@@ -3631,40 +3632,13 @@ size_t   len;
 #if defined(_WIN32)
 static char* mkdtemp(char* path)
 {
-	static unsigned int prev_h = 0;
-
 	// see also https://stackoverflow.com/questions/6287475/creating-a-unique-temporary-directory-from-pure-c-in-windows
 	char* cursor = path + strlen(path) - 6; // start of XXXXXX part:
 	char* rv = NULL;
 
 	// max 5 attempts when things go badly wrong.
 	for (int i = 0; i < 5; i++) {
-		LARGE_INTEGER li = { 0 };
-		QueryPerformanceCounter(&li);
-		LONGLONG hh = li.QuadPart;
-		// remix all bits into the lower 30 bits, which will be used to fill XXXXXX name part
-		hh ^= hh >> 17;					
-		hh ^= hh >> (64 - 6 * 5);
-		unsigned int h = (unsigned int)hh;
-
-		// remix with previously stored value: this ensures the numbers keep changing no matter how fast/often you query that perf counter.
-		prev_h *= 0x9E3779B1U;    // prime
-		prev_h ^= h;
-		h = prev_h;
-
-		static const char* const lu = "0123456789ABCDEFGHJKLMNPQRSTUVWZ";
-		assert(strlen(lu) == 32);
-		cursor[0] = lu[h & 0x1F];
-		h >>= 5;
-		cursor[1] = lu[h & 0x1F];
-		h >>= 5;
-		cursor[2] = lu[h & 0x1F];
-		h >>= 5;
-		cursor[3] = lu[h & 0x1F];
-		h >>= 5;
-		cursor[4] = lu[h & 0x1F];
-		h >>= 5;
-		cursor[5] = lu[h & 0x1F];
+		leptDebugMkRndToken6(cursor);
 		if (CreateDirectoryA(path, NULL) == 0) {
 			if (GetLastError() != ERROR_ALREADY_EXISTS) {
 				L_ERROR("failed to create temporary directory in temp/scratch basedir: '%s', error 0x%08x\n", __func__, path, (unsigned int)GetLastError());
@@ -3682,6 +3656,14 @@ static char* mkdtemp(char* path)
 }
 #endif
 
+
+static inline const char *
+stringOrEmpty(const char* str)
+{
+	if (str)
+		return str;
+	return "";
+}
 
 /*!
  * \brief   genPathname()
@@ -3863,9 +3845,8 @@ size_t   size;
 	}
 
 	/* remove the trailing slash in the directory, except when dir == "/"  */
-	convertSepCharsInPath(pathout, UNIX_PATH_SEPCHAR);
 	dirlen = strlen(pathout);
-	if (pathout[dirlen - 1] == '/' && dirlen > dir_root_len) {
+	if (dirlen > dir_root_len && leptIsSeparator(pathout[dirlen - 1])) {
 		pathout[dirlen - 1] = '\0';
 	}
 
@@ -3874,8 +3855,31 @@ size_t   size;
 		stringCat(pathout, size, "/");
         stringCat(pathout, size, fname);
     }
-
     LEPT_FREE(cdir);
+
+    convertSepCharsInPath(pathout, UNIX_PATH_SEPCHAR);
+
+	// see if the path has a 'random ID to be injected here' marker:
+	// (used in, f.e.: leptDebugGetFileBasePath() when userland hasn't configured some expected components)
+	{
+		char* p;
+		while ((p = strchr(pathout, '\x1F')) != NULL) {
+			char idstr[7];
+			leptDebugMkRndToken6(idstr);
+			idstr[6] = 0;
+
+			size_t l1 = p - pathout;
+			char* p1 = (l1 > 0 ? stringCopySegment(pathout, 0, l1) : NULL);
+			char* p2 = (p[1] != '\0' ? stringCopySegment(pathout, l1 + 1, -1) : NULL);
+
+			char* np = stringConcatNew(stringOrEmpty(p1), idstr, stringOrEmpty(p2), NULL);
+			stringDestroy(&pathout);
+			stringDestroy(&p1);
+			stringDestroy(&p2);
+			pathout = np;
+		}
+	}
+
     return pathout;
 }
 

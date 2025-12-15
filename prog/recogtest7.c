@@ -77,10 +77,8 @@ L_REGPARAMS* rp;
 
 #if 1
     pixa1 = pixaRead("recog/digits/bootnum4.pa");
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pixa2 = pixaMakeFromTiledPixa(pixa1, 0, 0, 100);
     pixa3 = l_bootnum_gen4(100);
-	pixaSetDiagnosticsSpec(pixa3, rp->diag_spec);
 	pixaEqual(pixa2, pixa3, 0, NULL, &same);
     if (!same) L_ERROR("Bad!  The pixa differ!\n", __func__);
     pix1 = pixaDisplayTiledWithText(pixa1, 1400, 1.0, 10, 2, 6, 0xff000000);
@@ -121,7 +119,6 @@ L_REGPARAMS* rp;
 #if 1
         /* Make a tiny recognizer and test it against itself */
     pixa1 = l_bootnum_gen4(5);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pix1 = pixaDisplayTiledWithText(pixa1, 1400, 1.0, 10, 2, 6, 0xff000000);
     pixDisplay(pix1, 1000, 100);
     pixDestroy(&pix1);
@@ -142,7 +139,7 @@ L_REGPARAMS* rp;
 
     lept_stderr("\nTest serialization\n");
     recogWrite("/tmp/lept/digits/rec1.rec", recog1);
-    recog2 = recogRead("/tmp/lept/digits/rec1.rec", rp->diag_spec);
+    recog2 = recogRead("/tmp/lept/digits/rec1.rec");
     lept_stderr("Contents of recog after write/read:\n");
     recogShowContent(stderr, recog2, 3, 1);
     recogWrite("/tmp/lept/digits/rec2.rec", recog2);

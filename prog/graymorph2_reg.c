@@ -57,11 +57,9 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("test8.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Dilation */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixDilateGray3(pixs, 3, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixDilateGray(pixs, 3, 1);
@@ -87,7 +85,6 @@ L_REGPARAMS* rp;
 
         /* Erosion */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixErodeGray3(pixs, 3, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixErodeGray(pixs, 3, 1);
@@ -113,7 +110,6 @@ L_REGPARAMS* rp;
 
         /* Opening */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixOpenGray3(pixs, 3, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixOpenGray(pixs, 3, 1);
@@ -139,7 +135,6 @@ L_REGPARAMS* rp;
 
         /* Closing */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixCloseGray3(pixs, 3, 1);
     pixaAddPix(pixa, pix1, L_INSERT);
     pix2 = pixCloseGray(pixs, 3, 1);

@@ -72,7 +72,6 @@ PIXA         *pixa;
 
 	/* Generate arrays of word widths and heights */
     pixs = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixReduceRankBinaryCascade(pixs, 1, 0, 0, 0);
     pixGetWordBoxesInTextlines(pix1, 6, 6, 500, 50, &boxa1, &naindex);
     n = boxaGetCount(boxa1);
@@ -89,11 +88,10 @@ PIXA         *pixa;
 
         /* Make the rank bin arrays of average values, with 10 bins */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	numaGetRankBinValues(na1, 10, &na3);
     numaGetRankBinValues(na2, 10, &na4);
-    pix1 = gplotSimplePix1(rp->diag_spec, na3, "lept/rankbin/width10", "width vs rank bins (10)");
-    pix2 = gplotSimplePix1(rp->diag_spec, na4, "lept/rankbin/height10", "height vs rank bins (10)");
+    pix1 = gplotSimplePix1(na3, "lept/rankbin/width10", "width vs rank bins (10)");
+    pix2 = gplotSimplePix1(na4, "lept/rankbin/height10", "height vs rank bins (10)");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     numaDestroy(&na3);
@@ -104,8 +102,8 @@ PIXA         *pixa;
         /* Make the rank bin arrays of average values, with 30 bins */
     numaGetRankBinValues(na1, 30, &na3);
     numaGetRankBinValues(na2, 30, &na4);
-    pix1 = gplotSimplePix1(rp->diag_spec, na3, "lept/rankbin/width30", "width vs rank bins (30)");
-    pix2 = gplotSimplePix1(rp->diag_spec, na4, "lept/rankbin/height30", "height vs rank bins (30)");
+    pix1 = gplotSimplePix1(na3, "lept/rankbin/width30", "width vs rank bins (30)");
+    pix2 = gplotSimplePix1(na4, "lept/rankbin/height30", "height vs rank bins (30)");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
     numaDestroy(&na3);
@@ -114,7 +112,7 @@ PIXA         *pixa;
     pixaAddPix(pixa, pix2, L_INSERT);
 
         /* Display results for debugging */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix3 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 25, 0);
         pixDisplayWithTitle(pix3, 0, 0, NULL);
         pixDestroy(&pix3);
@@ -126,9 +124,7 @@ PIXA         *pixa;
 
         /* Test pixRankBinByStrip */
     pix1 = pixRead(DEMOPATH("pancrazi.15.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixa = pixaCreate(3);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix2 = pixRankBinByStrip(pix1, L_SCAN_HORIZONTAL, 16, 10, L_SELECT_HUE);
     pix3 = pixExpandReplicate(pix2, 20);
     pixaAddPix(pixa, pix3, L_INSERT);
@@ -187,13 +183,11 @@ PIXA         *pixa;
     numaDestroy(&na4);
 
     pixa = pixaCreate(4);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixRead(DEMOPATH("karen8.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	na1 = pixGetGrayHistogram(pix1, 1);
     numaDiscretizeHistoInBins(na1, 1000, &na2, &na3);
-    pix2 = gplotSimplePix1(rp->diag_spec, na3, "lept/rankbin/gray", "rank vs gray");
-    pix3 = gplotSimplePix1(rp->diag_spec, na2, "lept/rankbin/binval", "gray vs rank-binval");
+    pix2 = gplotSimplePix1(na3, "lept/rankbin/gray", "rank vs gray");
+    pix3 = gplotSimplePix1(na2, "lept/rankbin/binval", "gray vs rank-binval");
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 11 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 12 */
     pixaAddPix(pixa, pix2, L_INSERT);
@@ -204,7 +198,6 @@ PIXA         *pixa;
     numaDestroy(&na3);
 
     pix1 = pixRead(DEMOPATH("wyom.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixGetRankColorArray(pix1, 20, L_SELECT_RED, 5,
                          &carray, NULL, 0);
     pix2 = pixDisplayColorArray(carray, 20, 200, 5, 6);

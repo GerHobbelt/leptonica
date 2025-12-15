@@ -194,8 +194,7 @@ PIXA      *pixa;
     if (!pixs || pixGetDepth(pixs) != 8 || pixGetColormap(pixs))
         return (PIXA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Locate them; use small threshold for edges. */
     boxa = pixLocateBarcodes(pixs, 20, &pix2, &pix1);
@@ -217,7 +216,6 @@ PIXA      *pixa;
 
         /* Deskew each barcode individually */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, diagspec);
     for (i = 0; i < n; i++) {
         box = boxaGetBox(boxa, i, L_CLONE);
         pix3 = pixDeskewBarcode(pixs, pix2, box, 15, 20, &angle, &conf);
@@ -277,8 +275,7 @@ SARRAY    *saw, *sad;
     if (method != L_USE_WIDTHS && method != L_USE_WINDOWS)
         return (SARRAY *)ERROR_PTR("invalid method", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixa);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     n = pixaGetCount(pixa);
     saw = sarrayCreate(n);
@@ -286,7 +283,6 @@ SARRAY    *saw, *sad;
     for (i = 0; i < n; i++) {
             /* Extract the widths of the lines in each barcode */
         pix1 = pixaGetPix(pixa, i, L_CLONE);
-		pixSetDiagnosticsSpec(pix1, diagspec);
         pixGetDimensions(pix1, &w, &h, NULL);
         if (w < MIN_BC_WIDTH || h < MIN_BC_HEIGHT) {
             L_ERROR("pix is too small: w = %d, h = %d\n", __func__, w, h);
@@ -357,8 +353,7 @@ NUMA      *na;
     if (method != L_USE_WIDTHS && method != L_USE_WINDOWS)
         return (NUMA *)ERROR_PTR("invalid method", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Extract the widths of the lines in each barcode */
     if (method == L_USE_WIDTHS)
@@ -646,8 +641,7 @@ NUMA  *nac, *nad;
     if (!pixs || pixGetDepth(pixs) != 8)
         return (NUMA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Get the best estimate of the crossings, in pixel units */
     if ((nac = pixExtractBarcodeCrossings(pixs, thresh)) == NULL)
@@ -655,7 +649,7 @@ NUMA  *nac, *nad;
 
         /* Get the array of bar widths, starting with a black bar  */
     nad = numaQuantizeCrossingsByWidth(nac, binfract, pnaehist,
-                                       pnaohist, diagspec);
+                                       pnaohist);
 
     numaDestroy(&nac);
     return nad;
@@ -701,8 +695,7 @@ NUMA    *nacp, *nad;
     if (!pixs || pixGetDepth(pixs) != 8)
         return (NUMA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Get the best estimate of the crossings, in pixel units */
     if ((nacp = pixExtractBarcodeCrossings(pixs, thresh)) == NULL)
@@ -741,8 +734,7 @@ NUMA      *nas, *nax, *nay, *nad;
     if (!pixs || pixGetDepth(pixs) != 8)
         return (NUMA *)ERROR_PTR("pixs undefined or not 8 bpp", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Scan pixels horizontally and average results */
     if ((nas = pixAverageRasterScans(pixs, 50)) == NULL)
@@ -755,7 +747,7 @@ NUMA      *nas, *nax, *nay, *nad;
 
     if (debugflag) {
         //lept_mkdir("lept/barcode");
-        gplot = gplotCreate(diagspec, "/tmp/lept/barcode/signal", GPLOT_PNG,
+        gplot = gplotCreate("/tmp/lept/barcode/signal", GPLOT_PNG,
                             "Pixel values", "dist in pixels", "value");
         gplotAddPlot(gplot, nax, nay, GPLOT_LINES, "plot 1");
         gplotMakeOutput(gplot);
@@ -861,8 +853,7 @@ NUMA *
 numaQuantizeCrossingsByWidth(NUMA       *nas,
                              l_float32   binfract,
                              NUMA      **pnaehist,
-                             NUMA      **pnaohist,
-                             LDIAG_CTX   diagspec)
+                             NUMA      **pnaohist)
 {
 l_int32    i, n, ret, ned, nod, iw, width;
 l_float32  val, minsize, maxsize, factor;
@@ -880,7 +871,7 @@ NUMA      *naerange, *naorange, *naelut, *naolut, *nad;
     if (binfract <= 0.0)
         return (NUMA *)ERROR_PTR("binfract <= 0.0", __func__, NULL);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Get even and odd crossing distances, and determine the rank
          * widths for rank 0.1 (minsize) and 0.9 (maxsize). */
@@ -906,7 +897,7 @@ NUMA      *naerange, *naorange, *naelut, *naolut, *nad;
 
     if (debugflag) {
         //lept_mkdir("lept/barcode");
-        gplot = gplotCreate(diagspec, "/tmp/lept/barcode/histw", GPLOT_PNG,
+        gplot = gplotCreate("/tmp/lept/barcode/histw", GPLOT_PNG,
                             "Raw width histogram", "Width", "Number");
         gplotAddPlot(gplot, NULL, naehist, GPLOT_LINES, "plot black");
         gplotAddPlot(gplot, NULL, naohist, GPLOT_LINES, "plot white");

@@ -63,17 +63,14 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("rock.png"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	DoTestsOnImage(pixs, rp, 2000);  /* 0 - 16 */
     pixDestroy(&pixs);
 
     pixs = pixRead(DEMOPATH("church.png"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	DoTestsOnImage(pixs, rp, 1500);  /* 17 - 33 */
     pixDestroy(&pixs);
 
     pixs = pixRead(DEMOPATH("color-wheel-hue.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	DoTestsOnImage(pixs, rp, 1000);  /* 34 - 50 */
     pixDestroy(&pixs);
 
@@ -90,7 +87,6 @@ PIX   *pix, *pixd;
 PIXA  *pixa;
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix = pixBilateral(pixs, 5.0, 10.0, ncomps, 1);
     regTestWritePixAndCheck(rp, pix, IFF_JFIF_JPEG);
     pixaAddPix(pixa, pix, L_INSERT);

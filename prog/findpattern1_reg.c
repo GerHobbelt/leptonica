@@ -106,7 +106,6 @@ SEL     *selhm;
         rp->success = FALSE;
         return ERROR_INT("pixs not made", __func__, 1);
     }
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Make a hit-miss sel at specified reduction factor */
     if (red == 4) {
@@ -126,7 +125,6 @@ SEL     *selhm;
         /* Display the sel */
     pixsel = pixDisplayHitMissSel(pixp, selhm, 7, HitColor, MissColor);
     pixa = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_CLONE);
     pixaAddPix(pixa, pixsel, L_CLONE);
     width = (patno == 0) ? 1200 : 400;
@@ -139,7 +137,6 @@ SEL     *selhm;
 
         /* Use the sel to find all instances in the page */
     pix = pixRead(DEMOPATH("tribune-page-4x.png"));  /* 4x reduced */
-	pixSetDiagnosticsSpec(pix, rp->diag_spec);
 	if (red == 4)
         pixr = pixClone(pix);
     else if (red == 8)

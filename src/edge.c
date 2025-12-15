@@ -311,8 +311,7 @@ pixMeasureEdgeSmoothness(PIX         *pixs,
                          l_int32      minreversal,
                          l_float32   *pjpl,
                          l_float32   *pjspl,
-                         l_float32   *prpl,
-                         LDIAG_CTX    diagspec)
+                         l_float32   *prpl)
 {
 l_int32  i, n, val, nval, diff, njumps, jumpsum, nreversal;
 NUMA    *na, *nae;
@@ -320,7 +319,7 @@ NUMA    *na, *nae;
     if (pjpl) *pjpl = 0.0;
     if (pjspl) *pjspl = 0.0;
     if (prpl) *prpl = 0.0;
-    if (!pjpl && !pjspl && !prpl && !diagspec)
+    if (!pjpl && !pjspl && !prpl)
         return ERROR_INT("no output requested", __func__, 1);
     if (!pixs || pixGetDepth(pixs) != 1)
         return ERROR_INT("pixs not defined or not 1 bpp", __func__, 1);
@@ -332,7 +331,7 @@ NUMA    *na, *nae;
     if (minreversal < 1)
         return ERROR_INT("invalid minreversal; must be >= 1", __func__, 1);
 
-    if ((na = pixGetEdgeProfile(pixs, side, diagspec)) == NULL)
+    if ((na = pixGetEdgeProfile(pixs, side)) == NULL)
         return ERROR_INT("edge profile not made", __func__, 1);
     if ((n = numaGetCount(na)) < 2) {
         numaDestroy(&na);
@@ -381,8 +380,7 @@ NUMA    *na, *nae;
  */
 NUMA *
 pixGetEdgeProfile(PIX         *pixs,
-                  l_int32      side,
-                  LDIAG_CTX    diagspec)
+                  l_int32      side)
 {
 l_int32   x, y, w, h, loc, index, ival;
 l_uint32  val;
@@ -396,7 +394,7 @@ PIXCMAP  *cmap;
         side != L_FROM_TOP && side != L_FROM_BOT)
         return (NUMA *)ERROR_PTR("invalid side", __func__, NULL);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     pixGetDimensions(pixs, &w, &h, NULL);
     if (side == L_FROM_LEFT || side == L_FROM_RIGHT)
@@ -480,7 +478,7 @@ PIXCMAP  *cmap;
                 pixSetPixel(pixt, x, ival, index);
             }
         }
-		const char* debugfile = leptDebugGenFilepath(diagspec, "%s-%d.png", __func__, side);
+		const char* debugfile = leptDebugGenFilepath("%s-%d.png", __func__, side);
         pixWrite(debugfile, pixt, IFF_PNG);
         pixDestroy(&pixt);
     }

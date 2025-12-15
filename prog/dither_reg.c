@@ -55,7 +55,6 @@ L_REGPARAMS* rp;
 		return 1;
 
     pix = pixRead(DEMOPATH("test8.jpg"));
-	pixSetDiagnosticsSpec(pix, rp->diag_spec);
 	pixs = pixGammaTRC(NULL, pix, 1.3, 0, 255);  /* gamma of 1.3, for fun */
 
         /* Dither to 1 bpp */

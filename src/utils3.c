@@ -137,12 +137,9 @@
 #include <errno.h>     /* for errno */
 #include <string.h>
 #include <stddef.h>
-#include "allheaders.h"
+#include <stdint.h>
 
-#if defined(__APPLE__) || defined(_WIN32)
-/* Rewrite paths starting with /tmp for macOS, iOS and Windows. */
-#define REWRITE_TMP
-#endif
+#include "allheaders.h"
 
 /*--------------------------------------------------------------------*
  *                     Special file name operations                   *

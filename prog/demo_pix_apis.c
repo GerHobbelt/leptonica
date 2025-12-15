@@ -745,7 +745,6 @@ int main(int argc, const char **argv)
 		lept_stderr("IMAGE: pixs: %s\n", pix_info.filepath);
 
 		PIX* pixs = pixClone(pix_info.image);
-		pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 		pixDisplayWithTitle(pixs, 50, 0, "pixs");
 		pixDestroy(&pixs);
 	}

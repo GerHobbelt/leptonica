@@ -62,11 +62,9 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* First, snap the color directly on the input rgb image. */
     pixs = pixRead(DEMOPATH("Leptonica.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_COPY);
     pixDisplayWithTitle(pixs, 0, 0, NULL);
     pix1 = pixSnapColor(NULL, pixs, 0xffffff00, LEPTONICA_YELLOW, 30);
@@ -86,7 +84,6 @@ L_REGPARAMS* rp;
         /* Set the background of the google searchbox to yellow.
          * The input image is colormapped with all 256 colors used. */
     pixs = pixRead(DEMOPATH("google-searchbox.png"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixDisplayWithTitle(pixs, 0, 200, NULL);
     pix1 = pixSnapColor(NULL, pixs, 0xffffff00, LEPTONICA_YELLOW, 30);
@@ -96,7 +93,6 @@ L_REGPARAMS* rp;
 
         /* A couple of more, setting pixels near white to strange colors */
     pixs = pixRead(DEMOPATH("weasel4.11c.png"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixDisplayWithTitle(pixs, 0, 300, NULL);
     pix1 = pixSnapColor(NULL, pixs, 0xfefefe00, 0x80800000, 50);
@@ -105,7 +101,6 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pix1, 200, 300, NULL);
 
     pixs = pixRead(DEMOPATH("wyom.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixFixedOctcubeQuant256(pixs, 0);
     pixaAddPix(pixa, pix1, L_INSERT);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */

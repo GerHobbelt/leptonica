@@ -72,9 +72,7 @@ L_REGPARAMS* rp;
 
         /*  Normalize for rapidly varying background */
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pixs = pixRead(DEMOPATH("w91frag.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa1, pixs, L_INSERT);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 0 */
     pix1 = pixBackgroundNormFlex(pixs, 7, 7, 1, 1, 10);

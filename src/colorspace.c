@@ -505,7 +505,6 @@ PIX       *pixt, *pixd;
         /* Convert RGB image */
     pixd = pixCreate(w, h, 8);
     pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wplt = pixGetWpl(pixt);
     datat = pixGetData(pixt);
     wpld = pixGetWpl(pixd);
@@ -579,7 +578,6 @@ PIX       *pixt, *pixd;
         /* Convert RGB image */
     pixd = pixCreate(w, h, 8);
     pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wplt = pixGetWpl(pixt);
     datat = pixGetData(pixt);
     wpld = pixGetWpl(pixd);
@@ -643,7 +641,6 @@ PIX       *pixt, *pixd;
         /* Convert RGB image */
     pixd = pixCreate(w, h, 8);
     pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wplt = pixGetWpl(pixt);
     datat = pixGetData(pixt);
     wpld = pixGetWpl(pixd);
@@ -1284,7 +1281,6 @@ PTA      *pta;
          * false color histograms. */
 	if (ppixa) {
 		*ppixa = pixaCreate(0);
-		pixaSetDiagnosticsSpec(*ppixa, pixGetDiagnosticsSpec(pixs));
 	}
     for (i = 0; i < npeaks; i++) {
         pixGetMaxValueInRect(pixw, NULL, &maxval, &xmax, &ymax);
@@ -1737,14 +1733,12 @@ FPIXA      *fpixa;
     if (!pixs || pixGetDepth(pixs) != 32)
         return (FPIXA *)ERROR_PTR("pixs undefined or not rgb", __func__, NULL);
 
-	LDIAG_CTX spec = pixGetDiagnosticsSpec(pixs);
 
         /* Convert RGB image */
     pixGetDimensions(pixs, &w, &h, NULL);
     fpixa = fpixaCreate(3);
     for (i = 0; i < 3; i++) {
         fpix = fpixCreate(w, h);
-		fpixSetDiagnosticsSpec(fpix, spec);
         fpixaAddFPix(fpixa, fpix, L_INSERT);
     }
     wpls = pixGetWpl(pixs);
@@ -1956,13 +1950,10 @@ FPIXA      *fpixad;
     if (fpixaGetFPixDimensions(fpixas, 0, &w, &h))
         return (FPIXA *)ERROR_PTR("fpixas sizes not found", __func__, NULL);
 
-	LDIAG_CTX diagspec = fpixaGetDiagnosticsSpec(fpixas);
 
 	fpixad = fpixaCreate(3);
-	fpixaSetDiagnosticsSpec(fpixad, diagspec);
     for (i = 0; i < 3; i++) {
         fpix = fpixCreate(w, h);
-		fpixSetDiagnosticsSpec(fpix, diagspec);
         fpixaAddFPix(fpixad, fpix, L_INSERT);
     }
     wpl = fpixGetWpl(fpix);
@@ -2025,13 +2016,10 @@ FPIXA      *fpixad;
     if (fpixaGetFPixDimensions(fpixas, 0, &w, &h))
         return (FPIXA *)ERROR_PTR("fpixas sizes not found", __func__, NULL);
 
-	LDIAG_CTX diagspec = fpixaGetDiagnosticsSpec(fpixas);
 
 	fpixad = fpixaCreate(3);
-	fpixaSetDiagnosticsSpec(fpixad, diagspec);
 	for (i = 0; i < 3; i++) {
         fpix = fpixCreate(w, h);
-		fpixSetDiagnosticsSpec(fpix, diagspec);
 		fpixaAddFPix(fpixad, fpix, L_INSERT);
     }
     wpl = fpixGetWpl(fpix);
@@ -2215,15 +2203,12 @@ FPIXA      *fpixa;
     if (!pixs || pixGetDepth(pixs) != 32)
         return (FPIXA *)ERROR_PTR("pixs undefined or not rgb", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 
         /* Convert RGB image */
     pixGetDimensions(pixs, &w, &h, NULL);
     fpixa = fpixaCreate(3);
-	fpixaSetDiagnosticsSpec(fpixa, diagspec);
     for (i = 0; i < 3; i++) {
         fpix = fpixCreate(w, h);
-		fpixSetDiagnosticsSpec(fpix, diagspec);
 		fpixaAddFPix(fpixa, fpix, L_INSERT);
     }
     wpls = pixGetWpl(pixs);
@@ -2278,10 +2263,8 @@ FPIX       *fpix;
     if (fpixaGetFPixDimensions(fpixa, 0, &w, &h))
         return (PIX *)ERROR_PTR("fpixa dimensions not found", __func__, NULL);
 
-	LDIAG_CTX diagspec = fpixaGetDiagnosticsSpec(fpixa);
 
 	pixd = pixCreate(w, h, 32);
-	pixSetDiagnosticsSpec(pixd, diagspec);
 	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
     datal = fpixaGetData(fpixa, 0);

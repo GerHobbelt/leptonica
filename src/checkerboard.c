@@ -133,7 +133,6 @@ SELA    *sela;
     if (nsels != 2 && nsels != 4)
         return ERROR_INT("nsels not 2 or 4", __func__, 1);
 
-	LDIAG_CTX diagspec = leptDebugGetDiagnosticsSpecFromAny(2, pixGetDiagnosticsSpec(pixs), pixaGetDiagnosticsSpec(pixadb));
 
         /* Generate the hit-miss sels for finding corners */
     sela = makeCheckerboardCornerSela(size, dilation, nsels, pixadb);
@@ -141,7 +140,6 @@ SELA    *sela;
         return ERROR_INT("sela not made", __func__, 1);
     if (pixadb) {
         pix1 = selaDisplayInPix(sela, 15, 3, 15, 2);
-		pixSetDiagnosticsSpec(pix1, diagspec);
         pixaAddPix(pixadb, pix1, L_INSERT);
     }
 

@@ -100,7 +100,7 @@ L_REGPARAMS* rp;
                              6, 2, 0);
 
         /* Convert to pdf */
-	const char* pdfpath = leptDebugGenFilepath(rp->diag_spec, "cleaning.pdf");
+	const char* pdfpath = leptDebugGenFilepath("cleaning.pdf");
 	L_INFO("Writing to %s\n", __func__, pdfpath);
     pixaConvertToPdf(pixa1, 100, 1.0, L_JPEG_ENCODE,
                      75, "Adaptive cleaning",
@@ -124,7 +124,7 @@ L_REGPARAMS* rp;
     pixa2 = pixaCreateFromPixacomp(pixac3, L_CLONE);
     pixa3 = pixaConvertToNUpPixa(pixa2, NULL, 1, 2, 1000, 6, 2, 0);
     lept_stderr("Time with pixac interleaving = %7.3f sec\n", stopTimer());
-	pdfpath = leptDebugGenFilepath(rp->diag_spec, "cleaning2.pdf");
+	pdfpath = leptDebugGenFilepath("cleaning2.pdf");
 	L_INFO("Writing to %s\n", __func__, pdfpath);
     pixaConvertToPdf(pixa3, 100, 1.0, L_JPEG_ENCODE,
                      75, "Adaptive cleaning", pdfpath);
@@ -148,7 +148,7 @@ L_REGPARAMS* rp;
     pixa3 = pixaInterleave(pixa1, pixa2, L_CLONE);
     pixa4 = pixaConvertToNUpPixa(pixa3, NULL, 1, 2, 1000, 6, 2, 0);
     lept_stderr("Time with pixa interleaving = %7.3f sec\n", stopTimer());
-	pdfpath = leptDebugGenFilepath(rp->diag_spec, "cleaning3.pdf");
+	pdfpath = leptDebugGenFilepath("cleaning3.pdf");
 	L_INFO("Writing to %s\n", __func__, pdfpath);
     pixaConvertToPdf(pixa4, 100, 1.0, L_JPEG_ENCODE,
                      75, "Adaptive cleaning", pdfpath);
@@ -175,21 +175,20 @@ PIX     *pix1, *pix2, *pix3, *pix4, *pix5;
     whiteval = 180;
     index = *pindex;
     pix1 = pixRead(fname);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
-	const char *pixpath = leptDebugGenFilepath(rp->diag_spec, "adapt_%03d.jpg", index++);
+	const char *pixpath = leptDebugGenFilepath("adapt_%03d.jpg", index++);
     pixWrite(pixpath, pix1, IFF_JFIF_JPEG);
 
     pix2 = pixBackgroundNorm(pix1, NULL, NULL, 10, 15, thresh, 25, 200, 2, 1);
     snprintf(buf, sizeof(buf), "Norm color: fg thresh = %d", thresh);
     lept_stderr("%s\n", buf);
     pix3 = pixAddTextlines(pix2, bmf, buf, 0x00ff0000, L_ADD_BELOW);
-	pixpath = leptDebugGenFilepath(rp->diag_spec, "adapt_%03d.jpg", index++);
+	pixpath = leptDebugGenFilepath("adapt_%03d.jpg", index++);
 	pixWrite(pixpath, pix3, IFF_JFIF_JPEG);
     pixDestroy(&pix3);
     pix3 = pixGammaTRC(NULL, pix2, 1.0, blackval, whiteval);
     snprintf(buf, sizeof(buf), "Clean color: fg thresh = %d", thresh);
     pix4 = pixAddSingleTextblock(pix3, bmf, buf, 0x00ff0000, L_ADD_BELOW, NULL);
-	pixpath = leptDebugGenFilepath(rp->diag_spec, "adapt_%03d.jpg", index++);
+	pixpath = leptDebugGenFilepath("adapt_%03d.jpg", index++);
     pixWrite(pixpath, pix4, IFF_JFIF_JPEG);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -200,7 +199,7 @@ PIX     *pix1, *pix2, *pix3, *pix4, *pix5;
     pix4 = pixGammaTRC(NULL, pix3, 1.0, blackval, whiteval);
     snprintf(buf, sizeof(buf), "Clean gray: fg thresh = %d", thresh);
     pix5 = pixAddSingleTextblock(pix4, bmf, buf, 0x00ff0000, L_ADD_BELOW, NULL);
-	pixpath = leptDebugGenFilepath(rp->diag_spec, "adapt_%03d.jpg", index++);
+	pixpath = leptDebugGenFilepath("adapt_%03d.jpg", index++);
     pixWrite(pixpath, pix5, IFF_JFIF_JPEG);
     pixDestroy(&pix2);
     pixDestroy(&pix3);

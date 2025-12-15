@@ -70,13 +70,9 @@ PTA          *pta;
 
 	//lept_mkdir("lept/baseline");
 
-	//leptDebugGetFileBasePath(diagspec);
-	//leptDebugAppendFileBasepath(diagspec, "baseline");
-
 	const char* sourcefilepath = DEMOPATH("keystone.png");
     pixs = pixRead(sourcefilepath);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
-	leptDebugSetFilenameForPrefix(rp->diag_spec, sourcefilepath, -1);
+	leptDebugSetFilenameForPrefix(sourcefilepath, -1);
 
         /* Test function for deskewing using projective transform
 	 * on linear approximation for local skew angle */
@@ -85,10 +81,9 @@ PTA          *pta;
 
         /* Test function for finding local skew angles */
     na = pixGetLocalSkewAngles(pixs, 10, 0, 0, 0.0, 0.0, 0.0, NULL, NULL);
-    pix2 = gplotSimplePix1(rp->diag_spec, na, "lept/baseline/ang", "Angles in degrees");
+    pix2 = gplotSimplePix1(na, "lept/baseline/ang", "Angles in degrees");
 
 	pix3 = pixRead("/tmp/lept/baseline/skew.png");
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
     pixDisplayWithTitle(pix2, 0, 550, NULL);
@@ -100,15 +95,11 @@ PTA          *pta;
 
         /* Test baseline finder */
     pixadb = pixaCreate(6);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	na = pixFindBaselines(pix1, &pta, pixadb);
     regTestCompareValues(rp, 23, numaGetCount(na), 0);  /* 3 */
     pix2 = pixRead("/tmp/lept/baseline/diff.png");
     pix3 = pixRead("/tmp/lept/baseline/loc.png");
     pix4 = pixRead("/tmp/lept/baseline/baselines.png");
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
-	pixSetDiagnosticsSpec(pix4, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 4 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 5 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 6 */
@@ -130,7 +121,6 @@ PTA          *pta;
         /* Another test for baselines, with dark image.
          * With minw = 60, the number at the top of the page is skipped. */
     pixadb = pixaCreate(6);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pixs = pixRead(DEMOPATH("pedante.079.jpg"));  /* 75 ppi */
     pix1 = pixRemoveBorder(pixs, 30);
     pixaAddPix(pixadb, pix1, L_COPY);
@@ -160,7 +150,6 @@ PTA          *pta;
 
         /* Another test for baselines: very short textblock is removed */
     pixadb = pixaCreate(6);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pix1 = pixRead("baseline1.png");
     na = pixFindBaselines(pix1, &pta, pixadb);
     regTestCompareValues(rp, 2, numaGetCount(na), 0);  /* 11 */
@@ -175,7 +164,6 @@ PTA          *pta;
 
         /* Another test for baselines: some very short lines */
     pixadb = pixaCreate(6);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pix1 = pixRead("baseline2.tif");
     na = pixFindBaselinesGen(pix1, 30, &pta, pixadb);
     regTestCompareValues(rp, 29, numaGetCount(na), 0);  /* 13 */
@@ -190,7 +178,6 @@ PTA          *pta;
 
         /* Another test for baselines: more short lines' */
     pixadb = pixaCreate(6);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pix1 = pixRead("baseline3.tif");
     na = pixFindBaselinesGen(pix1, 30, &pta, pixadb);
     regTestCompareValues(rp, 40, numaGetCount(na), 0);  /* 15 */

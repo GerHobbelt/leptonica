@@ -71,7 +71,6 @@ L_REGPARAMS* rp;
 
         /* Read page 7, normalize for varying background and binarize */
     pixs = pixRead(DEMOPATH("1555.007.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
     pixn = pixBackgroundNormSimple(pixs, NULL, NULL);
     pixg = pixConvertRGBToGray(pixn, 0.5, 0.3, 0.2);
@@ -82,7 +81,7 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pixb, 0, 0, "page 7 binarized input");
 
         /* Get the textline centers */
-    ptaa1 = dewarpGetTextlineCenters(pixb, rp->diag_spec);
+    ptaa1 = dewarpGetTextlineCenters(pixb);
     pixt1 = pixCreateTemplate(pixs);
     pixt2 = pixDisplayPtaa(pixt1, ptaa1);
     regTestWritePixAndCheck(rp, pixt2, IFF_PNG);  /* 1 */
@@ -117,15 +116,14 @@ L_REGPARAMS* rp;
         return ERROR_INT("\n\n\n FAILURE !!! \n\n\n", rp->testname, 1);
     dewarpaUseBothArrays(dewa1, 1);
     dewarpaInsertDewarp(dewa1, dew1);
-    dewarpBuildPageModel(dew1, NULL);
-    dewarpaApplyDisparity(dewa1, 7, pixb, 200, 0, 0, &pixd, NULL);
+    dewarpBuildPageModel(dew1);
+    dewarpaApplyDisparity(dewa1, 7, pixb, 200, 0, 0, &pixd);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 3 */
     pixDisplayWithTitle(pixd, 400, 0, "page 7 dewarped");
     pixDestroy(&pixd);
 
         /* Read page 3, normalize background and binarize */
     pixs2 = pixRead(DEMOPATH("1555.003.jpg"));
-	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
 
     pixn2 = pixBackgroundNormSimple(pixs2, NULL, NULL);
     pixg2 = pixConvertRGBToGray(pixn2, 0.5, 0.3, 0.2);
@@ -136,8 +134,8 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pixb, 0, 400, "binarized input (2)");
 
         /* Minimize and re-apply page 7 disparity to this image */
-    dewarpaInsertRefModels(dewa1, 0, 0);
-    dewarpaApplyDisparity(dewa1, 3, pixb2, 200, 0, 0, &pixd, NULL);
+    dewarpaInsertRefModels(dewa1, 0);
+    dewarpaApplyDisparity(dewa1, 3, pixb2, 200, 0, 0, &pixd);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 5 */
     pixDisplayWithTitle(pixd, 400, 400, "page 3 dewarped");
     pixDestroy(&pixd);
@@ -155,16 +153,16 @@ L_REGPARAMS* rp;
     dewa2 = dewarpaCreate(2, 30, 1, 15, 30);
     dewarpaUseBothArrays(dewa2, 1);
     dewarpaInsertDewarp(dewa2, dew2);
-    dewarpaInsertRefModels(dewa2, 0, 0);
+    dewarpaInsertRefModels(dewa2, 0);
     dewarpaListPages(dewa2);  /* just for fun: should be 1, 3, 5, 7 */
-    dewarpaApplyDisparity(dewa2, 3, pixb2, 200, 0, 0, &pixd, NULL);
+    dewarpaApplyDisparity(dewa2, 3, pixb2, 200, 0, 0, &pixd);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 9 */
     pixDisplayWithTitle(pixd, 800, 400, "page 3 dewarped again");
     pixDestroy(&pixd);
 
         /* Minimize, re-populate disparity arrays, and apply again */
     dewarpMinimize(dew2);
-    dewarpaApplyDisparity(dewa2, 3, pixb2, 200, 0, 0, &pixd, NULL);
+    dewarpaApplyDisparity(dewa2, 3, pixb2, 200, 0, 0, &pixd);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 10 */
     regTestCompareFiles(rp, 9, 10);  /* 11 */
     pixDisplayWithTitle(pixd, 900, 400, "page 3 dewarped yet again");
@@ -180,7 +178,6 @@ L_REGPARAMS* rp;
     regTestCheckFile(rp, "/tmp/lept/regout/dewarp.12.fpix");  /* 12 */
 
     fpix2 = fpixRead("/tmp/lept/regout/dewarp.12.fpix");
-	fpixSetDiagnosticsSpec(fpix2, rp->diag_spec);
 
     fpixWrite("/tmp/lept/regout/dewarp.13.fpix", fpix2);
     regTestCheckFile(rp, "/tmp/lept/regout/dewarp.13.fpix");  /* 13 */

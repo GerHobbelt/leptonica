@@ -100,8 +100,6 @@ L_REGPARAMS* rp;
         return ERROR_INT("pixs1 not made", __func__, 1);
     if ((pixs2 = pixRead(filein2)) == NULL)
         return ERROR_INT("pixs2 not made", __func__, 1);
-	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
 	d1 = pixGetDepth(pixs1);
     d2 = pixGetDepth(pixs2);
 
@@ -154,7 +152,7 @@ L_REGPARAMS* rp;
                 lept_stderr("Nonzero diff range: first = %d, last = %d\n",
                              first, last);
                 na2 = numaClipToInterval(na1, first, last);
-                gplot = gplotCreate(rp->diag_spec, "/tmp/lept/comp/rank", GPLOT_PNG,
+                gplot = gplotCreate("/tmp/lept/comp/rank", GPLOT_PNG,
                                     "Pixel Rank Difference",
                                     "pixel val difference", "rank");
                 gplotAddPlot(gplot, NULL, na2, GPLOT_LINES, "rank");

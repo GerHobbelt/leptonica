@@ -68,7 +68,6 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 	//lept_mkdir("lept/regout");
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixScaleToGray6(pixs);
     pixDisplayWithTitle(pix1, 100, 600, NULL);
 
@@ -83,7 +82,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
         if (!ret) {
             numaAddNumber(na1, (l_int32)minave);
             numaAddNumber(na3, (l_int32)maxave);
-            if (leptIsInDisplayMode(rp->diag_spec))
+            if (leptIsInDisplayMode())
                 lept_stderr("y = %d: minave = %d, maxave = %d\n",
                             y1, (l_int32)minave, (l_int32)maxave);
         }
@@ -107,7 +106,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
             numaAddNumber(na2, (l_int32)minave);
             numaAddNumber(na4, (l_int32)maxave);
             numaAddNumber(na5, (l_int32)minave2);
-            if (leptIsInDisplayMode(rp->diag_spec))
+            if (leptIsInDisplayMode())
                 lept_stderr("x = %d: minave = %d, minave2 = %d, maxave = %d\n",
                         x1, (l_int32)minave, (l_int32)minave2, (l_int32)maxave);
         }
@@ -134,12 +133,12 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
     numaaAddNuma(naa, na1, L_INSERT);  /* portrait, double-sided */
     numaaAddNuma(naa, na2, L_INSERT);  /* landscape, double-sided */
     numaaAddNuma(naa, na5, L_INSERT);  /* landscape, single-sided */
-	pix3 = gplotSimplePixN(rp->diag_spec, naa, "/tmp/lept/regout/nearline",
+	pix3 = gplotSimplePixN(naa, "/tmp/lept/regout/nearline",
                  "Average minimums along lines");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 7 */
     pixDisplayWithTitle(pix3, 100, 100, NULL);
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         n = numaGetCount(na3);
         for (i = 0; i < n; i++) {
             numaGetIValue(na1, i, &val1);
@@ -181,7 +180,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
     numaaAddNuma(naa, na1, L_INSERT);
     numaaAddNuma(naa, na2, L_INSERT);
     numaaAddNuma(naa, na3, L_INSERT);
-	pix4 = gplotSimplePixN(rp->diag_spec, naa, "/tmp/lept/regout/nearline2",
+	pix4 = gplotSimplePixN(naa, "/tmp/lept/regout/nearline2",
                  "Min along line");
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 9 */
     pixDisplayWithTitle(pix4, 800, 100, NULL);

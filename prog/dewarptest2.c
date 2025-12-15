@@ -82,14 +82,13 @@ L_REGPARAMS* rp;
     }
     if (!pixs)
         return ERROR_INT("image not read", __func__, 1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
 	method = atoi(argv[1]);
 
     //lept_mkdir("lept/dewarp");
 
     if (method == 1) {  /* Use single page dewarp function */
-        dewarpSinglePage(pixs, 0, 1, 1, 0, &pixd, NULL, rp->diag_spec);
+        dewarpSinglePage(pixs, 0, 1, 1, 0, &pixd, NULL);
     } else {  /* Break down into multiple steps; require min of only 8 lines */
         dewa = dewarpaCreate(40, 30, 1, 8, 50);
         dewarpaUseBothArrays(dewa, 1);
@@ -123,10 +122,10 @@ L_REGPARAMS* rp;
         pixWrite("/tmp/lept/dewarp/pixb.tif", pixb, IFF_TIFF_G4);
         dew1 = dewarpCreate(pixb, pageno);
         dewarpaInsertDewarp(dewa, dew1);
-		leptDebugSetFilenameBasename(rp->diag_spec, "test2_model.pdf");
-		dewarpBuildPageModel(dew1, rp->diag_spec);
-		leptDebugSetFilenameBasename(rp->diag_spec, "test2_apply.pdf");
-		dewarpaApplyDisparity(dewa, pageno, pixb, -1, 0, 0, &pixd, rp->diag_spec);
+		leptDebugSetFilenameBasename("test2_model.pdf");
+		dewarpBuildPageModel(dew1);
+		leptDebugSetFilenameBasename("test2_apply.pdf");
+		dewarpaApplyDisparity(dewa, pageno, pixb, -1, 0, 0, &pixd);
 
         dewarpaInfo(stderr, dewa);
         dewarpaDestroy(&dewa);

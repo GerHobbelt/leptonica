@@ -70,7 +70,6 @@ SELA         *sela;
 	/* Clip to foreground to see if there are any boundary
          * artifacts from thinning and thickening.  (There are not.) */
     pix1 = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	box = boxCreate(683, 799, 970, 479);
     pix2 = pixClipRectangle(pix1, box, NULL);
     pixClipToForeground(pix2, &pixs, NULL);
@@ -80,69 +79,68 @@ SELA         *sela;
     boxDestroy(&box);
 
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
-    sela = selaMakeThinSets(1, 0);
+    sela = selaMakeThinSets(1);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(2, 0);
+    sela = selaMakeThinSets(2);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(3, 0);
+    sela = selaMakeThinSets(3);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(4, 0);
+    sela = selaMakeThinSets(4);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(5, 0);
+    sela = selaMakeThinSets(5);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(6, 0);
+    sela = selaMakeThinSets(6);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 5 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(7, 0);
+    sela = selaMakeThinSets(7);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(8, 0);
+    sela = selaMakeThinSets(8);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 7 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(9, 0);
+    sela = selaMakeThinSets(9);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 8 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(10, 0);
+    sela = selaMakeThinSets(10);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_BG, sela, 5);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 9 */
     pixaAddPix(pixa1, pix1, L_INSERT);
     selaDestroy(&sela);
 
-    sela = selaMakeThinSets(11, 0);
+    sela = selaMakeThinSets(11);
     pix1 = pixThinConnectedBySet(pixs, L_THIN_BG, sela, 5);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
     pixaAddPix(pixa1, pix1, L_INSERT);
@@ -151,7 +149,7 @@ SELA         *sela;
         /* Display the thinning results */
     pix1 = pixaDisplayTiledAndScaled(pixa1, 8, 500, 1, 0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         //lept_mkdir("lept/thin");
         pixDisplayWithTitle(pix1, 0, 0, NULL);
         lept_stderr("Writing to: /tmp/lept/thin/ccthin2-1.pdf");
@@ -172,7 +170,6 @@ SELA         *sela;
     pixa3 = pixaScaleToSizeRel(pixa2, 4, 0);
     pixaaAddPixa(paa, pixa3, L_INSERT);
     pixa5 = pixaCreate(6);
-	pixaSetDiagnosticsSpec(pixa5, rp->diag_spec);
 	for (i = 0; i < 3; i++) {
         pixa3 = pixaaGetPixa(paa, i, L_CLONE);
         pix1 = pixaDisplayTiledInColumns(pixa3, 15, 1.0, 10, 1);
@@ -188,7 +185,7 @@ SELA         *sela;
     }
     pix1 = pixaDisplayTiledInColumns(pixa5, 2, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 18 */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixDisplayWithTitle(pix1, 0, 0, NULL);
         lept_stderr("Writing to: /tmp/lept/thin/ccthin2-2.pdf");
         pixaConvertToPdf(pixa5, 0, 1.0, 0, 0, "Thin strokes",

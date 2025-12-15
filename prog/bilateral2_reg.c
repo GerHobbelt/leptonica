@@ -65,7 +65,6 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("test24.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	DoTestsOnImage(pixs, rp);  /* 0 - 7 */
     pixDestroy(&pixs);
 
@@ -81,7 +80,6 @@ PIX   *pix, *pixd;
 PIXA  *pixa;
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix = pixBilateral(pixs, 5.0, 10.0, ncomps, 4);  /* 0 */
     regTestWritePixAndCheck(rp, pix, IFF_JFIF_JPEG);
     pixaAddPix(pixa, pix, L_INSERT);

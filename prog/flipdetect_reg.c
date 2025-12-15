@@ -62,10 +62,9 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "flip", &rp))
 		return 1;
 
-	l_ok debugflag = leptIsDebugModeActive(rp->diag_spec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     pix = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pix, rp->diag_spec);
     pixs = pixScale(pix, 0.5, 0.5);
     pixDestroy(&pix);
 
@@ -86,7 +85,6 @@ L_REGPARAMS* rp;
 
         /* Test orientation detection */
     pixa = pixaCreate(4);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
     pix1 = pixCopy(NULL, pixs);
     lept_stderr("\nTest orient detection for 4 orientations\n");
     pixOrientDetect(pix1, &upconf, &leftconf, 0);

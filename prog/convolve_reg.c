@@ -76,7 +76,6 @@ L_REGPARAMS* rp;
 
         /* Test pixBlockconvGray() on 8 bpp */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixacc = pixBlockconvAccum(pixs);
     pixd = pixBlockconvGray(pixs, pixacc, 3, 5);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 0 */
@@ -93,7 +92,6 @@ L_REGPARAMS* rp;
 
         /* Test pixBlockrank() on 1 bpp */
     pixs = pixRead(DEMOPATH("test1.png"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixacc = pixBlockconvAccum(pixs);
     for (i = 0; i < 3; i++) {
         pixd = pixBlockrank(pixs, pixacc, 4, 4, 0.25 + 0.25 * i);
@@ -112,7 +110,6 @@ L_REGPARAMS* rp;
 
         /* Test pixCensusTransform() */
     pixs = pixRead(DEMOPATH("test24.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixg = pixScaleRGBToGrayFast(pixs, 2, COLOR_GREEN);
     pixd = pixCensusTransform(pixg, 10, NULL);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 6 */
@@ -152,7 +149,6 @@ L_REGPARAMS* rp;
 
         /* Test bias convolution non-separable with kel2 */
     pixs = pixRead(DEMOPATH("marge.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixg = pixScaleRGBToGrayFast(pixs, 2, COLOR_GREEN);
     kel2 = kernelCreateFromString(5, 5, 2, 2, kel2str);
     pixd = pixConvolveWithBias(pixg, kel2, NULL, TRUE, &bias);
@@ -177,7 +173,6 @@ L_REGPARAMS* rp;
 
         /* Test pixWindowedMean() and pixWindowedMeanSquare() on 8 bpp */
     pixs = pixRead(DEMOPATH("feyn-fract2.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixg = pixConvertTo8(pixs, 0);
     sizex = 5;
     sizey = 20;

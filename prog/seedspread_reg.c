@@ -60,14 +60,11 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixsq = pixCreate(3, 3, 32);
-	pixSetDiagnosticsSpec(pixsq, rp->diag_spec);
 	pixSetAllArbitrary(pixsq, 0x00ff0000);
     pixa = pixaCreate(6);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Moderately dense */
     pixs = pixCreate(300, 300, 8);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	for (i = 0; i < 100; i++) {
         x = (153 * i * i * i + 59) % 299;
         y = (117 * i * i * i + 241) % 299;
@@ -102,7 +99,6 @@ L_REGPARAMS* rp;
 
         /* Regular lattice */
     pixs = pixCreate(200, 200, 8);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	for (i = 5; i <= 195; i += 10) {
         for (j = 5; j <= 195; j += 10) {
             pixSetPixel(pixs, i, j, (7 * i + 17 * j) % 255);
@@ -135,7 +131,6 @@ L_REGPARAMS* rp;
 
         /* Very sparse points */
     pixs = pixCreate(200, 200, 8);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixSetPixel(pixs, 60, 20, 90);
     pixSetPixel(pixs, 160, 40, 130);
     pixSetPixel(pixs, 80, 80, 205);

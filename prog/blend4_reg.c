@@ -67,17 +67,14 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/regout");
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Blending on a light image */
     pix1 = pixRead(DEMOPATH("fish24.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 3; i++) {
 		char fname[256];
 		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), blenders[i]);
 		pix2 = pixRead(fname);
-		pixSetDiagnosticsSpec(pix2, rp->diag_spec);
         if (i == 2) {
             pix3 = pixScale(pix2, 0.5, 0.5);
             pixDestroy(&pix2);
@@ -97,14 +94,12 @@ L_REGPARAMS* rp;
 
         /* Blending on a dark image */
     pix0 = pixRead(DEMOPATH("karen8.jpg"));
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
 	pix1 = pixScale(pix0, 2.0, 2.0);
     pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 2; i++) {
 		char fname[256];
 		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), blenders[i]);
 		pix2 = pixRead(fname);
-		pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 		pix3 = pixAddAlphaToBlend(pix2, 0.3, 1);
         pix4 = pixMirroredTiling(pix3, w, h);
         pix5 = pixBlendWithGrayMask(pix1, pix4, NULL, 0, 0);
@@ -121,8 +116,6 @@ L_REGPARAMS* rp;
         /* Blending of two color images using special mask */
     pix1 = pixRead("fish24.jpg");
     pix2 = pixRead("wyom.jpg");
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixGetDimensions(pix2, &w, &h, NULL);
     pix3 = pixRotateOrth(pix1, 1);
     pix4 = pixScaleToSize(pix3, w, h);   /* same size as wyom.jpg */

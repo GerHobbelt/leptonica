@@ -529,8 +529,7 @@ PIX       *pix;
     if (!pixm || pixGetDepth(pixm) != 1)
         return (NUMA *)ERROR_PTR("pixm undefined or not 1 bpp", __func__, NULL);
 
-	LDIAG_CTX diagspec = leptDebugGetDiagnosticsSpecFromAny(2, pixaGetDiagnosticsSpec(pixa), pixGetDiagnosticsSpec(pixm));
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     n = pixaGetCount(pixa);
     na = numaCreate(n);
@@ -1064,7 +1063,6 @@ PIX     *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyColormap(pixd, pixs);
     pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	pixRasterop(pixd, 0, 0, bw, bh, PIX_SRC, pixs, bx, by);
 
     if (pboxc)
@@ -1289,7 +1287,6 @@ PIX     *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyColormap(pixd, pixs);
     pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	pixCopyInputFormat(pixd, pixs);
     pixRasterop(pixd, 0, 0, wd, hd, PIX_SRC, pixs, 0, 0);
     return pixd;
@@ -1345,7 +1342,6 @@ PIX     *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyColormap(pixd, pixs);
     pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	pixCopyInputFormat(pixd, pixs);
     pixRasterop(pixd, 0, 0, ws, hs, PIX_SRC, pixs, 0, 0);
     if (ws >= w && hs >= h)

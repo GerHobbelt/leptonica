@@ -106,7 +106,6 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
     startTimer();
     pixt = pixRemoveColormap(pixs, REMOVE_CMAP_BASED_ON_SRC);
     pixd = pixColorSegment(pixt, max_dist, max_colors, sel_size,

@@ -71,7 +71,6 @@ L_REGPARAMS* rp;
 
         /* Set up images */
     pix1 = pixRead(DEMOPATH("weasel2.4c.png"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixScaleBySampling(pix1, 3.0, 3.0);
     box = boxCreate(0, 0, 209, 214);
     pixs = pixClipRectangle(pix2, box, NULL);
@@ -87,7 +86,6 @@ L_REGPARAMS* rp;
     pix7 = pixRotateAM(pix2, +0.15, L_BRING_IN_WHITE);
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	TranslateAndSave1(pixa, 32, pixs, 30, 30);
     TranslateAndSave1(pixa, 32, pix1, 35, 20);
     TranslateAndSave1(pixa, 32, pix2, 20, 35);
@@ -99,7 +97,6 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa);
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	TranslateAndSave1(pixa, 8, pix1, 35, 20);
     TranslateAndSave1(pixa, 8, pix4, 35, 20);
     pixd = pixaDisplayTiledInColumns(pixa, 4, 1.0, 30, 3);
@@ -109,7 +106,6 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa);
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	TranslateAndSave2(pixa, pixs, 30, 30);
     TranslateAndSave2(pixa, pix1, 30, 30);
     TranslateAndSave2(pixa, pix2, 35, 20);

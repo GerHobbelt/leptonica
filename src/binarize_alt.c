@@ -185,7 +185,6 @@ struct BG_THRES_PT_INFO {
     if (sx < 16 || sy < 16)
         return ERROR_INT("sx and sy must be >= 16", __func__, 1);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 
 	black_is_fg_weight = 0;
 	all_bg_count = 0;
@@ -214,9 +213,8 @@ struct BG_THRES_PT_INFO {
 				&fgval, &bgval, pixplt_ref);
 
 			if (pixplt) {
-				pixSetDiagnosticsSpec(pixplt, diagspec);
 				//lept_mkdir("lept/otsu");
-				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", diagspec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
 				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
 				stringDestroy(&pixd_path);
@@ -327,7 +325,7 @@ struct BG_THRES_PT_INFO {
 						numaZeroValues(na, 0, median_pos);
 						numaSetValue(na, median_pos, sum);
 
-						numaSplitDistribution(na, scorefract, &tile_thresh, &avebg, &avefg, &numbg, &numfg, diagspec, nascore_ref);
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avebg, &avefg, &numbg, &numfg, nascore_ref);
 
 						if (!(fabsf(avefg - avebg) >= 1) && numfg > 0.0 && numbg > 0.0) {
 							L_WARNING("klunt! !black_is_fg ... fabsf(avefg(%f) - avebg(%f)) >= 1) && numfg(%f) > 0.0 && numbg(%f) > 0.0\n", __func__, avefg, avebg, numfg, numbg);
@@ -374,7 +372,7 @@ struct BG_THRES_PT_INFO {
 						numaZeroValues(na, median_pos, -1);
 						numaSetValue(na, median_pos, sum);
 
-						numaSplitDistribution(na, scorefract, &tile_thresh, &avefg, &avebg, &numfg, &numbg, diagspec, nascore_ref);
+						numaSplitDistribution(na, scorefract, &tile_thresh, &avefg, &avebg, &numfg, &numbg, nascore_ref);
 
 						if (!(fabsf(avefg - avebg) >= 1) && numbg > 0.0 && numfg > 0.0) {
 							L_WARNING("klunt! ... fabsf(avefg(%f) - avebg(%f)) >= 1) && numfg(%f) > 0.0 && numbg(%f) > 0.0\n", __func__, avefg, avebg, numfg, numbg);
@@ -429,9 +427,9 @@ struct BG_THRES_PT_INFO {
 						/* Plot the score function */
 						char title[32];
 						//lept_mkdir("lept/otsu3");
-						const char* plot_path = leptDebugGenFilepathEx("lept/otsu3", diagspec, "%s.plots.%d", __func__, i);
+						const char* plot_path = leptDebugGenFilepathEx("lept/otsu3", "%s.plots.%d", __func__, i);
 						snprintf(title, sizeof(title), "Plot %d", i);
-						gplot = gplotCreate(diagspec, plot_path, GPLOT_PNG,
+						gplot = gplotCreate(plot_path, GPLOT_PNG,
 							"Otsu score function for splitting",
 							"Grayscale value", "Score");
 						gplotAddPlot(gplot, NULL, nascore, GPLOT_LINES, title);
@@ -496,7 +494,6 @@ struct BG_THRES_PT_INFO {
 		l_ok black_is_fg = (black_is_fg_weight >= 0);
 		pixd = pixCreate(w, h, 1);
         pixCopyResolution(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 		for (i = 0; i < ny; i++) {
             for (j = 0; j < nx; j++) {
                 pixt = pixTilingGetTile(pt, i, j);
@@ -948,7 +945,6 @@ PIX     *pixg, *pixsc, *pixm = NULL, *pixms = NULL, *pixth = NULL, *pixd = NULL;
     if (ppixd) {
         pixd = pixApplyLocalThreshold(pixsc, pixth);
         pixCopyResolution(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 	}
 
     if (ppixm)
@@ -1364,9 +1360,8 @@ PIX       *pix1, *pix2, *pix3;
         pixDestroy(&pix3);
     }
     if (debugflag) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixm);
         //lept_mkdir("lept/binarize");
-        gplot = gplotCreate(diagspec, "/tmp/lept/binarize", GPLOT_PNG,
+        gplot = gplotCreate("/tmp/lept/binarize", GPLOT_PNG,
                             "number of cc vs. threshold",
                             "threshold", "number of cc");
         gplotAddPlot(gplot, NULL, na4, GPLOT_LINES, "plot 4cc");
@@ -1406,7 +1401,6 @@ PIX       *pix1, *pix2, *pix3;
         if (ppixd) {
             *ppixd = pixConvertTo1(pix2, globthresh);
             pixCopyResolution(*ppixd, pixs);
-			pixCloneDiagnosticsSpec(*ppixd, pixs);
         }
         if (debugflag) lept_stderr("global threshold = %d\n", globthresh);
         pixDestroy(&pix2);
@@ -1491,9 +1485,8 @@ NUMA      *na1, *na2, *na3;
     L_INFO("fractional area under first peak: %5.3f\n", __func__, fract);
 
     if (ppixhisto) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 		//lept_mkdir("lept/histo");
-		*ppixhisto = gplotSimplePix1(diagspec, na3, "lept/histo/histo", "thresholds histogram");
+		*ppixhisto = gplotSimplePix1(na3, "lept/histo/histo", "thresholds histogram");
     }
     if (pnahisto)
         *pnahisto = na3;

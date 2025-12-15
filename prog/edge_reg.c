@@ -56,7 +56,6 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("test8.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Test speed: about 60 Mpix/sec/GHz */
     startTimer();

@@ -76,10 +76,8 @@ PIXA         *pixa;
 		return 1;
 
 	pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     pixs = pixRead(DEMOPATH("breviar.38.150.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_CLONE);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 0 */
     pixDisplayWithTitle(pixs, 0, 0, "Input image");
@@ -246,7 +244,6 @@ PIXA         *pixa;
 
         /* Test the color detector */
     pixa = pixaCreate(7);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     bmf = bmfCreate(NULL, 4);
     pix1 = TestForRedColor(rp, DEMOPATH("brev.06.75.jpg"), 1, bmf);  /* 14 */
@@ -287,7 +284,6 @@ l_int32    hasred;
 l_float32  ratio;
 
     pix1 = pixRead(fname);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixHasHighlightRed(pix1, 1, 0.0001, 2.5, &hasred, &ratio, NULL);
     regTestCompareValues(rp, gold_red, hasred, 0.0);
     if (hasred)

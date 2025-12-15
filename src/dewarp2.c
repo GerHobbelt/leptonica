@@ -151,8 +151,7 @@ static const l_float32   AllowedWidthFract = 0.05f;  /* no bigger */
  * </pre>
  */
 l_ok
-dewarpBuildPageModel(L_DEWARP    *dew,
-                     LDIAG_CTX    diagspec)
+dewarpBuildPageModel(L_DEWARP    *dew)
 {
 l_int32  linecount, ntop, nbot, ytop, ybot, ret;
 PIX     *pixs, *pix1, *pix2, *pix3;
@@ -162,9 +161,7 @@ PTAA    *ptaa1, *ptaa2;
     if (!dew)
         return ERROR_INT("dew not defined", __func__, 1);
 
-	leptReplaceDiagnoticsSpecInstance(&dew->diag_specX, diagspec);
-
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     dew->vsuccess = dew->hsuccess = 0;
     pixs = dew->pixs;
@@ -177,7 +174,7 @@ PTAA    *ptaa1, *ptaa2;
     }
 
         /* Make initial estimate of centers of textlines */
-    ptaa1 = dewarpGetTextlineCenters(pixs, diagspec);
+    ptaa1 = dewarpGetTextlineCenters(pixs);
     if (!ptaa1) {
         L_WARNING("textline centers not found; model not built\n", __func__);
         return 1;
@@ -186,7 +183,6 @@ PTAA    *ptaa1, *ptaa2;
         pix1 = pixConvertTo32(pixs);
         pta = generatePtaFilledCircle(1);
         pix2 = pixGenerateFromPta(pta, 5, 5);
-		pixSetDiagnosticsSpec(pix2, diagspec);
 		pix3 = pixDisplayPtaaPattern(NULL, pix1, ptaa1, pix2, 2, 2);
         pixWriteDebug("/tmp/lept/dewmod/0020.png", pix3, IFF_PNG);
         pixDestroy(&pix1);
@@ -202,7 +198,6 @@ PTAA    *ptaa1, *ptaa2;
         pix1 = pixConvertTo32(pixs);
         pta = generatePtaFilledCircle(1);
         pix2 = pixGenerateFromPta(pta, 5, 5);
-		pixSetDiagnosticsSpec(pix2, diagspec);
         pix3 = pixDisplayPtaaPattern(NULL, pix1, ptaa2, pix2, 2, 2);
         pixWriteDebug("/tmp/lept/dewmod/0030.png", pix3, IFF_PNG);
         pixDestroy(&pix1);
@@ -262,7 +257,7 @@ PTAA    *ptaa1, *ptaa2;
             pixDisplay(pix1, 1000, 0);
             pixDestroy(&pix1);
         }
-		const char *debugfile = leptDebugGenFilepath(diagspec, "page.pdf");
+		const char *debugfile = leptDebugGenFilepath("page.pdf");
         convertFilesToPdf("/tmp/lept/dewmod", NULL, 135, 1.0, 0, 0,
                           "Dewarp Build Model", debugfile);
         lept_stderr("pdf file: %s\n", debugfile);
@@ -322,8 +317,7 @@ FPIX       *fpix;
     if (!ptaa)
         return ERROR_INT("ptaa not defined", __func__, 1);
 
-	LDIAG_CTX diagspec = dew->diag_specX;
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     if (debugflag)
 		L_INFO("finding vertical disparity\n", __func__);
@@ -374,7 +368,6 @@ FPIX       *fpix;
         pix1 = pixConvertTo32(pixdb);
         pta = generatePtaFilledCircle(1);
         pixcirc = pixGenerateFromPta(pta, 5, 5);
-		pixSetDiagnosticsSpec(pixcirc, diagspec);
         pix2 = pixDisplayPtaaPattern(NULL, pix1, ptaat, pixcirc, 2, 2);
         pixWriteDebug("/tmp/lept/dewmod/0041.png", pix2, IFF_PNG);
         pixDestroy(&pix1);
@@ -443,7 +436,6 @@ FPIX       *fpix;
         pix1 = pixConvertTo32(pixdb);
         ptacirc = generatePtaFilledCircle(5);
         pixcirc = pixGenerateFromPta(ptacirc, 11, 11);
-		pixSetDiagnosticsSpec(pixcirc, diagspec);
 		srand(3);
         pixDisplayPtaaPattern(pix1, pix1, ptaa2, pixcirc, 5, 5);
         srand(3);  /* use the same colors for text and reference lines */
@@ -530,7 +522,6 @@ FPIX       *fpix;
 
         /* Save the result in a fpix at the specified subsampling  */
     fpix = fpixCreate(nx, ny);
-	fpixSetDiagnosticsSpec(fpix, diagspec);
 	for (i = 0; i < ny; i++) {
         for (j = 0; j < nx; j++) {
             ptaaGetPt(ptaa5, j, i, NULL, &val);
@@ -594,8 +585,7 @@ FPIX      *fpix;
     if (!ptaa)
         return ERROR_INT("ptaa not defined", __func__, 1);
 
-	LDIAG_CTX diagspec = dew->diag_specX;
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
 	if (debugflag) {
 		L_INFO("finding horizontal disparity\n", __func__);
@@ -790,7 +780,6 @@ FPIX      *fpix;
 
         /* Save the result in a fpix at the specified subsampling  */
     fpix = fpixCreate(nx, ny);
-	fpixSetDiagnosticsSpec(fpix, diagspec);
 	for (i = 0; i < ny; i++) {
         for (j = 0; j < nx; j++) {
             ptaaGetPt(ptaah, i, j, NULL, &val);
@@ -824,8 +813,7 @@ FPIX      *fpix;
  * </pre>
  */
 PTAA *
-dewarpGetTextlineCenters(PIX     *pixs,
-                         LDIAG_CTX diagspec)
+dewarpGetTextlineCenters(PIX     *pixs)
 {
 char      buf[64];
 l_int32   i, w, h, bx, by, nsegs, csize1, csize2;
@@ -839,8 +827,7 @@ PTAA     *ptaa;
         return (PTAA *)ERROR_PTR("pixs undefined or not 1 bpp", __func__, NULL);
     pixGetDimensions(pixs, &w, &h, NULL);
 
-	diagspec = leptDebugGetDiagnosticsSpecFromAny(2, diagspec, pixGetDiagnosticsSpec(pixs));
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     if (debugflag)
 		L_INFO("finding text line centers\n", __func__);
@@ -868,10 +855,10 @@ PTAA     *ptaa;
 
     if (debugflag) {
         //lept_mkdir("lept/dewmod");
-		const char* pixpath = leptDebugGenFilepath(diagspec, "dewmod/0011.tif");
+		const char* pixpath = leptDebugGenFilepath("dewmod/0011.tif");
         pixWriteDebug(pixpath, pix1, IFF_TIFF_G4);
         pixDisplayWithTitle(pix1, 0, 600, "pix1");
-		pixpath = leptDebugGenFilepath(diagspec, "dewmod/0012.tif");
+		pixpath = leptDebugGenFilepath("dewmod/0012.tif");
 		pixWriteDebug(pixpath, pix2, IFF_TIFF_G4);
         pixDisplayWithTitle(pix2, 0, 800, "pix2");
     }
@@ -896,7 +883,7 @@ PTAA     *ptaa;
     }
     if (debugflag) {
         pix2 = pixaDisplay(pixa2, w, h);
-		const char* pixpath = leptDebugGenFilepath(diagspec, "dewmod/0013.tif");
+		const char* pixpath = leptDebugGenFilepath("dewmod/0013.tif");
 		pixWriteDebug(pixpath, pix2, IFF_TIFF_G4);
         pixDisplayWithTitle(pix2, 0, 1000, "pix2");
         pixDestroy(&pix2);
@@ -916,7 +903,7 @@ PTAA     *ptaa;
     if (debugflag) {
         pix1 = pixCreateTemplate(pixs);
         pix2 = pixDisplayPtaa(pix1, ptaa);
-		const char* pixpath = leptDebugGenFilepath(diagspec, "dewmod/0014.tif");
+		const char* pixpath = leptDebugGenFilepath("dewmod/0014.tif");
 		pixWriteDebug(pixpath, pix2, IFF_PNG);
         pixDisplayWithTitle(pix2, 0, 1200, "pix3");
         pixDestroy(&pix1);
@@ -998,8 +985,7 @@ PTAA      *ptaad;
     if (!ptaas)
         return (PTAA *)ERROR_PTR("ptaas undefined", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     pixGetDimensions(pixs, &w, NULL, NULL);
     n = ptaaGetCount(ptaas);
@@ -1156,7 +1142,7 @@ PTA       *ptal1, *ptar1, *ptal2, *ptar2;
         return ERROR_INT("ptal or ptar not defined", __func__, 1);
     *pptalf = *pptarf = NULL;
 
-	l_ok debugflag = leptIsDebugModeActive(dew->diag_specX);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* First filter for lines near left and right margins */
     w = pixGetWidth(dew->pixs);
@@ -1534,8 +1520,7 @@ FPIX      *fpix;
     if (!pixb || pixGetDepth(pixb) != 1)
         return ERROR_INT("pixb not defined or not 1 bpp", __func__, 1);
 
-	LDIAG_CTX diagspec = leptDebugGetDiagnosticsSpecFromAny(2, dew->diag_specX, pixGetDiagnosticsSpec(pixb));
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
 	if (debugflag) {
 		L_INFO("finding slope horizontal disparity\n", __func__);
@@ -1563,7 +1548,7 @@ FPIX      *fpix;
     }
     if (debugflag) {
         //lept_mkdir("lept/dew");
-		gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/dew/0091", NULL);
+		gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/dew/0091", NULL);
         lept_mv("/tmp/lept/dew/0091.png", "lept/dewmod", NULL, NULL);
         pixWriteDebug("/tmp/lept/dewmod/0090.png", pix1, IFF_PNG);
     }
@@ -1610,7 +1595,7 @@ FPIX      *fpix;
     if (debugflag) {
 		L_INFO("Slope-disparity: first = %d, last = %d, fract = %7.3f\n",
                __func__, first, last, fract);
-        gplotSimple1(diagspec, na2, GPLOT_PNG, "/tmp/lept/dew/0092", NULL);
+        gplotSimple1(na2, GPLOT_PNG, "/tmp/lept/dew/0092", NULL);
         lept_mv("/tmp/lept/dew/0092.png", "lept/dewmod", NULL, NULL);
     }
     if (fract < fractthresh) {
@@ -1633,7 +1618,7 @@ FPIX      *fpix;
     numaDestroy(&na3);
     if (debugflag) {
 		L_INFO("Average background density: %5.1f\n", __func__, aveval);
-        gplotSimple1(diagspec, na2, GPLOT_PNG, "/tmp/lept/dew/0093", NULL);
+        gplotSimple1(na2, GPLOT_PNG, "/tmp/lept/dew/0093", NULL);
         lept_mv("/tmp/lept/dew/0093.png", "lept/dewmod", NULL, NULL);
     }
 
@@ -1644,7 +1629,7 @@ FPIX      *fpix;
     ptaGetQuarticLSF(pta1, &ca, &cb, &cc, &cd, &ce, &na3);
     ptaGetArrays(pta1, &na4, NULL);
     if (debugflag) {
-		gplot = gplotSimpleXY1(diagspec, na4, na3, GPLOT_LINES, GPLOT_PNG,
+		gplot = gplotSimpleXY1(na4, na3, GPLOT_LINES, GPLOT_PNG,
                               "/tmp/lept/dew/0094", NULL);
         gplotDestroy(&gplot);
         lept_mv("/tmp/lept/dew/0094.png", "lept/dewmod", NULL, NULL);
@@ -1692,7 +1677,6 @@ FPIX      *fpix;
     nx = dew->nx;
     ny = dew->ny;
     fpix = fpixCreate(nx, ny);
-	fpixSetDiagnosticsSpec(fpix, diagspec);
 	del = (l_float32)w / (l_float32)nx;
     for (i = 0; i < ny; i++) {
         for (j = 0; j < nx; j++) {
@@ -1745,8 +1729,7 @@ FPIX      *fpix;
  */
 l_ok
 dewarpBuildLineModel(L_DEWARP    *dew,
-                     l_int32      opensize,
-                     LDIAG_CTX    diagspec)
+                     l_int32      opensize)
 {
 char     buf[64];
 l_int32  i, j, bx, by, ret, nlines;
@@ -1763,8 +1746,7 @@ PTAA    *ptaa1, *ptaa2;
         opensize = 8;  /* default */
     }
 
-	leptReplaceDiagnoticsSpecInstance(&dew->diag_specX, diagspec);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     dew->vsuccess = dew->hsuccess = 0;
     pixs = dew->pixs;
@@ -1902,7 +1884,7 @@ PTAA    *ptaa1, *ptaa2;
             pixDisplay(pix1, 1000, 0);
             pixDestroy(&pix1);
         }
-		const char* debugfile = leptDebugGenFilepath(diagspec, "dewline.pdf");
+		const char* debugfile = leptDebugGenFilepath("dewline.pdf");
 		convertFilesToPdf("/tmp/lept/dewline", NULL, 135, 1.0, 0, 0,
                           "Dewarp Build Line Model", debugfile);
         lept_stderr("pdf file: %s\n", debugfile);
@@ -2012,7 +1994,6 @@ PTA      *ptalt, *ptart, *ptacirc;
 
     ptacirc = generatePtaFilledCircle(5);
     pixcirc = pixGenerateFromPta(ptacirc, 11, 11);
-	pixCloneDiagnosticsSpec(pixcirc, pixs);
 	ptalt = ptaTranspose(ptal);
     ptart = ptaTranspose(ptar);
 

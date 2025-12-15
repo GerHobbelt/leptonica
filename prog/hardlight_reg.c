@@ -72,20 +72,16 @@ PIXAA  *paa;
         /* Read in images */
     pixs1 = pixRead(file1);
     pixs2 = pixRead(file2);
-	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
 	paa = pixaaCreate(0);
 
         /* ---------- Test not-in-place; no colormaps ----------- */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixaAddPix(pixa, pixs1, L_COPY);
     pixaAddPix(pixa, pixs2, L_COPY);
     pixaaAddPixa(paa, pixa, L_INSERT);
     pixd = pixBlendHardLight(NULL, pixs1, pixs2, 0, 0, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0, 9 */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixaAddPix(pixa, pixd, L_INSERT);
 
     pix2 = pixConvertTo32(pixs2);
@@ -100,7 +96,6 @@ PIXAA  *paa;
 
         /* ---------- Test not-in-place; colormaps ----------- */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixMedianCutQuant(pixs1, 0);
     if (pixGetDepth(pixs2) == 8)
         pix2 = pixConvertGrayToColormap8(pixs2, 8);
@@ -111,7 +106,6 @@ PIXAA  *paa;
     pixaaAddPixa(paa, pixa, L_INSERT);
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixd = pixBlendHardLight(NULL, pix1, pixs2, 0, 0, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 2, 11 */
     pixaAddPix(pixa, pixd, L_INSERT);
@@ -129,13 +123,11 @@ PIXAA  *paa;
 
         /* ---------- Test in-place; no colormaps ----------- */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixBlendHardLight(pixs1, pixs1, pixs2, 0, 0, 1.0);
     regTestWritePixAndCheck(rp, pixs1, IFF_PNG);  /* 5, 14 */
     pixaAddPix(pixa, pixs1, L_INSERT);
 
     pixs1 = pixRead(file1);
-	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
 	pix2 = pixConvertTo32(pixs2);
     pixBlendHardLight(pixs1, pixs1, pix2, 0, 0, 1.0);
     regTestWritePixAndCheck(rp, pixs1, IFF_PNG);  /* 6, 15 */
@@ -143,7 +135,6 @@ PIXAA  *paa;
     pixDestroy(&pix2);
 
     pixs1 = pixRead(file1);
-	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
 	pixBlendHardLight(pixs2, pixs2, pixs1, 0, 0, 1.0);
     regTestWritePixAndCheck(rp, pixs2, IFF_PNG);  /* 7, 16 */
     pixaAddPix(pixa, pixs2, L_INSERT);

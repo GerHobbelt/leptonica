@@ -98,7 +98,6 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, (l_float32)xfact, (l_float32)yfact);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
 
@@ -158,7 +157,6 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, (l_float32)factor, (l_float32)factor);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
     if (factor == 2) {

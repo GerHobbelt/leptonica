@@ -58,7 +58,6 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("test8.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixt = pixCopy(NULL, pixs);
 
         /* Copy, in-place and one COLUMN at a time, from the right
@@ -80,7 +79,6 @@ L_REGPARAMS* rp;
         /* Show the mirrored border, which uses the general
            pixRasterop() on an image in-place.  */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixt = pixRemoveBorder(pixs, 40);
     pixd = pixAddMirroredBorder(pixt, 40, 40, 40, 40);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */

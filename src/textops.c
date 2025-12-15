@@ -181,7 +181,6 @@ SARRAY   *salines;
         pixCopyColormap(pixd, pixs);
         pixCopyResolution(pixd, pixs);
         pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 		pixSetBlackOrWhite(pixd, L_BRING_IN_WHITE);
         if (location == L_ADD_ABOVE)
             pixRasterop(pixd, 0, extra, w, h, PIX_SRC, pixs, 0, 0);
@@ -344,7 +343,6 @@ SARRAY   *sa;
         pixCopyColormap(pixd, pixs);
         pixCopyResolution(pixd, pixs);
         pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 		pixSetBlackOrWhite(pixd, L_BRING_IN_WHITE);
         if (location == L_ADD_ABOVE)
             pixRasterop(pixd, 0, hadd, w, h, PIX_SRC, pixs, 0, 0);
@@ -356,7 +354,6 @@ SARRAY   *sa;
         pixCopyColormap(pixd, pixs);
         pixCopyResolution(pixd, pixs);
         pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 		pixSetBlackOrWhite(pixd, L_BRING_IN_WHITE);
         if (location == L_ADD_LEFT)
             pixRasterop(pixd, wadd, 0, w, h, PIX_SRC, pixs, 0, 0);

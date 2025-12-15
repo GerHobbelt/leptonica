@@ -78,7 +78,6 @@ L_REGPARAMS* rp;
 
         /* Find a mask for repainting pixels */
     pixs = pixRead(DEMOPATH("amoris.2.150.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
     pix1 = MakeReplacementMask(pixs);
     boxa = pixConnCompBB(pix1, 8);
     box1 = boxaGetBox(boxa, 0, L_COPY);

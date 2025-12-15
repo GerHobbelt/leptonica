@@ -103,8 +103,7 @@ dewarpSinglePage(PIX         *pixs,
                  l_int32      useboth,
                  l_int32      check_columns,
                  PIX        **ppixd,
-                 L_DEWARPA  **pdewa,
-                 LDIAG_CTX    diagspec)
+                 L_DEWARPA  **pdewa)
 {
 L_DEWARPA  *dewa;
 PIX        *pixb;
@@ -123,7 +122,7 @@ PIX        *pixb;
         return ERROR_INT("pixb not made", __func__, 1);
     }
 
-    dewarpSinglePageRun(pixs, pixb, dewa, ppixd, diagspec);
+    dewarpSinglePageRun(pixs, pixb, dewa, ppixd);
 
     if (pdewa)
         *pdewa = dewa;
@@ -226,10 +225,8 @@ l_ok
 dewarpSinglePageRun(PIX        *pixs,
                     PIX        *pixb,
                     L_DEWARPA  *dewa,
-                    PIX       **ppixd,
-                    LDIAG_CTX   diagspec)
+                    PIX       **ppixd)
 {
-const char  *debugfile;
 l_int32      vsuccess, ret;
 L_DEWARP    *dew;
 
@@ -243,7 +240,7 @@ L_DEWARP    *dew;
     if (!dewa)
         return ERROR_INT("dewa not defined", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
 	if (debugflag) {
 		//lept_mkdir("lept/dewarp");
@@ -252,8 +249,8 @@ L_DEWARP    *dew;
         /* Generate the page model */
     dew = dewarpCreate(pixb, 0);
     dewarpaInsertDewarp(dewa, dew);
-    debugfile = (diagspec) ? "/tmp/lept/dewarp/singlepage_model.pdf" : NULL;
-    dewarpBuildPageModel(dew, diagspec);
+    leptDebugSetFilenameForPrefix("/tmp/lept/dewarp/singlepage_model.pdf", -2);
+    dewarpBuildPageModel(dew);
     dewarpaModelStatus(dewa, 0, &vsuccess, NULL);
     if (vsuccess == 0) {
         L_ERROR("failure to build model for vertical disparity\n", __func__);
@@ -262,8 +259,8 @@ L_DEWARP    *dew;
     }
 
         /* Apply the page model */
-    debugfile = (diagspec) ? "/tmp/lept/dewarp/singlepage_apply.pdf" : NULL;
-    ret = dewarpaApplyDisparity(dewa, 0, pixs, 255, 0, 0, ppixd, diagspec);
+	leptDebugSetFilenameForPrefix("/tmp/lept/dewarp/singlepage_apply.pdf", -2);
+    ret = dewarpaApplyDisparity(dewa, 0, pixs, 255, 0, 0, ppixd);
     if (ret)
         L_ERROR("invalid model; failure to apply disparity\n", __func__);
     return 0;
@@ -341,8 +338,7 @@ NUMA      *namodels, *napages;
  */
 l_ok
 dewarpaSetValidModels(L_DEWARPA  *dewa,
-                      l_int32     notests,
-                      LDIAG_CTX   diagspec)
+                      l_int32     notests)
 {
 l_int32    i, n, maxcurv, diffcurv, diffedge;
 L_DEWARP  *dew;
@@ -350,7 +346,7 @@ L_DEWARP  *dew;
     if (!dewa)
         return ERROR_INT("dewa not defined", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     n = dewa->maxpage + 1;
     for (i = 0; i < n; i++) {
@@ -447,8 +443,7 @@ L_DEWARP  *dew;
  */
 l_ok
 dewarpaInsertRefModels(L_DEWARPA  *dewa,
-                       l_int32     notests,
-                       LDIAG_CTX   diagspec)
+                       l_int32     notests)
 {
 l_int32    i, j, n, val, min, distdown, distup;
 L_DEWARP  *dew;
@@ -460,7 +455,7 @@ NUMA      *na, *nah;
         L_INFO("maxdist < 2; no ref models can be used\n", __func__);
 
         /* Make an indicator numa for pages with valid models. */
-    dewarpaSetValidModels(dewa, notests, diagspec);
+    dewarpaSetValidModels(dewa, notests);
     n = dewa->maxpage + 1;
     na = numaMakeConstant(0, n);
     for (i = 0; i < n; i++) {
@@ -1121,7 +1116,7 @@ PIXA      *pixa;
         pixd = NULL;
         if (dew) {
             dewarpaApplyDisparity(dewa, dew->pageno, pixc,
-                                  GrayInValue, 0, 0, &pixd, NULL);
+                                  GrayInValue, 0, 0, &pixd);
             dewarpMinimize(dew);
         }
         pixa = pixaCreate(2);

@@ -115,7 +115,7 @@ L_REGPARAMS* rp;
 
     /*--------------------------------------------------------------*/
 
-    jbRankHaus(dirin, size, rank, COMPONENTS, rootname, firstpage, npages, 1, rp->diag_spec);
+    jbRankHaus(dirin, size, rank, COMPONENTS, rootname, firstpage, npages, 1);
 
     /*--------------------------------------------------------------*/
 
@@ -141,7 +141,7 @@ L_REGPARAMS* rp;
 
         /* Render the pages from the classifier data.
          * Use debugflag == FALSE to omit outlines of each component. */
-    pixa = jbDataRender(data, rp->diag_spec);
+    pixa = jbDataRender(data);
 
         /* Write the pages out */
     npages = pixaGetCount(pixa);
@@ -161,7 +161,6 @@ L_REGPARAMS* rp;
     PIX  *pix1, *pix2;
     fname = sarrayGetString(safiles, 0, L_NOCOPY);
     pix1 = pixRead(fname);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixaGetPix(pixa, 0, L_CLONE);
     pixXor(pix1, pix1, pix2);
     pixWrite("/tmp/lept/jb/output_diff.png", pix1, IFF_PNG);
@@ -179,7 +178,7 @@ L_REGPARAMS* rp;
 
         /* Read the data back in and render the pages */
     newdata = jbDataRead(rootname);
-    newpixa = jbDataRender(newdata, rp->diag_spec);
+    newpixa = jbDataRender(newdata);
     iofail = FALSE;
     for (i = 0; i < npages; i++) {
         pix = pixaGetPix(pixa, i, L_CLONE);
@@ -204,7 +203,7 @@ L_REGPARAMS* rp;
 
   #if  RENDER_DEBUG
         /* Use debugflag == TRUE to see outlines of each component. */
-    pixadb = jbDataRender(data, rp->diag_spec);
+    pixadb = jbDataRender(data);
         /* Write the debug pages out */
     npages = pixaGetCount(pixadb);
     for (i = 0; i < npages; i++) {

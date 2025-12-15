@@ -124,7 +124,7 @@ L_REGPARAMS* rp;
     nac2 = numaWindowedMean(na2, HALFWIDTH);
     nac3 = numaWindowedMean(na3, HALFWIDTH);
     nac4 = numaWindowedMean(na4, HALFWIDTH);
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/morph/dilate", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/morph/dilate", GPLOT_PNG,
                         "Dilation time vs sel size", "size", "time (ms)");
     gplotAddPlot(gplot, nax, nac1, GPLOT_LINES, "linear rasterop");
     gplotAddPlot(gplot, nax, nac2, GPLOT_LINES, "composite rasterop");
@@ -179,7 +179,7 @@ L_REGPARAMS* rp;
     nac2 = numaWindowedMean(na2, HALFWIDTH);
     nac3 = numaWindowedMean(na3, HALFWIDTH);
     nac4 = numaWindowedMean(na4, HALFWIDTH);
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/morph/erode", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/morph/erode", GPLOT_PNG,
                         "Erosion time vs sel size", "size", "time (ms)");
     gplotAddPlot(gplot, nax, nac1, GPLOT_LINES, "linear rasterop");
     gplotAddPlot(gplot, nax, nac2, GPLOT_LINES, "composite rasterop");
@@ -234,7 +234,7 @@ L_REGPARAMS* rp;
     nac2 = numaWindowedMean(na2, HALFWIDTH);
     nac3 = numaWindowedMean(na3, HALFWIDTH);
     nac4 = numaWindowedMean(na4, HALFWIDTH);
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/morph/open", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/morph/open", GPLOT_PNG,
                         "Opening time vs sel size", "size", "time (ms)");
     gplotAddPlot(gplot, nax, nac1, GPLOT_LINES, "linear rasterop");
     gplotAddPlot(gplot, nax, nac2, GPLOT_LINES, "composite rasterop");
@@ -289,7 +289,7 @@ L_REGPARAMS* rp;
     nac2 = numaWindowedMean(na2, HALFWIDTH);
     nac3 = numaWindowedMean(na3, HALFWIDTH);
     nac4 = numaWindowedMean(na4, HALFWIDTH);
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/morph/close", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/morph/close", GPLOT_PNG,
                         "Closing time vs sel size", "size", "time (ms)");
     gplotAddPlot(gplot, nax, nac1, GPLOT_LINES, "linear rasterop");
     gplotAddPlot(gplot, nax, nac2, GPLOT_LINES, "composite rasterop");

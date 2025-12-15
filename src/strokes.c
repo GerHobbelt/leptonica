@@ -420,7 +420,6 @@ PIX     *pix1, *pix2, *pixd;
     snprintf(buf, sizeof(buf), "D%d.%d", width, width);
     pixd = pixMorphSequence(pix2, buf, 0);
     pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	pixDestroy(&pix2);
     return pixd;
 }

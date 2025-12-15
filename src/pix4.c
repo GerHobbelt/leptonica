@@ -2673,11 +2673,6 @@ PIX        *pix1;
     if (nbins < 1 || nbins > 100)
         return ERROR_INT("nbins not in [1,100]", __func__, 1);
 
-	LDIAG_CTX diagspec = NULL;
-	if (pixadb) {
-		diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixg);
-	}
-
         /* Require that each bin has at least 5 pixels. */
     pixGetDimensions(pixs, &w, &h, NULL);
     npts = (w + factor - 1) * (h + factor - 1) / (factor * factor);
@@ -2717,9 +2712,9 @@ PIX        *pix1;
 
             /* Plot the gray bin value and the rank(gray) values */
         numaDiscretizeHistoInBins(na, nbins, &nabinval, &narank);
-        pix1 = gplotSimplePix1(diagspec, nabinval, "lept/regout/grey-bin", "Gray value in each bin");
+        pix1 = gplotSimplePix1(nabinval, "lept/regout/grey-bin", "Gray value in each bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(diagspec, narank, "lept/regout/rank-grey", "rank as function of gray value");
+        pix1 = gplotSimplePix1(narank, "lept/regout/rank-grey", "rank as function of gray value");
         pixaAddPix(pixadb, pix1, L_INSERT);
         numaDestroy(&na);
         numaDestroy(&nabinval);
@@ -2778,11 +2773,11 @@ PIX        *pix1;
             numaAddNumber(nablue, bval);
         }
         //lept_mkdir("lept/regout");
-		pix1 = gplotSimplePix1(diagspec, nared, "lept/regout/red-bin", "Average red val vs. rank bin");
+		pix1 = gplotSimplePix1(nared, "lept/regout/red-bin", "Average red val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(diagspec, nagreen, "lept/regout/green-bin", "Average green val vs. rank bin");
+        pix1 = gplotSimplePix1(nagreen, "lept/regout/green-bin", "Average green val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(diagspec, nablue, "lept/regout/blue-bin", "Average blue val vs. rank bin");
+        pix1 = gplotSimplePix1(nablue, "lept/regout/blue-bin", "Average blue val vs. rank bin");
         pixaAddPix(pixadb, pix1, L_INSERT);
         numaDestroy(&nared);
         numaDestroy(&nagreen);
@@ -3454,7 +3449,6 @@ l_float32  numfg, numbg;
 GPLOT     *gplot;
 NUMA      *na, *nascore, *nax, *nay;
 PIX       *pixg;
-LDIAG_CTX  diagspec;
 
     if (pthresh) *pthresh = 0;
     if (pfgval) *pfgval = 0;
@@ -3465,22 +3459,19 @@ LDIAG_CTX  diagspec;
     if (!pixs)
         return ERROR_INT("pixs not defined", __func__, 1);
 
-	diagspec = NULL;
-
         /* Generate a subsampled 8 bpp version */
     pixg = pixConvertTo8BySampling(pixs, factor, 0);
 
         /* Make the fg/bg estimates */
     na = pixGetGrayHistogram(pixg, 1);
     if (ppixdb) {
-		diagspec = pixGetDiagnosticsSpec(pixs);
 
         numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
-                              &numfg, &numbg, diagspec, &nascore);
+                              &numfg, &numbg, &nascore);
         numaDestroy(&nascore);
     } else {
         numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
-                              &numfg, &numbg, NULL, NULL);
+                              &numfg, &numbg, NULL);
     }
 
     if (pthresh) *pthresh = thresh;
@@ -3526,7 +3517,7 @@ LDIAG_CTX  diagspec;
 		index++;
 		//lept_mkdir("lept/redout");
 		snprintf(namebuf, sizeof(namebuf), "/tmp/lept/redout/histplot-%03d", index);
-		gplot = gplotCreate(diagspec, namebuf, GPLOT_PNG, "Histogram",
+		gplot = gplotCreate(namebuf, GPLOT_PNG, "Histogram",
                             "Grayscale value", "Number of pixels");
         gplotAddPlot(gplot, NULL, na, GPLOT_LINES, NULL);
 
@@ -3561,7 +3552,6 @@ LDIAG_CTX  diagspec;
 
 		/* create a final chart image of: chart on top, image tile from which this histogram was taken at the bottom, with a border to clearly delineate it. */
 		pixadb = pixaCreate(2);
-		pixaSetDiagnosticsSpec(pixadb, diagspec);
 		pixaAddPix(pixadb, pixplot, L_INSERT);
 		/* scale the pix (image tile) to approximate the plot image width; to keep the original pixels obvious, this must be a *sampled* scaling */
 		int pw, ph, tw, th;

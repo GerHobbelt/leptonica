@@ -63,7 +63,6 @@ L_REGPARAMS* rp;
 
         /* Mask */
     pixm = pixCreate(200, 200, 8);
-	pixSetDiagnosticsSpec(pixm, rp->diag_spec);
 	for (i = 0; i < 200; i++)
         for (j = 0; j < 200; j++)
             pixSetPixel(pixm, j, i, 20 + L_ABS((100 - i) * (100 - j)) / 50);
@@ -71,7 +70,6 @@ L_REGPARAMS* rp;
 
         /* Seed1 */
     pixs1 = pixCreate(200, 200, 8);
-	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
 	for (i = 99; i <= 101; i++)
         for (j = 99; j <= 101; j++)
             pixSetPixel(pixs1, j, i, 50 - i/100 - j/100);
@@ -79,7 +77,6 @@ L_REGPARAMS* rp;
 
         /* Seed2 */
     pixs2 = pixCreate(200, 200, 8);
-	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
 	for (i = 99; i <= 101; i++)
         for (j = 99; j <= 101; j++)
             pixSetPixel(pixs2, j, i, 205 - i/100 - j/100);
@@ -87,7 +84,6 @@ L_REGPARAMS* rp;
 
         /* Inverse grayscale fill */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixaAddPix(pixa, pixm, L_COPY);
     regTestWritePixAndCheck(rp, pixm, IFF_PNG);  /* 0 */
     pixaAddPix(pixa, pixs1, L_COPY);
@@ -115,7 +111,6 @@ L_REGPARAMS* rp;
 
         /* Standard grayscale fill */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixaAddPix(pixa, pixmi, L_COPY);
     regTestWritePixAndCheck(rp, pixmi, IFF_PNG);  /* 7 */
     pixaAddPix(pixa, pixs2, L_COPY);
@@ -139,7 +134,6 @@ L_REGPARAMS* rp;
 
         /* Basin fill from minima as seed */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixaAddPix(pixa, pixm, L_COPY);
     regTestWritePixAndCheck(rp, pixm, IFF_PNG);  /* 13 */
     pixLocalExtrema(pixm, 0, 0, &pixmin, NULL);

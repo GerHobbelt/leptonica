@@ -309,8 +309,7 @@ PIX       *pix1;
     if (!pixs || pixGetDepth(pixs) != 1)
         return (PIX *)ERROR_PTR("pixs undefined or not 1 bpp", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Get confidences for orientation */
     pixUpDownDetect(pixs, &upconf, 0, 0);
@@ -591,8 +590,7 @@ SEL       *sel1, *sel2, *sel3, *sel4;
     if (npixels < 0)
         npixels = 0;
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     if (debugflag) {
         //lept_mkdir("lept/orient");
@@ -750,8 +748,7 @@ SEL       *sel1, *sel2;
     if (mincount == 0)
         mincount = DefaultMinMirrorFlipCount;
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     if (debugflag) {
         //lept_mkdir("lept/orient");
@@ -826,8 +823,7 @@ pixDebugFlipDetect(const char *filename,
 {
 PIX  *pixt, *pixthm;
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixhm);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
 	if (!debugflag)
 	   return;

@@ -68,7 +68,6 @@ L_REGPARAMS* rp;
 
         /* Read the training data */
     pixat = pixaRead("recog/sets/train06.pa");
-	pixaSetDiagnosticsSpec(pixat, rp->diag_spec);
     recog = recogCreateFromPixa(pixat, 0, 0, 0, 128, 1);
     recogAverageSamples(recog);  /* required for splitting characters */
     pix1 = pixaDisplayTiledWithText(pixat, 1500, 1.0, 10, 1, 8, 0xff000000);

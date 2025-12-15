@@ -112,13 +112,11 @@ PIX     *pix0, *pix1, *pix2, *pix3;
 
         /* Read, write, read back and write again */
     pix0 = pixRead(fname);
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
 	pix1 = pixScale(pix0, 0.5, 0.5);
     pixGetDimensions(pix1, &w, &h, NULL);
     regTestWritePixAndCheck(rp, pix1, IFF_JP2);  /* 0, 5 */
     name = regTestGenLocalFilename(rp, -1, IFF_JP2);
     pix2 = pixRead(name);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix2, IFF_JP2);  /* 1, 6 */
     pixDisplayWithTitle(pix2, 0, 100, "1");
     pixDestroy(&pix1);
@@ -127,17 +125,14 @@ PIX     *pix0, *pix1, *pix2, *pix3;
         /* Test cropping and scaling in the jp2 interface */
     box = boxCreate(w / 4, h / 4, w / 2, h / 2);
     pix1 = pixReadJp2k(name, 1, box, 0, 0);  /* read cropped to the box */
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	snprintf(buf, sizeof(buf), "/tmp/lept/regout/jp2kio.%02d.jp2",
              rp->index + 1);
     pixWriteJp2k(buf, pix1, 38, 0, 0, 0);  /* write cropped to the box */
     regTestCheckFile(rp, buf);  /* 2, 7 */
     pix2 = pixRead(buf);  /* read the cropped image */
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix2, IFF_JP2);  /* 3, 8 */
     pixDisplayWithTitle(pix2, 500, 100, "2");
     pix3 = pixReadJp2k(buf, 2, NULL, 0, 0);  /* read cropped image at 2x red */
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix3, IFF_JP2);  /* 4, 9 */
     pixDisplayWithTitle(pix3, 1000, 100, "3");
     pixDestroy(&pix0);
@@ -162,17 +157,14 @@ PIX      *pix0, *pix1, *pix2, *pix3;
 
         /* Test the memory interface */
     pix0 = pixRead(fname);
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
 	pix1 = pixScale(pix0, 0.5, 0.5);
     pixGetDimensions(pix1, &w, &h, NULL);
     regTestWritePixAndCheck(rp, pix1, IFF_JP2);  /* 10 */
     name = regTestGenLocalFilename(rp, -1, IFF_JP2);
     pix2 = pixRead(name);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix2, IFF_JP2);  /* 11 */
     data = l_binaryRead(name, &nbytes);
     pix3 = pixReadMemJp2k(data, nbytes, 1, NULL, 0, 0);
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix3, IFF_JP2);  /* 12 */
     pixDisplayWithTitle(pix3, 0, 100, "1");
     pixDestroy(&pix1);
@@ -183,18 +175,15 @@ PIX      *pix0, *pix1, *pix2, *pix3;
         /* Test scaling on read with the memory interface */
     box = boxCreate(w / 3, h / 3, w / 3, h / 3);
     pix1 = pixReadJp2k(name, 1, box, 0, 0);  /* just read the box region */
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	snprintf(buf, sizeof(buf), "/tmp/lept/regout/jp2kio.%02d.jp2",
              rp->index + 1);
     pixWriteJp2k(buf, pix1, 38, 0, 0, 0);  /* write cropped to the box */
     regTestCheckFile(rp, buf);  /* 13 */
     data = l_binaryRead(buf, &nbytes);
     pix2 = pixReadMemJp2k(data, nbytes, 1, NULL, 0, 0);  /* read it again */
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix2, IFF_JP2);  /* 14 */
     pixDisplayWithTitle(pix2, 500, 100, "2");
     pix3 = pixReadMemJp2k(data, nbytes, 2, NULL, 0, 0);  /* read at 2x red */
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix3, IFF_JP2);  /* 15 */
     pixDisplayWithTitle(pix3, 1000, 100, "3");
     boxDestroy(&box);
@@ -218,13 +207,11 @@ PIX   *pix0, *pix1;
     //lept_mkdir("lept/jp2k");
 
     pix0 = pixRead(fname);
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
 	if ((fp = lept_fopen("/tmp/lept/jp2k/wyom.j2k", "wb+")) != NULL) {
         pixWriteStreamJp2k(fp, pix0, 34, 6, L_J2K_CODEC, 0, 0);
         lept_fclose(fp);
     }
     pix1 = pixRead("/tmp/lept/jp2k/wyom.j2k");
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestCompareSimilarPix(rp, pix0, pix1, 20, 0.01, 0);  /* 16 */
     pixDisplayWithTitle(pix1, 500, 500, NULL);
     pixDestroy(&pix0);

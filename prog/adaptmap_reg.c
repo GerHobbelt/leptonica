@@ -76,7 +76,6 @@ L_REGPARAMS* rp;
 
     pixs = pixRead(DEMOPATH("wet-day.jpg"));
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     pixg = pixConvertRGBToGray(pixs, 0.33, 0.34, 0.33);
     pixaAddPix(pixa, pixs, L_INSERT);
@@ -179,7 +178,6 @@ L_REGPARAMS* rp;
 
         /* Check pixFillMapHoles() */
     pixa = pixaCreate(3);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
 	pix1 = pixRead(DEMOPATH("weasel8.png"));  /* use this as the map */
     pixGammaTRC(pix1, pix1, 1.0, 0, 270);  /* darken white pixels */
@@ -202,7 +200,6 @@ L_REGPARAMS* rp;
 
         /* An even simpler check of pixFillMapHoles() */
     pixa = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
 	pix1 = pixCreate(3, 3, 8);
     pixSetPixel(pix1, 1, 0, 128);

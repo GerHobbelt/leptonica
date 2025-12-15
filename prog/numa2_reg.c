@@ -86,24 +86,23 @@ PIXA        *pixa1;
      * -------------------------------------------------------------------*/
     na = numaRead(DEMOPATH("lyra.5.na"));
     numaWindowedStats(na, 5, &na1, &na2, &na3, &na4);
-	pix1 = gplotSimplePix1(rp->diag_spec, na, "lept/numa2/lyra1", "Original");
-	pix2 = gplotSimplePix1(rp->diag_spec, na1, "lept/numa2/lyra2", "Mean");
-	pix3 = gplotSimplePix1(rp->diag_spec, na2, "lept/numa2/lyra3", "Mean Square");
-	pix4 = gplotSimplePix1(rp->diag_spec, na3, "lept/numa2/lyra4", "Variance");
-	pix5 = gplotSimplePix1(rp->diag_spec, na4, "lept/numa2/lyra5", "RMS Difference");
+	pix1 = gplotSimplePix1(na, "lept/numa2/lyra1", "Original");
+	pix2 = gplotSimplePix1(na1, "lept/numa2/lyra2", "Mean");
+	pix3 = gplotSimplePix1(na2, "lept/numa2/lyra3", "Mean Square");
+	pix4 = gplotSimplePix1(na3, "lept/numa2/lyra4", "Variance");
+	pix5 = gplotSimplePix1(na4, "lept/numa2/lyra5", "RMS Difference");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 3 */
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 4 */
     pixa1 = pixaCreate(5);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix2, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix4, L_INSERT);
     pixaAddPix(pixa1, pix5, L_INSERT);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
         pixDisplayWithTitle(pixd, 0, 0, NULL);
         pixDestroy(&pixd);
@@ -121,7 +120,6 @@ PIXA        *pixa1;
         /* First, make a pretty image */
     w = h = 200;
     pixs = pixCreate(w, h, 32);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	wpls = pixGetWpl(pixs);
     datas = pixGetData(pixs);
     for (i = 0; i < 200; i++) {
@@ -142,23 +140,22 @@ PIXA        *pixa1;
     na2 = pixExtractOnLine(pixg, 40, 30, 40, 170, 1);
     na3 = pixExtractOnLine(pixg, 20, 170, 180, 30, 1);
     na4 = pixExtractOnLine(pixg, 20, 190, 180, 10, 1);
-	pix1 = gplotSimplePix1(rp->diag_spec, na1, "lept/numa2/ext1", "Horizontal");
-	pix2 = gplotSimplePix1(rp->diag_spec, na2, "lept/numa2/ext2", "Vertical");
-	pix3 = gplotSimplePix1(rp->diag_spec, na3, "lept/numa2/ext3",
+	pix1 = gplotSimplePix1(na1, "lept/numa2/ext1", "Horizontal");
+	pix2 = gplotSimplePix1(na2, "lept/numa2/ext2", "Vertical");
+	pix3 = gplotSimplePix1(na3, "lept/numa2/ext3",
                 "Slightly more horizontal than vertical");
-	pix4 = gplotSimplePix1(rp->diag_spec, na4, "lept/numa2/ext4",
+	pix4 = gplotSimplePix1(na4, "lept/numa2/ext4",
                 "Slightly more vertical than horizontal");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 7 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 8 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 9 */
     pixa1 = pixaCreate(4);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix2, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix4, L_INSERT);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
         pixDisplayWithTitle(pixd, 300, 0, NULL);
         pixDestroy(&pixd);
@@ -176,7 +173,6 @@ PIXA        *pixa1;
      * -------------------------------------------------------------------*/
         /* Sum by columns in two halves (left and right) */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixGetDimensions(pixs, &w, &h, NULL);
     box1 = boxCreate(0, 0, w / 2, h);
     box2 = boxCreate(w / 2, 0, w - 2 / 2, h);
@@ -230,7 +226,7 @@ PIXA        *pixa1;
     regTestCompareValues(rp, 189.59, ave1, 0.01);  /* 13 */
     regTestCompareValues(rp, 207.89, ave2, 0.01);  /* 14 */
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("ave1 = %8.4f\n", sum1 / h);
         lept_stderr("ave2 = %8.4f\n", 2.0 * sum2 / w);
     }
@@ -275,10 +271,9 @@ PIXA        *pixa1;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 19 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 20 */
     pixa1 = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix2, L_INSERT);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
         pixDisplayWithTitle(pixd, 400, 600, NULL);
         pixDestroy(&pixd);
@@ -291,7 +286,6 @@ PIXA        *pixa1;
 
         /* Again on a different image */
     pix1 = pixRead(DEMOPATH("boxedpage.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixConvertTo8(pix1, 0);
     pixGetDimensions(pix2, &w, &h, NULL);
     na1 = pixVarianceByRow(pix2, NULL);
@@ -316,10 +310,9 @@ PIXA        *pixa1;
                              0x00ff0000);
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 22 */
     pixa1 = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix5, L_INSERT);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
         pixDisplayWithTitle(pixd, 800, 600, NULL);
         pixDestroy(&pixd);
@@ -335,7 +328,6 @@ PIXA        *pixa1;
      *                    Windowed variance along a line                  *
      * -------------------------------------------------------------------*/
     pix1 = pixRead(DEMOPATH("boxedpage.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixConvertTo8(pix1, 0);
     pixGetDimensions(pix2, &w, &h, NULL);
     pix3 = pixCopy(NULL, pix1);
@@ -358,10 +350,9 @@ PIXA        *pixa1;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 23 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 24 */
     pixa1 = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixd = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
         pixDisplayWithTitle(pixd, 1200, 600, NULL);
         pixDestroy(&pixd);
@@ -375,63 +366,62 @@ PIXA        *pixa1;
      *               Test pixel average function for gray                 *
      * -------------------------------------------------------------------*/
     pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixConvertRGBToLuminance(pix1);
     box1 = boxCreate(20, 150, 700, 515);
     pix3 = pixClipRectangle(pix2, box1, NULL);
         /* No mask, no box, different subsampling */
     pixAverageInRect(pix3, NULL, NULL, 0, 255, 1, &ave1);  /* no mask */
     regTestCompareValues(rp, 176.97, ave1, 0.1);  /* 25 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave1 = %6.2f\n", ave1);
+    if (leptIsInDisplayMode()) lept_stderr("ave1 = %6.2f\n", ave1);
     pixAverageInRect(pix3, NULL, NULL, 0, 255, 2, &ave2);  /* no mask */
     regTestCompareValues(rp, ave1, ave2, 0.1);  /* 26 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave2 = %6.2f\n", ave2);
+    if (leptIsInDisplayMode()) lept_stderr("ave2 = %6.2f\n", ave2);
         /* Mask allows bg, no box */
     pix4 = pixThresholdToBinary(pix3, 80);  /* use light pixels */
     pixAverageInRect(pix3, pix4, NULL, 0, 255, 1, &ave1);  /* mask bg */
     regTestCompareValues(rp, 187.58, ave1, 0.1);  /* 27 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode()) lept_stderr("ave = %6.2f\n", ave1);
         /* Mask allows fg, no box */
     pixInvert(pix4, pix4);  /* use dark pixels */
     pixAverageInRect(pix3, pix4, NULL, 0, 255, 1, &ave1);  /* mask fg */
     regTestCompareValues(rp, 46.37, ave1, 0.1);  /* 28 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode()) lept_stderr("ave = %6.2f\n", ave1);
         /* Mask allows fg, no box, restricted range with samples */
     pixAverageInRect(pix3, pix4, NULL, 50, 60, 1, &ave1);  /* mask fg */
     regTestCompareValues(rp, 55.18, ave1, 0.1);  /* 29 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode()) lept_stderr("ave = %6.2f\n", ave1);
         /* Mask allows fg, no box, restricted range without samples */
     pixAverageInRect(pix3, pix4, NULL, 100, 255, 1, &ave1);
     regTestCompareValues(rp, 0.0, ave1, 0.0);  /* 30 */  /* mask fg */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode()) lept_stderr("ave = %6.2f\n", ave1);
         /* No mask, use box */
     box2 = boxCreate(100, 100, 200, 150);
     pixAverageInRect(pix3, NULL, box2, 0, 255, 1, &ave1);  /* no mask */
     regTestCompareValues(rp, 165.63, ave1, 0.1);  /* 31 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave1 = %6.2f\n", ave1);
+    if (leptIsInDisplayMode()) lept_stderr("ave1 = %6.2f\n", ave1);
         /* No mask, pix cropped to box */
     pixInvert(pix4, pix4);  /* use light pixels */
     pix5 = pixClipRectangle(pix3, box2, NULL);
     pixAverageInRect(pix5, NULL, NULL, 0, 255, 1, &ave2);  /* no mask */
     regTestCompareValues(rp, ave1, ave2, 0.1);  /* 32 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave2 = %6.2f\n", ave2);
+    if (leptIsInDisplayMode()) lept_stderr("ave2 = %6.2f\n", ave2);
         /* Mask allows bg, use box */
     pixAverageInRect(pix3, pix4, box2, 0, 255, 1, &ave1);  /* mask bg */
     regTestCompareValues(rp, 175.65, ave1, 0.1);  /* 33 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave1 = %6.2f\n", ave1);
+    if (leptIsInDisplayMode()) lept_stderr("ave1 = %6.2f\n", ave1);
         /* Cropped mask allows bg, pix cropped to box */
     pix6 = pixThresholdToBinary(pix5, 80);  /* use light pixels */
     pixAverageInRect(pix5, pix6, NULL, 0, 255, 1, &ave2);
     regTestCompareValues(rp, ave1, ave2, 0.1);  /* 34 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave2 = %6.2f\n", ave2);
+    if (leptIsInDisplayMode()) lept_stderr("ave2 = %6.2f\n", ave2);
         /* Mask allows bg, use box, restricted range */
     pixAverageInRect(pix3, pix4, box2, 100, 125, 1, &ave1);
     regTestCompareValues(rp, 112.20, ave1, 0.1);  /* 35 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave1);
+    if (leptIsInDisplayMode()) lept_stderr("ave = %6.2f\n", ave1);
         /* Cropped mask allows bg, pix cropped to box, restricted range */
     pixAverageInRect(pix5, pix6, NULL, 100, 125, 1, &ave2);
     regTestCompareValues(rp, ave1, ave2, 0.1);  /* 36 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("ave = %6.2f\n", ave2);
+    if (leptIsInDisplayMode()) lept_stderr("ave = %6.2f\n", ave2);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDestroy(&pix3);
@@ -445,7 +435,6 @@ PIXA        *pixa1;
      *               Test pixel average function for color                *
      * -------------------------------------------------------------------*/
     pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	box1 = boxCreate(20, 150, 700, 515);
     pix2 = pixClipRectangle(pix1, box1, NULL);
     pixa1 = pixaCreate(0);
@@ -477,7 +466,7 @@ PIXA        *pixa1;
     pixAverageInRectRGB(pix2, pix3, box3, 1, &avergb);
     regTestCompareValues(rp, 0xfdfddd00, avergb, 0);  /* 42 */
     SaveColorSquare(pixa1, avergb);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix4 = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 20, 2);
         pixDisplay(pix4, 0, 800);
         pixDestroy(&pix4);

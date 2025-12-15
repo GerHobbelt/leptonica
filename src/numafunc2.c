@@ -1978,7 +1978,6 @@ numaSplitDistribution(NUMA       *na,
                       l_float32  *pave2,
                       l_float32  *pnum1,
                       l_float32  *pnum2,
-	                  LDIAG_CTX   diagspec,
                       NUMA      **pnascore)
 {
 l_int32    i, n, bestsplit, minrange, maxrange, maxindex, left, right;
@@ -2229,11 +2228,11 @@ l_ok      rv = 0;
 
 		// re-try all the above, now with a 'faked/tweaked' 2 hump histo:
 		l_int32 th;
-		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2, diagspec, pnascore);
+		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2,pnascore);
 		if (th != bestsplit) {
 			L_WARNING("ehhhhhhh!!!\n", __func__);
 		}
-		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2, diagspec, pnascore);
+		rv = numaSplitDistribution(na2, scorefract, &th, pave1, pave2, pnum1, pnum2,pnascore);
 		// correct for our faked second hump: it'll otherwise show up in the output statistics
 		// and that is Not Good(tm) as those partial sums are used to check for black bg (yes/no)
 		// and single-hump histogram inputs, which should be treated as "don't care" zones in
@@ -2281,16 +2280,16 @@ l_ok      rv = 0;
 			lept_stderr("num1prev = %f, num2prev = %f\n", num1prev, num2prev);
 			lept_stderr("ave1prev = %f, ave2prev = %f\n", ave1prev, ave2prev);
 			lept_stderr("mean = %f, median = %f, mode = %f, variance = %f\n", average, median, mode, variance);
-	        gplotSimple1(diagspec, nascore, GPLOT_PNG, namebuf,
+	        gplotSimple1(nascore, GPLOT_PNG, namebuf,
 	                     "Score for split distribution");
 			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-histovalues-%03d", index);
-			gplotSimple1(diagspec, na, GPLOT_PNG, namebuf,
+			gplotSimple1(na, GPLOT_PNG, namebuf,
 				"Raw histogram values for split distribution");
 			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-na.num1-%03d", index);
-			gplotSimple1(diagspec, nanum1, GPLOT_PNG, namebuf,
+			gplotSimple1(nanum1, GPLOT_PNG, namebuf,
 				"NANUM1 values for split distribution");
 			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-na.num2-%03d", index);
-			gplotSimple1(diagspec, nanum2, GPLOT_PNG, namebuf,
+			gplotSimple1(nanum2, GPLOT_PNG, namebuf,
 				"NANUM2 values for split distribution");
 			*pnascore = nascore;
 			nascore = NULL;

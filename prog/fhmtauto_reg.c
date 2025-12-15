@@ -84,7 +84,7 @@ L_REGPARAMS* rp;
         pixEqual(pixref, pix4, &same2);
         if (!same1 || !same2)
             lept_stderr("hmt differ for sel %d (%s)\n", i, selname);
-        if (leptIsInDisplayMode(rp->diag_spec) && same1 && same2)
+        if (leptIsInDisplayMode() && same1 && same2)
             lept_stderr("hmt are identical for sel %d (%s)\n", i, selname);
         pixDestroy(&pixref);
         pixDestroy(&pix1);

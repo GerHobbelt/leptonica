@@ -196,10 +196,8 @@ PIXTILING  *pt;
                                      NULL, NULL, pixplt_ref);
 
 			if (pixplt) {
-				LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-				pixSetDiagnosticsSpec(pixplt, diagspec);
 				//lept_mkdir("lept/otsu");
-				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", diagspec, "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
 				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
 				stringDestroy(&pixd_path);
@@ -221,7 +219,6 @@ PIXTILING  *pt;
     if (ppixd) {
         pixd = pixCreate(w, h, 1);
         pixCopyResolution(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 		for (i = 0; i < ny; i++) {
             for (j = 0; j < nx; j++) {
                 pixt = pixTilingGetTile(pt, i, j);
@@ -667,7 +664,6 @@ PIX     *pixg, *pixsc, *pixm = NULL, *pixms = NULL, *pixth = NULL, *pixd = NULL;
     if (ppixd) {
         pixd = pixApplyLocalThreshold(pixsc, pixth);
         pixCopyResolution(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 	}
 
     if (ppixm)
@@ -821,7 +817,6 @@ PIX       *pixd;
 
     pixGetDimensions(pixs, &w, &h, NULL);
 	pixd = pixCreate(w, h, 1);
-	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(2, pixs, pixth));
 	datas = pixGetData(pixs);
     datat = pixGetData(pixth);
     datad = pixGetData(pixd);
@@ -1084,11 +1079,10 @@ PIX       *pix1, *pix2, *pix3;
         numaAddNumber(na8, n8);
         pixDestroy(&pix3);
     }
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixm);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 	if (debugflag) {
         //lept_mkdir("lept/binarize");
-        gplot = gplotCreate(diagspec, "/tmp/lept/binarize", GPLOT_PNG,
+        gplot = gplotCreate("/tmp/lept/binarize", GPLOT_PNG,
                             "number of cc vs. threshold",
                             "threshold", "number of cc");
         gplotAddPlot(gplot, NULL, na4, GPLOT_LINES, "plot 4cc");
@@ -1128,7 +1122,6 @@ PIX       *pix1, *pix2, *pix3;
         if (ppixd) {
             *ppixd = pixConvertTo1(pix2, globthresh);
             pixCopyResolution(*ppixd, pixs);
-			pixCloneDiagnosticsSpec(*ppixd, pixs);
         }
         if (debugflag) lept_stderr("global threshold = %d\n", globthresh);
         pixDestroy(&pix2);
@@ -1213,9 +1206,8 @@ NUMA      *na1, *na2, *na3;
     L_INFO("fractional area under first peak: %5.3f\n", __func__, fract);
 
     if (ppixhisto) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 		//lept_mkdir("lept/histo");
-		*ppixhisto = gplotSimplePix1(diagspec, na3, "lept/histo/histo", "thresholds histogram");
+		*ppixhisto = gplotSimplePix1(na3, "lept/histo/histo", "thresholds histogram");
     }
     if (pnahisto)
         *pnahisto = na3;

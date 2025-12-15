@@ -73,13 +73,11 @@ L_REGPARAMS* rp;
 
         /* Calculate projection profiles through images/drawings. */
     pixa1 = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	for (i = 0; i < 2; i++) {
 		const char* fname = DEMOPATH(fnames[i]);
         pageno = extractNumberFromFilename(fname, 5, 0);
         lept_stderr("Page %d\n", pageno);
         pixs = pixRead(fname);
-		pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 		pixr = pixRotate90(pixs, (pageno % 2) ? 1 : -1);
         pixg = pixConvertTo8(pixr, 0);
         pixGetDimensions(pixg, &w, &h, NULL);
@@ -88,7 +86,7 @@ L_REGPARAMS* rp;
         nar = pixReversalProfile(pixg, 0.8, L_VERTICAL_LINE,
                                  0, h - 1, mindif, 1, 1);
         naro = numaOpen(nar, 11);
-        pix1 = gplotSimplePix1(rp->diag_spec, naro, "lept/crop/reversals-open", "Reversals Opened");
+        pix1 = gplotSimplePix1(naro, "lept/crop/reversals-open", "Reversals Opened");
         regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0,2 */
         narl = numaLowPassIntervals(naro, 0.1, 0.0);
         nart = numaThresholdEdges(naro, 0.1, 0.5, 0.0);
@@ -100,7 +98,7 @@ L_REGPARAMS* rp;
         nai = pixAverageIntensityProfile(pixgi, 0.8, L_VERTICAL_LINE,
                                          0, h - 1, 1, 1);
         naio = numaOpen(nai, 11);
-        pix2 = gplotSimplePix1(rp->diag_spec, naio, "lept/crop/intensities-open", "Intensities Opened");
+        pix2 = gplotSimplePix1(naio, "lept/crop/intensities-open", "Intensities Opened");
         regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1,3 */
         nait = numaThresholdEdges(naio, 0.4, 0.6, 0.0);
         numaDestroy(&nai);
@@ -109,12 +107,11 @@ L_REGPARAMS* rp;
             /* Analyze profiles for left/right edges  */
         GetLeftCut(narl, nart, nait, w, &left);
         GetRightCut(narl, nart, nait, w, &right);
-        if (leptIsInDisplayMode(rp->diag_spec))
+        if (leptIsInDisplayMode())
             lept_stderr("left = %d, right = %d\n", left, right);
 
             /* Output visuals */
         pixa2 = pixaCreate(3);
-		pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
 		pixaAddPix(pixa2, pixr, L_INSERT);
         pixaAddPix(pixa2, pix1, L_INSERT);
         pixaAddPix(pixa2, pix2, L_INSERT);
@@ -122,7 +119,7 @@ L_REGPARAMS* rp;
         pixaDestroy(&pixa2);
         pixaAddPix(pixa1, pixd, L_INSERT);
         pixDisplayWithTitle(pixd, 800 * i, 100, NULL);
-        if (leptIsInDisplayMode(rp->diag_spec)) {
+        if (leptIsInDisplayMode()) {
             lept_stderr("narl:");
             numaWriteStderr(narl);
             lept_stderr("nart:");
@@ -145,21 +142,19 @@ L_REGPARAMS* rp;
 
         /* Calculate projection profiles from text lines */
     pixs = pixRead(DEMOPATH("1555.007.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixGetDimensions(pixs, &w, &h, NULL);
     na1 = pixReversalProfile(pixs, 0.98, L_HORIZONTAL_LINE,
                                   0, h - 1, 40, 3, 3);
-    pix1 = gplotSimplePix1(rp->diag_spec, na1, "lept/crop/reversals", "Reversals");
+    pix1 = gplotSimplePix1(na1, "lept/crop/reversals", "Reversals");
     numaDestroy(&na1);
 
     na1 = pixAverageIntensityProfile(pixs, 0.98, L_HORIZONTAL_LINE,
                                     0, h - 1, 1, 1);
-    pix2 = gplotSimplePix1(rp->diag_spec, na1, "lept/crop/intensities", "Intensities");
+    pix2 = gplotSimplePix1(na1, "lept/crop/intensities", "Intensities");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 5 */
     numaDestroy(&na1);
     pixa1 = pixaCreate(3);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pixaAddPix(pixa1, pixScale(pixs, 0.5, 0.5), L_INSERT);
     pixaAddPix(pixa1, pix1, L_INSERT);
     pixaAddPix(pixa1, pix2, L_INSERT);
@@ -172,7 +167,6 @@ L_REGPARAMS* rp;
 
         /* Test rectangle clipping with border */
     pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixScale(pix1, 0.5, 0.5);
     box1 = boxCreate(125, 50, 180, 230);  /* fully contained */
     pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);

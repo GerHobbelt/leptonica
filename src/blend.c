@@ -195,7 +195,6 @@ PIX       *pixc, *pixt, *pixd;
         return (PIX *)ERROR_PTR("mixing gray or color with 1 bpp",
                                 __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs1, pixs2);
 
         /* remove colormap from pixs2 if necessary */
     pixt = pixRemoveColormap(pixs2, REMOVE_CMAP_BASED_ON_SRC);
@@ -232,7 +231,6 @@ PIX       *pixc, *pixt, *pixd;
     pixDestroy(&pixc);
     pixDestroy(&pixt);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -302,7 +300,6 @@ PIX       *pixc, *pix1, *pix2;
         type = L_BLEND_WITH_INVERSE;
     }
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* If pixd != NULL, we know that it is equal to pixs1 and
          * that pixs1 does not have a colormap, so that an in-place operation
@@ -448,7 +445,6 @@ PIX       *pixc, *pix1, *pix2;
 
     pixDestroy(&pixc);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
 	return pixd;
 }
@@ -532,7 +528,6 @@ PIX       *pixc, *pix1, *pix2;
         type = L_BLEND_GRAY;
     }
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* If pixd != NULL, we know that it is equal to pixs1 and
          * that pixs1 does not have a colormap, so that an in-place operation
@@ -657,7 +652,6 @@ PIX       *pixc, *pix1, *pix2;
 
     pixDestroy(&pixc);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
 	return pixd;
 }
@@ -729,7 +723,6 @@ PIX       *pixc, *pix1, *pix2;
         fract = 0.5;
     }
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* If pixd != NULL, we know that it is equal to pixs1 and
          * that pixs1 does not have a colormap, so that an in-place operation
@@ -799,7 +792,6 @@ PIX       *pixc, *pix1, *pix2;
 
     pixDestroy(&pixc);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -867,7 +859,6 @@ PIX       *pixc;
         fract = 0.5;
     }
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* If pixd != null, we know that it is equal to pixs1 and
          * that pixs1 is 32 bpp rgb, so that an in-place operation
@@ -914,7 +905,6 @@ PIX       *pixc;
 
     pixDestroy(&pixc);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
 	return pixd;
 }
@@ -986,7 +976,6 @@ PIX       *pixc;
     if (pixd && (pixd != pixs1))
         return (PIX *)ERROR_PTR("pixd must be NULL or pixs1", __func__, pixd);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* If pixd != NULL, we know that it is equal to pixs1 and
          * that pixs1 is 32 bpp rgb, so that an in-place operation
@@ -1027,7 +1016,6 @@ PIX       *pixc;
 
     pixDestroy(&pixc);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -1127,7 +1115,6 @@ PIX       *pixc, *pix1, *pix2;
         shift = 64;
     }
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* Test for overlap */
     pixGetDimensions(pixs1, &w, &h, NULL);
@@ -1242,7 +1229,6 @@ PIX       *pixc, *pix1, *pix2;
 
     pixDestroy(&pixc);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
 	return pixd;
 }
@@ -1294,7 +1280,6 @@ PIX       *pixd;
     if (type != L_BLEND_TO_WHITE && type != L_BLEND_TO_BLACK)
         return (PIX *)ERROR_PTR("invalid fade type", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixb);
 
         /* Remove colormap if it exists; otherwise copy */
     pixd = pixRemoveColormapGeneral(pixs, REMOVE_CMAP_BASED_ON_SRC, L_COPY);
@@ -1344,7 +1329,6 @@ PIX       *pixd;
         }
     }
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -1421,7 +1405,6 @@ PIX       *pixc, *pixt;
         fract = 0.5;
     }
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* If pixs2 has a colormap, remove it */
     pixc = pixRemoveColormap(pixs2, REMOVE_CMAP_BASED_ON_SRC);  /* clone ok */
@@ -1500,7 +1483,6 @@ PIX       *pixc, *pixt;
 
     pixDestroy(&pixc);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
 	return pixd;
 }
@@ -1753,7 +1735,6 @@ PIX       *pixr1, *pixr2, *pix1, *pix2, *pixg2, *pixd;
     if (!pixs2)
         return (PIX *)ERROR_PTR("pixs2 not defined", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixs1, pixs2, pixg);
 
     pixGetDimensions(pixs1, &w1, &h1, &d1);
     pixGetDimensions(pixs2, &w2, &h2, &d2);
@@ -1857,7 +1838,6 @@ PIX       *pixr1, *pixr2, *pix1, *pix2, *pixg2, *pixd;
     pixDestroy(&pixg2);
     pixDestroy(&pix2);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -1911,7 +1891,6 @@ PIX     *pixt, *pixc, *pixr, *pixg;
     if (pixd && (pixd != pixs))
         return (PIX *)ERROR_PTR("pixd neither null nor pixs", __func__, pixd);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixd, pixs);
 
         /* Extract the (optionally cropped) region, pixr, and generate
          * an identically sized pixc with the uniform color. */
@@ -1946,7 +1925,6 @@ PIX     *pixt, *pixc, *pixr, *pixg;
     pixDestroy(&pixr);
     pixDestroy(&pixg);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }

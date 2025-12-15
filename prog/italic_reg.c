@@ -69,27 +69,23 @@ PIXA         *pixadb;
 	//lept_mkdir("lept/ital");
 
     pixs = pixRead(DEMOPATH("italic.png"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Basic functionality with debug flag */
-    pixItalicWords(pixs, NULL, NULL, &boxa1, rp->diag_spec);
+    pixItalicWords(pixs, NULL, NULL, &boxa1);
     boxaWrite("/tmp/lept/ital/ital1.ba", boxa1);
     regTestCheckFile(rp, "/tmp/lept/ital/ital1.ba");  /* 0 */
     regTestCheckFile(rp, "/tmp/lept/ital/ital.3.pdf");  /* 1 */
     pix1 = pixRead("/tmp/lept/ital/ital.3.png");
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     pixDisplayWithTitle(pix1, 0, 0, "Intermediate steps");
     pixDestroy(&pix1);
     pix1 = pixRead("/tmp/lept/ital/runhisto.png");
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
     pixDisplayWithTitle(pix1, 400, 0, "Histogram of white runs");
     pixDestroy(&pix1);
 
         /* Generate word mask */
     pixadb = pixaCreate(5);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
 	pixWordMaskByDilation(pixs, NULL, &size, pixadb);
     l_pdfSetDateAndVersion(0);
     pixaConvertToPdf(pixadb, 100, 1.0, L_FLATE_ENCODE, 0, "Word Mask",
@@ -107,13 +103,13 @@ PIXA         *pixadb;
     pixDisplayWithTitle(pixm, 400, 550, "Word mask");
 
         /* Re-run italic finder using the word mask */
-    pixItalicWords(pixs, NULL, pixm, &boxa2, rp->diag_spec);
+    pixItalicWords(pixs, NULL, pixm, &boxa2);
     boxaWrite("/tmp/lept/ital/ital2.ba", boxa2);
     regTestCheckFile(rp, "/tmp/lept/ital/ital2.ba");  /* 7 */
 
         /* Re-run italic finder using word mask bounding boxes */
     boxa3 = pixConnComp(pixm, NULL, 8);
-    pixItalicWords(pixs, boxa3, NULL, &boxa4, rp->diag_spec);
+    pixItalicWords(pixs, boxa3, NULL, &boxa4);
     boxaWrite("/tmp/lept/ital/ital3.ba", boxa3);
     regTestCheckFile(rp, "/tmp/lept/ital/ital3.ba");  /* 8 */
     boxaWrite("/tmp/lept/ital/ital4.ba", boxa4);

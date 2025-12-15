@@ -71,15 +71,6 @@ L_REGPARAMS* rp;
     pixc8 = pixRead(DEMOPATH("weasel8.240c.png"));
     pixs16 = pixRead(DEMOPATH("test16.tif"));
     pixs32 = pixRead(DEMOPATH("marge.jpg"));
-	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixc2, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs4, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixc4, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs8, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixc8, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs16, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs32, rp->diag_spec);
 	error = FALSE;
     sa = sarrayCreate(0);
 

@@ -117,35 +117,29 @@ PIX      *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 
         /* Test file read/write (general functions) */
     pixs = pixRead(fname);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	snprintf(buf, sizeof(buf), "/tmp/lept/regout/jpegio.%d.jpg", rp->index + 1);
     pixWrite(buf, pixs, IFF_JFIF_JPEG);
     pix1 = pixRead(buf);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestCompareSimilarPix(rp, pixs, pix1, 6, 0.01, 0);
     pixDisplayWithTitle(pix1, 500, 100, "pix1");
 
         /* Test memory read/write (general functions) */
     pixWriteMemJpeg(&data, &size, pixs, 75, 0);
     pix2 = pixReadMem(data, size);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	regTestComparePix(rp, pix1, pix2);
     lept_free(data);
 
         /* Test file read/write (specialized jpeg functions) */
     pix3 = pixReadJpeg(fname, 0, 1, NULL, 0);
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
 	regTestComparePix(rp, pixs, pix3);
     snprintf(buf, sizeof(buf), "/tmp/lept/regout/jpegio.%d.jpg", rp->index + 1);
     pixWriteJpeg(buf, pix3, 75, 0);
     pix4 = pixReadJpeg(buf, 0, 1, NULL, 0);
-	pixSetDiagnosticsSpec(pix4, rp->diag_spec);
 	regTestComparePix(rp, pix2, pix4);
 
         /* Test memory read/write (specialized jpeg functions) */
     pixWriteMemJpeg(&data, &size, pixs, 75, 0);
     pix5 = pixReadMemJpeg(data, size, 0, 1, NULL, 0);
-	pixSetDiagnosticsSpec(pix5, rp->diag_spec);
 	regTestComparePix(rp, pix4, pix5);
     lept_free(data);
 
@@ -169,11 +163,9 @@ PIX      *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 
         /* Test file read/write (general functions) */
     pixs = pixRead(fname);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	snprintf(buf, sizeof(buf), "/tmp/lept/regout/jpegio.%d.jpg", rp->index + 1);
     pixWrite(buf, pixs, IFF_JFIF_JPEG);
     pix1 = pixRead(buf);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	if (pixGetColormap(pixs) != NULL)
         pix2 = pixRemoveColormap(pixs, REMOVE_CMAP_BASED_ON_SRC);
     else
@@ -184,23 +176,19 @@ PIX      *pixs, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
         /* Test memory read/write (general functions) */
     pixWriteMemJpeg(&data, &size, pixs, 75, 0);
     pix3 = pixReadMem(data, size);
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
 	regTestComparePix(rp, pix1, pix3);
     lept_free(data);
 
         /* Test file write (specialized jpeg function) */
     pix4 = pixRead(fname);
-	pixSetDiagnosticsSpec(pix4, rp->diag_spec);
 	snprintf(buf, sizeof(buf), "/tmp/lept/regout/jpegio.%d.jpg", rp->index + 1);
     pixWriteJpeg(buf, pix4, 75, 0);
     pix5 = pixReadJpeg(buf, 0, 1, NULL, 0);
-	pixSetDiagnosticsSpec(pix5, rp->diag_spec);
 	regTestComparePix(rp, pix5, pix5);
 
         /* Test memory write (specialized jpeg function) */
     pixWriteMemJpeg(&data, &size, pixs, 75, 0);
     pix6 = pixReadMemJpeg(data, size, 0, 1, NULL, 0);
-	pixSetDiagnosticsSpec(pix6, rp->diag_spec);
 	regTestComparePix(rp, pix5, pix6);
     lept_free(data);
 
@@ -225,7 +213,6 @@ PIX      *pixs;
         /* Test header reading (specialized jpeg functions) */
     readHeaderJpeg(fname, &w1, &h1, &spp1, NULL, NULL);
     pixs = pixRead(fname);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixWriteMemJpeg(&data, &size, pixs, 75, 0);
     readHeaderMemJpeg(data, size, &w2, &h2, &spp2, NULL, NULL);
     regTestCompareValues(rp, w1, w2, 0.0);

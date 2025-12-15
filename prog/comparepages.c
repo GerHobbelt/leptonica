@@ -60,7 +60,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "compare", &rp))
 		return 1;
 
-	l_ok debugflag = leptIsDebugModeActive(rp->diag_spec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     //lept_mkdir("lept/comp");
 

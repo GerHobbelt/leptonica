@@ -77,7 +77,7 @@ PIX          *pix1;
         f += 63.4 * cos(0.21 * (l_float32)i);
         numaAddNumber(na1, f);
     }
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/extrema/plot", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/extrema/plot", GPLOT_PNG,
                         "Extrema test", "x", "y");
     gplotAddPlot(gplot, NULL, na1, GPLOT_LINES, "plot 1");
 
@@ -98,7 +98,7 @@ PIX          *pix1;
     lept_free(data);
 
     regTestCheckFile(rp, "/tmp/lept/extrema/plot.png");  /* 1 */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix1 = pixRead("/tmp/lept/extrema/plot.png");
         pixDisplay(pix1, 100, 100);
         pixDestroy(&pix1);

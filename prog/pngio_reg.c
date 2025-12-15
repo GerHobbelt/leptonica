@@ -372,14 +372,12 @@ PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
     pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 180, 130, 220, 0);  /* transparent */
     pixcmapAddRGBA(cmap, 20, 120, 0, 255);  /* opaque */
     pixWrite("/tmp/lept/regout/1bpp-trans.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/1bpp-trans.png");
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixEqual(pix1, pix2, &same);
     if (same)
         lept_stderr("1bpp_trans: success\n");
@@ -395,7 +393,7 @@ PIXCMAP  *cmap;
         lept_stderr("1bpp_trans: correct -- transparency found\n");
     else
         lept_stderr("1bpp_trans: error -- no transparency found!\n");
-    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode()) pixcmapWriteStream(stderr, cmap);
     pixcmapDestroy(&cmap);
     return same;
 }
@@ -409,14 +407,12 @@ PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
     pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 180, 130, 220, 255);  /* color, opaque */
     pixcmapAddRGBA(cmap, 20, 120, 0, 255);  /* color, opaque */
     pixWrite("/tmp/lept/regout/1bpp-color.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/1bpp-color.png");
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixEqual(pix1, pix2, &same);
     if (same)
         lept_stderr("1bpp_color: success\n");
@@ -432,7 +428,7 @@ PIXCMAP  *cmap;
         lept_stderr("1bpp_color: error -- transparency found!\n");
     else
         lept_stderr("1bpp_color: correct -- no transparency found\n");
-    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode()) pixcmapWriteStream(stderr, cmap);
     pixcmapDestroy(&cmap);
     return same;
 }
@@ -445,14 +441,12 @@ PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
     pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 180, 180, 180, 255);  /* light, opaque */
     pixcmapAddRGBA(cmap, 60, 60, 60, 255);  /* dark, opaque */
     pixWrite("/tmp/lept/regout/1bpp-gray.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/1bpp-gray.png");
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixEqual(pix1, pix2, &same);
     if (same)
         lept_stderr("1bpp_gray: success\n");
@@ -472,14 +466,12 @@ PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
     pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 0, 0, 0, 255);  /* black, opaque */
     pixcmapAddRGBA(cmap, 255, 255, 255, 255);  /* white, opaque */
     pixWrite("/tmp/lept/regout/1bpp-bw1.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/1bpp-bw1.png");
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixEqual(pix1, pix2, &same);
     if (same)
         lept_stderr("1bpp_bw1: success\n");
@@ -499,14 +491,12 @@ PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
     pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 255, 255, 255, 255);  /* white, opaque */
     pixcmapAddRGBA(cmap, 0, 0, 0, 255);  /* black, opaque */
     pixWrite("/tmp/lept/regout/1bpp-bw2.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/1bpp-bw2.png");
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixEqual(pix1, pix2, &same);
     if (same)
         lept_stderr("1bpp_bw2: success\n");
@@ -526,7 +516,6 @@ PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
     pix1 = pixRead(FILE_TRANS_CMAP_2BPP);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixGetDimensions(pix1, &w, &h, NULL);
     if (w != 82 || h != 73) {
         lept_stderr("%s: bad dimensions\n", FILE_TRANS_CMAP_2BPP);
@@ -535,12 +524,10 @@ PIXCMAP  *cmap;
     pixDestroy(&pix1);
 
     pix1 = pixRead(DEMOPATH("weasel2.4g.png"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	cmap = pixGetColormap(pix1);
     pixcmapSetAlpha(cmap, 2, 100);
     pixWrite("/tmp/lept/regout/2bpp-cmap-trans.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/2bpp-cmap-trans.png");
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixEqual(pix1, pix2, &same);
     if (same)
         lept_stderr("2bpp-cmap-trans: success\n");
@@ -560,7 +547,6 @@ PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
     pix1 = pixRead(FILE_TRANS_CMAP_4BPP);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixGetDimensions(pix1, &w, &h, NULL);
     if (w != 82 || h != 73) {
         lept_stderr("%s: bad dimensions\n", FILE_TRANS_CMAP_4BPP);
@@ -569,12 +555,10 @@ PIXCMAP  *cmap;
     pixDestroy(&pix1);
 
     pix1 = pixRead(DEMOPATH("weasel4.5g.png"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	cmap = pixGetColormap(pix1);
     pixcmapSetAlpha(cmap, 2, 60);
     pixWrite("/tmp/lept/regout/4bpp-cmap-trans.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/4bpp-cmap-trans.png");
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixEqual(pix1, pix2, &same);
     if (same)
         lept_stderr("4bpp-cmap-trans: success\n");
@@ -594,7 +578,6 @@ PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
     pix1 = pixRead(FILE_TRANS_CMAP_8BPP);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixGetDimensions(pix1, &w, &h, NULL);
     if (w != 82 || h != 73) {
         lept_stderr("%s: bad dimensions\n", FILE_TRANS_CMAP_8BPP);
@@ -603,13 +586,11 @@ PIXCMAP  *cmap;
     pixDestroy(&pix1);
 
     pix1 = pixRead(DEMOPATH("weasel8.5g.png"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	cmap = pixGetColormap(pix1);
     pixcmapSetAlpha(cmap, 2, 80);
     pixcmapSetAlpha(cmap, 3, 80);
     pixWrite("/tmp/lept/regout/8bpp-cmap-trans.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/8bpp-cmap-trans.png");
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixEqual(pix1, pix2, &same);
     if (same)
         lept_stderr("8bpp-cmap-trans: success\n");
@@ -630,13 +611,11 @@ PIX      *pix1, *pix2, *pix3;
 PIXCMAP  *cmap;
 
     pix1 = pixRead(DEMOPATH("wyom.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixColorSegment(pix1, 75, 10, 8, 7);
     cmap = pixGetColormap(pix2);
     pixcmapSetAlpha(cmap, 0, 0);  /* set blueish sky color to transparent */
     pixWrite("/tmp/lept/regout/8bpp-trans.png", pix2, IFF_PNG);
     pix3 = pixRead("/tmp/lept/regout/8bpp-trans.png");
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
 	pixEqual(pix2, pix3, &same);
     if (same)
         lept_stderr("8bpp_trans: success\n");
@@ -653,7 +632,7 @@ PIXCMAP  *cmap;
         lept_stderr("8bpp_trans: correct -- transparency found\n");
     else
         lept_stderr("8bpp_trans: error -- no transparency found!\n");
-    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode()) pixcmapWriteStream(stderr, cmap);
     pixcmapDestroy(&cmap);
     return same;
 }

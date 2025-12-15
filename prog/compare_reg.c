@@ -71,7 +71,6 @@ PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5;
 
     /* ------------ Test of pixBestCorrelation() --------------- */
     pix0 = pixRead(DEMOPATH("harmoniam100-11.png"));
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
     pix1 = pixConvertTo1(pix0, 160);
     pixGetDimensions(pix1, &w, &h, NULL);
 
@@ -79,7 +78,6 @@ PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5;
          * Except for the resizing, this is equivalent to
          *     pix2 = pixTranslate(NULL, pix1, -32, -12, L_BRING_IN_WHITE);  */
     pix2 = pixCreate(w - 10, h, 1);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixRasterop(pix2, 0, 0, w, h, PIX_SRC, pix1, 32, 12);
 
         /* Get the number of FG pixels and the centroid locations */
@@ -100,7 +98,7 @@ PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5;
     lept_stderr("delx = %d, dely = %d, score = %7.4f\n", delx, dely, score);
     regTestCompareValues(rp, 32, delx, 0);   /* 0 */
     regTestCompareValues(rp, 12, dely, 0);   /* 1 */
-	const char* pixpath = leptDebugGenFilepath(rp->diag_spec, "comp/correl_5.png");
+	const char* pixpath = leptDebugGenFilepath("comp/correl_5.png");
 	pixWrite(pixpath, pix3, IFF_PNG);
     lept_mv(pixpath, "lept/regout", NULL, NULL);  // TODO: this image file copying + comparing logic needs more work...
     regTestCheckFile(rp, "/tmp/lept/regout/correl_5.png");   /* 2 */
@@ -116,7 +114,6 @@ PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5;
          * to remove pixels at the bottom from pix2, so that the
          * centroids are initially far apart. */
     pix1 = pixRead(DEMOPATH("harmoniam-11.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixTranslate(NULL, pix1, -45, 25, L_BRING_IN_WHITE);
     l_pdfSetDateAndVersion(0);
     pixCompareWithTranslation(pix1, pix2, 160, &delx, &dely, &score, NULL);
@@ -133,8 +130,6 @@ PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5;
     /* ------------ Test of pixGetPerceptualDiff() --------------- */
     pix0 = pixRead(DEMOPATH("greencover.jpg"));
     pix1 = pixRead(DEMOPATH("redcover.jpg"));  /* pre-scaled to the same size */
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	/* Apply directly to the color images */
     pixGetPerceptualDiff(pix0, pix1, 1, 3, 20, &fract, &pix2, &pix3);
     lept_stderr("Fraction of color pixels = %f\n", fract);

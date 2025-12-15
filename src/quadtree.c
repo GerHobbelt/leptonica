@@ -127,16 +127,13 @@ PIX       *pix_mac;
         return ERROR_INT("baa not made", __func__, 1);
     }
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pix_ma);
 
     *pfpixa = fpixaCreate(nlevels);
-	fpixaSetDiagnosticsSpec(*pfpixa, diagspec);
 	for (i = 0; i < nlevels; i++) {
         boxa = boxaaGetBoxa(baa, i, L_CLONE);
         size = 1 << i;
         n = boxaGetCount(boxa);  /* n == size * size */
         fpix = fpixCreate(size, size);
-		fpixSetDiagnosticsSpec(fpix, diagspec);
 		for (j = 0; j < n; j++) {
             box = boxaGetBox(boxa, j, L_CLONE);
             pixMeanInRectangle(pixs, box, pix_mac, &val);
@@ -198,7 +195,6 @@ DPIX      *dpix_msac;  /* msa clone */
     if (nlevels > quadtreeMaxLevels(w, h))
         return ERROR_INT("nlevels too large for image", __func__, 1);
 
-	LDIAG_CTX diagspec = leptDebugGetDiagnosticsSpecFromAny(3, pixGetDiagnosticsSpec(pixs), pixGetDiagnosticsSpec(pix_ma), dpixGetDiagnosticsSpec(dpix_msa));
 
     if (!pix_ma)
         pix_mac = pixBlockconvAccum(pixs);
@@ -223,11 +219,9 @@ DPIX      *dpix_msac;  /* msa clone */
 
 	if (pfpixa_v) {
 		*pfpixa_v = fpixaCreate(nlevels);
-		fpixaSetDiagnosticsSpec(*pfpixa_v, diagspec);
 	}
 	if (pfpixa_rv) {
 		*pfpixa_rv = fpixaCreate(nlevels);
-		fpixaSetDiagnosticsSpec(*pfpixa_rv, diagspec);
 	}
     for (i = 0; i < nlevels; i++) {
         boxa = boxaaGetBoxa(baa, i, L_CLONE);
@@ -235,11 +229,9 @@ DPIX      *dpix_msac;  /* msa clone */
         n = boxaGetCount(boxa);  /* n == size * size */
 		if (pfpixa_v) {
 			fpixv = fpixCreate(size, size);
-			fpixSetDiagnosticsSpec(fpixv, diagspec);
 		}
 		if (pfpixa_rv) {
 			fpixrv = fpixCreate(size, size);
-			fpixSetDiagnosticsSpec(fpixrv, diagspec);
 		}
         for (j = 0; j < n; j++) {
             box = boxaGetBox(boxa, j, L_CLONE);

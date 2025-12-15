@@ -76,7 +76,6 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
     for (i = 1; i <= 4; i++)
         DoPageSegmentation(pixs, i);
@@ -128,7 +127,6 @@ l_int32   block_flag = 0;
         return ERROR_INT("invalid parameter: not in [1...4]", __func__, 1);
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
 
     //lept_mkdir("lept/livre");
 

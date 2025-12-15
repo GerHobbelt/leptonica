@@ -82,7 +82,6 @@ L_REGPARAMS* rp;
 
         /* Generate the recognizer */
     pixa1 = pixaRead("recog/sets/train01.pa");
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 #if 1   /* scale to fixed height */
     recog = recogCreateFromPixa(pixa1, 0, 40, 0, 128, 1);
 #else   /* no scaling */

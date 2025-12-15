@@ -349,15 +349,14 @@ pixConnCompIncrAdd(PIX       *pixs,
                    PTAA      *ptaa,
                    l_int32   *pncc,
                    l_float32  x,
-                   l_float32  y,
-                   LDIAG_CTX  diagspec)
+                   l_float32  y)
 {
 l_int32   conn, i, j, w, h, count, nvals, ns, firstindex;
 l_uint32  val;
 l_int32  *neigh;
 PTA      *ptas, *ptad;
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     if (!pixs || pixGetDepth(pixs) != 32)
         return ERROR_INT("pixs not defined or not 32 bpp", __func__, 1);

@@ -69,7 +69,6 @@ L_REGPARAMS* rp;
     deg2rad = 3.1415926535 / 180.;
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pix not made", __func__, 1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	if (pixGetDepth(pixs) == 1) {
         pixt = pixScaleToGray3(pixs);
         pixDestroy(&pixs);
@@ -83,7 +82,6 @@ L_REGPARAMS* rp;
 #if 01
         /* repertory of rotation operations to choose from */
 	pixa = pixaCreate(6);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
     pixd = pixRotateAM(pixs, deg2rad * angle, L_BRING_IN_WHITE);
 	pixSetText(pixd, "pixRotateAM");
@@ -204,7 +202,7 @@ L_REGPARAMS* rp;
     pixd = pixAbsDifference(pix1, pix2);
     pixGetColorHistogram(pixd, 1, &nar, &nag, &nab);
     naseq = numaMakeSequence(0., 1., 256);
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/rotate/absdiff", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/rotate/absdiff", GPLOT_PNG,
                         "Number vs diff", "diff", "number");
     gplotAddPlot(gplot, naseq, nar, GPLOT_POINTS, "red");
     gplotAddPlot(gplot, naseq, nag, GPLOT_POINTS, "green");

@@ -300,10 +300,10 @@ PIXA     *pixa;
 L_RECOG  *recog;
 SARRAY   *sa;
 
-	l_ok debugflag = leptIsDebugModeActive(rp->diag_spec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Phase 1: generate recog from the digit data */
-    recog = recogCreate(0, 40, 0, 128, 1, rp->diag_spec);
+    recog = recogCreate(0, 40, 0, 128, 1);
     sa = getSortedPathnamesInDirectory("recog/bootnums", "png", 0, 0);
     n = sarrayGetCount(sa);
     for (i = 0; i < n; i++) {

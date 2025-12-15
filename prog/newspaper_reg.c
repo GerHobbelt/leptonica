@@ -65,9 +65,7 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/regout");
 
     pixs = pixRead(DEMOPATH("scots-frag.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixa1 = pixaCreate(12);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
     pixt = pixScaleToGray4(pixs);
     pixaAddPix(pixa1, pixt, L_INSERT);

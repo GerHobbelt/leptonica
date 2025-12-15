@@ -157,7 +157,6 @@ FPIX       *fpixd;
         pixDestroy(&pixt);
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
     }
-	fpixSetDiagnosticsSpec(fpixd, pixGetDiagnosticsSpec(pixs));
 	datat = pixGetData(pixt);
     wplt = pixGetWpl(pixt);
     datad = fpixGetData(fpixd);
@@ -249,7 +248,6 @@ DPIX       *dpixd;
         pixDestroy(&pixt);
         return (DPIX *)ERROR_PTR("dpixd not made", __func__, NULL);
     }
-	dpixSetDiagnosticsSpec(dpixd, pixGetDiagnosticsSpec(pixs));
     datat = pixGetData(pixt);
     wplt = pixGetWpl(pixt);
     datad = dpixGetData(dpixd);
@@ -448,7 +446,6 @@ PIX        *pixd;
     }
 
     pixd = pixCreate(w, h, 8);
-	pixSetDiagnosticsSpec(pixd, fpixGetDiagnosticsSpec(fpixs));
     if (maxval == 0.0)
         return pixd;  /* all pixels are 0 */
 
@@ -491,7 +488,6 @@ DPIX       *dpix;
     fpixGetDimensions(fpix, &w, &h);
     if ((dpix = dpixCreate(w, h)) == NULL)
         return (DPIX *)ERROR_PTR("dpix not made", __func__, NULL);
-	dpixSetDiagnosticsSpec(dpix, fpixGetDiagnosticsSpec(fpix));
 
     datas = fpixGetData(fpix);
     datad = dpixGetData(dpix);
@@ -650,7 +646,6 @@ FPIX       *fpix;
     dpixGetDimensions(dpix, &w, &h);
     if ((fpix = fpixCreate(w, h)) == NULL)
         return (FPIX *)ERROR_PTR("fpix not made", __func__, NULL);
-	fpixSetDiagnosticsSpec(fpix, dpixGetDiagnosticsSpec(dpix));
 
     datas = dpixGetData(dpix);
     datad = fpixGetData(fpix);
@@ -916,7 +911,6 @@ FPIX       *fpixd;
     wd = factor * (ws - 1) + 1;
     hd = factor * (hs - 1) + 1;
     fpixd = fpixCreate(wd, hd);
-	fpixCloneDiagnosticsSpec(fpixd, fpixs);
 	datas = fpixGetData(fpixs);
     datad = fpixGetData(fpixd);
     wpls = fpixGetWpl(fpixs);
@@ -1007,7 +1001,6 @@ DPIX       *dpixd;
     wd = factor * (ws - 1) + 1;
     hd = factor * (hs - 1) + 1;
     dpixd = dpixCreate(wd, hd);
-	dpixCloneDiagnosticsSpec(dpixd, dpixs);
 	datas = dpixGetData(dpixs);
     datad = dpixGetData(dpixd);
     wpls = dpixGetWpl(dpixs);
@@ -1382,7 +1375,6 @@ FPIX    *fpixd;
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
 
     fpixCopyResolution(fpixd, fpixs);
-	fpixCloneDiagnosticsSpec(fpixd, fpixs);
 	fpixRasterop(fpixd, left, top, ws, hs, fpixs, 0, 0);
     return fpixd;
 }
@@ -1419,7 +1411,6 @@ FPIX    *fpixd;
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
 
     fpixCopyResolution(fpixd, fpixs);
-	fpixCloneDiagnosticsSpec(fpixd, fpixs);
 	fpixRasterop(fpixd, 0, 0, wd, hd, fpixs, left, top);
     return fpixd;
 }
@@ -1800,7 +1791,6 @@ FPIX       *fpixd;
     if ((fpixd = fpixCreate(wd, hd)) == NULL)
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
     fpixCopyResolution(fpixd, fpixs);
-	fpixCloneDiagnosticsSpec(fpixd, fpixs);
 
     datas = fpixGetData(fpixs);
     wpls = fpixGetWpl(fpixs);
@@ -2323,7 +2313,6 @@ FPIX       *fpixd;
     datas = pixGetData(pix);
     wpls = pixGetWpl(pix);
     fpixd = fpixCreate(w, h);
-	fpixSetDiagnosticsSpec(fpixd, pixGetDiagnosticsSpec(pix));
 	datad = fpixGetData(fpixd);
     wpld = fpixGetWpl(fpixd);
     zerodenom = (rdenom == 0.0 && gdenom == 0.0 && bdenom == 0.0) ? 1: 0;

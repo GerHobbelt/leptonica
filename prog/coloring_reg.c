@@ -85,7 +85,6 @@ PIXCMAP      *cmap;
     pix0 = pixRead(DEMOPATH("harmoniam100-11.png"));
     cmap = pixGetColormap(pix0);
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Do cmapped coloring on the white pixels only */
     pixcmapGetIndex(cmap, 255, 255, 255, &index);  /* index of white pixels */
@@ -158,7 +157,7 @@ PIXCMAP      *cmap;
     }
 
         /* If in testing mode, make a pdf */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixaConvertToPdf(pixa, 100, 1.0, L_FLATE_ENCODE, 0,
                          "Colored background", "/tmp/lept/regout/coloring.pdf");
         L_INFO("Output pdf: /tmp/lept/regout/coloring.pdf\n", rp->testname);

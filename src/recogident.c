@@ -116,8 +116,7 @@ static l_int32 pixCorrelationBestShift(PIX *pix1, PIX *pix2, NUMA *nasum1,
                                        NUMA *namoment1, l_int32 area2,
                                        l_int32 ycent2, l_int32 maxyshift,
                                        l_int32 *tab8, l_int32 *pdelx,
-                                       l_int32 *pdely, l_float32 *pscore,
-	                                   LDIAG_CTX diagspec);
+                                       l_int32 *pdely, l_float32 *pscore);
 static L_RCH *rchCreate(l_int32 index, l_float32 score, char *text,
                         l_int32 sample, l_int32 xloc, l_int32 yloc,
                         l_int32 width);
@@ -432,8 +431,7 @@ l_int32    iter;
     if (!recog->train_done)
         return ERROR_INT("training not finished", __func__, 1);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Binarize and crop to foreground if necessary */
     pixb = recogProcessToIdentify(recog, pixs, 0);
@@ -446,7 +444,6 @@ l_int32    iter;
     pixadb = NULL;
 	if (debugflag) {
 		pixadb = pixaCreate(4);
-		pixaSetDiagnosticsSpec(pixadb, diagspec);
 	}
 
         /* Initialize the images remaining to be processed with the input.
@@ -472,7 +469,6 @@ l_int32    iter;
             /* Pop one from the queue */
         pixaRemovePixAndSave(pixar, 0, &pixc, &boxc);
         boxGetGeometry(boxc, &bxc, NULL, &bwc, NULL);
-		pixSetDiagnosticsSpec(pixc, diagspec);
 
             /* This is a single component; if noise, remove it */
         recogSplittingFilter(recog, pixc, 0, MinFillFactor, &remove);
@@ -617,8 +613,7 @@ PIX       *pix1, *pix2;
     if (!recog->train_done)
         return ERROR_INT("training not finished", __func__, 1);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Binarize and crop to foreground if necessary.  Add padding
          * to both the left and right side; this is compensated for
@@ -630,7 +625,7 @@ PIX       *pix1, *pix2;
     nasum = pixCountPixelsByColumn(pix1);
     namoment = pixGetMomentByColumn(pix1, 1);
 
-	leptDebugAddStepLevel(diagspec);
+	leptDebugAddStepLevel();
 
         /* Do shifted correlation against all averaged templates. */
     n = recog->setsize;
@@ -638,7 +633,7 @@ PIX       *pix1, *pix2;
     bestscore = 0.0;
     bestindex = bestdelx = bestdely = 0;
     for (i = 0; i < n; i++) {
-		leptDebugIncrementStepId(diagspec);
+		leptDebugIncrementStepId();
         pix2 = pixaGetPix(recog->pixa_u, i, L_CLONE);
         w2 = pixGetWidth(pix2);
             /* Note that the slightly expended w1 is typically larger
@@ -648,7 +643,7 @@ PIX       *pix1, *pix2;
             ptaGetIPt(recog->pta_u, i, NULL, &ycent2);
             pixCorrelationBestShift(pix1, pix2, nasum, namoment, area2, ycent2,
                                     recog->maxyshift, recog->sumtab, &delx,
-                                    &dely, &score, diagspec);
+                                    &dely, &score);
             if (debugflag) {
                 lept_stderr(
                     "Best match template %d: (x,y) = (%d,%d), score = %5.3f\n",
@@ -670,7 +665,7 @@ PIX       *pix1, *pix2;
         boxaAddBox(boxa, box, L_INSERT);
         pixDestroy(&pix2);
     }
-	leptDebugPopStepLevel(diagspec);
+	leptDebugPopStepLevel();
 
     *pscore = bestscore;
     *pbox = boxaGetBox(boxa, bestindex, L_COPY);
@@ -744,8 +739,7 @@ pixCorrelationBestShift(PIX        *pix1,
                         l_int32    *tab8,
                         l_int32    *pdelx,
                         l_int32    *pdely,
-                        l_float32  *pscore,
-	                    LDIAG_CTX   diagspec)
+                        l_float32  *pscore)
 {
 l_int32     w1, w2, h1, h2, i, j, nx, shifty, delx, dely;
 l_int32     sum, moment, count;
@@ -767,7 +761,7 @@ PIX        *pixt, *pixt1, *pixt2;
     if (area2 <= 0 || ycent2 <= 0)
         return ERROR_INT("area2 and ycent2 must be > 0", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
        /* If pix1 (the unknown image) is narrower than pix2,
         * don't bother to try the match.  pix1 is already padded with
@@ -785,7 +779,6 @@ PIX        *pixt, *pixt1, *pixt2;
 
 	if (debugflag > 0) {
 		fpix = fpixCreate(nx, 2 * maxyshift + 1);
-		fpixSetDiagnosticsSpec(fpix, diagspec);
 	}
     if (!tab8)
         tab = makePixelSumTab8();
@@ -846,7 +839,7 @@ PIX        *pixt, *pixt1, *pixt2;
         //lept_mkdir("lept/recog");
         pixt1 = fpixDisplayMaxDynamicRange(fpix);
         pixt2 = pixExpandReplicate(pixt1, 5);
-		const char *pixpath = leptDebugGenFilepath(diagspec, "recog/junkbs_@STEPID@.png");
+		const char *pixpath = leptDebugGenFilepath("recog/junkbs_@STEPID@.png");
         pixWrite(pixpath, pixt2, IFF_PNG);
         pixDestroy(&pixt1);
         pixDestroy(&pixt2);
@@ -1543,7 +1536,7 @@ l_float32  aspratio, fract;
         return ERROR_INT("pixs not defined", __func__, 1);
     if (minh <= 0) minh = DefaultMinHeight;
 
-	l_ok debugflag = pixIsDebugModeActive(pixs);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Remove from further consideration:
          *    small stuff

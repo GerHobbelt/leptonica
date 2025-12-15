@@ -80,12 +80,10 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixas = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixas, rp->diag_spec);
 	for (i = 0; i < 10; i++) {  /* this preserves any alpha */
 		char filename[256];
 		snprintf(filename, sizeof(filename), "%s%s", DEMOPATH(""), fnames[i]);
 		pix1 = pixRead(filename);
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		pix2 = pixScaleBySamplingToSize(pix1, 250, 150);
         pixaAddPix(pixas, pix2, L_INSERT);
         pixDestroy(&pix1);
@@ -95,7 +93,6 @@ L_REGPARAMS* rp;
     pix1 = pixaGetPix(pixas, 8, L_COPY);
     pixGetDimensions(pix1, &w, &h, NULL);
     pix2 = pixCreate(w, h, 1);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	for (i = 0; i < 5; i++) {
         y = h * (i + 1) / 6;
         pixRenderLine(pix2, 0, y, w, y, 3, L_SET_PIXELS);
@@ -118,7 +115,6 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixDestroy(&pix1);
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRemoveAlpha(pix1);
@@ -135,7 +131,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
          /* Setting to gray */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pixSetAllGray(pix1, 170);
@@ -153,7 +148,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* General scaling */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixScaleToSize(pix1, 350, 650);
@@ -174,7 +168,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Scaling by sampling */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixScaleBySamplingToSize(pix1, 350, 650);
@@ -195,7 +188,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by area mapping; no embedding */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_AREA_MAP,
@@ -218,7 +210,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by area mapping; with embedding */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_AREA_MAP,
@@ -243,7 +234,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by 3-shear; no embedding */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_SHEAR,
@@ -266,7 +256,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by 3-shear; with embedding */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_SHEAR,
@@ -291,7 +280,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by 2-shear about the center */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pixGetDimensions(pix1, &w, &h, NULL);
@@ -313,7 +301,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by sampling; no embedding */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_SAMPLING,
@@ -336,7 +323,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by sampling; with embedding */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotate(pix1, 0.25, L_ROTATE_SAMPLING,
@@ -361,7 +347,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Rotation by area mapping at corner */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
         pix2 = pixRotateAMCorner(pix1, 0.25, L_BRING_IN_WHITE);
@@ -382,7 +367,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Affine transform by interpolation */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	vc = Generate3PtTransformVector();
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
@@ -404,7 +388,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Projective transform by sampling */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	vc = Generate4PtTransformVector(PROJECTIVE);
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
@@ -425,7 +408,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Projective transform by interpolation */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	vc = Generate4PtTransformVector(PROJECTIVE);
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);
@@ -446,7 +428,6 @@ L_REGPARAMS* rp;
 #if DO_ALL
         /* Bilinear transform by interpolation */
     pixa = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	vc = Generate4PtTransformVector(BILINEAR);
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_COPY);

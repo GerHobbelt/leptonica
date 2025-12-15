@@ -94,7 +94,6 @@ L_REGPARAMS* rp;
     //lept_mkdir("lept/lineseg");
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Binarize input */
     pixs = pixRead(DEMOPATH("arabic.png"));
@@ -150,7 +149,6 @@ L_REGPARAMS* rp;
 
         /* Visual output */
     pix2 = selDisplayInPix(selsplit, 31, 2);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixaAddPix(pixa, pix2, L_INSERT);
     pix3 = pixaDisplayTiledAndScaled(pixa, 32, 400, 3, 0, 35, 3);
     pixWrite("/tmp/lept/lineseg/result.png", pix3, IFF_PNG);

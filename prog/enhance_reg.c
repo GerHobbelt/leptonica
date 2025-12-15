@@ -80,7 +80,6 @@ PIXA         *pixa1, *pixa2, *pixaf;
     //lept_mkdir("lept/enhance");
 
     pix = pixRead(DEMOPATH("test24.jpg"));  /* rgb */
-	pixSetDiagnosticsSpec(pix, rp->diag_spec);
 	w = pixGetWidth(pix);
     scalefact = 150.0 / (l_float32)w;  /* scale to w = 150 */
     pixs = pixScale(pix, scalefact, scalefact);
@@ -90,7 +89,6 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* TRC: vary gamma */
     pixa1 = pixaCreate(20);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	for (i = 0; i < 20; i++) {
         pix0 = pixGammaTRC(NULL, pixs, 0.3 + 0.15 * i, 0, 255);
         pixaAddPix(pixa1, pix0, L_INSERT);
@@ -103,7 +101,6 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* TRC: vary black point */
     pixa1 = pixaCreate(20);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	for (i = 0; i < 20; i++) {
         pix0 = pixGammaTRC(NULL, pixs, 1.0, 5 * i, 255);
         pixaAddPix(pixa1, pix0, L_INSERT);
@@ -116,7 +113,6 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* Vary hue */
     pixa1 = pixaCreate(20);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	for (i = 0; i < 20; i++) {
         pix0 = pixModifyHue(NULL, pixs, 0.01 + 0.05 * i);
         pixaAddPix(pixa1, pix0, L_INSERT);
@@ -129,7 +125,6 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* Vary saturation */
     pixa1 = pixaCreate(20);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	na1 = numaCreate(20);
     for (i = 0; i < 20; i++) {
         pix0 = pixModifySaturation(NULL, pixs, -0.9 + 0.1 * i);
@@ -139,7 +134,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     }
     pix1 = pixaDisplayTiledAndScaled(pixa1, 32, w, 5, 0, 10, 2);
     pixaAddPix(pixaf, pix1, L_INSERT);
-    gplotSimple1(rp->diag_spec, na1, GPLOT_PNG, "/tmp/lept/regout/enhance.7",
+    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/regout/enhance.7",
                  "Average Saturation");
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
     pixDisplayWithTitle(pix1, 900, 100, "Saturation");
@@ -148,7 +143,6 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* Vary contrast */
     pixa1 = pixaCreate(20);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	for (i = 0; i < 20; i++) {
         pix0 = pixContrastTRC(NULL, pixs, 0.1 * i);
         pixaAddPix(pixa1, pix0, L_INSERT);
@@ -161,7 +155,6 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* Vary sharpening */
     pixa1 = pixaCreate(20);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	for (i = 0; i < 20; i++) {
         pix0 = pixUnsharpMasking(pixs, 3, 0.01 + 0.15 * i);
         pixaAddPix(pixa1, pix0, L_INSERT);
@@ -174,10 +167,8 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* Hue constant mapping to lighter background */
     pixa2 = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
 	bmf10 = bmfCreate(DEMOPATH("fonts"), 10);
     pix0 = pixRead(DEMOPATH("candelabrum.011.jpg"));
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
 	composeRGBPixel(230, 185, 144, &srcval);  /* select typical bg pixel */
     for (k = 1; k > -2; k -= 2) {
         pixa1 = pixaCreate(11);
@@ -221,7 +212,6 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* More trc testing */
     pix = pixRead(DEMOPATH("test24.jpg"));  /* rgb */
-	pixSetDiagnosticsSpec(pix, rp->diag_spec);
 	pixs = pixScale(pix, 0.3, 0.3);
     pixDestroy(&pix);
     pixa1 = pixaCreate(5);
@@ -267,7 +257,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
     na1 = numaGammaTRC(0.8, 0, 220);
     na2 = numaGammaTRC(1.0, 40, 220);
-	pix1 = gplotSimplePix2(rp->diag_spec, na1, na2, "/tmp/lept/enhance/junkp", NULL);
+	pix1 = gplotSimplePix2(na1, na2, "/tmp/lept/enhance/junkp", NULL);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 13 */
     pixaAddPix(pixa1, pix1, L_COPY);
     numaDestroy(&na1);
@@ -285,7 +275,6 @@ PIXA         *pixa1, *pixa2, *pixaf;
      * -----------------------------------------------*/
         /* Make identical cmap and rgb images */
     pix = pixRead(DEMOPATH("wet-day.jpg"));
-	pixSetDiagnosticsSpec(pix, rp->diag_spec);
 	pixs1 = pixOctreeColorQuant(pix, 200, 0);
     pixs2 = pixRemoveColormap(pixs1, REMOVE_CMAP_TO_FULL_COLOR);
     regTestComparePix(rp, pixs1, pixs2);  /* 15 */

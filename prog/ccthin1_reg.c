@@ -60,12 +60,10 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Generate and display all of the 4-cc sels */
     sela4 = sela4ccThin(NULL);
     pix1 = selaDisplayInPix(sela4, 35, 3, 15, 3);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     pixDisplayWithTitle(pix1, 400, 0, NULL);
     pixaAddPix(pixa, pix1, L_INSERT);
@@ -74,7 +72,6 @@ L_REGPARAMS* rp;
         /* Generate and display all of the 8-cc sels */
     sela8 = sela8ccThin(NULL);
     pix1 = selaDisplayInPix(sela8, 35, 3, 15, 3);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
     pixDisplayWithTitle(pix1, 850, 0, NULL);
     pixaAddPix(pixa, pix1, L_INSERT);
@@ -83,7 +80,6 @@ L_REGPARAMS* rp;
         /* Generate and display all of the 4 and 8-cc preserving sels */
     sela48 = sela4and8ccThin(NULL);
     pix1 = selaDisplayInPix(sela48, 35, 3, 15, 4);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     pixDisplayWithTitle(pix1, 1300, 0, NULL);
     pixaAddPix(pixa, pix1, L_INSERT);
@@ -117,7 +113,6 @@ L_REGPARAMS* rp;
     selaAddSel(sela4, sel2, "sel_4_3_180", L_INSERT);
     selaAddSel(sela4, sel3, "sel_4_3_270", L_INSERT);
     pix1 = selaDisplayInPix(sela4, 35, 3, 15, 4);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 3 */
     pixDisplayWithTitle(pix1, 400, 500, NULL);
     pixaAddPix(pixa, pix1, L_INSERT);
@@ -160,7 +155,6 @@ L_REGPARAMS* rp;
     selaAddSel(sela8, sel2, "sel_8_6_180", L_INSERT);
     selaAddSel(sela8, sel3, "sel_8_6_270", L_INSERT);
     pix1 = selaDisplayInPix(sela8, 35, 3, 15, 4);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
     pixDisplayWithTitle(pix1, 1000, 500, NULL);
     pixaAddPix(pixa, pix1, L_INSERT);
@@ -168,7 +162,7 @@ L_REGPARAMS* rp;
     selaDestroy(&sela8);
 
         /* Optional display */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         //lept_mkdir("/lept/thin");
         lept_stderr("Writing to: /tmp/lept/thin/ccthin1-1.pdf");
         pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "Thin 1 Sels",
@@ -177,11 +171,9 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa);
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Test the best 4 and 8 cc thinning */
     pix2 = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	box = boxCreate(683, 799, 970, 479);
     pix1 = pixClipRectangle(pix2, box, NULL);
     boxDestroy(&box);
@@ -208,7 +200,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
     pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixDestroy(&pix1);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("Writing to: /tmp/lept/thin/ccthin1-2.pdf");
         pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "Thin 1 Results",
                          "/tmp/lept/thin/ccthin1-2.pdf");

@@ -402,7 +402,6 @@ PIX       *pixt;
     if (pixGetColormap(pixd) || pixGetColormap(pixs))
         return ERROR_INT("pixs and/or pixd is cmapped", __func__, 1);
 
-	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(3, pixs, pixd, pixm));
 
         /* For d = 1, use rasterop.  pixt is the part from pixs, under
          * the fg of pixm, that is to be combined with pixd.  We also
@@ -523,7 +522,6 @@ PIX       *pixt;
     if (pixGetColormap(pixd) || pixGetColormap(pixs))
         return ERROR_INT("pixs and/or pixd is cmapped", __func__, 1);
 
-	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(3, pixs, pixd, pixm));
 
         /* For d = 1, use rasterop.  pixt is the part from pixs, under
          * the fg of pixm, that is to be combined with pixd.  We also
@@ -1009,7 +1007,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datas = pixGetData(pixs);
     datad = pixGetData(pixd);
     wpls = pixGetWpl(pixs);
@@ -1068,7 +1065,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datas = pixGetData(pixs);
     datad = pixGetData(pixd);
     wpls = pixGetWpl(pixs);
@@ -1207,7 +1203,7 @@ PIX  *pixg, *pixm, *pixt, *pixd;
         return pixCopy(NULL, pixs);
     }
 
-	l_ok debugflag = pixIsDebugModeActive(pixs);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Make a mask from the alpha component with ON pixels
          * wherever the alpha component is fully transparent (0).
@@ -1359,8 +1355,7 @@ PIX       *pix1, *pix2, *pix3;
     if (dist < 0)
         return ERROR_INT("dist must be >= 0", __func__, 1);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixm);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Clip mask piece, expanded beyond %box by (%dist + 5) on each side.
          * box1 is the region requested; box2 is the actual region retrieved,
@@ -1557,7 +1552,6 @@ pixOr(PIX  *pixd,
         L_WARNING("pixs1 and pixs2 not equal sizes\n", __func__);
 #endif  /* EQUAL_SIZE_WARNING */
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* Prepare pixd to be a copy of pixs1 */
     if ((pixd = pixCopy(pixd, pixs1)) == NULL)
@@ -1567,7 +1561,6 @@ pixOr(PIX  *pixd,
     pixRasterop(pixd, 0, 0, pixGetWidth(pixd), pixGetHeight(pixd),
                 PIX_SRC | PIX_DST, pixs2, 0, 0);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -1623,7 +1616,6 @@ pixAnd(PIX  *pixd,
         L_WARNING("pixs1 and pixs2 not equal sizes\n", __func__);
 #endif  /* EQUAL_SIZE_WARNING */
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* Prepare pixd to be a copy of pixs1 */
     if ((pixd = pixCopy(pixd, pixs1)) == NULL)
@@ -1633,7 +1625,6 @@ pixAnd(PIX  *pixd,
     pixRasterop(pixd, 0, 0, pixGetWidth(pixd), pixGetHeight(pixd),
                 PIX_SRC & PIX_DST, pixs2, 0, 0);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -1689,7 +1680,6 @@ pixXor(PIX  *pixd,
         L_WARNING("pixs1 and pixs2 not equal sizes\n", __func__);
 #endif  /* EQUAL_SIZE_WARNING */
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
         /* Prepare pixd to be a copy of pixs1 */
     if ((pixd = pixCopy(pixd, pixs1)) == NULL)
@@ -1699,7 +1689,6 @@ pixXor(PIX  *pixd,
     pixRasterop(pixd, 0, 0, pixGetWidth(pixd), pixGetHeight(pixd),
                 PIX_SRC ^ PIX_DST, pixs2, 0, 0);
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -1756,7 +1745,6 @@ l_int32  w, h;
         L_WARNING("pixs1 and pixs2 not equal sizes\n", __func__);
 #endif  /* EQUAL_SIZE_WARNING */
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(3, pixd, pixs1, pixs2);
 
     pixGetDimensions(pixs1, &w, &h, NULL);
     if (!pixd) {
@@ -1775,7 +1763,6 @@ l_int32  w, h;
             pixs2, 0, 0);   /* src1 & (~src2)  */
     }
 
-	pixSetDiagnosticsSpec(pixd, diagspec);
 
     return pixd;
 }
@@ -3487,7 +3474,7 @@ PIXA      *pixa;
                   __func__, ntiles);
     }
 
-	l_ok debugflag = pixIsDebugModeActive(pixs);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Locate tile regions */
     pixGetDimensions(pixs, &w, &h, NULL);

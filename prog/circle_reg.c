@@ -80,10 +80,8 @@ PIXA         *pixas, *pixa1, *pixa2;
     n = pixaGetCount(pixas);
 
     pixa2 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
 	for (k = 0; k < n; k++) {
         pixa1 = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 		na = numaCreate(0);
         pixs = pixaGetPix(pixas, k, L_COPY);
         pixaAddPix(pixa1, pixs, L_INSERT);
@@ -98,14 +96,14 @@ PIXA         *pixas, *pixa1, *pixa2;
         pixaAddPix(pixa1, pix1, L_INSERT);
         pixCountConnComp(pix1, 8, &count);
         numaAddNumber(na, count);
-        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("count[0] = %d\n", count);
+        if (leptIsInDisplayMode()) lept_stderr("count[0] = %d\n", count);
         for (i = 1; i < num_erodes; i++) {
             pixErodeBrick(pixc, pixc, 3, 3);
             pix1 = pixAnd(NULL, pixs, pixc);
             pixaAddPix(pixa1, pix1, L_INSERT);
             pixCountConnComp(pix1, 8, &count);
             numaAddNumber(na, count);
-            if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("count[%d] = %d\n", i, count);
+            if (leptIsInDisplayMode()) lept_stderr("count[%d] = %d\n", i, count);
         }
 
             /* Find the max value, not including the original image, which

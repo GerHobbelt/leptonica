@@ -107,8 +107,7 @@ boxaSmoothSequenceMedian(BOXA    *boxas,
                          l_int32  halfwin,
                          l_int32  subflag,
                          l_int32  maxdiff,
-                         l_int32  extrapixels,
-						 LDIAG_CTX diagspec)
+                         l_int32  extrapixels)
 {
 l_int32  n;
 BOXA    *boxae, *boxao, *boxamede, *boxamedo, *boxame, *boxamo, *boxad;
@@ -135,7 +134,7 @@ PIX     *pix1;
         return boxaCopy(boxas, L_COPY);
     }
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
 	boxaSplitEvenOdd(boxas, 0, &boxae, &boxao);
     if (debugflag) {
@@ -144,8 +143,8 @@ PIX     *pix1;
         boxaWriteDebug("/tmp/lept/smooth/boxao.ba", boxao);
     }
 
-    boxamede = boxaWindowedMedian(boxae, halfwin, diagspec);
-    boxamedo = boxaWindowedMedian(boxao, halfwin, diagspec);
+    boxamede = boxaWindowedMedian(boxae, halfwin);
+    boxamedo = boxaWindowedMedian(boxao, halfwin);
     if (debugflag) {
         boxaWriteDebug("/tmp/lept/smooth/boxamede.ba", boxamede);
         boxaWriteDebug("/tmp/lept/smooth/boxamedo.ba", boxamedo);
@@ -160,16 +159,16 @@ PIX     *pix1;
 
     boxad = boxaMergeEvenOdd(boxame, boxamo, 0);
     if (debugflag) {
-        boxaPlotSides(boxas, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
+        boxaPlotSides(boxas, NULL, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/smooth/plotsides1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSides(boxad, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
+        boxaPlotSides(boxad, NULL, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/smooth/plotsides2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxas, NULL, diagspec, NULL, NULL, &pix1);
+        boxaPlotSizes(boxas, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/smooth/plotsizes1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxad, NULL, diagspec, NULL, NULL, &pix1);
+        boxaPlotSizes(boxad, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/smooth/plotsizes2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
     }
@@ -204,8 +203,7 @@ PIX     *pix1;
  */
 BOXA *
 boxaWindowedMedian(BOXA    *boxas,
-                   l_int32  halfwin,
-                   LDIAG_CTX diagspec)
+                   l_int32  halfwin)
 {
 l_int32  n, i, left, top, right, bot;
 BOX     *box;
@@ -224,7 +222,7 @@ PIX     *pix1;
         return boxaCopy(boxas, L_COPY);
     }
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Fill invalid boxes in the input sequence */
     if ((boxaf = boxaFillSequence(boxas, L_USE_ALL_BOXES, debugflag)) == NULL)
@@ -250,16 +248,16 @@ PIX     *pix1;
 
 	if (debugflag) {
         //lept_mkdir("lept/windowed");
-        boxaPlotSides(boxaf, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
+        boxaPlotSides(boxaf, NULL, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsides1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSides(boxad, NULL, diagspec, NULL, NULL, NULL, NULL, &pix1);
+        boxaPlotSides(boxad, NULL, NULL, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsides2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxaf, NULL, diagspec, NULL, NULL, &pix1);
+        boxaPlotSizes(boxaf, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsizes1.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
-        boxaPlotSizes(boxad, NULL, diagspec, NULL, NULL, &pix1);
+        boxaPlotSizes(boxad, NULL, NULL, NULL, &pix1);
         pixWrite("/tmp/lept/windowed/plotsizes2.png", pix1, IFF_PNG);
         pixDestroy(&pix1);
     }
@@ -843,9 +841,8 @@ PIX     *pix;
     if (pixadb) {
         l_int32 ndb = pixaGetCount(pixadb);
         if (ndb == 0 || ndb == 5) {  /* first of even and odd box sets */
-			LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixadb);
             adjustSidePlotName(buf, sizeof(buf), "init", select);
-            boxaPlotSides(boxas, buf, diagspec, NULL, NULL, NULL, NULL, &pix);
+            boxaPlotSides(boxas, buf,NULL, NULL, NULL, NULL, &pix);
             pixaAddPix(pixadb, pix, L_INSERT);
         }
     }
@@ -895,9 +892,8 @@ PIX     *pix;
     }
 
     if (pixadb) {
-		LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixadb);
 		adjustSidePlotName(buf, sizeof(buf), "final", select);
-        boxaPlotSides(boxad, buf, diagspec, NULL, NULL, NULL, NULL, &pix);
+        boxaPlotSides(boxad, buf, NULL, NULL, NULL, NULL, &pix);
         pixaAddPix(pixadb, pix, L_INSERT);
     }
     return boxad;
@@ -1240,7 +1236,6 @@ NUMA      *naind, *nadelw, *nadelh;
 l_ok
 boxaPlotSides(BOXA        *boxa,
               const char  *plotname,
-	          LDIAG_CTX    diagspec,
               NUMA       **pnal,
               NUMA       **pnat,
               NUMA       **pnar,
@@ -1269,7 +1264,7 @@ NUMA           *nal, *nat, *nar, *nab;
     if (!ppixd)
         return ERROR_INT("&pixd not defined", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     boxat = boxaFillSequence(boxa, L_USE_ALL_BOXES, debugflag);
 
@@ -1299,7 +1294,7 @@ NUMA           *nal, *nat, *nar, *nab;
         snprintf(buf, sizeof(buf), "/tmp/lept/plots/sides.%d", plotid++);
         snprintf(titlebuf, sizeof(titlebuf), "Box sides vs. box index");
     }
-    gplot = gplotCreate(diagspec, buf, GPLOT_PNG, titlebuf,
+    gplot = gplotCreate(buf, GPLOT_PNG, titlebuf,
                         "box index", "side location");
     gplotAddPlot(gplot, NULL, nal, GPLOT_LINES, "left side");
     gplotAddPlot(gplot, NULL, nat, GPLOT_LINES, "top side");
@@ -1374,7 +1369,6 @@ NUMA           *nal, *nat, *nar, *nab;
 l_ok
 boxaPlotSizes(BOXA        *boxa,
               const char  *plotname,
-	          LDIAG_CTX    diagspec,
               NUMA       **pnaw,
               NUMA       **pnah,
               PIX        **ppixd)
@@ -1396,7 +1390,7 @@ NUMA           *naw, *nah;
     if (!ppixd)
         return ERROR_INT("&pixd not defined", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
 	boxat = boxaFillSequence(boxa, L_USE_ALL_BOXES, debugflag);
 
@@ -1419,7 +1413,7 @@ NUMA           *naw, *nah;
         snprintf(buf, sizeof(buf), "/tmp/lept/plots/size.%d", plotid++);
         snprintf(titlebuf, sizeof(titlebuf), "Box size vs. box index");
     }
-    gplot = gplotCreate(diagspec, buf, GPLOT_PNG, titlebuf,
+    gplot = gplotCreate(buf, GPLOT_PNG, titlebuf,
                         "box index", "box dimension");
     gplotAddPlot(gplot, NULL, naw, GPLOT_LINES, "width");
     gplotAddPlot(gplot, NULL, nah, GPLOT_LINES, "height");

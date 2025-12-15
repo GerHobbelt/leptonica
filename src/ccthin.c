@@ -91,16 +91,13 @@ SELA    *sela;
     if (d != 1)
         return (PIXA *)ERROR_PTR("pix are not all 1 bpp", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixaPassDiagIfDebugModeActive(pixas);
-
 	if (connectivity == 4)
-        sela = selaMakeThinSets(1, diagspec);
+        sela = selaMakeThinSets(1);
     else  /* connectivity == 8 */
-        sela = selaMakeThinSets(5, diagspec);
+        sela = selaMakeThinSets(5);
 
     n = pixaGetCount(pixas);
     pixad = pixaCreate(n);
-	pixaCloneDiagnosticsSpec(pixad, pixas);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         pix2 = pixThinConnectedBySet(pix1, type, sela, maxiters);
@@ -154,7 +151,7 @@ SELA    *sela;
  *      (5) This makes and destroys the sela set each time. It's not a large
  *          overhead, but if you are calling this thousands of times on
  *          very small images, you can avoid the overhead; e.g.
- *             Sela *sela = selaMakeThinSets(1, 0);  // for 4-c.c.
+ *             Sela *sela = selaMakeThinSets(1);  // for 4-c.c.
  *             Pix *pix = pixThinConnectedBySet(pixs, L_THIN_FG, sela, 0);
  *          using set 1 for 4-c.c. and set 5 for 8-c.c operations.
  * </pre>
@@ -178,12 +175,10 @@ SELA  *sela;
         return (PIX *)ERROR_PTR("connectivity not 4 or 8", __func__, NULL);
     if (maxiters == 0) maxiters = 10000;
 
-	LDIAG_CTX diagspec = pixPassDiagIfDebugModeActive(pixs);
-
     if (connectivity == 4)
-        sela = selaMakeThinSets(1, diagspec);
+        sela = selaMakeThinSets(1);
     else  /* connectivity == 8 */
-        sela = selaMakeThinSets(5, diagspec);
+        sela = selaMakeThinSets(5);
 
     pixd = pixThinConnectedBySet(pixs, type, sela, maxiters);
 
@@ -341,8 +336,7 @@ SEL     *sel, *selr;
  * </pre>
  */
 SELA *
-selaMakeThinSets(l_int32   index,
-                 LDIAG_CTX diagspec)
+selaMakeThinSets(l_int32   index)
 {
 SEL   *sel;
 SELA  *sela1, *sela2, *sela3;
@@ -456,15 +450,14 @@ SELA  *sela1, *sela2, *sela3;
         break;
     }
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Optionally display the sel set */
     if (debugflag) {
         PIX  *pix1;
         //lept_mkdir("/lept/sels");
         pix1 = selaDisplayInPix(sela2, 35, 3, 15, 4);
-		pixSetDiagnosticsSpec(pix1, diagspec);
-		const char* pixpath = leptDebugGenFilepath(diagspec, "sels-set%02d.png", index);
+		const char* pixpath = leptDebugGenFilepath("sels-set%02d.png", index);
         pixWrite(pixpath, pix1, IFF_PNG);
         pixDisplay(pix1, 100, 100);
         pixDestroy(&pix1);

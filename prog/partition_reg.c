@@ -89,7 +89,7 @@ PIXA         *pixad;
                   pixad);
 
         /* If display requested, make a tiled image of all the results */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix1 = pixaDisplayTiledInRows(pixad, 32, 2000, 0.7f, 0, 30, 3);
         pixDisplay(pix1, 100, 100);
         pixWrite("/tmp/lept/part/tiled_result.png", pix1, IFF_PNG);
@@ -146,7 +146,7 @@ PIXA    *pixa;
     regTestCheckFile(rp, pathout);
 
         /* Display in a column */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix4 = pixaDisplayTiledInColumns(pixa, 1, 0.7f, 20, 2);
         pixaAddPix(pixad, pix4, L_INSERT);
     }

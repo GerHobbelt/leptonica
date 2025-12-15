@@ -605,7 +605,6 @@ NUMA     *na;
 
     tab = makePixelSumTab8();
     pixa = pixaCreate(95);
-	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
 	for (i = 0; i < nrows; i++) {
         box = boxaGetBox(boxar, i, L_CLONE);
         pixr = pixClipRectangle(pixs, box, NULL);  /* row of chars */

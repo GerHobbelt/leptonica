@@ -365,7 +365,7 @@ PIXAA   *paa;
         return ERROR_INT("not added: training has been completed", __func__, 1);
     paa = recog->pixaa_u;
 
-	l_ok debugflag = leptIsDebugModeActive(recog->diag_specX);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Make sure the character is in the set */
     text = pixGetText(pix);
@@ -387,7 +387,6 @@ PIXAA   *paa;
             L_INFO("Adding new class and pixa: index = %d, text = %s\n",
                    __func__, index, text);
             pixa1 = pixaCreate(10);
-			pixaSetDiagnosticsSpec(pixa1, recog->diag_specX);
 			pixaaAddPixa(paa, pixa1, L_INSERT);
         }
     }
@@ -493,7 +492,7 @@ PTA       *pta1;
     if (!recog)
         return ERROR_INT("recog not defined", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(recog->diag_specX);
+	l_ok debugflag = leptIsDebugModeActive();
 
     if (recog->ave_done) {
         if (debugflag)  /* always do this if requested */
@@ -507,7 +506,6 @@ PTA       *pta1;
     ptaDestroy(&recog->pta_u);
     numaDestroy(&recog->nasum_u);
     recog->pixa_u = pixaCreate(size);
-	pixaSetDiagnosticsSpec(recog->pixa_u, recog->diag_specX);
     recog->pta_u = ptaCreate(size);
     recog->nasum_u = numaCreate(size);
 
@@ -515,7 +513,6 @@ PTA       *pta1;
     ptaDestroy(&recog->pta);
     numaDestroy(&recog->nasum);
     recog->pixa = pixaCreate(size);
-	pixaSetDiagnosticsSpec(recog->pixa, recog->diag_specX);
 	recog->pta = ptaCreate(size);
     recog->nasum = numaCreate(size);
 
@@ -800,7 +797,6 @@ L_RECOG   *recog;
     size = recog->maxarraysize;
     paa = pixaaCreate(size);
     pixa = pixaCreate(1);
-	pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
 	pixaaInitFull(paa, pixa);
     pixaDestroy(&pixa);
     pixaaDestroy(&recog->pixaa);
@@ -969,7 +965,6 @@ PIXAA     *paa;
     if (!pixas)
         return (PIXA *)ERROR_PTR("pixas not defined", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixas);
 
     if ((paa = recogSortPixaByClass(pixas, setsize)) == NULL)
         return (PIXA *)ERROR_PTR("paa not made", __func__, NULL);
@@ -977,7 +972,6 @@ PIXAA     *paa;
     na = (pna) ? numaCreate(0) : NULL;
     if (pna) *pna = na;
     pixa5 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa5, diagspec);
 	for (i = 0; i < nc; i++) {
         pixa1 = pixaaGetPixa(paa, i, L_CLONE);
         if ((n = pixaGetCount(pixa1)) == 0) {
@@ -989,7 +983,6 @@ PIXAA     *paa;
         j90 = (l_int32)(0.9 * n);
         pixaGetPixDimensions(pixa2, j90, NULL, &h90, NULL);
         pixa3 = pixaCreate(n);
-		pixaSetDiagnosticsSpec(pixa3, diagspec);
 		for (j = 0; j < n; j++) {
             pixaGetPixDimensions(pixa2, j, NULL, &hj, NULL);
             ratio = (l_float32)h90 / (l_float32)hj;
@@ -1182,12 +1175,10 @@ L_RECOG   *recog;
     pixarem = NULL;
 	if (ppixrem) {
 		pixarem = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixarem, recog->diag_specX);
 	}
 	narem = (ppixrem) ? numaCreate(0) : NULL;
 
     pixad = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixad, recog->diag_specX);
 	for (i = 0; i < recog->setsize; i++) {
             /* Access the average template and values for scaled
              * images in this class */
@@ -1385,11 +1376,9 @@ L_RECOG   *recog;
     pixarem = NULL;
 	if (ppixrem) {
 		pixarem = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixarem, recog->diag_specX);
 	}
 
     pixad = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixad, recog->diag_specX);
 	pixaaGetCount(recog->pixaa, &nan);  /* number of templates in each class */
     for (i = 0; i < recog->setsize; i++) {
             /* Get the scores for each sample in the class, when comparing
@@ -1493,7 +1482,7 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixad;
     if (!pixas)
         return (PIXA *)ERROR_PTR("pixas not defined", __func__, NULL);
 
-	l_ok debugflag = pixaIsDebugModeActive(pixas);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Make sure all input pix are 1 bpp */
     if ((n = pixaGetCount(pixas)) == 0)
@@ -1503,7 +1492,6 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixad;
         pixa1 = pixaCopy(pixas, L_COPY);
     } else {
         pixa1 = pixaCreate(n);
-		pixaSetDiagnosticsSpec(pixa1, recogboot->diag_specX);
 		for (i = 0; i < n; i++) {
             pix1 = pixaGetPix(pixas, i, L_CLONE);
             pix2 = pixConvertTo1(pix1, threshold);
@@ -1516,7 +1504,6 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixad;
     scaleh = recogboot->scaleh;
     linew = recogboot->linew;
     pixa2 = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa2, recogboot->diag_specX);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
         pix2 = pixScaleToSize(pix1, 0, scaleh);
@@ -1535,7 +1522,6 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixad;
         /* Identify using recogboot */
     n = pixaGetCount(pixa3);
     pixad = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixad, recogboot->diag_specX);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa3, i, L_COPY);
         pixSetText(pix1, NULL);  /* remove any existing text or labelling */
@@ -1769,7 +1755,7 @@ PIXA    *pixa1, *pixa2;
         return (PIXA *)ERROR_PTR("boot charset not available", __func__, NULL);
 
         /* Make boot recog templates */
-    pixa1 = recogMakeBootDigitTemplates(0, 0);
+    pixa1 = recogMakeBootDigitTemplates(0);
     n = pixaGetCount(pixa1);
 
         /* Extract the unscaled templates from %recog */
@@ -1864,17 +1850,16 @@ L_RECOG  *
 recogMakeBootDigitRecog(l_int32  nsamp,
                         l_int32  scaleh,
                         l_int32  linew,
-                        l_int32  maxyshift,
-                        LDIAG_CTX diagspec)
+                        l_int32  maxyshift)
 
 {
 PIXA     *pixa;
 L_RECOG  *recog;
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Get the templates, extended by horizontal scaling */
-    pixa = recogMakeBootDigitTemplates(nsamp, diagspec);
+    pixa = recogMakeBootDigitTemplates(nsamp);
 
         /* Make the boot recog; recogModifyTemplate() will scale the
          * templates and optionally turn them into strokes of fixed width. */
@@ -1900,18 +1885,16 @@ L_RECOG  *recog;
  * </pre>
  */
 PIXA  *
-recogMakeBootDigitTemplates(l_int32   nsamp,
-                            LDIAG_CTX diagspec)
+recogMakeBootDigitTemplates(l_int32   nsamp)
 {
 NUMA  *na1;
 PIX   *pix1, *pix2, *pix3;
 PIXA  *pixa1, *pixa2, *pixa3;
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     if (nsamp > 0) {
         pixa1 = l_bootnum_gen4(nsamp);
-		pixaSetDiagnosticsSpec(pixa1, diagspec);
         if (debugflag) {
             pix1 = pixaDisplayTiledWithText(pixa1, 1500, 1.0, 10,
                                             2, 6, 0xff000000);
@@ -1925,9 +1908,6 @@ PIXA  *pixa1, *pixa2, *pixa3;
     pixa1 = l_bootnum_gen1();
     pixa2 = l_bootnum_gen2();
     pixa3 = l_bootnum_gen3();
-	pixaSetDiagnosticsSpec(pixa1, diagspec);
-	pixaSetDiagnosticsSpec(pixa2, diagspec);
-	pixaSetDiagnosticsSpec(pixa3, diagspec);
     if (debugflag) {
         pix1 = pixaDisplayTiledWithText(pixa1, 1500, 1.0, 10, 2, 6, 0xff000000);
         pix2 = pixaDisplayTiledWithText(pixa2, 1500, 1.0, 10, 2, 6, 0xff000000);
@@ -2062,7 +2042,7 @@ PIXAA     *paa1, *paa2;
     if (!recog)
         return ERROR_INT("recog not defined", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(recog->diag_specX);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Mark the training as finished if necessary, and make sure
          * that the average templates have been built. */
@@ -2081,7 +2061,6 @@ PIXAA     *paa1, *paa2;
     paa2 = pixaaCreate(n);
     for (i = 0; i < n; i++) {
         pixa = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
 		pixat = pixaaGetPixa(paa1, i, L_CLONE);
         np = pixaGetCount(pixat);
         for (j = 0; j < np; j++) {
@@ -2148,12 +2127,10 @@ PIXA      *pixat, *pixadb;
     pixr = pixCreate(3, 3, 32);  /* 3x3 red square for centroid location */
     pixSetAllArbitrary(pixr, 0xff000000);
     pixadb = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixadb, recog->diag_specX);
 
         /* Unscaled bitmaps */
     size = recog->setsize;
     pixat = pixaCreate(size);
-	pixaSetDiagnosticsSpec(pixat, recog->diag_specX);
 	for (i = 0; i < size; i++) {
         if ((pix1 = pixaGetPix(recog->pixa_u, i, L_CLONE)) == NULL)
             continue;
@@ -2171,7 +2148,6 @@ PIXA      *pixat, *pixadb;
 
         /* Scaled bitmaps */
     pixat = pixaCreate(size);
-	pixaSetDiagnosticsSpec(pixat, recog->diag_specX);
 	for (i = 0; i < size; i++) {
         if ((pix1 = pixaGetPix(recog->pixa, i, L_CLONE)) == NULL)
             continue;
@@ -2224,10 +2200,8 @@ PIXA      *pixa1;
     if (numaGetCount(nas) != n)
         return (PIX *)ERROR_PTR("pixas and nas sizes differ", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixas);
 
     pixa1 = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa1, diagspec);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         pix2 = pixAddBlackOrWhiteBorder(pix1, 25, 25, 0, 0, L_GET_WHITE_VAL);
@@ -2280,7 +2254,6 @@ PIXA  *pixa;
     pix2 = pixaGetPix(recog->pixa, iclass, L_CLONE);
     pix3 = pixaGetPix(recog->pixa, maxclass, L_CLONE);
     pixa = pixaCreate(3);
-	pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
 	pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaAddPix(pixa, pix3, L_INSERT);
@@ -2339,7 +2312,6 @@ PIXA      *pixa1, *pixa2;
     nascore = numaCreate(n);
     naindex = numaCreate(n);
     pixa1 = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa1, recog->diag_specX);
 	for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa, i, L_CLONE);
         recogIdentifyPix(recog, pix1, &pix2);
@@ -2352,7 +2324,6 @@ PIXA      *pixa1, *pixa2;
 
         /* Filter the set and optionally add text to each */
     pixa2 = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixa2, recog->diag_specX);
 	depth = 1;
     for (i = 0; i < n; i++) {
         numaGetFValue(nascore, i, &score);
@@ -2439,7 +2410,6 @@ PIXA   *pixa;
 
     if (pix2) {
         pixa = pixaCreate(2);
-		pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
 		pixaAddPix(pixa, pix3, L_CLONE);
         pixaAddPix(pixa, pix2, L_CLONE);
         pix4 = pixaDisplayTiledInRows(pixa, 1, 500, 1.0, 0, 15, 0);

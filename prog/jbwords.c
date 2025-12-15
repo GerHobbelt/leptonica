@@ -111,7 +111,7 @@ L_REGPARAMS* rp;
 #if  RENDER_PAGES
         /* Render the pages from the classifier data, and write to file.
          * Use debugflag == FALSE to omit outlines of each component. */
-    pixa = jbDataRender(data, rp->diag_spec);
+    pixa = jbDataRender(data);
     npages = pixaGetCount(pixa);
     for (i = 0; i < npages; i++) {
         pix = pixaGetPix(pixa, i, L_CLONE);
@@ -125,7 +125,7 @@ L_REGPARAMS* rp;
 
 #if  RENDER_DEBUG
         /* Use debugflag == TRUE to see outlines of each component. */
-    pixadb = jbDataRender(data, rp->diag_spec);
+    pixadb = jbDataRender(data);
         /* Write the debug pages out */
     npages = pixaGetCount(pixadb);
     for (i = 0; i < npages; i++) {

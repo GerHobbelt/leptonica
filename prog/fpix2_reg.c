@@ -59,7 +59,6 @@ L_REGPARAMS* rp;
 
         /* Test orthogonal rotations */
     pix1 = pixRead(DEMOPATH("marge.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixConvertTo8(pix1, 0);
     fpix1 = pixConvertToFPix(pix2, 1);
 
@@ -97,7 +96,6 @@ L_REGPARAMS* rp;
 
         /* Test adding various borders */
     pix1 = pixRead(DEMOPATH("marge.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixConvertTo8(pix1, 0);
     fpix1 = pixConvertToFPix(pix2, 1);
 

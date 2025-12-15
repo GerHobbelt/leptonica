@@ -75,12 +75,10 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("tetons.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	for (k = 0; k < 3; k++) {
         maxcolors = MaxColors[k];
         finalcolors = FinalColors[k];
         pixa = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 		for (i = 1; i <= 9; i++) {
             maxdist = 20 * i;
             for (j = 0; j <= 6; j++) {
@@ -100,7 +98,6 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
 
     pixs = pixRead(DEMOPATH("wyom.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixColorSegment(pixs, 50, 6, 6, 6);
     cmap = pixGetColormap(pix1);
     nc = pixcmapGetCount(cmap);

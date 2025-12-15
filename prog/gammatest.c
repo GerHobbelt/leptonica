@@ -85,12 +85,12 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
 
     na = numaGammaTRC(gam, MINVAL, MAXVAL);
-    gplotSimple1(rp->diag_spec, na, GPLOT_PNG, "/tmp/lept/gamma/trc", "gamma trc");
+    gplotSimple1(na, GPLOT_PNG, "/tmp/lept/gamma/trc", "gamma trc");
     l_fileDisplay("/tmp/lept/gamma/trc.png", 100, 100, 1.0);
     numaDestroy(&na);
 
         /* Plot gamma TRC maps */
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/gamma/corr", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/gamma/corr", GPLOT_PNG,
                         "Mapping function for gamma correction",
                         "value in", "value out");
     nax = numaMakeSequence(0.0, 1.0, 256);

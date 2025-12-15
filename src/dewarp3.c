@@ -59,8 +59,7 @@
 #include "allheaders.h"
 
 static l_int32 dewarpaApplyInit(L_DEWARPA *dewa, l_int32 pageno, PIX *pixs,
-                                l_int32 x, l_int32 y, L_DEWARP **pdew,
-                                LDIAG_CTX diagspec);
+                                l_int32 x, l_int32 y, L_DEWARP **pdew);
 static PIX *pixApplyVertDisparity(L_DEWARP *dew, PIX *pixs, l_int32 grayin);
 static PIX * pixApplyHorizDisparity(L_DEWARP *dew, PIX *pixs, l_int32 grayin);
 static BOXA *boxaApplyDisparity(L_DEWARP *dew, BOXA *boxa, l_int32 direction,
@@ -119,13 +118,12 @@ dewarpaApplyDisparity(L_DEWARPA   *dewa,
                       l_int32      grayin,
                       l_int32      x,
                       l_int32      y,
-                      PIX        **ppixd,
-                      LDIAG_CTX    diagspec)
+                      PIX        **ppixd)
 {
 L_DEWARP  *dew1, *dew;
 PIX       *pixv, *pixh;
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Initialize the output with the input, so we'll have that
          * in case we can't apply the page model. */
@@ -138,7 +136,7 @@ PIX       *pixv, *pixh;
     }
 
         /* Find the appropriate dew to use and fully populate its array(s) */
-    if (dewarpaApplyInit(dewa, pageno, pixs, x, y, &dew, diagspec))
+    if (dewarpaApplyInit(dewa, pageno, pixs, x, y, &dew))
         return ERROR_INT("no model available", __func__, 1);
 
         /* Correct for vertical disparity and save the result */
@@ -176,7 +174,7 @@ PIX       *pixv, *pixh;
     }
 
     if (debugflag) {
-		const char* debugfile = leptDebugGenFilepath(diagspec, "%s.pdf", __func__);
+		const char* debugfile = leptDebugGenFilepath("%s.pdf", __func__);
 		dew1 = dewarpaGetDewarp(dewa, pageno);
         dewarpDebug(dew1, "lept/dewapply", 0);
         convertFilesToPdf("/tmp/lept/dewapply", NULL, 250, 1.0, 0, 0,
@@ -219,8 +217,7 @@ dewarpaApplyInit(L_DEWARPA   *dewa,
                  PIX         *pixs,
                  l_int32      x,
                  l_int32      y,
-                 L_DEWARP   **pdew,
-                 LDIAG_CTX    diagspec)
+                 L_DEWARP   **pdew)
 {
 l_int32    ncols;
 L_DEWARP  *dew1, *dew2;
@@ -242,7 +239,7 @@ PIX       *pix1;
         /* Make sure all models are valid and all refmodels have
          * been added to dewa */
     if (dewa->modelsready == FALSE)
-        dewarpaInsertRefModels(dewa, 0, diagspec);
+        dewarpaInsertRefModels(dewa, 0);
 
         /* Check for the existence of a valid model; we don't expect
          * all pages to have them. */
@@ -334,7 +331,6 @@ PIX        *pixd;
         /* Two choices for requested pixels outside pixs: (1) use pixels'
          * from the boundary of pixs; use white or light gray pixels. */
     pixd = pixCreateTemplate(pixs);
-	pixSetDiagnosticsSpec(pixd, leptDebugGetDiagnosticsSpecFromAny(2, pixGetDiagnosticsSpec(pixs), dew->diag_specX));
     if (grayin >= 0)
         pixSetAllGray(pixd, grayin);
     datad = pixGetData(pixd);
@@ -538,8 +534,7 @@ dewarpaApplyDisparityBoxa(L_DEWARPA   *dewa,
                           l_int32      mapdir,
                           l_int32      x,
                           l_int32      y,
-                          BOXA       **pboxad,
-                          LDIAG_CTX    diagspec)
+                          BOXA       **pboxad)
 {
 l_int32    debug_out;
 L_DEWARP  *dew1, *dew;
@@ -553,7 +548,7 @@ PIX       *pixv, *pixh;
     *pboxad = boxaCopy(boxas, L_CLONE);
 
         /* Find the appropriate dew to use and fully populate its array(s) */
-    if (dewarpaApplyInit(dewa, pageno, pixs, x, y, &dew, diagspec))
+    if (dewarpaApplyInit(dewa, pageno, pixs, x, y, &dew))
         return ERROR_INT("no model available", __func__, 1);
 
         /* Correct for vertical disparity and save the result */
@@ -565,9 +560,9 @@ PIX       *pixv, *pixh;
     *pboxad = boxav;
     pixv = NULL;
     pixh = NULL;
-    if (diagspec && mapdir != 1)
+    if (leptIsDebugModeActive() && mapdir != 1)
         L_INFO("Reverse map direction; no debug output\n", __func__);
-    debug_out = diagspec && (mapdir == 1);
+    debug_out = leptIsDebugModeActive() && (mapdir == 1);
     if (debug_out) {
         PIX  *pix1;
         lept_rmdir("lept/dewboxa");  /* remove previous images */
@@ -608,7 +603,7 @@ PIX       *pixv, *pixh;
     }
 
     if (debug_out) {
-		const char* debugfile = leptDebugGenFilepath(diagspec, "%s.pdf", __func__);
+		const char* debugfile = leptDebugGenFilepath("%s.pdf", __func__);
 		pixDestroy(&pixv);
         dew1 = dewarpaGetDewarp(dewa, pageno);
         dewarpDebug(dew1, "lept/dewapply", 0);
@@ -904,7 +899,6 @@ FPIX      *fpixd;
     if (wd < 3 || hd < 3)
         return (FPIX *)ERROR_PTR("wd < 3 or hd < 3", __func__, NULL);
     fpixd = fpixCreate(wd, hd);
-	fpixCloneDiagnosticsSpec(fpixd, fpixs);
 	for (i = 0; i < hd; i++) {
         is = sampling * i;
         if (is >= h) continue;
@@ -982,7 +976,6 @@ FPIX       *fpixh;
 
     fw = w + *pxwid;
     fpixh = fpixCreate(fw, h);
-	fpixCloneDiagnosticsSpec(fpixh, fpixv);
 	data = fpixGetData(fpixh);
     wpl = fpixGetWpl(fpixh);
     fadiff = numaGetFArray(nadiff, L_NOCOPY);

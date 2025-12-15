@@ -74,11 +74,11 @@ L_REGPARAMS* rp;
         /* Run the basic functions */
     dew1 = dewarpCreate(pixb, 35);
     dewarpaInsertDewarp(dewa1, dew1);
-	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_junk35.pdf");
-	dewarpBuildPageModel(dew1, rp->diag_spec);
+	leptDebugSetFilenameBasename("dewarp_junk35.pdf");
+	dewarpBuildPageModel(dew1);
     dewarpPopulateFullRes(dew1, pixg, 0, 0);
-	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_debug_35.pdf");
-	dewarpaApplyDisparity(dewa1, 35, pixg, 200, 0, 0, &pixd, rp->diag_spec);
+	leptDebugSetFilenameBasename("dewarp_debug_35.pdf");
+	dewarpaApplyDisparity(dewa1, 35, pixg, 200, 0, 0, &pixd);
 
         /* Normalize another image. */
 /*    pixs2 = pixRead(DEMOPATH("1555.003.jpg")); */
@@ -90,10 +90,10 @@ L_REGPARAMS* rp;
         /* Run the basic functions */
     dew2 = dewarpCreate(pixb2, 7);
     dewarpaInsertDewarp(dewa1, dew2);
-	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_junk7.pdf");
-	dewarpBuildPageModel(dew2, rp->diag_spec);
-	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_debug_7.pdf");
-	dewarpaApplyDisparity(dewa1, 7, pixg, 200, 0, 0, &pixd2, rp->diag_spec);
+	leptDebugSetFilenameBasename("dewarp_junk7.pdf");
+	dewarpBuildPageModel(dew2);
+	leptDebugSetFilenameBasename("dewarp_debug_7.pdf");
+	dewarpaApplyDisparity(dewa1, 7, pixg, 200, 0, 0, &pixd2);
 
         /* Serialize and deserialize dewarpa */
     dewarpaWrite("/tmp/lept/dewarp4/dewarpa1.dewa", dewa1);
@@ -111,8 +111,8 @@ L_REGPARAMS* rp;
     dewarpPopulateFullRes(dew3, pixs, 0, 0);
     pixc2 = fpixRenderContours(dew3->fullvdispar, 2.0, 0.2);
     pixDisplay(pixc2, 1400, 900);
-	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_debug_35b.pdf");
-	dewarpaApplyDisparity(dewa2, 35, pixb, 200, 0, 0, &pixd3, rp->diag_spec);
+	leptDebugSetFilenameBasename("dewarp_debug_35b.pdf");
+	dewarpaApplyDisparity(dewa2, 35, pixb, 200, 0, 0, &pixd3);
     pixDisplay(pixd, 0, 1000);
     pixDisplay(pixd2, 600, 1000);
     pixDisplay(pixd3, 1200, 1000);

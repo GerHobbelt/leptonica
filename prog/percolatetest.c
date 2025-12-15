@@ -77,7 +77,7 @@ L_REGPARAMS* rp;
     srand(26);
     for (i = 0; i < 50; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, rp->diag_spec);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y);
         npta = ptaaGetCount(ptaa);
         lept_stderr("x,y = (%d,%d), num c.c. = %d, num pta = %d\n",
                     x, y, ncc, npta);
@@ -101,7 +101,7 @@ L_REGPARAMS* rp;
     srand(26);
     for (i = 0; i < 50; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, rp->diag_spec);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y);
         npta = ptaaGetCount(ptaa);
         lept_stderr("x,y = (%d,%d), num c.c. = %d, num pta = %d\n",
                     x, y, ncc, npta);
@@ -126,7 +126,7 @@ L_REGPARAMS* rp;
     srand(26);
     for (i = 0; i < 700; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, rp->diag_spec);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y);
         numaAddNumber(na1, ncc);
         npta = ptaaGetCount(ptaa);
         if (i < 100) {
@@ -141,7 +141,7 @@ L_REGPARAMS* rp;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 0, 0);
     pixWrite("/tmp/lept/perc/file3.png", pix3, IFF_PNG);
-    gplotSimple1(rp->diag_spec, na1, GPLOT_PNG, "/tmp/lept/plot1",
+    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot1",
                  "Number of components: 4 cc");
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -159,7 +159,7 @@ L_REGPARAMS* rp;
     srand(26);
     for (i = 0; i < 700; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, rp->diag_spec);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y);
         numaAddNumber(na1, ncc);
         npta = ptaaGetCount(ptaa);
         if (i < 100) {
@@ -174,7 +174,7 @@ L_REGPARAMS* rp;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 0, 360);
     pixWrite("/tmp/lept/perc/file4.png", pix3, IFF_PNG);
-    gplotSimple1(rp->diag_spec, na1, GPLOT_PNG, "/tmp/lept/plot2",
+    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot2",
                  "Number of components: 8 cc");
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -192,7 +192,7 @@ L_REGPARAMS* rp;
     srand(26);
     for (i = 0; i < 20000; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, rp->diag_spec);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y);
         npta = ptaaGetCount(ptaa);
         numaAddNumber(na1, ncc);
         if (i % 500 == 1) {
@@ -205,7 +205,7 @@ L_REGPARAMS* rp;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 0, 0);
     pixWrite("/tmp/lept/perc/file5.png", pix3, IFF_PNG);
-    gplotSimple1(rp->diag_spec, na1, GPLOT_PNG, "/tmp/lept/plot3",
+    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot3",
                  "Number of components: 4 connected");
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -223,7 +223,7 @@ L_REGPARAMS* rp;
     lept_stderr("ncc = %d, npta = %d\n", ncc, ptaaGetCount(ptaa));
     for (i = 0; i < 20000; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, rp->diag_spec);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y);
         npta = ptaaGetCount(ptaa);
         numaAddNumber(na1, ncc);
         if (i % 500 == 1) {
@@ -236,7 +236,7 @@ L_REGPARAMS* rp;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 340, 0);
     pixWrite("/tmp/lept/perc/file6.png", pix3, IFF_PNG);
-    gplotSimple1(rp->diag_spec, na1, GPLOT_PNG, "/tmp/lept/plot4",
+    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot4",
                  "Number of components: 8 connected");
     pixDestroy(&pixs);
     pixDestroy(&pix1);
@@ -254,7 +254,7 @@ L_REGPARAMS* rp;
     lept_stderr("ncc = %d, npta = %d\n", ncc, ptaaGetCount(ptaa));
     for (i = 0; i < 20000; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, rp->diag_spec);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y);
         npta = ptaaGetCount(ptaa);
         numaAddNumber(na1, ncc);
         if (i % 500 == 1) {
@@ -267,7 +267,7 @@ L_REGPARAMS* rp;
     pix3 = pixaDisplayTiledInRows(pixa, 32, 1500, 1.0, 0, 30, 2);
     pixDisplay(pix3, 0, 0);
     pixWrite("/tmp/lept/perc/file7.png", pix3, IFF_PNG);
-    gplotSimple1(rp->diag_spec, na1, GPLOT_PNG, "/tmp/lept/plot5",
+    gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/plot5",
                  "Number of components: 8 connected");
     pixDestroy(&pixs);
     pixDestroy(&pix1);

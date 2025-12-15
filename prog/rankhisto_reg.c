@@ -70,12 +70,10 @@ PIXA         *pixa;
 
 	/* Find the rank bin colors */
     pixs = pixRead(DEMOPATH("map1.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixGetDimensions(pixs, &w, &h, NULL);
     factor = L_MAX(1, (l_int32)sqrt((l_float64)(w * h / 20000.0)));
     nbins = 10;
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixGetRankColorArray(pixs, nbins, L_SELECT_MIN, factor, &array, pixa, 6);
     if (!array)
         return ERROR_INT("\n\n\nFAILURE!\n\n\n", rp->testname, 1);
@@ -114,7 +112,6 @@ PIXA         *pixa;
         /* Now test the edge case where all the histo data is piled up
          * at one place.  We only require that the result be sensible. */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < 3; i++) {
         if (i == 0)
             spike = 1;
@@ -125,11 +122,11 @@ PIXA         *pixa;
         na = numaMakeConstant(0, 100);
         numaReplaceNumber(na, spike, 200.0);
         numaDiscretizeHistoInBins(na, 10, &nabinval, &narank);
-        pix1 = gplotSimplePix1(rp->diag_spec, na, "lept/rankhisto/histo", "Histogram");
+        pix1 = gplotSimplePix1(na, "lept/rankhisto/histo", "Histogram");
         pixaAddPix(pixa, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(rp->diag_spec, nabinval, "lept/rankhisto/gray-vs-bin", "Gray value vs rank bin");
+        pix1 = gplotSimplePix1(nabinval, "lept/rankhisto/gray-vs-bin", "Gray value vs rank bin");
         pixaAddPix(pixa, pix1, L_INSERT);
-        pix1 = gplotSimplePix1(rp->diag_spec, narank, "lept/rankhisto/rank-vs-gray", "rank value vs. gray value");
+        pix1 = gplotSimplePix1(narank, "lept/rankhisto/rank-vs-gray", "rank value vs. gray value");
         pixaAddPix(pixa, pix1, L_INSERT);
         numaDestroy(&na);
         numaDestroy(&nabinval);

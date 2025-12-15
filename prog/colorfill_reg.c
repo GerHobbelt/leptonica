@@ -64,13 +64,12 @@ L_REGPARAMS* rp;
 
         /* Test on a small image */
     pix1 = makeSmallTestPix(0x3070A000, 0xA0703000);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
     pix2 = pixExpandReplicate(pix1, 15);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
     pixDisplayWithTitle(pix2, 0, 0, NULL);
     pixDestroy(&pix2);
     cf = l_colorfillCreate(pix1, 1, 1);
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 15, 3, 1, rp->diag_spec);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 15, 3, 1);
     pix2 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     pix3 = pixExpandReplicate(pix2, 10);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1 */
@@ -83,7 +82,6 @@ L_REGPARAMS* rp;
         /* Test on simple random image with many colors (1 tile and 4 tiles */
     pixa1 = makeColorfillTestData(350, 350, 35, 100);
     pixa2 = pixaCreate(5);
-	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
 
     pix1 = pixaGetPix(pixa1, 0, L_COPY);
     pix2 = pixConvertTo32(pix1);
@@ -91,7 +89,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 2 */
     pixaAddPix(pixa2, pix2, L_INSERT);
     cf = l_colorfillCreate(pix2, 1, 1);  /* 1 tile */
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 500, 1, rp->diag_spec);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 500, 1);
     pix3 = pixaDisplayTiledInColumns(cf->pixam, cf->nx, 1.0, 10, 1);
     pix4 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 3 */
@@ -101,14 +99,14 @@ L_REGPARAMS* rp;
     l_colorfillDestroy(&cf);
 
     cf = l_colorfillCreate(pix2, 2, 2);  /* 4 tiles */
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 500, 1, rp->diag_spec);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 500, 1);
     pix3 = pixaDisplayTiledInColumns(cf->pixam, cf->nx, 1.0, 10, 1);
     pix4 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 5 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 6 */
     pixaAddPix(pixa2, pix3, L_INSERT);
     pixaAddPix(pixa2, pix4, L_INSERT);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix1 = pixaDisplayTiledInColumns(pixa2, 5, 1.0, 15, 2);
         pixDisplay(pix1, 0, 400);
         pixDestroy(&pix1);
@@ -122,19 +120,18 @@ L_REGPARAMS* rp;
     pix2 = pixScale(pix1, 0.5, 0.5);
     pixDestroy(&pix1);
     cf = l_colorfillCreate(pix2, 1, 1);  /* 1 tile */
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 100, 1, rp->diag_spec);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 100, 1);
     pix3 = pixaDisplayTiledInColumns(cf->pixam, cf->nx, 1.0, 10, 1);
     pix4 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 7 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 8 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 9 */
     pixa2 = pixaCreate(3);
-	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
 
     pixaAddPix(pixa2, pix2, L_COPY);
     pixaAddPix(pixa2, pix3, L_INSERT);
     pixaAddPix(pixa2, pix4, L_INSERT);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix1 = pixaDisplayTiledInColumns(pixa2, 3, 0.8, 15, 2);
         pixDisplay(pix1, 0, 650);
         pixDestroy(&pix1);
@@ -143,17 +140,16 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa2);
 
     cf = l_colorfillCreate(pix2, 3, 3);  /* 9 tiles */
-    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 100, 1, rp->diag_spec);
+    pixColorContentByLocation(cf, 0, 0, 0, 70, 30, 100, 1);
     pix3 = pixaDisplayTiledInColumns(cf->pixam, cf->nx, 1.0, 10, 1);
     pix4 = pixaDisplayTiledInColumns(cf->pixadb, cf->nx, 1.0, 10, 1);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 10 */
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 11 */
     pixa2 = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
 
     pixaAddPix(pixa2, pix3, L_INSERT);
     pixaAddPix(pixa2, pix4, L_INSERT);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix1 = pixaDisplayTiledInColumns(pixa2, 2, 0.8, 15, 2);
         pixDisplay(pix1, 0, 1000);
         pixDestroy(&pix1);

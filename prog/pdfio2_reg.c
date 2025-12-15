@@ -89,7 +89,6 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
          * small bogus regions at the top, but we'll keep them for
          * the demonstration. */
     pix1 = pixRead(DEMOPATH("rabi.png"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixScaleToGray2(pix1);
     pixWrite("/tmp/lept/pdf2/rabi8.jpg", pix2, IFF_JFIF_JPEG);
     pix3 = pixThresholdTo4bpp(pix2, 16, 1);
@@ -154,7 +153,6 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     startTimer();
 
     pix1 = pixRead(DEMOPATH("candelabrum.011.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixScale(pix1, 3.0, 3.0);
     pixWrite("/tmp/lept/pdf2/candelabrum3.jpg", pix2, IFF_JFIF_JPEG);
     GetImageMask(pix2, 200, &boxa1, rp, "seg1");
@@ -173,11 +171,9 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     boxaDestroy(&boxa1);
 
     pix1 = pixRead(DEMOPATH("lion-page.00016.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixScale(pix1, 3.0, 3.0);
     pixWrite("/tmp/lept/pdf2/lion16.jpg", pix2, IFF_JFIF_JPEG);
     pix3 = pixRead(DEMOPATH("lion-mask.00016.tif"));
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
 	boxa1 = pixConnComp(pix3, NULL, 8);
     boxa2 = boxaTransform(boxa1, 0, 0, 3.0, 3.0);
     convertToPdfSegmented("/tmp/lept/pdf2/lion16.jpg", 200, L_G4_ENCODE,
@@ -219,13 +215,10 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 
     pix1 = pixRead(DEMOPATH("feyn.tif"));
     pix2 = pixRead(DEMOPATH("rabi.png"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pix3 = pixScaleToGray3(pix1);
     pix4 = pixScaleToGray3(pix2);
     pix5 = pixScale(pix1, 0.33, 0.33);
     pix6 = pixRead(DEMOPATH("test24.jpg"));
-	pixSetDiagnosticsSpec(pix6, rp->diag_spec);
 	pixWrite("/tmp/lept/image/file1.png", pix3, IFF_PNG);  /* 10 colors */
     pixWrite("/tmp/lept/image/file2.jpg", pix4, IFF_JFIF_JPEG); /* 256 colors */
     pixWrite("/tmp/lept/image/file3.tif", pix5, IFF_TIFF_G4);
@@ -355,16 +348,15 @@ PIXA  *pixa;
     pix2 = pixGenerateHalftoneMask(pix1, NULL, NULL, NULL);
     pix3 = pixMorphSequence(pix2, "c20.1 + c1.20", 0);
     *pboxa = pixConnComp(pix3, NULL, 8);
-    if (debugfile && rp->diag_spec) {
-		leptDebugSetFilenameForPrefix(rp->diag_spec, debugfile, -1);
+    if (debugfile && leptIsDebugModeActive()) {
+		leptDebugSetFilenameForPrefix(debugfile, -1);
         pixa = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 		pixaAddPix(pixa, pixs, L_COPY);
         pixaAddPix(pixa, pix1, L_INSERT);
         pixaAddPix(pixa, pix2, L_INSERT);
         pixaAddPix(pixa, pix3, L_INSERT);
         pix4 = pixaDisplayTiledInRows(pixa, 32, 1800, 0.25, 0, 25, 2);
-		const char* pixfilepath = leptDebugGenFilepath(rp->diag_spec, "%s.%s", __func__, ".jpg");
+		const char* pixfilepath = leptDebugGenFilepath("%s.%s", __func__, ".jpg");
         pixWrite(debugfile, pix4, IFF_JFIF_JPEG);
 		stringDestroy(&pixfilepath);
         pixDisplayWithTitle(pix4, 100, 100, NULL);

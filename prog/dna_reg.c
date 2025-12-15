@@ -106,7 +106,7 @@ NUMA         *na, *nahisto, *nax;
     nahisto = numaMakeHistogramClipped(na, 12, 2000);
     nbins = numaGetCount(nahisto);
     nax = numaMakeSequence(0, 1, nbins);
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/regout/historoot", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/regout/historoot", GPLOT_PNG,
                         "Histo example", "i", "histo[i]");
     gplotAddPlot(gplot, nax, nahisto, GPLOT_LINES, "sine");
     gplotMakeOutput(gplot);

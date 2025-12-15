@@ -962,9 +962,8 @@ size_t         fullpathsize;
     if (!pixs)
         return ERROR_INT("pixs not defined", __func__, 1);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok dispflag = leptIsInDisplayMode(diagspec);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok dispflag = leptIsInDisplayMode();
+	l_ok debugflag = leptIsDebugModeActive();
 
 	if (!dispflag && !debugflag)
 		return 0;
@@ -1046,10 +1045,10 @@ size_t         fullpathsize;
 	const char* pixpath;
     if (pixGetDepth(pix2) < 8 || pixGetColormap(pix2) ||
         (w < MaxSizeForPng && h < MaxSizeForPng)) {
-		pixpath = leptDebugGenFilepath(diagspec, "disp/%s.%05d.png", __func__, (int)index);
+		pixpath = leptDebugGenFilepath("disp/%s.%05d.png", __func__, (int)index);
         pixWrite(pixpath, pix2, IFF_PNG);
     } else {
-		pixpath = leptDebugGenFilepath(diagspec, "disp/%s.%05d.jpg", __func__, (int)index);
+		pixpath = leptDebugGenFilepath("disp/%s.%05d.jpg", __func__, (int)index);
         pixWrite(pixpath, pix2, IFF_JFIF_JPEG);
     }
     tempname = genPathname(pixpath, NULL);

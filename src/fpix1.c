@@ -209,7 +209,6 @@ FPIX    *fpixd;
     if ((fpixd = fpixCreate(w, h)) == NULL)
         return (FPIX *)ERROR_PTR("fpixd not made", __func__, NULL);
     fpixCopyResolution(fpixd, fpixs);
-	fpixCloneDiagnosticsSpec(fpixd, fpixs);
     return fpixd;
 }
 
@@ -295,9 +294,6 @@ FPIX       *fpix;
     if (--fpix->refcount == 0) {
         if ((data = fpixGetData(fpix)) != NULL)
             LEPT_FREE(data);
-
-		if (fpix->diag_spec)
-			leptDestroyDiagnoticsSpecInstance(&fpix->diag_spec);
 
 		LEPT_FREE(fpix);
     }
@@ -654,9 +650,6 @@ FPIXA   *fpixa;
             fpixDestroy(&fpixa->fpix[i]);
         LEPT_FREE(fpixa->fpix);
 		fpixa->fpix = NULL;
-
-		if (fpixa->diag_spec != NULL)
-			leptDestroyDiagnoticsSpecInstance(&fpixa->diag_spec);
 
 		LEPT_FREE(fpixa);
     }
@@ -1025,7 +1018,6 @@ DPIX    *dpixd;
     dpixGetDimensions(dpixs, &w, &h);
     dpixd = dpixCreate(w, h);
     dpixCopyResolution(dpixd, dpixs);
-	dpixCloneDiagnosticsSpec(dpixd, dpixs);
 	return dpixd;
 }
 
@@ -1073,7 +1065,6 @@ DPIX       *dpixd;
 
     if ((dpixd = dpixCreateTemplate(dpixs)) == NULL)
         return (DPIX *)ERROR_PTR("dpixd not made", __func__, NULL);
-	dpixCloneDiagnosticsSpec(dpixd, dpixs);
 	dpixCopyResolution(dpixd, dpixs);
 	datas = dpixGetData(dpixs);
     datad = dpixGetData(dpixd);
@@ -1112,9 +1103,6 @@ DPIX       *dpix;
     if (--dpix->refcount == 0) {
         if ((data = dpixGetData(dpix)) != NULL)
             LEPT_FREE(data);
-
-		if (dpix->diag_spec != NULL)
-			leptDestroyDiagnoticsSpecInstance(&dpix->diag_spec);
 
 		LEPT_FREE(dpix);
     }

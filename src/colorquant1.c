@@ -683,7 +683,6 @@ PIXCMAP   *cmap;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Force darkest color to black if each component <= 4 */
     pixcmapGetRankIntensity(cmap, 0.0, &index);
@@ -999,7 +998,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -1752,7 +1750,6 @@ PIXCMAP        *cmap;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	cmap = pixcmapCreate(depth);
     pixSetColormap(pixd, cmap);
 
@@ -2301,7 +2298,6 @@ PIXCMAP   *cmap;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /*----------------------------------------------------------*
          * If we're using the minimum number of colors, it is       *
@@ -2628,7 +2624,6 @@ PIXCMAP   *cmap;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	cmap = pixcmapCreate(depth);
     for (j = 0; j < size; j++)  /* reserve octcube colors */
         pixcmapAddColor(cmap, 1, 1, 1);  /* a color that won't be used */
@@ -2834,7 +2829,6 @@ PIXCMAP   *cmap;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -3004,7 +2998,6 @@ PIXCMAP   *cmap;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     for (i = 0; i < h; i++) {
@@ -3156,7 +3149,6 @@ PIXCMAP   *cmap;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -3422,7 +3414,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixs);
@@ -3658,7 +3649,6 @@ PIXCMAP   *cmapc;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Insert the colormap index of the color nearest to the input pixel */
     datas = pixGetData(pixs);

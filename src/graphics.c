@@ -2591,7 +2591,6 @@ PIX       *pixd;
         pixd = pixCreate(w, h, 1);
 
     pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixs);
@@ -2740,7 +2739,6 @@ PIXCMAP    *cmap;
     fpixGetDimensions(fpixs, &w, &h);
     if ((pixd = pixCreate(w, h, 8)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-	pixSetDiagnosticsSpec(pixd, fpixGetDiagnosticsSpec(fpixs));
     cmap = pixcmapCreate(8);
     pixSetColormap(pixd, cmap);
     pixcmapAddColor(cmap, 255, 255, 255);  /* white */

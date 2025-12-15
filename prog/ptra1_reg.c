@@ -67,12 +67,9 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixac1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixac1, rp->diag_spec);
 	pixac2 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixac2, rp->diag_spec);
 
     pixs = pixRead(DEMOPATH("lucasta.1.300.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixGetDimensions(pixs, &w, &h, NULL);
     boxa = pixConnComp(pixs, &pixas, 8);
     pixDestroy(&pixs);
@@ -80,7 +77,7 @@ L_REGPARAMS* rp;
     n = pixaGetCount(pixas);
 
         /* Fill ptras with clones and reconstruct */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Fill with clones and reconstruct\n");
     MakePtrasFromPixa(pixas, &papix, &pabox, L_CLONE);
     pixa1 = ReconstructPixa1(rp, papix, pabox);
@@ -99,7 +96,7 @@ L_REGPARAMS* rp;
 
         /* Remove every other one for the first half;
          * with compaction at each removal */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Remove every other in 1st half, with compaction\n");
     MakePtrasFromPixa(pixas, &papix, &pabox, L_COPY);
     for (i = 0; i < n / 2; i++) {
@@ -135,7 +132,7 @@ L_REGPARAMS* rp;
 
         /* Remove every other one for the entire set,
          * but without compaction at each removal */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Remove every other in 1st half, "
                     "without & then with compaction\n");
     MakePtrasFromPixa(pixas, &papix, &pabox, L_COPY);
@@ -175,7 +172,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixd);
 
         /* Fill ptras using insert at head, and reconstruct */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Insert at head and reconstruct\n");
     papix = ptraCreate(n);
     pabox = ptraCreate(n);
@@ -208,7 +205,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixd);
 
         /* Reverse the arrays by swapping */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Reverse by swapping\n");
     MakePtrasFromPixa(pixas, &papix, &pabox, L_CLONE);
     for (i = 0; i < n / 2; i++) {
@@ -241,7 +238,7 @@ L_REGPARAMS* rp;
         /* Remove at the top of the array and push the hole to the end
          * by neighbor swapping (!).  This is O(n^2), so it's not a
          * recommended way to copy a ptra. [joke]  */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr(
                 "Remove at top, pushing hole to end by swapping -- O(n^2)\n");
     MakePtrasFromPixa(pixas, &papix, &pabox, L_CLONE);
@@ -281,7 +278,7 @@ L_REGPARAMS* rp;
          * it will do a full downshift at each insert.  This is a
          * situation where the heuristic (expected number of holes)
          * fails to do the optimal thing. */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Remove and insert one position above (min downshift)\n");
     MakePtrasFromPixa(pixas, &papix, &pabox, L_CLONE);
     for (i = 1; i < n; i++) {
@@ -313,7 +310,7 @@ L_REGPARAMS* rp;
 
         /* Remove and insert one position above, but this time
          * forcing a full downshift at each step.  */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Remove and insert one position above (full downshift)\n");
     MakePtrasFromPixa(pixas, &papix, &pabox, L_CLONE);
     for (i = 1; i < n; i++) {
@@ -399,12 +396,11 @@ PIXA    *pixat;
 
     ptraGetMaxIndex(papix, &imax);
     ptraGetActualCount(papix, &nactual);
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Before removal:  imax = %4d, actual = %4d\n",
                     imax, nactual);
 
     pixat = pixaCreate(imax + 1);
-	pixaSetDiagnosticsSpec(pixat, rp->diag_spec);
 	for (i = 0; i <= imax; i++) {
         pix = (PIX *)ptraRemove(papix, i, L_NO_COMPACTION);
         box = (BOX *)ptraRemove(pabox, i, L_NO_COMPACTION);
@@ -414,7 +410,7 @@ PIXA    *pixat;
 
     ptraGetMaxIndex(papix, &imax);
     ptraGetActualCount(papix, &nactual);
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("After removal:   imax = %4d, actual = %4d\n\n",
                     imax, nactual);
 
@@ -435,13 +431,12 @@ PIXA    *pixat;
 
     ptraGetMaxIndex(papix, &imax);
     ptraGetActualCount(papix, &nactual);
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Before removal:    imax = %4d, actual = %4d\n",
                     imax, nactual);
 
         /* Remove half */
     pixat = pixaCreate(imax + 1);
-	pixaSetDiagnosticsSpec(pixat, rp->diag_spec);
 	for (i = 0; i <= imax; i++) {
         if (i % 2 == 0) {
             pix = (PIX *)ptraRemove(papix, i, L_NO_COMPACTION);
@@ -454,14 +449,14 @@ PIXA    *pixat;
         /* Compact */
     ptraGetMaxIndex(papix, &imax);
     ptraGetActualCount(papix, &nactual);
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Before compaction: imax = %4d, actual = %4d\n",
                     imax, nactual);
     ptraCompactArray(papix);
     ptraCompactArray(pabox);
     ptraGetMaxIndex(papix, &imax);
     ptraGetActualCount(papix, &nactual);
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("After compaction:  imax = %4d, actual = %4d\n",
                     imax, nactual);
 
@@ -478,7 +473,7 @@ PIXA    *pixat;
 
     ptraGetMaxIndex(papix, &imax);
     ptraGetActualCount(papix, &nactual);
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("After removal:     imax = %4d, actual = %4d\n\n",
                     imax, nactual);
 

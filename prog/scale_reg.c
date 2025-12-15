@@ -80,9 +80,7 @@ L_REGPARAMS* rp;
         /* Test 1 bpp */
     lept_stderr("\n-------------- Testing 1 bpp ----------\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH(image[0]));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixc = pixScale(pixs, 0.32, 0.32);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 0 */
     pixaAddPix(pixa, pixc, L_INSERT);
@@ -110,7 +108,6 @@ L_REGPARAMS* rp;
 
     for (i = 1; i < 10; i++) {
         pixa = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 		AddScaledImages(pixa, DEMOPATH(image[i]), WIDTH);
         PixaSaveDisplay(pixa, rp);  /* 7 - 15 */
     }
@@ -119,9 +116,7 @@ L_REGPARAMS* rp;
         /* Test 2 bpp without colormap */
     lept_stderr("\n-------------- Testing 2 bpp without cmap ----------\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH(image[1]));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixc = pixScale(pixs, 2.25, 2.25);
     regTestWritePixAndCheck(rp, pixc, IFF_JFIF_JPEG);  /* 16 */
@@ -137,9 +132,7 @@ L_REGPARAMS* rp;
         /* Test 2 bpp with colormap */
     lept_stderr("\n-------------- Testing 2 bpp with cmap ----------\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH(image[2]));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixc = pixScale(pixs, 2.25, 2.25);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 20 */
@@ -155,9 +148,7 @@ L_REGPARAMS* rp;
         /* Test 4 bpp without colormap */
     lept_stderr("\n-------------- Testing 4 bpp without cmap ----------\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH(image[3]));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixc = pixScale(pixs, 1.72, 1.72);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 24 */
@@ -173,9 +164,7 @@ L_REGPARAMS* rp;
         /* Test 4 bpp with colormap */
     lept_stderr("\n-------------- Testing 4 bpp with cmap ----------\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH(image[4]));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixc = pixScale(pixs, 1.72, 1.72);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 28 */
@@ -191,9 +180,7 @@ L_REGPARAMS* rp;
         /* Test 8 bpp without colormap */
     lept_stderr("\n-------------- Testing 8 bpp without cmap ----------\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH(image[5]));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixc = pixScale(pixs, 1.92, 1.92);
     regTestWritePixAndCheck(rp, pixc, IFF_JFIF_JPEG);  /* 32 */
@@ -214,9 +201,7 @@ L_REGPARAMS* rp;
         /* Test 8 bpp with colormap */
     lept_stderr("\n-------------- Testing 8 bpp with cmap ----------\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH(image[6]));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixc = pixScale(pixs, 1.92, 1.92);
     regTestWritePixAndCheck(rp, pixc, IFF_JFIF_JPEG);  /* 37 */
@@ -232,9 +217,7 @@ L_REGPARAMS* rp;
         /* Test 16 bpp */
     lept_stderr("\n-------------- Testing 16 bpp ------------\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH(image[7]));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixc = pixScale(pixs, 1.92, 1.92);
     regTestWritePixAndCheck(rp, pixc, IFF_JFIF_JPEG);  /* 41 */
@@ -250,9 +233,7 @@ L_REGPARAMS* rp;
         /* Test 32 bpp */
     lept_stderr("\n-------------- Testing 32 bpp ------------\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH(image[8]));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pixc = pixScale(pixs, 1.42, 1.42);
     regTestWritePixAndCheck(rp, pixc, IFF_JFIF_JPEG);  /* 45 */
@@ -314,14 +295,12 @@ PIX       *pix1, *pix2, *pix3;
 PIXA      *pixa;
 
     pix1 = pixRead(fname);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixa = pixaCreate(12);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	scale = 0.5;
     for (i = 0; i < 12; i++) {
         scale *= 0.7;
         upscale = 0.25 / scale;
-        if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("scale = %5.3f\n", scale);
+        if (leptIsInDisplayMode()) lept_stderr("scale = %5.3f\n", scale);
         pix2 = pixScaleSmooth(pix1, scale, scale);
         pix3 = pixScale(pix2, upscale, upscale);
         pixaAddPix(pixa, pix3, L_INSERT);

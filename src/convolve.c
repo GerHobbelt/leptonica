@@ -1323,18 +1323,15 @@ FPIX       *fpixv, *fpixrv;  /* variance and square root of variance */
     if (w != ws || h != hs)
         return ERROR_INT("pixm and pixms sizes differ", __func__, 1);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpecFromAny(2, pixm, pixms);
 
     if (pfpixv) {
         fpixv = fpixCreate(w, h);
-		fpixSetDiagnosticsSpec(fpixv, diagspec);
 		*pfpixv = fpixv;
         wplv = fpixGetWpl(fpixv);
         datav = fpixGetData(fpixv);
     }
     if (pfpixrv) {
         fpixrv = fpixCreate(w, h);
-		fpixSetDiagnosticsSpec(fpixrv, diagspec);
 		*pfpixrv = fpixrv;
         wplrv = fpixGetWpl(fpixrv);
         datarv = fpixGetData(fpixrv);
@@ -1402,7 +1399,6 @@ DPIX       *dpix;
     pixGetDimensions(pixs, &w, &h, NULL);
     if ((dpix = dpixCreate(w, h)) ==  NULL)
         return (DPIX *)ERROR_PTR("dpix not made", __func__, NULL);
-	dpixSetDiagnosticsSpec(dpix, pixGetDiagnosticsSpec(pixs));
 
     datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
@@ -1591,7 +1587,6 @@ PIX       *pixt, *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     }
     pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
     wpld = pixGetWpl(pixd);
     wplt = pixGetWpl(pixt);
@@ -2224,7 +2219,6 @@ FPIX       *fpixt, *fpixd;
     else
         keln = kernelCopy(keli);
 
-	LDIAG_CTX diagspec = fpixGetDiagnosticsSpec(fpixs);
 
     fpixGetDimensions(fpixs, &w, &h);
     fpixt = fpixAddMirroredBorder(fpixs, cx, sx - cx, cy, sy - cy);
@@ -2236,7 +2230,6 @@ FPIX       *fpixt, *fpixd;
     wd = (w + ConvolveSamplingFactX - 1) / ConvolveSamplingFactX;
     hd = (h + ConvolveSamplingFactY - 1) / ConvolveSamplingFactY;
     fpixd = fpixCreate(wd, hd);
-	fpixSetDiagnosticsSpec(fpixd, diagspec);
 	datat = fpixGetData(fpixt);
     datad = fpixGetData(fpixd);
     wplt = fpixGetWpl(fpixt);

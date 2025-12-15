@@ -66,7 +66,7 @@ L_REGPARAMS* rp;
     box = boxCreate(293, 37, pixGetWidth(pix0) - 691, pixGetHeight(pix0) -145);
     pixs = pixClipRectangle(pix0, box, NULL);
     boxDestroy(&box);
-    if (leptIsInDisplayMode(rp->diag_spec)) pixDisplay(pixs, 100, 100);
+    if (leptIsInDisplayMode()) pixDisplay(pixs, 100, 100);
 
         /* Test 63 different sizes */
     for (width = 1; width <= 25; width += 3) {   /* 9 values */

@@ -91,7 +91,6 @@ PIXA      *pixa;
         rp->success = FALSE;
         return ERROR_INT_1("pix not made", buf, __func__, 1);
     }
-	pixSetDiagnosticsSpec(pix, rp->diag_spec);
 	pixGetDimensions(pix, &w, &h, NULL);
     if (w > MAX_WIDTH) {
         factor = (l_float32)MAX_WIDTH / (l_float32)w;
@@ -102,7 +101,6 @@ PIXA      *pixa;
     pixDestroy(&pix);
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Median cut quantizer (no dither; 5 sigbits) */
     pixaAddPix(pixa, pixs, L_COPY);

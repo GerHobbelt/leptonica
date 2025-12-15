@@ -86,14 +86,12 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixsc = pixScale(pixs, 0.3, 0.3);
 
 #if ALL
         /* Test invertability of sampling */
     lept_stderr("Test invertability of sampling\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < 3; i++) {
         pixb = pixAddBorder(pixsc, ADDED_BORDER_PIXELS, 0);
         MakePtas(i, &ptas, &ptad);
@@ -124,7 +122,6 @@ L_REGPARAMS* rp;
         /* Test invertability of interpolation on grayscale */
     lept_stderr("Test invertability of grayscale interpolation\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixg = pixScaleToGray(pixs, 0.2);
     for (i = 0; i < 2; i++) {
         pixb = pixAddBorder(pixg, ADDED_BORDER_PIXELS / 2, 255);
@@ -157,9 +154,7 @@ L_REGPARAMS* rp;
         /* Test invertability of interpolation on color */
     lept_stderr("Test invertability of color interpolation\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixc = pixRead(DEMOPATH("test24.jpg"));
-	pixSetDiagnosticsSpec(pixc, rp->diag_spec);
 	pixcs = pixScale(pixc, 0.3, 0.3);
     for (i = 0; i < 5; i++) {
         if (i == 2) continue;
@@ -195,7 +190,6 @@ L_REGPARAMS* rp;
     lept_stderr("Compare sampling with interpolated\n");
     MakePtas(3, &ptas, &ptad);
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixg = pixScaleToGray(pixs, 0.2);
 
         /* Use sampled transform */

@@ -67,7 +67,6 @@ L_REGPARAMS* rp;
 
         /* Scale each image and add a white boundary */
     pixa = pixaCreate(setsize);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < setsize; i++) {
 		char fname[256];
 		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), fnames[i]);
@@ -97,7 +96,6 @@ L_REGPARAMS* rp;
 
         /* Scale each image and add a black boundary */
     pixa = pixaCreate(setsize);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < setsize; i++) {
 		char fname[256];
 		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), fnames[i]);

@@ -96,7 +96,6 @@ SARRAY       *sa;
 	bmf = bmfCreate(DEMOPATH("fonts"), 6);
     bmftop = bmfCreate(DEMOPATH("fonts"), 10);
     pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixScale(pixs, 0.4, 0.4);          /* 8 bpp grayscale */
     pix2 = pixConvertTo32(pix1);              /* 32 bpp rgb */
     pix3 = pixThresholdOn8bpp(pix1, 12, 1);   /* 8 bpp cmapped */
@@ -108,7 +107,6 @@ SARRAY       *sa;
 
     for (i = 0; i < 4; i++) {
         pixa = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 		AddTextAndSave(pixa, pix1, bmf, textstr[0], loc[i], 800);
         AddTextAndSave(pixa, pix2, bmf, textstr[1], loc[i], 0xff000000);
         AddTextAndSave(pixa, pix3, bmf, textstr[2], loc[i], 0x00ff0000);
@@ -142,7 +140,6 @@ SARRAY       *sa;
         /* Write multiple lines in different colors, filling up
          * the colormap and requesting even more colors. */
     pixs = pixRead(DEMOPATH("weasel4.11c.png"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixConvertTo8(pixs, 0);
     pix2 = pixScale(pixs, 8.0, 8.0);
     pix3 = pixQuantFromCmap(pix2, pixGetColormap(pixs), 4, 5,

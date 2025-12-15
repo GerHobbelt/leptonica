@@ -94,7 +94,6 @@ L_REGPARAMS* rp;
         /* Make a second set that is rotated; combine with the input set. */
 	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
-	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     pixa2 = pixaScaleBySampling(pixa1, 2.0, 2.0);  /* to resolution 150 ppi */
     n = pixaGetCount(pixa2);
     for (i = 0; i < n; i++) {
@@ -113,7 +112,7 @@ L_REGPARAMS* rp;
 
         /* Show the similarity classes. */
     numaWriteStderr(nai);
-	const char* pixpath = leptDebugGenFilepath(rp->diag_spec, "comp/photoclass1.jpg");
+	const char* pixpath = leptDebugGenFilepath("comp/photoclass1.jpg");
     pixWrite(pixpath, pix1, IFF_JFIF_JPEG);
     lept_stderr("Writing photo classes: %s\n", pixpath);
     numaDestroy(&nai);
@@ -121,7 +120,6 @@ L_REGPARAMS* rp;
 
         /* Show the scores between images as a 2d array */
     //pix2 = pixRead("/tmp/lept/comp/scorearray.png");
-	//pixSetDiagnosticsSpec(pix2, rp->diag_spec);
     pixDisplay(pix2, 100, 100);
     pixDestroy(&pix2);
     pixaDestroy(&pixa1);
@@ -136,7 +134,6 @@ L_REGPARAMS* rp;
         /* Make a second set that is translated; combine with the input set. */
 	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
-	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     pixa2 = pixaScaleBySampling(pixa1, 2.0, 2.0);  /* to resolution 150 ppi */
     pixa3 = pixaTranslate(pixa2, 15, -21, L_BRING_IN_WHITE);
     pixaJoin(pixa2, pixa3, 0, -1);
@@ -148,7 +145,7 @@ L_REGPARAMS* rp;
 
         /* Show the similarity classes. */
     numaWriteStderr(nai);
-	const char* pixpath = leptDebugGenFilepath(rp->diag_spec, "comp/photoclass2.jpg");
+	const char* pixpath = leptDebugGenFilepath("comp/photoclass2.jpg");
 	pixWrite(pixpath, pix1, IFF_JFIF_JPEG);
     lept_stderr("Writing photo classes: %s\n", pixpath);
     numaDestroy(&nai);
@@ -156,7 +153,6 @@ L_REGPARAMS* rp;
 
         /* Show the scores between images as a 2d array */
     //pix2 = pixRead("/tmp/lept/comp/scorearray.png");
-	//pixSetDiagnosticsSpec(pix2, rp->diag_spec);
     pixDisplay(pix2, 100, 100);
     pixDestroy(&pix2);
     pixaDestroy(&pixa1);
@@ -173,18 +169,17 @@ L_REGPARAMS* rp;
          * superficially similar.  But they are far apart by this test. */
 	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
-	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     pixa2 = pixaScaleBySampling(pixa1, 2.0, 2.0);  /* to resolution 150 ppi */
     pix1 = pixaGetPix(pixa2, 5, L_CLONE);
     box1 = pixaGetBox(pixa2, 5, L_COPY);
     pix2 = pixaGetPix(pixa2, 7, L_CLONE);
     box2 = pixaGetBox(pixa2, 7, L_COPY);
-	leptDebugAddStepLevel(rp->diag_spec);
-	leptDebugSetStepId(rp->diag_spec, 5);
+	leptDebugAddStepLevel();
+	leptDebugSetStepId(5);
     pixGenPhotoHistos(pix1, box1, 1, 1.2, 3, &naa1, &w1, &h1);
-	leptDebugSetStepId(rp->diag_spec, 7);
+	leptDebugSetStepId(7);
 	pixGenPhotoHistos(pix2, box2, 1, 1.2, 3, &naa2, &w2, &h2);
-	(void)leptDebugPopStepLevel(rp->diag_spec);
+	(void)leptDebugPopStepLevel();
 	pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
     if (!naa1 || !naa2) {
@@ -197,7 +192,6 @@ L_REGPARAMS* rp;
     naa4 = l_uncompressGrayHistograms(bytea2, size2, &w2, &h2);
     lept_stderr("*******  (%d, %d), (%d, %d)  *******\n", w1, h1, w2, h2);
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
         /* Set @minratio very small to allow comparison for all pairs */
     compareTilesByHisto(naa3, naa4, 0.1, w1, h1, w2, h2, &score, pixa1);
     pixaDestroy(&pixa1);
@@ -221,7 +215,6 @@ L_REGPARAMS* rp;
      * -------------------------------------------------------------- */
 	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
-	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     n = pixaGetCount(pixa1);
     maxscore = 0.0;
     maxi = 0;
@@ -261,7 +254,6 @@ L_REGPARAMS* rp;
          * histo method.  Output to /tmp/lept/comp/isphoto1.pdf.  */
 	{
     pixa1 = pixaCreateFromPixacomp(pac, L_COPY);
-	pixaSetDiagnosticsSpecPervasively(pixa1, rp->diag_spec);
     n = pixaGetCount(pixa1);
     pixa2 = pixaCreate(n);
     for (i = 0; i < n; i++) {
@@ -288,7 +280,7 @@ L_REGPARAMS* rp;
         pixDestroy(&pix1);
         boxDestroy(&box1);
     }
-	const char* pdfpath = leptDebugGenFilepath(rp->diag_spec, "comp/isphoto1.pdf");
+	const char* pdfpath = leptDebugGenFilepath("comp/isphoto1.pdf");
 	lept_stderr("Writing to: %s\n", pdfpath);
     pixaConvertToPdf(pixa2, 300, 1.0, L_FLATE_ENCODE, 0, NULL,
                          pdfpath);

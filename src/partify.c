@@ -74,8 +74,7 @@ static l_ok boxaRemoveVGaps(BOXA *boxa);
 l_ok
 partifyFiles(const char  *dirname,
              const char  *substr,
-             l_int32      nparts,
-             LDIAG_CTX    diagspec)
+             l_int32      nparts)
 {
 PIXA   *pixadb;
 PIXAC  *pixac;
@@ -85,17 +84,16 @@ PIXAC  *pixac;
     if (nparts < 0 || nparts > 10)
         return ERROR_INT("nparts not in [1 ... 10]", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     pixadb = NULL;
 	if (debugflag) {
 		pixadb = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixadb, diagspec);
 	}
 	pixac = pixacompCreateFromFiles(dirname, substr, IFF_PNG);
     partifyPixac(pixac, nparts, pixadb);
     if (pixadb) {
-		const char* debugfile = leptDebugGenFilepath(diagspec, "partify_debug.pdf");
+		const char* debugfile = leptDebugGenFilepath("partify_debug.pdf");
         L_INFO("writing debug output to %s\n", __func__, debugfile);
         pixaConvertToPdf(pixadb, 300, 1.0, L_FLATE_ENCODE, 0,
                          "Partify Debug", debugfile);
@@ -134,7 +132,6 @@ BOX       *box1, *box2;
 BOXA      *boxa1, *boxa2, *boxa3;
 PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXAC    **pixaca;
-LDIAG_CTX  diagspec = pixaGetDiagnosticsSpec(pixadb);
 
     if (!pixac)
         return ERROR_INT("pixac not defined", __func__, 1);
@@ -228,7 +225,7 @@ LDIAG_CTX  diagspec = pixaGetDiagnosticsSpec(pixadb);
 
         /* Output separate pdfs for each part */
     for (i = 0; i < nparts; i++) {
-		const char* debugfile = leptDebugGenFilepath(diagspec, "@PREFIX@-%d.pdf", i);
+		const char* debugfile = leptDebugGenFilepath("@PREFIX@-%d.pdf", i);
         L_INFO("writing part %d: %s\n", __func__, i, debugfile);
         pixacompConvertToPdf(pixaca[i], 300, 1.0, L_G4_ENCODE, 0, NULL, debugfile);
         pixacompDestroy(&pixaca[i]);

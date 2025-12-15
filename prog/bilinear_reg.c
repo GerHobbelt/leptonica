@@ -91,7 +91,6 @@ L_REGPARAMS* rp;
         /* Test non-invertability of sampling */
     lept_stderr("Test invertability of sampling\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 1; i < 3; i++) {
         pixb = pixAddBorder(pixg, ADDED_BORDER_PIXELS, 255);
         MakePtas(i, &ptas, &ptad);
@@ -122,7 +121,6 @@ L_REGPARAMS* rp;
         /* Test invertability of grayscale interpolation */
     lept_stderr("Test invertability of grayscale interpolation\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 1; i < 3; i++) {
         pixb = pixAddBorder(pixg, ADDED_BORDER_PIXELS, 255);
         MakePtas(i, &ptas, &ptad);
@@ -153,7 +151,6 @@ L_REGPARAMS* rp;
         /* Test invertability of color interpolation */
     lept_stderr("Test invertability of color interpolation\n");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
 	pixc = pixRead(DEMOPATH("test24.jpg"));
     pixcs = pixScale(pixc, 0.3, 0.3);
@@ -190,7 +187,6 @@ L_REGPARAMS* rp;
     lept_stderr("Compare sampling with interpolated\n");
     MakePtas(2, &ptas, &ptad);
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Use sampled transform */
     pix1 = pixBilinearSampledPta(pixg, ptas, ptad, L_BRING_IN_WHITE);
@@ -223,7 +219,6 @@ L_REGPARAMS* rp;
     lept_stderr("Large bilinear distortion with inversion\n");
     MakePtas(0, &ptas, &ptad);
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
 	pixs = pixRead(DEMOPATH("marge.jpg"));
     pixg = pixConvertTo8(pixs, 0);

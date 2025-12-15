@@ -82,7 +82,6 @@ L_REGPARAMS* rp;
 
         /* More general method */
     pixadb = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixadb, rp->diag_spec);
     pixFindColorRegions(pix1, NULL, 4, 200, 60, 10, 90, 0.05,
                         &fcolor, &pix3, &pix4, pixadb);
     lept_stderr("ncolor = %f\n", fcolor);
@@ -220,13 +219,6 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
     if (mindiff < 0) mindiff = 50;
     if (colordiff < 0) colordiff = 40;
 
-	LDIAG_CTX diagspec = NULL;
-	if (pixadb) {
-		diagspec = pixaGetDiagnosticsSpec(pixadb);
-		if (!diagspec)
-			diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, pixm);
-	}
-
         /* Check if pixm covers most of the image.  If so, just return. */
     pixGetDimensions(pixs, &w, &h, NULL);
     if (pixm) {
@@ -263,7 +255,7 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pixm1, *pixm2, *pixm3;
     pixDestroy(&pix2);
     if (pixadb) {
         L_INFO("val at 0.95 rank = %5.1f\n", __func__, val95);
-		pix3 = gplotSimplePix1(diagspec, nah, "lept/histo1", "gray histo");
+		pix3 = gplotSimplePix1(nah, "lept/histo1", "gray histo");
         pix4 = pixExpandReplicate(pix3, 2);
         pixaAddPix(pixadb, pix4, L_INSERT);
         pixDestroy(&pix3);

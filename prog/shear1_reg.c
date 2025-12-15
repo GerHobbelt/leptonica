@@ -72,7 +72,6 @@ L_REGPARAMS* rp;
 
     lept_stderr("Test binary image:\n");
     pixs = pixRead(BINARY_IMAGE);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0 */
     pixDisplayWithTitle(pixd, 100, 100, NULL);
@@ -84,7 +83,6 @@ L_REGPARAMS* rp;
          * can't bring in black because the cmap is filled. */
     lept_stderr("Test 2 bpp cmapped image with filled cmap:\n");
     pixs = pixRead(TWO_BPP_IMAGE);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	cmap = pixGetColormap(pixs);
     pixcmapGetIndex(cmap, 40, 44, 40, &index);
     pixcmapResetColor(cmap, index, 100, 0, 0);
@@ -96,7 +94,6 @@ L_REGPARAMS* rp;
 
     lept_stderr("Test 4 bpp cmapped image with unfilled cmap:\n");
     pixs = pixRead(FOUR_BPP_IMAGE1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 2 */
     pixDisplayWithTitle(pixd, 100, 100, NULL);
@@ -105,7 +102,6 @@ L_REGPARAMS* rp;
 
     lept_stderr("Test 4 bpp cmapped image with filled cmap:\n");
     pixs = pixRead(FOUR_BPP_IMAGE2);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 3 */
     pixDisplayWithTitle(pixd, 100, 100, NULL);
@@ -114,7 +110,6 @@ L_REGPARAMS* rp;
 
     lept_stderr("Test 8 bpp grayscale image:\n");
     pixs = pixRead(EIGHT_BPP_IMAGE);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixScale(pixs, 0.5, 0.5);
     pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 4 */
@@ -125,7 +120,6 @@ L_REGPARAMS* rp;
 
     lept_stderr("Test 8 bpp grayscale cmap image:\n");
     pixs = pixRead(EIGHT_BPP_CMAP_IMAGE1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixd = shearTest1(pixs, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 5 */
     pixDisplayWithTitle(pixd, 100, 100, NULL);
@@ -134,7 +128,6 @@ L_REGPARAMS* rp;
 
     lept_stderr("Test 8 bpp color cmap image:\n");
     pixs = pixRead(EIGHT_BPP_CMAP_IMAGE2);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixScale(pixs, 0.3, 0.3);
     pixd = pixOctreeColorQuant(pix1, 200, 0);
     pixc = shearTest1(pixd, 1.0);
@@ -147,7 +140,6 @@ L_REGPARAMS* rp;
 
     lept_stderr("Test rgb image:\n");
     pixs = pixRead(RGB_IMAGE);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixScale(pixs, 0.3, 0.3);
     pixd = shearTest1(pix1, 1.0);
     regTestWritePixAndCheck(rp, pixd, IFF_JFIF_JPEG);  /* 7 */
@@ -159,7 +151,6 @@ L_REGPARAMS* rp;
 #if 1
     lept_stderr("Test in-place shear on 4 bpp cmapped image:\n");
     pixs = pixRead(FOUR_BPP_IMAGE1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixd = shearTest2(pixs, rp);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 12 */
     pixDisplayWithTitle(pixd, 800, 100, NULL);
@@ -180,7 +171,6 @@ PIX     *pix1, *pix2, *pixd;
 PIXA    *pixa;
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
 	pixGetDimensions(pixs, &w, &h, &d);
 
     pix1 = pixHShear(NULL, pixs, 0, ANGLE1, L_BRING_IN_WHITE);
@@ -268,7 +258,6 @@ PIX     *pix1, *pix2, *pixd;
 PIXA    *pixa;
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
 	pixGetDimensions(pixs, &w, &h, NULL);
 
     pix1 = pixHShear(NULL, pixs, h / 2, ANGLE1, L_BRING_IN_WHITE);

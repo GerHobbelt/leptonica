@@ -102,9 +102,6 @@ L_REGPARAMS* rp;
     pixa2 = pixaCreate(0);   /* to generate a small BAR */
     pixa3 = pixaCreate(0);   /* for templates to be labeled and
                               * added to the BAR */
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
-	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
-	pixaSetDiagnosticsSpec(pixa3, rp->diag_spec);
 	n = pixaGetCount(pixa1);
     for (i = 0; i < 10; i++)
         histo[i] = 0;
@@ -147,7 +144,7 @@ L_REGPARAMS* rp;
 
         /* Test recog serialization */
     recogWrite("/tmp/lept/recog/recog2.rec", recog2);
-    recog3 = recogRead("/tmp/lept/recog/recog2.rec", rp->diag_spec);
+    recog3 = recogRead("/tmp/lept/recog/recog2.rec");
     recogWrite("/tmp/lept/recog/recog3.rec", recog3);
     filesAreIdentical("/tmp/lept/recog/recog2.rec",
                       "/tmp/lept/recog/recog3.rec", &same);

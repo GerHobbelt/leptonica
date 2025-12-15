@@ -84,7 +84,6 @@ L_REGPARAMS* rp;
 
         /* Contrast normalization followed by Sauvola */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
 	pix1 = pixSauvolaOnContrastNorm(pixs, 130, NULL, NULL);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 30 */
@@ -129,7 +128,6 @@ PIXA    *pixa;
         /* Get results witout tiling */
     pixSauvolaBinarize(pixs, size, factor, 1, &pixm, &pixsd, &pixth, &pixd);
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
 	pixaAddPix(pixa, pixm, L_INSERT);
     pixaAddPix(pixa, pixsd, L_INSERT);
@@ -171,9 +169,8 @@ PIXA    *pixa;
     pixSauvolaBinarizeTiled(pixs, size, factor, nx, ny, &pixth, &pixd);
     regTestWritePixAndCheck(rp, pixth, IFF_JFIF_JPEG);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);
-    if (rp->index < 7 && leptIsInDisplayMode(rp->diag_spec)) {
+    if (rp->index < 7 && leptIsInDisplayMode()) {
         pixa = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 		pixaAddPix(pixa, pixth, L_COPY);
         pixaAddPix(pixa, pixd, L_COPY);
         pix1 = pixaDisplayTiledInColumns(pixa, 2, 1.0, 30, 2);

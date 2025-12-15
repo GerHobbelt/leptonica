@@ -75,7 +75,6 @@ L_REGPARAMS* rp;
 
         /* Set up the input data */
     pix1 = pixRead(DEMOPATH("pageseg1.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixGetDimensions(pix1, &w, &h, NULL);
     box = boxCreate(0, 0, w, h / 2);
     pix2 = pixClipRectangle(pix1, box, NULL);
@@ -83,7 +82,6 @@ L_REGPARAMS* rp;
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pix1 = pixRead(DEMOPATH("pageseg4.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixClipRectangle(pix1, box, NULL);
     pixWrite("/tmp/lept/class/pix2.tif", pix2, IFF_TIFF_G4);
     pixDestroy(&pix1);
@@ -105,14 +103,13 @@ L_REGPARAMS* rp;
     lept_stderr("Number of classes: %d\n", classer->nclass);
 
     pix1 = pixRead("/tmp/lept/class/corr.templates.png");
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 0 */
     pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixDestroy(&pix1);
 
         /* Render the pages from the classifier data.
          * Use debugflag == FALSE to omit outlines of each component. */
-    pixa1 = jbDataRender(data, rp->diag_spec);
+    pixa1 = jbDataRender(data);
     for (i = 0; i < 2; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
         regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 1, 2 */
@@ -147,14 +144,13 @@ L_REGPARAMS* rp;
     lept_stderr("Number of classes: %d\n", classer->nclass);
 
     pix1 = pixRead("/tmp/lept/class2/haus.templates.png");
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 4 */
     pixDisplayWithTitle(pix1, 200, 0, NULL);
     pixDestroy(&pix1);
 
         /* Render the pages from the classifier data.
          * Use debugflag == FALSE to omit outlines of each component. */
-    pixa1 = jbDataRender(data, rp->diag_spec);
+    pixa1 = jbDataRender(data);
     for (i = 0; i < 2; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
         regTestWritePixAndCheck(rp, pix1, IFF_TIFF_G4);  /* 5, 6 */
@@ -206,7 +202,6 @@ PIXA    *pixad;
 
         /* Add a boundary of 3 white and 1 black pixels to templates */
     pixad = pixaCreate(n);
-	pixaCloneDiagnosticsSpec(pixad, pixas);
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixas, i, L_CLONE);
         numaGetIValue(nai, i, &val);

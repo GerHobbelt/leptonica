@@ -52,9 +52,8 @@
 
 
 static L_AMAP *BuildMapHistogram(PIX *pix, l_int32 factor, l_int32 print);
-static void DisplayMapHistogram(L_AMAP *m, PIXCMAP *cmap, LDIAG_CTX diagspec,
-                                const char *rootname);
-static void DisplayMapRGBHistogram(L_AMAP *m, LDIAG_CTX diagspec, const char *rootname);
+static void DisplayMapHistogram(L_AMAP *m, PIXCMAP *cmap, const char *rootname);
+static void DisplayMapRGBHistogram(L_AMAP *m, const char *rootname);
 static void TestMapIterator1(L_AMAP *m, l_int32  print);
 static void TestMapIterator2(L_AMAP *m, l_int32  print);
 static void TestMapIterator3(L_AMAP *m, l_int32  print);
@@ -96,12 +95,12 @@ L_REGPARAMS* rp;
     m = BuildMapHistogram(pix, 1, FALSE);
     TestMapIterator1(m, FALSE);
     TestMapIterator2(m, FALSE);
-    DisplayMapHistogram(m, cmap, rp->diag_spec, "/tmp/lept/map/map1");
+    DisplayMapHistogram(m, cmap, "/tmp/lept/map/map1");
     l_amapDestroy(&m);
 
         /* Ditto, but just with a few pixels */
     m = BuildMapHistogram(pix, 14, TRUE);
-    DisplayMapHistogram(m, cmap, rp->diag_spec, "/tmp/lept/map/map2");
+    DisplayMapHistogram(m, cmap, "/tmp/lept/map/map2");
     l_amapDestroy(&m);
 
         /* Do in-order tranversals, using the iterators */
@@ -126,7 +125,7 @@ L_REGPARAMS* rp;
         /* Build a histogram the old-fashioned way */
     na = pixGetCmapHistogram(pix, 1);
     numaWrite("/tmp/lept/map/map2.na", na);
-    gplotSimple1(rp->diag_spec, na, GPLOT_PNG, "/tmp/lept/map/map3", NULL);
+    gplotSimple1(na, GPLOT_PNG, "/tmp/lept/map/map3", NULL);
     numaDestroy(&na);
 
         /* Build a separate map from (rgb) --> colormap index ... */
@@ -152,7 +151,7 @@ L_REGPARAMS* rp;
         /* Build and display a real RGB histogram */
     pix = pixRead(DEMOPATH("wyom.jpg"));
     m = pixGetColorAmapHistogram(pix, 1);
-    DisplayMapRGBHistogram(m, rp->diag_spec, "/tmp/lept/map/map4");
+    DisplayMapRGBHistogram(m, "/tmp/lept/map/map4");
     pixNumColors(pix, 1, &ncolors);
     lept_stderr(" Using pixNumColors: %d\n", ncolors);
     pixCountRGBColors(pix, 1, &ncolors);
@@ -210,8 +209,7 @@ RB_TYPE   *pval;
 static void
 DisplayMapHistogram(L_AMAP      *m,
                     PIXCMAP     *cmap,
-				    LDIAG_CTX    diagspec,
-                    const char  *rootname)
+				    const char  *rootname)
 {
 char      buf[128];
 l_int32   i, n, ival;
@@ -231,7 +229,7 @@ RB_TYPE  *pval;
             numaAddNumber(na, ival);
         }
     }
-    gplotSimple1(diagspec, na, GPLOT_PNG, rootname, NULL);
+    gplotSimple1(na, GPLOT_PNG, rootname, NULL);
     snprintf(buf, sizeof(buf), "%s.png", rootname);
     l_fileDisplay(buf, 700, 0, 1.0);
     numaDestroy(&na);
@@ -240,8 +238,7 @@ RB_TYPE  *pval;
 
 static void
 DisplayMapRGBHistogram(L_AMAP      *m,
-	                   LDIAG_CTX diagspec,
-                       const char  *rootname)
+	                   const char  *rootname)
 {
 char          buf[128];
 l_int32       ncolors, npix, ival, maxn, maxn2;
@@ -271,7 +268,7 @@ NUMA         *na;
     maxn2 = amapGetCountForColor(m, maxcolor);
     if (maxn != maxn2)
         lept_stderr(" Error: maxn2 = %d; not equal to %d\n", maxn, maxn2);
-    gplotSimple1(diagspec, na, GPLOT_PNG, rootname, NULL);
+    gplotSimple1(na, GPLOT_PNG, rootname, NULL);
     snprintf(buf, sizeof(buf), "%s.png", rootname);
     l_fileDisplay(buf, 1400, 0, 1.0);
     numaDestroy(&na);

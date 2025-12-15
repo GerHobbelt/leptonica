@@ -68,7 +68,6 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
     /* --------------------------------------------------------------- *
      *         Test pixConnComp() and pixCountConnComp(),              *
@@ -143,7 +142,7 @@ L_REGPARAMS* rp;
     cmap = pixGetColormap(pix1);
     pixcmapResetColor(cmap, 0, 255, 255, 255);  /* reset background to white */
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 11 */
-    if (leptIsInDisplayMode(rp->diag_spec)) pixDisplay(pix1, 100, 0);
+    if (leptIsInDisplayMode()) pixDisplay(pix1, 100, 0);
     boxaDestroy(&boxa1);
     pixDestroy(&pix1);
     pixaDestroy(&pixa1);
@@ -153,9 +152,7 @@ L_REGPARAMS* rp;
      *  Test iterative covering of connected components by rectangles  *
      * --------------------------------------------------------------- */
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pix1 = pixRead(DEMOPATH("rabi.png"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixReduceRankBinaryCascade(pix1, 1, 1, 1, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 12 -  */
     pixaAddPix(pixa1, pix2, L_INSERT);

@@ -75,12 +75,10 @@ PIXCMAP      *cmap;
 
         /* Generate a pdf of results when called with display */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
         /* Generate colors by sampling hue with max sat and value.
          * This image has been saved as 19-colors.png.  */
     pixat = pixaCreate(19);
-	pixaSetDiagnosticsSpec(pixat, rp->diag_spec);
 	for (i = 0; i < 19; i++) {
         convertHSVToRGB((240 * i / 18), 255, 255, &rval, &gval, &bval);
         composeRGBPixel(rval, gval, bval, &pixel);
@@ -95,7 +93,6 @@ PIXCMAP      *cmap;
 
         /* Colorspace conversion in rgb */
     pixs = pixRead(DEMOPATH("wyom.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixaAddPix(pixa, pixs, L_INSERT);
     pix3 = pixConvertRGBToHSV(NULL, pixs);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 1 */
@@ -109,13 +106,13 @@ PIXCMAP      *cmap;
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 3 */
     pixaAddPix(pixa, pix3, L_COPY);
     cmap = pixGetColormap(pix3);
-    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode()) pixcmapWriteStream(stderr, cmap);
     pixcmapConvertRGBToHSV(cmap);
-    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode()) pixcmapWriteStream(stderr, cmap);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 4 */
     pixaAddPix(pixa, pix3, L_COPY);
     pixcmapConvertHSVToRGB(cmap);
-    if (leptIsInDisplayMode(rp->diag_spec)) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode()) pixcmapWriteStream(stderr, cmap);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 5 */
     pixaAddPix(pixa, pix3, L_INSERT);
 
@@ -176,10 +173,10 @@ PIXCMAP      *cmap;
         }
         pixDestroy(&pix1);
     }
-    gplot1 = gplotCreate(rp->diag_spec, "/tmp/lept/regout/colorspace.10", GPLOT_PNG,
+    gplot1 = gplotCreate("/tmp/lept/regout/colorspace.10", GPLOT_PNG,
                          "Fraction with given color (diff from average)",
                          "white point space for red", "amount of color");
-    gplot2 = gplotCreate(rp->diag_spec, "/tmp/lept/regout/colorspace.11", GPLOT_PNG,
+    gplot2 = gplotCreate("/tmp/lept/regout/colorspace.11", GPLOT_PNG,
                          "Fraction with given color (min diff)",
                          "white point space for red", "amount of color");
     for (j = 0; j < 6; j++) {
@@ -208,7 +205,7 @@ PIXCMAP      *cmap;
     regTestCheckFile(rp, "/tmp/lept/regout/colorspace.10.png");  /* 10 */
     regTestCheckFile(rp, "/tmp/lept/regout/colorspace.11.png");  /* 11 */
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix3 = pixRead("/tmp/lept/regout/colorspace.10.png");
         pixaAddPix(pixa, pix3, L_INSERT);
         pix3 = pixRead("/tmp/lept/regout/colorspace.11.png");

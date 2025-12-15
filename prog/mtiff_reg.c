@@ -87,7 +87,6 @@ SARRAY       *sa;
     writeMultipageTiff(".", "weasel8.", "/tmp/lept/tiff/weasel8.tif");
     regTestCheckFile(rp, "/tmp/lept/tiff/weasel8.tif");  /* 0 */
     pixa = pixaReadMultipageTiff("/tmp/lept/tiff/weasel8.tif");
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixaDisplayTiledInRows(pixa, 1, 1200, 0.5, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
     pixDisplayWithTitle(pix1, 0, 0, NULL);
@@ -107,17 +106,15 @@ SARRAY       *sa;
     offset = 0;
     n = 0;
     pixa = pixaCreate(8);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	do {
         pix1 = pixReadFromMultipageTiff("/tmp/lept/tiff/weasel8.tif", &offset);
         if (!pix1) continue;
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		pixaAddPix(pixa, pix1, L_INSERT);
-        if (leptIsInDisplayMode(rp->diag_spec))
+        if (leptIsInDisplayMode())
              lept_stderr("offset = %ld\n", (unsigned long)offset);
         n++;
     } while (offset != 0);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Num images = %d\n", n);
+    if (leptIsInDisplayMode()) lept_stderr("Num images = %d\n", n);
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.2, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 4 */
     pixDisplayWithTitle(pix1, 0, 600, NULL);
@@ -129,18 +126,16 @@ SARRAY       *sa;
     offset = 0;
     n = 0;
     pixa = pixaCreate(8);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	data = l_binaryRead("/tmp/lept/tiff/weasel8.tif", &size);
     do {
         pix1 = pixReadMemFromMultipageTiff(data, size, &offset);
         if (!pix1) continue;
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		pixaAddPix(pixa, pix1, L_INSERT);
-        if (leptIsInDisplayMode(rp->diag_spec))
+        if (leptIsInDisplayMode())
             lept_stderr("offset = %ld\n", (unsigned long)offset);
         n++;
     } while (offset != 0);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Num images = %d\n", n);
+    if (leptIsInDisplayMode()) lept_stderr("Num images = %d\n", n);
     pix1 = pixaDisplayTiledInRows(pixa, 32, 1200, 1.2, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 5 */
     pixDisplayWithTitle(pix1, 0, 800, NULL);
@@ -158,7 +153,6 @@ SARRAY       *sa;
          *  quadratic, and the actual wall clock time is significantly
          *  more than the printed value. */
     pix1 = pixRead(DEMOPATH("char.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	startTimer();
     pixWriteTiff("/tmp/lept/tiff/junkm.tif", pix1, IFF_TIFF_G4, "w");
     for (i = 1; i < 1000; i++) {
@@ -166,7 +160,7 @@ SARRAY       *sa;
     }
     regTestCheckFile(rp, "/tmp/lept/tiff/junkm.tif");  /* 8 */
     pixDestroy(&pix1);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("\n1000 image file: /tmp/lept/tiff/junkm.tif\n");
         lept_stderr("Time to write 1000 images: %7.3f sec\n", stopTimer());
     }
@@ -177,19 +171,17 @@ SARRAY       *sa;
     do {
         pix1 = pixReadFromMultipageTiff("/tmp/lept/tiff/junkm.tif", &offset);
         if (!pix1) continue;
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
-		if (leptIsInDisplayMode(rp->diag_spec) && (n % 100 == 0))
+		if (leptIsInDisplayMode() && (n % 100 == 0))
             lept_stderr("offset = %ld\n", (unsigned long)offset);
         pixDestroy(&pix1);
         n++;
     } while (offset != 0);
     regTestCompareValues(rp, 1000, n, 0);  /* 9 */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("Time to read %d images: %6.3f sec\n", n, stopTimer());
 
     startTimer();
     pixa = pixaReadMultipageTiff("/tmp/lept/tiff/junkm.tif");
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	lept_stderr("Time to read %d images and return a pixa: %6.3f sec\n",
             pixaGetCount(pixa), stopTimer());
     pix1 = pixaDisplayTiledInRows(pixa, 8, 1500, 0.8, 0, 15, 4);
@@ -205,9 +197,7 @@ SARRAY       *sa;
          * (5) generates pixa3 by uncompressing the memory data
          * (6) compares pixa3 with pixa1   */
     pix1 = pixRead(DEMOPATH("weasel8.240c.png"));  /* (1) */
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixa1 = pixaCreate(10);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	for (i = 0; i < 10; i++)
         pixaAddPix(pixa1, pix1, L_COPY);
     pixDestroy(&pix1);
@@ -223,16 +213,15 @@ SARRAY       *sa;
         n++;
     } while (offset != 0);
     regTestCompareValues(rp, 10, n, 0);  /* 12 */
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("\nRead %d images\n", n);
+    if (leptIsInDisplayMode()) lept_stderr("\nRead %d images\n", n);
     lept_free(data);
     pixaWriteMemMultipageTiff(&data, &size, pixa2);  /* (4) */
     pixa3 = pixaReadMemMultipageTiff(data, size);  /* (5) */
-	pixaSetDiagnosticsSpec(pixa3, rp->diag_spec);
 	pix1 = pixaDisplayTiledInRows(pixa3, 8, 1500, 0.8, 0, 15, 4);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 13 */
     pixDestroy(&pix1);
     n = pixaGetCount(pixa3);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Write/read %d images\n", n);
+    if (leptIsInDisplayMode()) lept_stderr("Write/read %d images\n", n);
     success = TRUE;
     for (i = 0; i < n; i++) {
         pix1 = pixaGetPix(pixa1, i, L_CLONE);
@@ -252,16 +241,15 @@ SARRAY       *sa;
         /* Read the files and generate a multipage tiff file of G4 images.
          * Then convert that to a G4 compressed and ascii85 encoded PS file. */
     sa = getSortedPathnamesInDirectory(".", "weasel4.", 0, 4);
-    if (leptIsInDisplayMode(rp->diag_spec)) sarrayWriteStderr(sa);
+    if (leptIsInDisplayMode()) sarrayWriteStderr(sa);
     sarraySort(sa, sa, L_SORT_INCREASING);
-    if (leptIsInDisplayMode(rp->diag_spec)) sarrayWriteStderr(sa);
+    if (leptIsInDisplayMode()) sarrayWriteStderr(sa);
     npages = sarrayGetCount(sa);
     for (i = 0; i < npages; i++) {
         fname = sarrayGetString(sa, i, L_NOCOPY);
         filename = genPathname(".", fname);
         pix1 = pixRead(filename);
         if (!pix1) continue;
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		pix2 = pixConvertTo1(pix1, 128);
         if (i == 0)
             pixWriteTiff("/tmp/lept/tiff/weasel4", pix2, IFF_TIFF_G4, "w+");
@@ -305,7 +293,6 @@ SARRAY       *sa;
     for (i = 0; i < npages + 1; i++) {   /* read one beyond to catch error */
         pix1 = pixReadTiff(weasel_orig, i);
         if (!pix1) continue;
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		snprintf(buf, sizeof(buf), "/tmp/lept/tiff/%03d.tif", i);
         pixWrite(buf, pix1, IFF_TIFF_ZIP);
         pixDestroy(&pix1);
@@ -316,7 +303,6 @@ SARRAY       *sa;
         snprintf(buf, sizeof(buf), "/tmp/lept/tiff/%03d.tif", i);
         pix1 = pixRead(buf);
         if (!pix1) continue;
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		if (i == npages - 1)
             pixWriteTiff(weasel_rev, pix1, IFF_TIFF_ZIP, "w+");
         else
@@ -327,10 +313,8 @@ SARRAY       *sa;
 
         /* Read reversed file and reverse again */
     pixa = pixaCreate(npages);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < npages; i++) {
         pix1 = pixReadTiff(weasel_rev, i);
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		pixaAddPix(pixa, pix1, L_INSERT);
     }
     for (i = npages - 1; i >= 0; i--) {
@@ -353,7 +337,6 @@ SARRAY       *sa;
     SARRAY       *savals, *satypes;
 
     pix1 = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	naflags = numaCreate(10);
     savals = sarrayCreate(10);
     satypes = sarrayCreate(10);

@@ -145,8 +145,7 @@ PIX       *pixd;
     if (pixGetDepth(pixs) != 32)
         return (PIX *)ERROR_PTR("must be rgb color", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Phase 1; original segmentation */
     pixd = pixColorSegmentCluster(pixs, maxdist, maxcolors);
@@ -154,7 +153,7 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     if (debugflag) {
         //lept_mkdir("lept/segment");
-		const char* pixpath = leptDebugGenFilepath(diagspec, "segment/colorseg1.png");
+		const char* pixpath = leptDebugGenFilepath("segment/colorseg1.png");
         pixWriteDebug(pixpath, pixd, IFF_PNG);
     }
 
@@ -162,7 +161,7 @@ PIX       *pixd;
     countarray = (l_int32 *)LEPT_CALLOC(256, sizeof(l_int32));
     pixAssignToNearestColor(pixd, pixs, NULL, LEVEL_IN_OCTCUBE, countarray);
     if (debugflag) {
-		const char* pixpath = leptDebugGenFilepath(diagspec, "segment/colorseg2.png");
+		const char* pixpath = leptDebugGenFilepath("segment/colorseg2.png");
 		pixWriteDebug(pixpath, pixd, IFF_PNG);
 	}
 
@@ -170,7 +169,7 @@ PIX       *pixd;
     pixColorSegmentClean(pixd, selsize, countarray);
     LEPT_FREE(countarray);
     if (debugflag) {
-		const char* pixpath = leptDebugGenFilepath(diagspec, "segment/colorseg3.png");
+		const char* pixpath = leptDebugGenFilepath("segment/colorseg3.png");
 		pixWriteDebug(pixpath, pixd, IFF_PNG);
 	}
 
@@ -218,7 +217,7 @@ PIXCMAP  *cmap;
     if (pixGetDepth(pixs) != 32)
         return (PIX *)ERROR_PTR("must be rgb color", __func__, NULL);
 
-	l_ok debugflag = pixIsDebugModeActive(pixs);
+	l_ok debugflag = leptIsDebugModeActive();
 
     pixGetDimensions(pixs, &w, &h, NULL);
     if ((pixd = pixCreate(w, h, 8)) == NULL)
@@ -226,7 +225,6 @@ PIXCMAP  *cmap;
     cmap = pixcmapCreate(8);
     pixSetColormap(pixd, cmap);
     pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
     newmaxdist = maxdist;
     niters = 0;
@@ -296,7 +294,7 @@ PIXCMAP   *cmap;
     if (!pixd)
         return ERROR_INT("pixd not defined", __func__, 1);
 
-	l_ok debugflag = pixIsDebugModeActive(pixs);
+	l_ok debugflag = leptIsDebugModeActive();
 
     w = pixGetWidth(pixs);
     h = pixGetHeight(pixs);

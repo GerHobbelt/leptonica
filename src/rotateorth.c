@@ -183,7 +183,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	pixCopySpp(pixd, pixs);
 
     datas = pixGetData(pixs);

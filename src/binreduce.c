@@ -96,7 +96,6 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, 0.5, 0.5);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
 
@@ -253,7 +252,6 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
     pixScaleResolution(pixd, 0.5, 0.5);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wpld = pixGetWpl(pixd);
     datad = pixGetData(pixd);
 

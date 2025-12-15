@@ -101,12 +101,12 @@ void PixAddEdgeData(PIXA    *pixa,
 l_float32  jpl, jspl, rpl;
 PIX       *pixt1, *pixt2;
 
-	leptDebugSetFilenameForPrefix(rp->diag_spec, "junkedge.png", -1);
+	leptDebugSetFilenameForPrefix("junkedge.png", -1);
     pixMeasureEdgeSmoothness(pixs, side, minjump, minreversal, &jpl,
-                             &jspl, &rpl, rp->diag_spec);
+                             &jspl, &rpl);
     lept_stderr("side = %d: jpl = %6.3f, jspl = %6.3f, rpl = %6.3f\n",
                 side, jpl, jspl, rpl);
-	const char* pixpath = leptDebugGetLastGenFilepath(rp->diag_spec);
+	const char* pixpath = leptDebugGetLastGenFilepath();
 
 	// TODO: get rid of the ridiculous round trip through the filesystem.
     pixt1 = pixRead("/tmp/junkedge.png");

@@ -92,7 +92,6 @@ L_REGPARAMS* rp;
         /* Get a 1 bpp version of the page */
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	if (pixGetDepth(pixs) == 32)
         pixg = pixConvertRGBToGrayFast(pixs);
     else

@@ -667,13 +667,11 @@ PIXA      *pixa1;
                   __func__, maxwiden);
     if (printwiden < 0 || printwiden > 2) printwiden = 0;
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
 	pixa1 = NULL;
 	if (debugflag) {
 		pixa1 = pixaCreate(5);
-		pixaSetDiagnosticsSpec(pixa1, diagspec);
 	}
 	if (pixa1) {
 		pixaAddPix(pixa1, pixs, L_COPY);
@@ -771,7 +769,7 @@ PIXA      *pixa1;
         boxDestroy(&box2);
     if (pixa1) {
        pixaAddPix(pixa1, pix4, L_COPY);
-	   const char* pdfpath = leptDebugGenFilepath(diagspec, "@PREFIX@.pdf");
+	   const char* pdfpath = leptDebugGenFilepath("@PREFIX@.pdf");
        lept_stderr("Writing debug file: %s\n", pdfpath);
        pixaConvertToPdf(pixa1, 0, 1.0, L_DEFAULT_ENCODE, 0, NULL, pdfpath);
        pixaDestroy(&pixa1);
@@ -1300,7 +1298,6 @@ PIXA   *pixa1, *pixadb;
     if (!pixs || pixGetDepth(pixs) != 1)
         return ERROR_INT("pixs not defined or not 1 bpp", __func__, 1);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 
         /* Remove the small stuff */
     pix1 = pixSelectBySize(pixs, minw, minh, 8, L_SELECT_IF_BOTH,
@@ -1321,7 +1318,6 @@ PIXA   *pixa1, *pixadb;
     pixadb = NULL;
 	if (ppixdebug) {
 		pixadb = pixaCreate(ncomp);
-		pixaSetDiagnosticsSpec(pixadb, diagspec);
 	}
 	for (i = 0; i < ncomp; i++) {
         pix = pixaGetPix(pixa1, i, L_CLONE);
@@ -1403,7 +1399,6 @@ PIX      *pix1, *pixdb;
     if (!pixs || pixGetDepth(pixs) != 1)
         return (BOXA *)ERROR_PTR("pixa undefined or not 1 bpp", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 
     pixGetDimensions(pixs, &w, &h, NULL);
 
@@ -1450,9 +1445,9 @@ PIX      *pix1, *pixdb;
     }
     nsplit = numaGetCount(nasplit);
 
-    if (ppixdebug && nsplit > 0 && leptIsDebugModeActive(diagspec)) {
+    if (ppixdebug && nsplit > 0 && leptIsDebugModeActive()) {
         //lept_mkdir("lept/split");
-        gplotSimple1(diagspec, na1, GPLOT_PNG, "/tmp/lept/split/split", NULL);
+        gplotSimple1(na1, GPLOT_PNG, "/tmp/lept/split/split", NULL);
     }
 
     numaDestroy(&na1);
@@ -1561,7 +1556,6 @@ PIXA    *pixa1, *pixa2, *pixa3;
     if (!pixs)
         return (PIXA *)ERROR_PTR("pixs not defined", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 
         /* Binarize carefully, if necessary */
     if (pixGetDepth(pixs) > 1) {
@@ -1891,9 +1885,8 @@ PIX       *pix1, *pix2, *pix3, *pix4, *pix5;
     na1 = pixCountByColumn(pix4, NULL);
 
     if (pixadb) {
-		LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 		//lept_mkdir("lept/textcol");
-		pix5 = gplotSimplePix1(diagspec, na1, "/tmp/lept/textcol/plot", "text column counts");
+		pix5 = gplotSimplePix1(na1, "/tmp/lept/textcol/plot", "text column counts");
         pixaAddPix(pixadb, pix5, L_INSERT);
     }
 
@@ -2808,8 +2801,7 @@ PIXA    *pixadb;
         select != L_LARGEST_AREA && select != L_SMALLEST_AREA)
         return (BOX *)ERROR_PTR("invalid select", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Extract the c.c. if necessary */
     x = y = 0;
@@ -2830,7 +2822,6 @@ PIXA    *pixadb;
 	pixadb = NULL;
 	if (debugflag) {
 		pixadb = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixadb, diagspec);
 	}
 	pixdb1 = NULL;
     if (pixadb) {

@@ -250,7 +250,6 @@ PIXA    *pixa;
     if (recogRunViterbi(recog, &pix1))
         return (BOXA *)ERROR_PTR("error in viterbi", __func__, NULL);
     pixa = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa, recog->diag_specX);
     pixaAddPix(pixa, pix1, L_INSERT);
     if (recogRescoreDidResult(recog, &pix1)) {
         pixaDestroy(&pixa);

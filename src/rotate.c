@@ -282,7 +282,6 @@ PIX       *pixd;
     pixCopyColormap(pixd, pixs);
     pixCopySpp(pixd, pixs);
     pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	xoff = (wnew - w) / 2;
     yoff = (hnew - h) / 2;
 

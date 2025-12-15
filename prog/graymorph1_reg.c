@@ -81,9 +81,7 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("aneurisms8.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     /* =========================================================== */
 
@@ -197,7 +195,6 @@ L_REGPARAMS* rp;
     /* =========================================================== */
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	/* ---------- Closing plus white tophat result ------------ *
      *            Parameters: wsize, hsize = 9, 29             *
      * ---------------------------------------------------------*/
@@ -278,11 +275,9 @@ L_REGPARAMS* rp;
     /* =========================================================== */
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     /* ----  Tophat result on feynman stamp, to extract diagrams ----- */
     pixs = pixRead(DEMOPATH("feynman-stamp.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixGetDimensions(pixs, &w, &h, NULL);
 
         /* Make output image to hold five intermediate images */

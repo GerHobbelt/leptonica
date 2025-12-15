@@ -64,7 +64,6 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(argv[1])) == NULL)
        	return ERROR_INT("pixs not made", __func__, 1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	d = pixGetDepth(pixs);
 
 #if 1
@@ -296,7 +295,7 @@ L_REGPARAMS* rp;
         pixd = pixAbsDifference(pix1, pix2);
         pixGetColorHistogram(pixd, 1, &nar, &nag, &nab);
         naseq = numaMakeSequence(0., 1., 256);
-        gplot = gplotCreate(rp->diag_spec, "/tmp/lept/scale/c_absdiff", GPLOT_PNG,
+        gplot = gplotCreate("/tmp/lept/scale/c_absdiff", GPLOT_PNG,
                             "Number vs diff", "diff", "number");
         gplotSetScaling(gplot, GPLOT_LOG_SCALE_Y);
         gplotAddPlot(gplot, naseq, nar, GPLOT_POINTS, "red");
@@ -352,7 +351,7 @@ L_REGPARAMS* rp;
         pixd = pixAbsDifference(pix1, pix2);
         nagray = pixGetGrayHistogram(pixd, 1);
         naseq = numaMakeSequence(0., 1., 256);
-        gplot = gplotCreate(rp->diag_spec, "/tmp/lept/scale/g_absdiff", GPLOT_PNG,
+        gplot = gplotCreate("/tmp/lept/scale/g_absdiff", GPLOT_PNG,
                             "Number vs diff", "diff", "number");
         gplotSetScaling(gplot, GPLOT_LOG_SCALE_Y);
         gplotAddPlot(gplot, naseq, nagray, GPLOT_POINTS, "gray");

@@ -103,8 +103,7 @@ jbCorrelation(const char  *dirin,
               const char  *rootname,
               l_int32      firstpage,
               l_int32      npages,
-              l_int32      renderflag,
-	          LDIAG_CTX    diagspec)
+              l_int32      renderflag)
 {
 char        filename[L_BUF_SIZE];
 l_int32     nfiles, i, numpages;
@@ -135,7 +134,7 @@ SARRAY     *safiles;
 
         /* Optionally, render pages using class templates */
     if (renderflag) {
-        pixa = jbDataRender(data, diagspec);
+        pixa = jbDataRender(data);
         numpages = pixaGetCount(pixa);
         if (numpages != nfiles)
             lept_stderr("numpages = %d, nfiles = %d, not equal!\n",
@@ -184,8 +183,7 @@ jbRankHaus(const char  *dirin,
            const char  *rootname,
            l_int32      firstpage,
            l_int32      npages,
-           l_int32      renderflag,
-	       LDIAG_CTX    diagspec)
+           l_int32      renderflag)
 {
 char        filename[L_BUF_SIZE];
 l_int32     nfiles, i, numpages;
@@ -216,7 +214,7 @@ SARRAY     *safiles;
 
         /* Optionally, render pages using class templates */
     if (renderflag) {
-        pixa = jbDataRender(data, diagspec);
+        pixa = jbDataRender(data);
         numpages = pixaGetCount(pixa);
         if (numpages != nfiles)
             lept_stderr("numpages = %d, nfiles = %d, not equal!\n",
@@ -537,8 +535,7 @@ PIX       *pix1, *pix2, *pix3, *pix3a, *pix4, *pix5;
     if (thresh > 150)
         L_WARNING("threshold is %d; may be too high\n", __func__, thresh);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     if (boxs) {
         if ((pix1 = pixClipRectangle(pixs, boxs, NULL)) == NULL)
@@ -566,7 +563,7 @@ PIX       *pix1, *pix2, *pix3, *pix3a, *pix4, *pix5;
     if (debugflag) {
         pix4 = pixConvertTo32(pix2);
         pixRenderBoxaArb(pix4, boxa1, 2, 255, 0, 0);
-		const char* pixpath = leptDebugGenFilepath(diagspec, "words.png");
+		const char* pixpath = leptDebugGenFilepath("words.png");
         pixWrite(pixpath, pix4, IFF_PNG);
         pixDestroy(&pix4);
     }
@@ -621,7 +618,7 @@ PIX       *pix1, *pix2, *pix3, *pix3a, *pix4, *pix5;
         pixRenderBoxaArb(pix4, boxa2, 2, 255, 0, 0);
         boxa3 = boxaAdjustSides(boxaw, -2, 2, -2, 2);
         pixRenderBoxaArb(pix4, boxa3, 2, 0, 255, 0);
-		const char* pixpath = leptDebugGenFilepath(diagspec, "chars.png");
+		const char* pixpath = leptDebugGenFilepath("chars.png");
         pixWrite(pixpath, pix4, IFF_PNG);
         pixDestroy(&pix4);
         boxaDestroy(&boxa2);

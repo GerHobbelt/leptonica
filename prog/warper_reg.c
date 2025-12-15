@@ -69,13 +69,11 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-word.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixt = pixAddBorder(pixs, 25, 0);
     pixg = pixConvertTo8(pixt, 0);
 
     for (k = 0; k < size; k++) {
         pixac = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixac, rp->diag_spec);
 		for (i = 0; i < 50; i++) {
             pixd = pixRandomHarmonicWarp(pixg, xmag[k], ymag[k], xfreq[k],
                                          yfreq[k], nx[k], ny[k], 7 * i, 255);
@@ -94,7 +92,6 @@ L_REGPARAMS* rp;
 
     for (k = 1; k <= 4; k++) {
         pixac = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixac, rp->diag_spec);
 		for (i = 0; i < 50; i++) {
             newline = (i % 10 == 0) ? 1 : 0;
             DisplayCaptcha(pixac, pixs, k, 7 * i, newline);

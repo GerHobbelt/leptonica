@@ -69,7 +69,6 @@ L_REGPARAMS* rp;
     //lept_mkdir("lept/dewarp");
 
     pixs = pixRead(DEMOPATH("cat.035.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 /*    pixs = pixRead(DEMOPATH("zanotti-78.jpg")); */
 
         /* Normalize for varying background and binarize */
@@ -81,7 +80,7 @@ L_REGPARAMS* rp;
 
         /* Get the textline centers */
     pixa = pixaCreate(6);
-    ptaa1 = dewarpGetTextlineCenters(pixb, rp->diag_spec);
+    ptaa1 = dewarpGetTextlineCenters(pixb);
     pixt1 = pixCreateTemplate(pixs);
     pixSetAll(pixt1);
     pixt2 = pixDisplayPtaa(pixt1, ptaa1);

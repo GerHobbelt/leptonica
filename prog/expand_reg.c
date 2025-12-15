@@ -168,7 +168,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix2);
     pixDestroy(&pixs);
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("Writing to: /tmp/lept/expand/test.pdf\n");
         pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "Replicative expansion",
                          "/tmp/lept/expand/test.pdf");

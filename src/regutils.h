@@ -143,8 +143,6 @@ struct L_RegParams
 	const char* outpath;
 	SARRAY* searchpaths;
 	SARRAY* argvfiles;
-
-	LDIAG_CTX diag_spec; /*!< image diagnostics helper spec associated with pix & plots; used to help display/diagnose behaviour in the more complex algorithms */
 };
 typedef struct L_RegParams  L_REGPARAMS;
 

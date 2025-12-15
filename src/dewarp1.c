@@ -90,7 +90,7 @@
  *     // Insert in Dewarpa and obtain parameters for building the model
  *     dewarpaInsertDewarp(dewa, dew);
  *     // Do the work
- *     dewarpBuildPageModel(dew, NULL);  // no debugging
+ *     dewarpBuildPageModel(dew);  // no debugging
  *     // Optionally set rendering parameters
  *     // Apply model to the input pixs
  *     Pix *pixd;
@@ -114,7 +114,7 @@
  *     // Insert in Dewarpa and obtain parameters for building the model
  *     dewarpaInsertDewarp(dewa, dew);
  *     // Do the work
- *     dewarpBuildPageModel(dew, NULL);  // no debugging
+ *     dewarpBuildPageModel(dew);  // no debugging
  *     dewarpMinimze(dew);  // remove most heap storage
  *     pixDestroy(&pixb);
  *
@@ -471,7 +471,6 @@ L_DEWARP  *dew;
     dew->pageno = pageno;
     dew->w = pixGetWidth(pixs);
     dew->h = pixGetHeight(pixs);
-	dew->diag_specX = leptCloneDiagnoticsSpecInstance(pixGetDiagnosticsSpec(pixs));
     return dew;
 }
 
@@ -534,7 +533,6 @@ L_DEWARP  *dew;
     fpixDestroy(&dew->fullydispar);
     numaDestroy(&dew->namidys);
     numaDestroy(&dew->nacurves);
-	leptDestroyDiagnoticsSpecInstance(&dew->diag_specX);
     LEPT_FREE(dew);
     *pdew = NULL;
 }
@@ -697,7 +695,7 @@ PIX        *pixt;
             dewarpaInsertDewarp(dewa, dew);
 
                /* Build disparity arrays for this page */
-            dewarpBuildPageModel(dew, NULL);
+            dewarpBuildPageModel(dew);
             if (!dew->vsuccess) {  /* will need to use model from nearby page */
                 dewarpaDestroyDewarp(dewa, pageno);
                 L_ERROR("unable to build model for page %d\n", __func__, i);
@@ -708,7 +706,7 @@ PIX        *pixt;
         }
         pixDestroy(&pixt);
     }
-    dewarpaInsertRefModels(dewa, 0, 0);
+    dewarpaInsertRefModels(dewa, 0);
 
     return dewa;
 }
@@ -1514,7 +1512,7 @@ NUMA       *namodels;
     }
 
         /* Validate the models and insert reference models */
-    dewarpaInsertRefModels(dewa, 0, 0);
+    dewarpaInsertRefModels(dewa, 0);
     return dewa;
 }
 

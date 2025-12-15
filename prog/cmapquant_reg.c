@@ -65,7 +65,6 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("lucasta-frag.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
         /* Convert to 4 bpp with 6 levels and a colormap */
     pix1 = pixThresholdTo4bpp(pixs, 6, 1);

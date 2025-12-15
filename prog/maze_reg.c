@@ -71,9 +71,7 @@ L_REGPARAMS* rp;
     /* ---------------- Shortest path in binary maze ---------------- */
         /* Generate the maze */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixm = generateBinaryMaze(200, 200, 20, 20, 0.65, 0.25);
-	pixSetDiagnosticsSpec(pixm, rp->diag_spec);
 	pixd = pixExpandBinaryReplicate(pixm, 3, 3);
     pixaAddPix(pixa, pixd, L_INSERT);
 
@@ -90,7 +88,6 @@ L_REGPARAMS* rp;
 
     /* ---------------- Shortest path in gray maze ---------------- */
     pixg = pixRead(DEMOPATH("test8.jpg"));
-	pixSetDiagnosticsSpec(pixg, rp->diag_spec);
 	pixGetDimensions(pixg, &w, &h, NULL);
     ptaa = ptaaCreate(NPATHS);
     for (i = 0; i < NPATHS; i++) {
@@ -105,7 +102,6 @@ L_REGPARAMS* rp;
     pixt = pixDisplayPtaa(pixg, ptaa);
     pixd = pixScaleBySampling(pixt, 2., 2.);
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixaAddPix(pixa, pixd, L_INSERT);
     pixaaAddPixa(paa, pixa, L_INSERT);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */

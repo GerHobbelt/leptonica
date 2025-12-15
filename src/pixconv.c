@@ -247,7 +247,6 @@ PIXCMAP   *cmap;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	return pixd;
 }
 
@@ -404,7 +403,6 @@ PIX       *pixd;
         pixCopyResolution(pixd, pixs);
         pixCopyInputFormat(pixd, pixs);
 		pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 		datad = pixGetData(pixd);
         wpld = pixGetWpl(pixd);
         graymap = (l_uint32 *)LEPT_CALLOC(nalloc, sizeof(l_uint32));
@@ -561,7 +559,6 @@ PIX       *pixd;
         pixCopyInputFormat(pixd, pixs);
         pixCopyResolution(pixd, pixs);
 		pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 		if (type == REMOVE_CMAP_WITH_ALPHA)
             pixSetSpp(pixd, 4);
         datad = pixGetData(pixd);
@@ -703,7 +700,6 @@ PIXCMAP   *cmap;
     pixCopyInputFormat(pixd, pixs);
     pixCopyResolution(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     for (i = 0; i < h; i++) {
@@ -861,7 +857,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -917,7 +912,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -980,7 +974,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -1066,7 +1059,6 @@ PIX        *pixt, *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wplt = pixGetWpl(pixt);
     datat = pixGetData(pixt);
     wpld = pixGetWpl(pixd);
@@ -1145,7 +1137,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -1332,7 +1323,6 @@ PIXCMAP   *cmap;
     pixCopyInputFormat(pixd, pixs);
     pixCopyResolution(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
     index = 0;
     for (i = 0; i < 256; i++) {
@@ -1422,7 +1412,6 @@ PIXCMAP   *cmap;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datat = pixGetData(pixt);
@@ -1680,11 +1669,9 @@ PIX     *pixg, *pixd;
         octlevel = 3;
     }
 
-	LDIAG_CTX diagspec = pixPassDiagIfDebugModeActive(pixs);
-
         /* Test the number of colors.  For color, the octcube leaves
          * are at level 4. */
-    pixColorsForQuantization(pixs, 0, &ncolors, &iscolor, diagspec);
+    pixColorsForQuantization(pixs, 0, &ncolors, &iscolor);
     if (ncolors > maxcolors)
         return ERROR_INT("too many colors", __func__, 1);
 
@@ -1770,7 +1757,6 @@ PIX       *pixd;
     pixCopyInputFormat(pixd, pixs);
     pixCopyResolution(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wpls = pixGetWpl(pixs);
     datas = pixGetData(pixs);
     wpld = pixGetWpl(pixd);
@@ -1871,7 +1857,6 @@ PIXCMAP  *cmap;
     pixSetColormap(pixd, cmap);
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	return pixd;
 }
 
@@ -1985,11 +1970,9 @@ l_uint32  *tab, *datas, *datad, *lines, *lined;
         if ((pixd = pixCreate(w, h, 16)) == NULL)
             return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
 		pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Use a table to convert 2 src bits at a time */
     tab = (l_uint32 *)LEPT_CALLOC(4, sizeof(l_uint32));
@@ -2059,11 +2042,9 @@ l_uint32  *datas, *datad, *lines, *lined;
         if ((pixd = pixCreate(w, h, 32)) == NULL)
             return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
 		pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
     val[0] = val0;
     val[1] = val1;
@@ -2166,11 +2147,9 @@ l_uint32  *datas, *datad, *lines, *lined;
         if ((pixd = pixCreate(w, h, 2)) == NULL)
             return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
 		pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Use a table to convert 8 src bits to 16 dest bits */
     tab = (l_uint16 *)LEPT_CALLOC(256, sizeof(l_uint16));
@@ -2286,11 +2265,9 @@ l_uint32  *tab, *datas, *datad, *lines, *lined;
         if ((pixd = pixCreate(w, h, 4)) == NULL)
             return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
 		pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Use a table to convert 8 src bits to 32 bit dest word */
     tab = (l_uint32 *)LEPT_CALLOC(256, sizeof(l_uint32));
@@ -2406,11 +2383,9 @@ l_uint32  *tab, *datas, *datad, *lines, *lined;
         if ((pixd = pixCreate(w, h, 8)) == NULL)
             return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
 		pixCopyText(pixd, pixs);
-		pixCloneDiagnosticsSpec(pixd, pixs);
 	}
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	pixSetPadBits(pixs, 0);
 
         /* Use a table to convert 4 src bits at a time */
@@ -2503,7 +2478,6 @@ PIXCMAP   *cmaps, *cmapd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
     datad = pixGetData(pixd);
@@ -2608,7 +2582,6 @@ PIXCMAP   *cmaps, *cmapd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datas = pixGetData(pixs);
     wpls = pixGetWpl(pixs);
     datad = pixGetData(pixd);
@@ -2694,7 +2667,6 @@ PIX       *pixt, *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datat = pixGetData(pixt);
     datad = pixGetData(pixd);
     wplt = pixGetWpl(pixt);
@@ -3403,7 +3375,6 @@ PIX       *pixd;
     pixCopyInputFormat(pixd, pixs);
 	//pixCopySpp(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -3544,7 +3515,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	return pixd;
 }
 
@@ -3592,7 +3562,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	return pixd;
 }
 
@@ -3635,7 +3604,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wpls = pixGetWpl(pixs);
     datas = pixGetData(pixs);
     wpld = pixGetWpl(pixd);
@@ -3815,7 +3783,6 @@ PIX       *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Unpack the bits */
     datas = pixGetData(pixs);
@@ -4166,7 +4133,6 @@ PIXCMAP   *cmap;
     pixd = pixCreate(wd, hd, 32);
     pixCopyInputFormat(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
     datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datat = pixGetData(pix2);

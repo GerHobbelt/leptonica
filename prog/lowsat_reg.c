@@ -62,16 +62,13 @@ L_REGPARAMS* rp;
     //lept_mkdir("lept/lowsat");
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixRead(DEMOPATH("zier.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     pixDisplayWithTitle(pix1, 0, 100, NULL);
     pixaAddPix(pixa, pix1, L_INSERT);
 
         /* Embed the image in a varying gray background */
     pix2 = pixCreate(400, 580, 32);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	data = pixGetData(pix2);
     wpl = pixGetWpl(pix2);
     for (i = 0; i < 580; i++) {

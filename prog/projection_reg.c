@@ -61,11 +61,9 @@ L_REGPARAMS* rp;
 
         /* Use for input two different images */
     pixs = pixRead(DEMOPATH("projectionstats.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixConvertTo8(pixs, 0);
     pixDestroy(&pixs);
     pixs = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix2 = pixScaleToGray4(pixs);
     pixDestroy(&pixs);
 
@@ -97,18 +95,18 @@ PIXA    *pixa;
     pixRowStats(pixd, NULL, &na2, &na4, &na6, &na8, &na10, &na12);
     pixDestroy(&pixd);
 
-    pix1 = gplotSimplePix1(rp->diag_spec, na1, "lept/projection/col-mean", "Mean value");
-    pix2 = gplotSimplePix1(rp->diag_spec, na2, "lept/projection/row-mean", "Mean value");
-    pix3 = gplotSimplePix1(rp->diag_spec, na3, "lept/projection/col-median", "Median value");
-    pix4 = gplotSimplePix1(rp->diag_spec, na4, "lept/projection/row-median", "Median value");
-    pix5 = gplotSimplePix1(rp->diag_spec, na5, "lept/projection/col-mode", "Mode value");
-    pix6 = gplotSimplePix1(rp->diag_spec, na6, "lept/projection/row-mode", "Mode value");
-    pix7 = gplotSimplePix1(rp->diag_spec, na7, "lept/projection/col-modecount", "Mode count");
-    pix8 = gplotSimplePix1(rp->diag_spec, na8, "lept/projection/row-modecount", "Mode count");
-    pix9 = gplotSimplePix1(rp->diag_spec, na9, "lept/projection/col-variance", "Variance");
-    pix10 = gplotSimplePix1(rp->diag_spec, na10, "lept/projection/row-variance", "Variance");
-    pix11 = gplotSimplePix1(rp->diag_spec, na11, "lept/projection/col-sqrt-var", "Square Root Variance");
-    pix12 = gplotSimplePix1(rp->diag_spec, na12, "lept/projection/row-sqrt-var", "Square Root Variance");
+    pix1 = gplotSimplePix1(na1, "lept/projection/col-mean", "Mean value");
+    pix2 = gplotSimplePix1(na2, "lept/projection/row-mean", "Mean value");
+    pix3 = gplotSimplePix1(na3, "lept/projection/col-median", "Median value");
+    pix4 = gplotSimplePix1(na4, "lept/projection/row-median", "Median value");
+    pix5 = gplotSimplePix1(na5, "lept/projection/col-mode", "Mode value");
+    pix6 = gplotSimplePix1(na6, "lept/projection/row-mode", "Mode value");
+    pix7 = gplotSimplePix1(na7, "lept/projection/col-modecount", "Mode count");
+    pix8 = gplotSimplePix1(na8, "lept/projection/row-modecount", "Mode count");
+    pix9 = gplotSimplePix1(na9, "lept/projection/col-variance", "Variance");
+    pix10 = gplotSimplePix1(na10, "lept/projection/row-variance", "Variance");
+    pix11 = gplotSimplePix1(na11, "lept/projection/col-sqrt-var", "Square Root Variance");
+    pix12 = gplotSimplePix1(na12, "lept/projection/row-sqrt-var", "Square Root Variance");
 
          /* This is run twice, on two different images */
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0, 19 */
@@ -133,7 +131,6 @@ PIXA    *pixa;
     regTestComparePix(rp, pix11, pix12);  /* 17, 36 */
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixaAddPix(pixa, pix1, L_INSERT);
     pixaAddPix(pixa, pix2, L_INSERT);
     pixaAddPix(pixa, pix3, L_INSERT);

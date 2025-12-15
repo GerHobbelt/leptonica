@@ -224,13 +224,11 @@ PIXA    *pixa;
 
     if ((pixa = pixaCreate(n)) == NULL)
         return (PIXA *)ERROR_PTR("pixa not made", __func__, NULL);
-	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
 	pixGetDimensions(pixs, &w, &h, &d);
     if ((pix1 = pixCreate(cellw, cellh, d)) == NULL) {
         pixaDestroy(&pixa);
         return (PIXA *)ERROR_PTR("pix1 not made", __func__, NULL);
     }
-	pixCloneDiagnosticsSpec(pix1, pixs);
 
     nw = (w + cellw - 1) / cellw;
     nh = (h + cellh - 1) / cellh;
@@ -297,7 +295,6 @@ PIXA    *pixad;
     if ((pixad = pixaCreate(end - start + 1)) == NULL)
         return (PIXA *)ERROR_PTR("pixad not made", __func__, NULL);
 
-	pixaSetDiagnosticsSpec(pixad, pixGetDiagnosticsSpec(pixs));
 	boxaGetExtent(boxa, &wbox, &hbox, NULL);
     pixGetDimensions(pixs, &w, &h, NULL);
     cropwarn = FALSE;
@@ -369,7 +366,6 @@ PIXA    *pixa;
 
     if ((pixa = pixaCreate(nx * ny)) == NULL)
         return (PIXA *)ERROR_PTR("pixa not made", __func__, NULL);
-	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
 	pixGetDimensions(pixs, &w, &h, &d);
     cellw = (w + nx - 1) / nx;  /* round up */
     cellh = (h + ny - 1) / ny;
@@ -382,7 +378,6 @@ PIXA    *pixa;
                 return (PIXA *)ERROR_PTR("pix1 not made", __func__, NULL);
             }
             pixCopyColormap(pix1, pixs);
-			pixCloneDiagnosticsSpec(pix1, pixs);
             if (borderwidth == 0) {  /* initialize full image to white */
                 if (d == 1)
                     pixClearAll(pix1);
@@ -434,9 +429,6 @@ PIXA    *pixa;
 		pixa->pix = NULL;
         boxaDestroy(&pixa->boxa);
 
-		if (pixa->diag_spec != NULL)
-			leptDestroyDiagnoticsSpecInstance(&pixa->diag_spec);
-
 		LEPT_FREE(pixa);
     }
 
@@ -477,7 +469,6 @@ PIXA    *pixac;
 
     if ((pixac = pixaCreate(pixa->n)) == NULL)
         return (PIXA *)ERROR_PTR("pixac not made", __func__, NULL);
-	pixaCloneDiagnosticsSpec(pixac, pixa);
     nb = pixaGetBoxaCount(pixa);
     for (i = 0; i < pixa->n; i++) {
         if (copyflag == L_COPY) {
@@ -1625,8 +1616,6 @@ l_int32  i, n;
         pixDestroy(&pixa->pix[i]);
     pixa->n = 0;
 
-	leptDestroyDiagnoticsSpecInstance(&pixa->diag_spec);
-
     return boxaClear(pixa->boxa);
 }
 
@@ -1673,8 +1662,6 @@ PIX     *pix;
     if (istart > iend)
         return ERROR_INT("istart > iend; nothing to add", __func__, 1);
 
-	LDIAG_CTX diagspec = pixaGetDiagnosticsSpecFromAny(2, pixad, pixas);
-	pixaSetDiagnosticsSpec(pixad, diagspec);
 
     for (i = istart; i <= iend; i++) {
         pix = pixaGetPix(pixas, i, L_CLONE);
@@ -1736,8 +1723,6 @@ PIXA    *pixad;
 
     pixad = pixaCreate(2 * n);
 
-	LDIAG_CTX diagspec = pixaGetDiagnosticsSpecFromAny(2, pixa1, pixa2);
-	pixaSetDiagnosticsSpec(pixad, diagspec);
 
 	nb1 = pixaGetBoxaCount(pixa1);
     nb2 = pixaGetBoxaCount(pixa2);

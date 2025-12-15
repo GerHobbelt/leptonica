@@ -79,7 +79,6 @@ L_REGPARAMS* rp;
     for (k = 0; k < 7; k++) {
         srand(45617);
         pixa1 = pixaCreate(2);
-		pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 		boxa1 = boxaCreate(0);
         for (i = 0; i < 500; i++) {
             x = (l_int32)(600.0 * (l_float64)rand() / (l_float64)RAND_MAX);
@@ -93,12 +92,10 @@ L_REGPARAMS* rp;
         }
 
         pix1 = pixCreate(660, 660, 1);
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		pixRenderBoxa(pix1, boxa1, 2, L_SET_PIXELS);
         pixaAddPix(pixa1, pix1, L_INSERT);
         boxa2 = boxaCombineOverlaps(boxa1, NULL);
         pix2 = pixCreate(660, 660, 1);
-		pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 		pixRenderBoxa(pix2, boxa2, 2, L_SET_PIXELS);
         pixaAddPix(pixa1, pix2, L_INSERT);
 
@@ -120,7 +117,6 @@ L_REGPARAMS* rp;
     /* -------------------------------------------------------- */
     boxa1 = boxaCreate(0);
     pixa1 = pixaCreate(10);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	n = 80;
     for (i = 0; i < n; i++) {
         x = (l_int32)(600.0 * (l_float64)rand() / (l_float64)RAND_MAX);
@@ -174,7 +170,6 @@ L_REGPARAMS* rp;
     }
 
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	boxaCombineOverlapsInPair(boxa1, boxa2, &boxa3, &boxa4, pixa1);
     pix1 = pixaDisplayTiledInRows(pixa1, 32, 1500, 1.0, 0, 50, 2);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);   /* 11 */

@@ -99,7 +99,6 @@ L_REGPARAMS* rp;
          * Neither is properly symmetric (with symm pattern on odd-sized
          * pix, because the smoothing is destroying the symmetry. */
     pixa = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixExpandReplicate(pixc, 2);
     for (i = 0; i < 11; i++) {
         scale = 0.30 + 0.035 * (l_float32)i;
@@ -113,7 +112,6 @@ L_REGPARAMS* rp;
 
         /* Results same for pixScaleAreaMap w/ and w/out + 0.5 */
     pixa = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixExpandReplicate(pixc, 2);
     for (i = 0; i < 11; i++) {
         scale = 0.30 + 0.035 * (l_float32)i;
@@ -128,7 +126,6 @@ L_REGPARAMS* rp;
         /* Results better for pixScaleBySampling with + 0.5, for small,
          * odd-dimension pix.  */
     pixa = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixExpandReplicate(pixc, 2);
     for (i = 0; i < 11; i++) {
         scale = 0.30 + 0.035 * (l_float32)i;
@@ -142,7 +139,6 @@ L_REGPARAMS* rp;
 
         /* Results same for pixRotateAM w/ and w/out + 0.5 */
     pixa = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixExpandReplicate(pixc, 1);
     for (i = 0; i < 11; i++) {
         angle = 0.10 + 0.05 * (l_float32)i;
@@ -161,7 +157,6 @@ L_REGPARAMS* rp;
          * center, we get symmetrical results with +0.5.
          * So we choose not to include + 0.5. */
     pixa = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixExpandReplicate(pixc, 1);
     for (i = 0; i < 11; i++) {
         angle = 0.10 + 0.05 * (l_float32)i;
@@ -175,7 +170,6 @@ L_REGPARAMS* rp;
 
         /* Results same for pixRotateAMCorner w/ and w/out + 0.5 */
     pixa = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixExpandReplicate(pixc, 1);
     for (i = 0; i < 11; i++) {
         angle = 0.10 + 0.05 * (l_float32)i;
@@ -189,7 +183,6 @@ L_REGPARAMS* rp;
 
         /* Results better for pixRotateAMColorFast without + 0.5 */
     pixa = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixExpandReplicate(pixc, 1);
     for (i = 0; i < 11; i++) {
         angle = 0.10 + 0.05 * (l_float32)i;
@@ -203,7 +196,6 @@ L_REGPARAMS* rp;
 
         /* Results slightly better for pixScaleColorLI() w/out + 0.5 */
     pixa = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixExpandReplicate(pixc, 1);
     for (i = 0; i < 11; i++) {
         scale = 1.0 + 0.2 * (l_float32)i;
@@ -217,7 +209,6 @@ L_REGPARAMS* rp;
 
         /* Results slightly better for pixScaleColorLI() w/out + 0.5 */
     pixa = pixaCreate(11);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixExpandReplicate(pixc, 1);
     for (i = 0; i < 11; i++) {
         scale = 1.0 + 0.2 * (l_float32)i;

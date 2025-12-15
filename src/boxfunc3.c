@@ -759,7 +759,6 @@ PIXA      *pixad;
     }
 
     pixad = pixaCreate(n);
-	pixaCloneDiagnosticsSpec(pixad, pixas);
 	for (i = 0; i < n; i++) {
         pix = pixaGetPix(pixas, i, L_COPY);
         boxa = boxaaGetBoxa(baa, i, L_CLONE);
@@ -1366,8 +1365,7 @@ boxaCompareRegions(BOXA       *boxa1,
                    l_int32    *pnsame,
                    l_float32  *pdiffarea,
                    l_float32  *pdiffxor,
-                   PIX       **ppixdb,
-	               LDIAG_CTX   diagspec)
+                   PIX       **ppixdb)
 {
 l_int32   w, h, x3, y3, w3, h3, x4, y4, w4, h4, n3, n4, area1, area2;
 l_int32   count3, count4, countxor;
@@ -1444,7 +1442,6 @@ PIXA     *pixa;
 
     if (ppixdb) {
         pixa = pixaCreate(2);
-		pixaSetDiagnosticsSpec(pixa, diagspec);
 		pix1 = pixCreate(w, h, 32);
         pixSetAll(pix1);
         pixRenderHashBoxaBlend(pix1, boxa3, 5, 1, L_POS_SLOPE_LINE, 2,

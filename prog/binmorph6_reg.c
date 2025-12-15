@@ -59,7 +59,6 @@ L_REGPARAMS* rp;
 
         /* Test making sel from a pix */
     pixa = pixaCreate(10);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
 	pix1 = pixRead(DEMOPATH("feyn-fract.tif"));
     box1 = boxCreate(507, 65, 60, 36);

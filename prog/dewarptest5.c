@@ -67,7 +67,6 @@ L_REGPARAMS* rp;
 
     snprintf(buf, sizeof(buf), "cat.%03d.jpg", pageno);
     pixs = pixRead(buf);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	dewa = dewarpaCreate(40, 30, 1, 15, 10);
     dewarpaUseBothArrays(dewa, 1);
 
@@ -80,21 +79,20 @@ L_REGPARAMS* rp;
         /* Build the model */
     dew = dewarpCreate(pixb, pageno);
     dewarpaInsertDewarp(dewa, dew);
-    if (build_output) {
-		leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_build_%d.pdf", pageno);
-        dewarpBuildPageModel(dew, rp->diag_spec);
-    } else {
-        dewarpBuildPageModel(dew, NULL);
-    }
+
+		leptDebugSetFilenameBasename("dewarp_build_%d.pdf", pageno);
+		leptActivateDebugMode(0, build_output);
+			dewarpBuildPageModel(dew);
+		leptActivateDebugMode(0, -build_output);
 
         /* Apply the model */
     dewarpPopulateFullRes(dew, pixg, 0, 0);
-    if (apply_output) {
-		leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_apply_%d.pdf", pageno);
-        dewarpaApplyDisparity(dewa, pageno, pixb, 200, 0, 0, &pix2, rp->diag_spec);
-    } else {
-        dewarpaApplyDisparity(dewa, pageno, pixb, 200, 0, 0, &pix2, NULL);
-    }
+
+		leptDebugSetFilenameBasename("dewarp_apply_%d.pdf", pageno);
+		leptActivateDebugMode(0, apply_output);
+		dewarpaApplyDisparity(dewa, pageno, pixb, 200, 0, 0, &pix2);
+		leptActivateDebugMode(0, -apply_output);
+
     pixDisplay(pix2, 200, 100);
 
         /* Reverse direction: get the word boxes for the dewarped pix ... */
@@ -104,14 +102,11 @@ L_REGPARAMS* rp;
     pixDisplay(pix3, 400, 100);
 
         /* ... and map to the word boxes for the input image */
-    if (map_output) {
-		leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_map1_%d.pdf", pageno);
-        dewarpaApplyDisparityBoxa(dewa, pageno, pix2, boxa1, 0, 0, 0, &boxa2,
-                                  rp->diag_spec);
-    } else {
-        dewarpaApplyDisparityBoxa(dewa, pageno, pix2, boxa1, 0, 0, 0, &boxa2,
-                                  NULL);
-    }
+		leptDebugSetFilenameBasename("dewarp_map1_%d.pdf", pageno);
+		leptActivateDebugMode(0, map_output);
+		dewarpaApplyDisparityBoxa(dewa, pageno, pix2, boxa1, 0, 0, 0, &boxa2);
+		leptActivateDebugMode(0, -map_output);
+
     pix4 = pixConvertTo32(pixb);
     pixRenderBoxaArb(pix4, boxa2, 2, 0, 255, 0);
     pixDisplay(pix4, 600, 100);
@@ -123,15 +118,12 @@ L_REGPARAMS* rp;
     pixDisplay(pix5, 800, 100);
 
         /* ... and map to the word boxes for the dewarped image */
-    if (map_output) {
-		leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_map2_%d.pdf", pageno);
-        dewarpaApplyDisparityBoxa(dewa, pageno, pixb, boxa3, 1, 0, 0, &boxa4,
-                                  rp->diag_spec);
-    } else {
-        dewarpaApplyDisparityBoxa(dewa, pageno, pixb, boxa3, 1, 0, 0, &boxa4,
-                                  NULL);
-    }
-    pix6 = pixConvertTo32(pix2);
+		leptDebugSetFilenameBasename("dewarp_map2_%d.pdf", pageno);
+		leptActivateDebugMode(0, map_output);
+		dewarpaApplyDisparityBoxa(dewa, pageno, pixb, boxa3, 1, 0, 0, &boxa4);
+		leptActivateDebugMode(0, -map_output);
+
+	pix6 = pixConvertTo32(pix2);
     pixRenderBoxaArb(pix6, boxa4, 2, 0, 255, 0);
     pixDisplay(pix6, 1000, 100);
 

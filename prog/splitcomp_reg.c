@@ -71,9 +71,7 @@ L_REGPARAMS* rp;
 
         /* Generate and save 1 bpp masks */
     pixas = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixas, rp->diag_spec);
 	pixs = pixCreate(300, 250, 1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixSetAll(pixs);
     box1 = boxCreate(50, 0, 140, 25);
     box2 = boxCreate(120, 100, 100, 25);
@@ -108,12 +106,10 @@ L_REGPARAMS* rp;
 
         /* Do 5 splittings on each of the 8 masks */
     pixad = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixad, rp->diag_spec);
 	for (j = 0; j < 8; j++) {
         pixt = pixaGetPix(pixas, j, L_CLONE);
         pixGetDimensions(pixt, &w, &h, NULL);
         pix32 = pixCreate(w, h, 32);
-		pixSetDiagnosticsSpec(pix32, rp->diag_spec);
 		pixSetAll(pix32);
         pixPaintThroughMask(pix32, pixt, 0, 0, 0xc0c0c000);
         pixaAddPix(pixad, pix32, L_INSERT);
@@ -140,7 +136,6 @@ L_REGPARAMS* rp;
 
         /* Put the 8 masks all together, and split 5 ways */
     pixad = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixad, rp->diag_spec);
 	pixs = pixaDisplayOnLattice(pixas, 325, 325, NULL, NULL);
     pixGetDimensions(pixs, &w, &h, NULL);
     pix32 = pixCreate(w, h, 32);

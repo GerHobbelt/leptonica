@@ -64,7 +64,6 @@ L_REGPARAMS* rp;
      *     Normalize by adaptively expanding the dynamic range    *
      * ---------------------------------------------------------- */
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
 	pixs = pixRead(DEMOPATH("lighttext.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
@@ -110,7 +109,6 @@ L_REGPARAMS* rp;
      *          Normalize for rapidly varying background          *
      * ---------------------------------------------------------- */
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
 	pixs = pixRead(DEMOPATH("w91frag.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);

@@ -72,13 +72,12 @@ PIXA         *pixa1, *pixa2;
 
         /* Input is a fairly clean boxa */
     boxa1 = boxaRead(DEMOPATH("boxa1.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, rp->diag_spec);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
     scalefact = (l_float32)width / (l_float32)w;
     boxa3 = boxaTransform(boxa2, 0, 0, scalefact, scalefact);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 1500, 2, 1.0, 0, 3, 2);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     pixDisplayWithTitle(pix1, 600, 0, NULL);
     pixDestroy(&pix1);
@@ -88,13 +87,12 @@ PIXA         *pixa1, *pixa2;
 
         /* Input is an unsmoothed and noisy boxa */
     boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0, rp->diag_spec);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
     scalefact = (l_float32)width / (l_float32)w;
     boxa3 = boxaTransform(boxa2, 0, 0, scalefact, scalefact);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 1500, 2, 1.0, 0, 3, 2);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 1 */
     pixDisplayWithTitle(pix1, 800, 0, NULL);
     pixDestroy(&pix1);
@@ -104,11 +102,11 @@ PIXA         *pixa1, *pixa2;
 
         /* Input is an unsmoothed and noisy boxa */
     boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_LOC_DIFF, 80, 20, rp->diag_spec);
-    boxa3 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_SIZE_DIFF, 80, 20, rp->diag_spec);
-	boxaPlotSides(boxa1, "initial", rp->diag_spec, NULL, NULL, NULL, NULL, &pix1);
-    boxaPlotSides(boxa2, "side-smoothing", rp->diag_spec, NULL, NULL, NULL, NULL, &pix2);
-    boxaPlotSides(boxa3, "size-smoothing", rp->diag_spec, NULL, NULL, NULL, NULL, &pix3);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_LOC_DIFF, 80, 20);
+    boxa3 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_SIZE_DIFF, 80, 20);
+	boxaPlotSides(boxa1, "initial", NULL, NULL, NULL, NULL, &pix1);
+    boxaPlotSides(boxa2, "side-smoothing", NULL, NULL, NULL, NULL, &pix2);
+    boxaPlotSides(boxa3, "size-smoothing", NULL, NULL, NULL, NULL, &pix3);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 2 */
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 3 */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 4 */
@@ -125,14 +123,12 @@ PIXA         *pixa1, *pixa2;
         /* Reconcile all sides by median */
     boxa1 = boxaRead(DEMOPATH("boxa5.ba"));
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
 	boxa2 = boxaReconcileAllByMedian(boxa1, L_ADJUST_LEFT_AND_RIGHT,
                                      L_ADJUST_TOP_AND_BOT, 50, 0, pixa1);
     boxaWriteMem(&data, &size, boxa2);
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 5 */
     pix1 = pixRead("/tmp/lept/boxa/recon_sides.png");
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 6 */
     pixDisplayWithTitle(pix1, 0, 0, NULL);
     lept_free(data);
@@ -142,14 +138,12 @@ PIXA         *pixa1, *pixa2;
 
         /* Reconcile top/bot sides by median */
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
 	boxa2 = boxaReconcileAllByMedian(boxa1, L_ADJUST_SKIP,
                                      L_ADJUST_TOP_AND_BOT, 50, 0, pixa1);
     boxaWriteMem(&data, &size, boxa2);
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 7 */
     pix1 = pixRead("/tmp/lept/boxa/recon_sides.png");
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 8 */
     pixDisplayWithTitle(pix1, 0, 300, NULL);
     lept_free(data);
@@ -161,7 +155,6 @@ PIXA         *pixa1, *pixa2;
         /* Split even/odd and reconcile all sides by median */
     boxa1 = boxaRead(DEMOPATH("boxa5.ba"));
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
     boxaSplitEvenOdd(boxa1, 0, &boxa1e, &boxa1o);
     boxa2e = boxaReconcileSidesByMedian(boxa1e, L_ADJUST_TOP_AND_BOT, 50,
@@ -175,7 +168,7 @@ PIXA         *pixa1, *pixa2;
     boxa3 = boxaMergeEvenOdd(boxa3e, boxa3o, 0);
     boxaWriteMem(&data, &size, boxa3);
     regTestWriteDataAndCheck(rp, data, size, "ba");  /* 9 */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix1 = pixaDisplayTiledInRows(pixa1, 32, 1800, 0.5, 0, 30, 2);
         pixDisplay(pix1, 800, 500);
         pixDestroy(&pix1);
@@ -193,13 +186,12 @@ PIXA         *pixa1, *pixa2;
 
         /* Input is a boxa smoothed with a median window filter */
     boxa1 = boxaRead(DEMOPATH("boxa3.ba"));
-    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MIN, 20, 0, rp->diag_spec);
+    boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MIN, 20, 0);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
     scalefact = (l_float32)width / (l_float32)w;
     boxa3 = boxaTransform(boxa2, 0, 0, scalefact, scalefact);
     pix1 = boxaDisplayTiled(boxa3, NULL, 0, -1, 1500, 2, 1.0, 0, 3, 2);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 10 */
     pixDisplayWithTitle(pix1, 1000, 0, NULL);
     pixDestroy(&pix1);
@@ -209,7 +201,6 @@ PIXA         *pixa1, *pixa2;
 
         /* ----------- Test pixaDisplayBoxaa() ------------ */
     pixa1 = pixaReadBoth("showboxes.pac");
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	baa1 = boxaaRead("showboxes1.baa");
     baa2 = boxaaTranspose(baa1);
     baa3 = boxaaTranspose(baa2);

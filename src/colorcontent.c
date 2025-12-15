@@ -237,7 +237,6 @@ PIX       *pix1, *pixr, *pixg, *pixb;
     if (ppixr) {
         pixr = pixCreate(w, h, 8);
 		pixCopyResolution(pixr, pixs);
-		pixCloneDiagnosticsSpec(pixr, pixs);
 		datar = pixGetData(pixr);
         wplr = pixGetWpl(pixr);
         *ppixr = pixr;
@@ -245,7 +244,6 @@ PIX       *pix1, *pixr, *pixg, *pixb;
     if (ppixg) {
         pixg = pixCreate(w, h, 8);
 		pixCopyResolution(pixg, pixs);
-		pixCloneDiagnosticsSpec(pixg, pixs);
 		datag = pixGetData(pixg);
         wplg = pixGetWpl(pixg);
         *ppixg = pixg;
@@ -253,7 +251,6 @@ PIX       *pix1, *pixr, *pixg, *pixb;
     if (ppixb) {
         pixb = pixCreate(w, h, 8);
 		pixCopyResolution(pixb, pixs);
-		pixCloneDiagnosticsSpec(pixb, pixs);
 		datab = pixGetData(pixb);
         wplb = pixGetWpl(pixb);
         *ppixb = pixb;
@@ -392,7 +389,6 @@ PIX       *pix1, *pixd;
     pixGetDimensions(pix1, &w, &h, NULL);
     pixd = pixCreate(w, h, 8);
 	pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     data1 = pixGetData(pix1);
@@ -623,7 +619,6 @@ PIXCMAP   *cmap;
     pixGetDimensions(pix1, &w, &h, NULL);
     pix2 = pixCreate(w, h, 32);
 	pixCopyResolution(pix2, pixs);
-	pixCloneDiagnosticsSpec(pix2, pixs);
     data1 = pixGetData(pix1);
     wpl1 = pixGetWpl(pix1);
     data2 = pixGetData(pix2);
@@ -718,7 +713,6 @@ PIXCMAP   *cmap;
 
     pixd = pixCreate(w, h, 1);
 	pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixc);
@@ -794,7 +788,6 @@ PIX       *pixd;
     if ((pixd = pixCreate(w, h, 1)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
 	pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
 
@@ -858,7 +851,6 @@ PIXCMAP   *cmap;
 
     pixd = pixCreate(w, h, 1);
 	pixCopyResolution(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	datad = pixGetData(pixd);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixc);
@@ -1302,8 +1294,7 @@ l_ok
 pixColorsForQuantization(PIX      *pixs,
                          l_int32   thresh,
                          l_int32  *pncolors,
-                         l_int32  *piscolor,
-                         LDIAG_CTX diagspec)
+                         l_int32  *piscolor)
 {
 l_int32    w, h, d, minside, factor;
 l_float32  pixfract, colorfract;
@@ -1395,15 +1386,15 @@ PIXCMAP   *cmap;
          * should not be overly sensitive to their actual values. */
     if (d == 8) {
         pixSetMasked(pixg, pixm, 0xff);
-		if (leptIsDebugModeActive(diagspec)) {
-			const char* pixpath = leptDebugGenFilepath(diagspec, "junkpix8.png");
+		if (leptIsDebugModeActive()) {
+			const char* pixpath = leptDebugGenFilepath("junkpix8.png");
 			pixWrite(pixpath, pixg, IFF_PNG);
 		}
         pixNumSignificantGrayColors(pixg, 20, 236, 0.0001f, 1, pncolors);
     } else {  /* d == 32 */
         pixSetMasked(pixsc, pixm, 0xffffffff);
-		if (leptIsDebugModeActive(diagspec)) {
-			const char* pixpath = leptDebugGenFilepath(diagspec, "junkpix32.png");
+		if (leptIsDebugModeActive()) {
+			const char* pixpath = leptDebugGenFilepath("junkpix32.png");
 			pixWrite(pixpath, pixsc, IFF_PNG);
 		}
         pixNumberOccupiedOctcubes(pixsc, 4, 20, -1, pncolors);

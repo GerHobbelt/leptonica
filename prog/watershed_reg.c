@@ -59,8 +59,6 @@ L_REGPARAMS* rp;
 
     pix1 = pixCreate(500, 500, 8);
     pix2 = pixCreate(500, 500, 8);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	for (i = 0; i < 500; i++) {
         for (j = 0; j < 500; j++) {
             f = 128.0 + 26.3 * sin(0.0438 * (l_float32)i);
@@ -98,7 +96,6 @@ PTA       *pta;
 
         /* Find local extrema */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixGetDimensions(pixs, &w, &h, NULL);
     regTestWritePixAndCheck(rp, pixs, IFF_PNG);  /* 0 */
     pixaAddPix(pixa, pixs, L_COPY);
@@ -119,7 +116,6 @@ PTA       *pta;
         /* Generate seeds for watershed */
     pixSelectMinInConnComp(pixs, pix1, &pta, NULL);
     pix3 = pixGenerateFromPta(pta, w, h);
-	pixSetDiagnosticsSpec(pix3, rp->diag_spec);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 3 */
     pixaAddPix(pixa, pix3, L_COPY);
     pix4 = pixConvertTo32(pixs);

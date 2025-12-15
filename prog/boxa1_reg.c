@@ -85,13 +85,13 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pix1, 0, 0, NULL);
     pixDestroy(&pix1);
 
-    boxaCompareRegions(boxa1, boxa1, 100, &same, &diffarea, &diffxor, NULL, rp->diag_spec);
+    boxaCompareRegions(boxa1, boxa1, 100, &same, &diffarea, &diffxor, NULL);
     regTestCompareValues(rp, 1, same, 0.0);  /* 1 */
     regTestCompareValues(rp, 0.0, diffarea, 0.0);  /* 2 */
     regTestCompareValues(rp, 0.0, diffxor, 0.0);  /* 3 */
 
     boxa2 = boxaTransform(boxa1, -13, -13, 1.0, 1.0);
-    boxaCompareRegions(boxa1, boxa2, 10, &same, &diffarea, &diffxor, NULL, rp->diag_spec);
+    boxaCompareRegions(boxa1, boxa2, 10, &same, &diffarea, &diffxor, NULL);
     regTestCompareValues(rp, 1, same, 0.0);  /* 4 */
     regTestCompareValues(rp, 0.0, diffarea, 0.0);  /* 5 */
     regTestCompareValues(rp, 0.0, diffxor, 0.0);  /* 6 */
@@ -115,8 +115,8 @@ L_REGPARAMS* rp;
     boxa1 = boxaReadMem(data1, size1);
     boxaWriteMem(&data2, &size2, boxa1);
     boxa2 = boxaReadMem(data2, size2);
-	const char* boxpath1 = leptDebugGenFilepath(rp->diag_spec, "boxa1.ba");
-	const char* boxpath2 = leptDebugGenFilepath(rp->diag_spec, "boxa2.ba");
+	const char* boxpath1 = leptDebugGenFilepath("boxa1.ba");
+	const char* boxpath2 = leptDebugGenFilepath("boxa2.ba");
 	boxaWrite(boxpath1, boxa1);
     boxaWrite(boxpath2, boxa2);
     filesAreIdentical(boxpath1, boxpath2,
@@ -140,7 +140,6 @@ PIX     *pix1, *pix2, *pix3;
 PIXA    *pixa;
 
     pixa = pixaCreate(2);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
 	boxaGetExtent(boxa, &w, &h, &box);
     pix1 = pixCreate(w, h, 1);

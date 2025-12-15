@@ -73,7 +73,6 @@ PTA          *ptapk;
 
         /* Make a graded frame color */
     pixs = pixCreate(650, 900, 32);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	for (i = 0; i < 900; i++) {
         rval = 40 + i / 30;
         for (j = 0; j < 650; j++) {
@@ -86,14 +85,12 @@ PTA          *ptapk;
 
         /* Place an image inside the frame and convert to HSV */
     pix1 = pixRead(DEMOPATH("1555.003.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixScale(pix1, 0.5, 0.5);
     pixRasterop(pixs, 100, 100, 2000, 2000, PIX_SRC, pix2, 0, 0);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     pixDisplayWithTitle(pixs, 400, 0, "Input image");
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     pixhsv = pixConvertRGBToHSV(NULL, pixs);
 
@@ -107,11 +104,11 @@ PTA          *ptapk;
     pixaAddPix(pixa, pixhsv, L_INSERT);
     pixaAddPix(pixa, pixg, L_INSERT);
     pixaAddPix(pixa, pixf, L_INSERT);
-    pix3 = gplotSimplePix1(rp->diag_spec, nahue, "lept/regout/junkhue", "Histogram of hue values");
+    pix3 = gplotSimplePix1(nahue, "lept/regout/junkhue", "Histogram of hue values");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 1 */
     pixDisplayWithTitle(pix3, 100, 300, "Histo of hue");
     pixaAddPix(pixa, pix3, L_INSERT);
-	pix3 = gplotSimplePix1(rp->diag_spec, nasat, "lept/regout/junksat", "Histogram of saturation values");
+	pix3 = gplotSimplePix1(nasat, "lept/regout/junksat", "Histogram of saturation values");
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 2 */
     pixDisplayWithTitle(pix3, 100, 800, "Histo of saturation");
     pixaAddPix(pixa, pix3, L_INSERT);
@@ -137,7 +134,6 @@ PTA          *ptapk;
 
         /* Make masks for each of the peaks */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     pixr = pixScaleBySampling(pixs, 0.4, 0.4);
     for (i = 0; i < 6; i++) {

@@ -81,7 +81,6 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	d = pixGetDepth(pixs);
     if (d != 8 && d != 32)
         return ERROR_INT("depth not 8 or 32 bpp", __func__, 1);
@@ -91,7 +90,7 @@ L_REGPARAMS* rp;
         if ((na1 = pixOctcubeHistogram(pixs, sigbits, NULL)) == NULL)
             return ERROR_INT("na1 not made", __func__, 1);
         lept_stderr("histo time = %7.3f sec\n", stopTimer());
-        gplot = gplotCreate(rp->diag_spec, "/tmp/lept/histo/color", GPLOT_PNG,
+        gplot = gplotCreate("/tmp/lept/histo/color", GPLOT_PNG,
                             "color histogram with octcube indexing",
                             "octcube index", "number of pixels in cube");
         gplotAddPlot(gplot, NULL, na1, GPLOT_LINES, "input pix");
@@ -103,7 +102,7 @@ L_REGPARAMS* rp;
         if ((na1 = pixGetGrayHistogram(pixs, 1)) == NULL)
             return ERROR_INT("na1 not made", __func__, 1);
         numaWrite("/tmp/junk.na", na1);
-        gplot = gplotCreate(rp->diag_spec, "/tmp/lept/histo/gray", GPLOT_PNG,
+        gplot = gplotCreate("/tmp/lept/histo/gray", GPLOT_PNG,
                             "grayscale histogram", "gray value",
                             "number of pixels");
         gplotSetScaling(gplot, GPLOT_LOG_SCALE_Y);
@@ -119,12 +118,10 @@ L_REGPARAMS* rp;
         /* Test behavior of pixThresholdByHisto() */
 #if 0  /* for valgrind, use pnm instead of jpg */
     pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixWrite("/tmp/lyra.005.pnm", pix1, IFF_PNM);
 #endif
 /*    pix1 = pixRead("/tmp/lyra.005.pnm"); */
     pixs = pixRead(DEMOPATH("lyra.005.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	box1 = boxCreate(0, 173, 350, 580);
     pix1 = pixClipRectangle(pixs, box1, 0);
     pix2 = pixRotateOrth(pix1, 1);
@@ -132,7 +129,6 @@ L_REGPARAMS* rp;
     pixThresholdByHisto(pix3, 1, 0, 0, &val, &pix4, &na1, &pix5);
     lept_stderr("val = %d\n", val);
     pixa1 = pixaCreate(4);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 	pixaAddPix(pixa1, pix2, L_INSERT);
     pixaAddPix(pixa1, pix3, L_INSERT);
     pixaAddPix(pixa1, pix4, L_INSERT);

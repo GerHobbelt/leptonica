@@ -70,7 +70,6 @@ L_REGPARAMS* rp;
 
     if ((pixs = pixRead(filein)) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
     sad1 = pixProcessBarcodes(pixs, L_BF_ANY, L_USE_WIDTHS, &saw1);
     sarrayWrite("/tmp/lept/barc/saw1.sa", saw1);

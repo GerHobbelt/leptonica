@@ -1897,7 +1897,6 @@ PIX      *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopyColormap(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 
         /* Set the new border pixels */
     maxval = (d == 32) ? 0xffffff00 : (1 << d) - 1;
@@ -2035,7 +2034,6 @@ PIX     *pixd;
     pixCopyResolution(pixd, pixs);
     pixCopySpp(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	pixCopyColormap(pixd, pixs);
 
     pixRasterop(pixd, 0, 0, wd, hd, PIX_SRC, pixs, left, top);
@@ -2384,7 +2382,6 @@ PIXCMAP   *cmap;
     width = (l_int32)(scalefact * w);
 
     pixa = pixaCreate(3);
-	pixaSetDiagnosticsSpec(pixa, pixGetDiagnosticsSpec(pixs));
     pixSetSpp(pix1, 3);
     pixaAddPix(pixa, pix1, L_INSERT);  /* show the rgb values */
     pix1 = pixGetRGBComponent(pixs, L_ALPHA_CHANNEL);
@@ -2454,7 +2451,6 @@ PIX     *pixd;
     if ((pixd = pixCreate(wr, hr, 32)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixr);
-	pixSetDiagnosticsSpec(pixd, pixGetDiagnosticsSpecFromAny(3, pixr, pixg, pixb));
 	pixSetRGBComponent(pixd, pixr, COLOR_RED);
     pixSetRGBComponent(pixd, pixg, COLOR_GREEN);
     pixSetRGBComponent(pixd, pixb, COLOR_BLUE);
@@ -2506,7 +2502,6 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     pixCopyResolution(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wpls = pixGetWpl(pixs);
     wpld = pixGetWpl(pixd);
     datas = pixGetData(pixs);
@@ -2640,7 +2635,6 @@ RGBA_QUAD  *cta;
     }
     pixCopyResolution(pixd, pixs);
 	pixCopyText(pixd, pixs);
-	pixCloneDiagnosticsSpec(pixd, pixs);
 	wplc = pixGetWpl(pixc);
     wpld = pixGetWpl(pixd);
     datac = pixGetData(pixc);

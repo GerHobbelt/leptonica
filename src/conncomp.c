@@ -212,7 +212,6 @@ L_STACK  *stack, *auxstack;
     if (connectivity != 4 && connectivity != 8)
         return (BOXA *)ERROR_PTR("connectivity not 4 or 8", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
 
     pix1 = pix2 = pix3 = pix4 = NULL;
     stack = NULL;
@@ -287,7 +286,6 @@ cleanup:
     pixDestroy(&pix1);
     pixDestroy(&pix2);
 
-	pixaSetDiagnosticsSpecPervasively(pixa, diagspec);
 
     return boxa;
 }

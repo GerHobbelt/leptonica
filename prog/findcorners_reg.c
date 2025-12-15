@@ -99,17 +99,15 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/regout");
 
     pixs = pixRead(DEMOPATH("tickets.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
-	flag = leptIsInDisplayMode(rp->diag_spec);
+	flag = leptIsInDisplayMode();
 
 	boxa = LocateBarcodes(pixs, &pixd, flag);
     regTestWritePixAndCheck(rp, pixd, IFF_TIFF_G4);  /* 0 */
-    if (leptIsInDisplayMode(rp->diag_spec)) boxaWriteStderr(boxa);
+    if (leptIsInDisplayMode()) boxaWriteStderr(boxa);
     n = boxaGetCount(boxa);
     deg2rad = 3.14159265 / 180.;
     pixa = pixaCreate(9);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 0; i < n; i++) {
         box1 = boxaGetBox(boxa, i, L_CLONE);
             /* Use a larger adjustment to get entire skewed ticket */
@@ -126,7 +124,7 @@ L_REGPARAMS* rp;
         box4 = boxAdjustSides(NULL, box3, -141, 221, -1535, 157);
         pix3 = pixClipRectangle(pix2, box4, NULL);
         regTestWritePixAndCheck(rp, pix3, IFF_TIFF_G4);  /* 1 - 9 */
-        if (leptIsInDisplayMode(rp->diag_spec))
+        if (leptIsInDisplayMode())
             pixaAddPix(pixa, pix3, L_INSERT);
         else
             pixDestroy(&pix3);
@@ -138,7 +136,7 @@ L_REGPARAMS* rp;
         pixDestroy(&pix1);
         pixDestroy(&pix2);
     }
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixaConvertToPdf(pixa, 0, 1.0, 0, 0, "tickets",
                          "/tmp/lept/regout/tickets.pdf");
         L_INFO("Output pdf: /tmp/lept/regout/tickets.pdf\n", rp->testname);
@@ -217,9 +215,8 @@ SELA  *sela1, *sela2;
     selaFindSelByName(sela1, "sel_lrc", NULL, &sel);
     selaAddSel(sela2, sel, NULL, 1);
     selaDestroy(&sela1);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix = selaDisplayInPix(sela2, 21, 3, 10, 4);
-		pixSetDiagnosticsSpec(pix, rp->diag_spec);
 		pixDisplay(pix, 0, 0);
         pixDestroy(&pix);
     }

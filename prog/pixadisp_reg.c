@@ -65,11 +65,8 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix32 = pixRead(DEMOPATH("marge.jpg"));
     pixs = pixRead(DEMOPATH("feyn.tif"));
-	pixSetDiagnosticsSpec(pix32, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	box = boxCreate(683, 799, 970, 479);
     pix1 = pixClipRectangle(pixs, box, NULL);
     boxDestroy(&box);
@@ -159,7 +156,6 @@ L_REGPARAMS* rp;
 
         /* pixaMakeFromTiledPix() and pixaDisplayOnLattice()  */
     pix1 = pixRead(DEMOPATH("sevens.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixa1 = pixaMakeFromTiledPix(pix1, 20, 30, 0, 0, NULL);
     pix2 = pixaDisplayOnLattice(pixa1, 20, 30, NULL, NULL);
     regTestComparePix(rp, pix1, pix2);  /* 10 */
@@ -184,13 +180,10 @@ L_REGPARAMS* rp;
         sarrayAddString(sa1, DEMOPATH(files[i]), L_COPY);
     pixa1 = pixaCreate(7);
     pixa2 = pixaCreate(7);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
-	pixaSetDiagnosticsSpec(pixa2, rp->diag_spec);
 	sa2 = sarrayCreate(7);
     for (i = 0; i < 7; i++) {
         fname = sarrayGetString(sa1, i, L_NOCOPY);
         pix1 = pixRead(fname);
-		pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 		pix2 = pixConvertTo8(pix1, 0);
         pixaAddPix(pixa1, pix1, L_INSERT);
         pixaAddPix(pixa2, pix2, L_INSERT);
@@ -207,7 +200,7 @@ L_REGPARAMS* rp;
     sarrayDestroy(&sa1);
     sarrayDestroy(&sa2);
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         //lept_mkdir("lept/padisp");
 
         lept_stderr("Writing to: /tmp/lept/padisp/pixadisp.pdf\n");

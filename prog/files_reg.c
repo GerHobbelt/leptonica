@@ -108,12 +108,12 @@ L_REGPARAMS* rp;
     lept_stderr(" ===================================================\n");
     lept_rmdir("junkfiles");
     lept_dir_exists("/tmp/junkfiles", &exists);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("directory removed?: %d\n", !exists);
+    if (leptIsInDisplayMode()) lept_stderr("directory removed?: %d\n", !exists);
     regTestCompareValues(rp, 0, exists, 0.0);  /* 17 */
 
     lept_mkdir("junkfiles");
     lept_dir_exists("/tmp/junkfiles", &exists);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("directory made?: %d\n", exists);
+    if (leptIsInDisplayMode()) lept_stderr("directory made?: %d\n", exists);
     regTestCompareValues(rp, 1, exists, 0.0);  /* 18 */
 
     lept_stderr("\n ===================================================\n");
@@ -172,7 +172,7 @@ char  *path = NULL;
         newpath = stringNew("\"\"");
     else if (path)
         newpath = stringNew(path);
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("join: %s + %s --> %s\n", newfirst, newsecond, newpath);
     lept_free(path);
     lept_free(newfirst);
@@ -195,7 +195,7 @@ SARRAY  *sa;
     realtail = (newtail) ? stringNew(newtail) : stringNew(srctail);
     lept_rm(newdir, realtail);
     makeTempDirname(realnewdir, 256, newdir);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("\nInput: srctail = %s, newdir = %s, newtail = %s\n",
                     srctail, newdir, newtail);
         lept_stderr("  realnewdir = %s, realtail = %s\n", realnewdir, realtail);
@@ -208,7 +208,7 @@ SARRAY  *sa;
     lept_cp(srctail, newdir, newtail, &fname);
     sa = getFilenamesInDirectory(realnewdir);
     nfiles2 = sarrayGetCount(sa);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("  File copied to directory: %s\n", realnewdir);
         lept_stderr("  ... with this filename: %s\n", fname);
         lept_stderr("  delta files should be 1: %d\n", nfiles2 - nfiles1);
@@ -221,7 +221,7 @@ SARRAY  *sa;
     lept_rm(newdir, realtail);
     sa = getFilenamesInDirectory(realnewdir);
     nfiles2 = sarrayGetCount(sa);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("  File removed from directory: %s\n", realnewdir);
         lept_stderr("  delta files should be 0: %d\n", nfiles2 - nfiles1);
     }
@@ -230,7 +230,7 @@ SARRAY  *sa;
 
         /* Copy it again ... */
     lept_cp(srctail, newdir, newtail, &fname);
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("  File copied to: %s\n", fname);
     lept_free(fname);
 
@@ -239,24 +239,24 @@ SARRAY  *sa;
     lept_mkdir("junko");
     newsrc = pathJoin(realnewdir, realtail);
     lept_mv(newsrc, "junko", NULL, &fname);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("  Move file at: %s\n", newsrc);
         lept_stderr("  ... to: %s\n", fname);
     }
     lept_free(fname);
     lept_free(newsrc);
     makeTempDirname(newnewdir, 256, "junko");
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  In this directory: %s\n", newnewdir);
+    if (leptIsInDisplayMode()) lept_stderr("  In this directory: %s\n", newnewdir);
     sa = getFilenamesInDirectory(newnewdir);  /* check if it landed ok */
     nfiles3 = sarrayGetCount(sa);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("  num files should be 1: %d\n", nfiles3);
+    if (leptIsInDisplayMode()) lept_stderr("  num files should be 1: %d\n", nfiles3);
     regTestCompareValues(rp, 1, nfiles3, 0.0);  /* '3' */
     sarrayDestroy(&sa);
 
         /* and verify it was removed from the original location */
     sa = getFilenamesInDirectory(realnewdir);  /* check if it was removed */
     nfiles2 = sarrayGetCount(sa);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         lept_stderr("  In this directory: %s\n", realnewdir);
         lept_stderr("  delta files should be 0: %d\n", nfiles2 - nfiles1);
     }
@@ -289,7 +289,7 @@ void TestGenPathname(L_REGPARAMS  *rp,
         regTestCompareStrings(rp, (l_uint8 *)result, strlen(result),
                               (l_uint8 *)path, strlen(path));
     }
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         char  *newdir = NULL;
         if (dir && dir[0] == '\0')
             newdir = stringNew("\"\"");

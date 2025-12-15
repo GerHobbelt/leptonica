@@ -74,7 +74,6 @@ PIXA         *pixa;
 	//lept_mkdir("lept/rank");
 
     pixs = pixRead(DEMOPATH("lucasta.150.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixGetDimensions(pixs, &w, &h, NULL);
 
     startTimer();
@@ -118,7 +117,7 @@ PIXA         *pixa;
     nax = numaMakeSequence(1, 1, 20);
     nay1 = numaCreate(20);
     nay2 = numaCreate(20);
-    gplot = gplotCreate(rp->diag_spec, "/tmp/lept/rank/plots", GPLOT_PNG,
+    gplot = gplotCreate("/tmp/lept/rank/plots", GPLOT_PNG,
                         "sec/MPix vs filter size", "size", "time");
     pixa = pixaCreate(20);
     for (i = 1; i <= 20; i++) {
@@ -143,7 +142,6 @@ PIXA         *pixa;
     gplotMakeOutput(gplot);
     gplotDestroy(&gplot);
     pix1 = pixRead("/tmp/lept/rank/plots.png");
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixDisplayWithTitle(pix1, 100, 100, NULL);
     pixDestroy(&pix1);
     pixDestroy(&pix0);
@@ -160,9 +158,7 @@ PIXA         *pixa;
 
     /* ------------------     Gray tests    ------------------ */
     pixs = pixRead(DEMOPATH("test8.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixa = pixaCreate(4);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	for (i = 1; i <= 4; i++) {
         pix1 = pixScaleGrayRank2(pixs, i);
         pixaAddPix(pixa, pix1, L_INSERT);
@@ -175,7 +171,6 @@ PIXA         *pixa;
     pixaDestroy(&pixa);
 
     pixs = pixRead(DEMOPATH("test24.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixConvertRGBToLuminance(pixs);
     pix2 = pixScale(pix1, 1.5, 1.5);
     pixa = pixaCreate(5);
@@ -196,7 +191,6 @@ PIXA         *pixa;
 
     /* ---------- Compare color morph with rank operator ---------- */
     pixs = pixRead(DEMOPATH("wyom.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	box = boxCreate(400, 220, 300, 250);
     pix0 = pixClipRectangle(pixs, box, NULL);
     boxDestroy(&box);
@@ -219,9 +213,8 @@ PIXA         *pixa;
     pixDestroy(&pix4);
 
     /* Show color results for different rank values */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixa = pixaCreate(10);
-		pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 		pix1 = pixColorMorph(pix0, L_MORPH_ERODE, 13, 13);
         pixaAddPix(pixa, pix1, L_INSERT);
         for (i = 0; i <= 10; i++) {

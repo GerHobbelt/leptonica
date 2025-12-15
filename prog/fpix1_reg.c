@@ -99,29 +99,25 @@ PTA          *ptas, *ptad;
 
         /* Gaussian kernel */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	kel = makeGaussianKernel(5, 5, 3.0, 4.0);
     kernelGetSum(kel, &sum);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Sum for 2d gaussian kernel = %f\n", sum);
+    if (leptIsInDisplayMode()) lept_stderr("Sum for 2d gaussian kernel = %f\n", sum);
     pix0 = kernelDisplayInPix(kel, 41, 2);
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 0 */
     pixaAddPix(pixa, pix0, L_INSERT);
 
         /* Separable gaussian kernel */
     makeGaussianKernelSep(5, 5, 3.0, 4.0, &kelx, &kely);
     kernelGetSum(kelx, &sumx);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Sum for x gaussian kernel = %f\n", sumx);
+    if (leptIsInDisplayMode()) lept_stderr("Sum for x gaussian kernel = %f\n", sumx);
     kernelGetSum(kely, &sumy);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Sum for y gaussian kernel = %f\n", sumy);
-    if (leptIsInDisplayMode(rp->diag_spec)) lept_stderr("Sum for x * y gaussian kernel = %f\n",
+    if (leptIsInDisplayMode()) lept_stderr("Sum for y gaussian kernel = %f\n", sumy);
+    if (leptIsInDisplayMode()) lept_stderr("Sum for x * y gaussian kernel = %f\n",
                          sumx * sumy);
     pix0 = kernelDisplayInPix(kelx, 41, 2);
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 1 */
     pixaAddPix(pixa, pix0, L_INSERT);
     pix0 = kernelDisplayInPix(kely, 41, 2);
-	pixSetDiagnosticsSpec(pix0, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix0, IFF_PNG);  /* 2 */
     pixaAddPix(pixa, pix0, L_INSERT);
     pix0 = pixaDisplayTiledInColumns(pixa, 4, 1.0, 20, 2);
@@ -131,11 +127,8 @@ PTA          *ptas, *ptad;
 
         /* Use pixRasterop() to generate source image */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH("test8.jpg"));
     pixs2 = pixRead(DEMOPATH("karen8.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
 	pixRasterop(pixs, 150, 125, 150, 100, PIX_SRC, pixs2, 75, 100);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 4 */
 
@@ -166,7 +159,7 @@ PTA          *ptas, *ptad;
     fpixDestroy(&fpix2);
 
         /* Comparison of results */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixCompareGray(pix1, pix2, L_COMPARE_ABS_DIFF, 0, NULL,
                        &diff, NULL, NULL);
         lept_stderr("Ave diff of pixConvolve and pixConvolveSep: %f\n", diff);
@@ -184,7 +177,6 @@ PTA          *ptas, *ptad;
 
         /* Test arithmetic operations; add in a fraction rotated by 180 */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs3 = pixRotate180(NULL, pixs);
     regTestWritePixAndCheck(rp, pixs3, IFF_JFIF_JPEG);  /* 10 */
     pixaAddPix(pixa, pixs3, L_INSERT);
@@ -208,9 +200,7 @@ PTA          *ptas, *ptad;
 
         /* Test some more convolutions, with sampled output. First on pix */
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH("1555.007.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixg = pixConvertTo8(pixs, 0);
     l_setConvolveSampling(5, 5);
     pix1 = pixConvolve(pixg, kel, 8, 1);
@@ -254,7 +244,6 @@ PTA          *ptas, *ptad;
          * First, build a smooth vertical disparity array;
          * then extend and show the contours. */
     pixs = pixRead(DEMOPATH("cat.035.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixn = pixBackgroundNormSimple(pixs, NULL, NULL);
     pixg = pixConvertRGBToGray(pixn, 0.5, 0.3, 0.2);
     pixb = pixThresholdToBinary(pixg, 130);
@@ -265,7 +254,7 @@ PTA          *ptas, *ptad;
         return regTestCleanup(rp);
     }
     dewarpaInsertDewarp(dewa, dew);
-    dewarpBuildPageModel(dew, NULL);  /* two invalid indices in ptaGetPt() */
+    dewarpBuildPageModel(dew);  /* two invalid indices in ptaGetPt() */
     dewarpPopulateFullRes(dew, NULL, 0, 0);
     fpixs = dew->fullvdispar;
     fpixs2 = fpixAddContinuedBorder(fpixs, 200, 200, 100, 300);
@@ -277,7 +266,6 @@ PTA          *ptas, *ptad;
     pix3 = fpixRenderContours(fpixs3, 2.0, 0.2);
     pix4 = fpixRenderContours(fpixs4, 2.0, 0.2);
     pix5 = pixRead(DEMOPATH("karen8.jpg"));
-	pixSetDiagnosticsSpec(pix5, rp->diag_spec);
 	dpix2 = pixConvertToDPix(pix5, 1);
     pix6 = dpixConvertToPix(dpix2, 8, L_CLIP_TO_ZERO, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 22 */
@@ -307,7 +295,6 @@ PTA          *ptas, *ptad;
         /* Test affine and projective transforms on fpix */
     fpixWrite("/tmp/lept/regout/fpix1.fp", dew->fullvdispar);
     fpix1 = fpixRead("/tmp/lept/regout/fpix1.fp");
-	fpixSetDiagnosticsSpec(fpix1, rp->diag_spec);
 	pix1 = fpixAutoRenderContours(fpix1, 40);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 27 */
     pixDisplayWithTitle(pix1, 0, 500, NULL);

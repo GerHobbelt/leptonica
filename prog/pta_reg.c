@@ -77,7 +77,6 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	boxa = pixConnComp(pixs, NULL, 8);
     nbox = boxaGetCount(boxa);
     regTestCompareValues(rp, nbox, 464, 0);  /* 0 */
@@ -122,7 +121,6 @@ L_REGPARAMS* rp;
 
         /* Render the fg boundary pixels on top of pixs. */
     pixa = pixaCreate(4);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixc = pixRenderRandomCmapPtaa(pixs, ptaafg, 0, 0, 0);
     regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 7 */
     pixaAddPix(pixa, pixc, L_INSERT);
@@ -168,7 +166,6 @@ L_REGPARAMS* rp;
 
         /* Test rotation */
     pix1 = pixRead(DEMOPATH("feyn-word.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixAddBorderGeneral(pix1, 200, 200, 200, 200, 0);
     pixa = pixaCreate(0);
     pix3 = PtaDisplayRotate(pix2, 0, 0);
@@ -189,7 +186,6 @@ L_REGPARAMS* rp;
 
         /* Test pta sort and pta equality */
     pix1 = pixRead(DEMOPATH("feyn-word.tif"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixGetDimensions(pix1, &w, &h, NULL);
     pta1 = ptaGetPixelsFromPix(pix1, NULL);
     ptaGetIPt(pta1, 0, &x, &y);  /* add copy of first point */
@@ -227,13 +223,12 @@ L_REGPARAMS* rp;
     regTestCompareValues(rp, 1, convex1, 0.0);  /* 16 */
     regTestCompareValues(rp, 0, convex2, 0.0);  /* 17 */
     regTestCompareValues(rp, 0, convex3, 0.0);  /* 18 */
-    if (leptIsInDisplayMode(rp->diag_spec))
+    if (leptIsInDisplayMode())
         lept_stderr("convex1 = %s, convex2 = %s, convex3 = %s\n",
                     (convex1 == 0) ? "no" : "yes",
                     (convex2 == 0) ? "no" : "yes",
                     (convex3 == 0) ? "no" : "yes");
     pixa = pixaCreate(3);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pix1 = pixCreate(100, 100, 1);
 	pixRenderPta(pix1, pta1, L_SET_PIXELS);
     pixaAddPix(pixa, pix1, L_INSERT);
@@ -278,7 +273,6 @@ PTAA    *ptaa;
         /* Render them */
     pixGetDimensions(pixs, &w, &h, NULL);
     pix1 = pixCreate(w, h, 32);
-	pixCloneDiagnosticsSpec(pix1, pixs);
     pixSetAll(pix1);
     pta3 = generatePtaFilledCircle(4);
     pta4 = ptaTranslate(pta3, xc, yc);

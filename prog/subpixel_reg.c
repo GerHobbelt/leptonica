@@ -78,11 +78,9 @@ PIXA         *pixa;
 
 	/* ----------------- Test on 8 bpp grayscale ---------------------*/
     pixa = pixaCreate(5);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	bmf = bmfCreate(DEMOPATH("fonts"), 6);
     bmftop = bmfCreate(DEMOPATH("fonts"), 10);
     pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixg = pixScale(pixs, 0.4, 0.4);  /* 8 bpp grayscale */
     pix1 = pixConvertTo32(pixg);  /* 32 bpp rgb */
     AddTextAndSave(pixa, pix1, bmf, textstr[0], L_ADD_BELOW, 0xff000000);
@@ -115,9 +113,7 @@ PIXA         *pixa;
 
     /* ----------------- Test on 32 bpp rgb ---------------------*/
     pixa = pixaCreate(5);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 	pixs = pixRead(DEMOPATH("fish24.jpg"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixScale(pixs, 0.4, 0.4);
     AddTextAndSave(pixa, pix1, bmf, textstr[0], L_ADD_BELOW, 0xff000000);
     pix2 = pixConvertToSubpixelRGB(pixs, 0.4, 0.4, L_SUBPIXEL_ORDER_RGB);
@@ -153,7 +149,6 @@ PIXA         *pixa;
         /* Normal scaling of 8 bpp grayscale */
     scalefact = 800. / 2320.;
     pixs = pixRead(DEMOPATH("patent.png"));   /* sharp, 300 ppi, 1 bpp image */
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pix1 = pixConvertTo8(pixs, FALSE);  /* use 8 bpp input */
     pix2 = pixScale(pix1, scalefact, scalefact);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 2 */

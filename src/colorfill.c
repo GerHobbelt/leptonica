@@ -84,7 +84,7 @@ static l_int32 colorsAreSimilarForFill(l_uint32 val1, l_uint32 val2,
                                        l_int32 maxdiff);
 static l_ok    pixelColorIsValid(l_uint32 val, l_int32 minmax);
 static l_int32 pixelIsOnColorBoundary(PIX *pixs, l_int32 x, l_int32 y);
-static l_int32 evalColorfillData(L_COLORFILL *cf, LDIAG_CTX diagspec);
+static l_int32 evalColorfillData(L_COLORFILL *cf);
 
 
 /*---------------------------------------------------------------------*
@@ -226,8 +226,7 @@ pixColorContentByLocation(L_COLORFILL  *cf,
                           l_int32       minmax,
                           l_int32       maxdiff,
                           l_int32       minarea,
-                          l_int32       smooth,
-                          LDIAG_CTX     diagspec)
+                          l_int32       smooth)
 {
 l_int32    i, n;
 PIX       *pix1, *pix2, *pix3;
@@ -239,13 +238,12 @@ PIXA      *pixas, *pixam;
     if (minmax > 200)
         return ERROR_INT("minmax > 200; unreasonably large", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Do the optional linear color map; this checks the ref vals
          * and uses them if valid.  Use {0,0,0} to skip this operation. */
     if ((pix1 = pixColorShiftWhitePoint(cf->pixs, rref, gref, bref)) == NULL)
         return ERROR_INT("pix1 not returned", __func__, 1);
-	pixSetDiagnosticsSpec(pix1, diagspec);
     cf->pixst = pix1;
 
         /* Break the image up into small tiles */
@@ -255,11 +253,9 @@ PIXA      *pixas, *pixam;
         /* Find regions of similar color in each tile */
     n = pixaGetCount(pixas);
     pixam = pixaCreate(n);
-	pixaSetDiagnosticsSpec(pixam, diagspec);
 	cf->pixam = pixam;
     for (i = 0; i < n; i++) {
         pix2 = pixaGetPix(pixas, i, L_COPY);
-		pixSetDiagnosticsSpec(pix2, diagspec);
 		pix3 = pixColorFill(pix2, minmax, maxdiff, smooth, minarea);
         pixDestroy(&pix2);
         pixaAddPix(pixam, pix3, L_INSERT);
@@ -268,7 +264,7 @@ PIXA      *pixas, *pixam;
         /* Evaluate color components.  Find the average color in each
          * component and determine if there is more than one color in
          * each of the tiles. */
-    evalColorfillData(cf, diagspec);
+    evalColorfillData(cf);
 
     return 0;
 }
@@ -311,8 +307,7 @@ L_QUEUE   *lq;
     if (!pixs || pixGetDepth(pixs) != 32)
         return (PIX *)ERROR_PTR("pixs undefined or not 32 bpp", __func__, NULL);
 
-	LDIAG_CTX diagspec = pixGetDiagnosticsSpec(pixs);
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
         /* Set the non-color pixels to 0; generate a mask representing them */
     pixGetDimensions(pixs, &w, &h, NULL);
@@ -348,11 +343,9 @@ L_QUEUE   *lq;
 
         /* Find the color components */
     pixv = pixCreate(w, h, 1);  /* visited pixels */
-	pixCloneDiagnosticsSpec(pixv, pixs);
 	pixOr(pixv, pixv, pixncd);  /* consider non-color as visited */
     pixSetBorderRingVal(pixv, 1, 1);
     pixm = pixCreate(w, h, 1);  /* color components */
-	pixCloneDiagnosticsSpec(pixm, pixs);
 	lq = lqueueCreate(0);
     x = y = 1;  /* first row and column have been marked as visited */
     while (findNextUnvisited(pixv, &x, &y) == 1) {
@@ -363,7 +356,6 @@ L_QUEUE   *lq;
                              minarea, debugflag);
         if (pta1) {  /* erode and add the pixels to pixm */
             pixm1 = pixGenerateFromPta(pta1, w, h);
-			pixSetDiagnosticsSpec(pixm1, diagspec);
 			pixErodeBrick(pixm1, pixm1, 3, 3);
             pixOr(pixm, pixm, pixm1);
             pixDestroy(&pixm1);
@@ -852,8 +844,7 @@ l_uint32  val, neigh;
  * \return  0 if OK, 1 on error
  */
 static l_int32
-evalColorfillData(L_COLORFILL  *cf,
-                  LDIAG_CTX     diagspec)
+evalColorfillData(L_COLORFILL  *cf)
 {
 l_int32    i, j, n, nc, w, h, x, y, count;
 l_float32  rval, gval, bval;
@@ -869,7 +860,7 @@ PIXA      *pixa1;
     if (!cf)
         return ERROR_INT("cf not defind", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     tab = makePixelSumTab8();
     n = cf->nx * cf->ny;
@@ -885,7 +876,6 @@ PIXA      *pixa1;
 		pixdb = NULL;
 		if (debugflag) {
 			pixdb = pixCreate(w, h, 32);
-			pixSetDiagnosticsSpec(pixdb, diagspec);
 		}
         for (j = 0; j < nc; j++) {
             pix2 = pixaGetPix(pixa1, j, L_COPY);

@@ -107,7 +107,6 @@ L_REGPARAMS* rp;
         /* Create from file and display result */
     sela1 = selaCreateFromFile("flipsels.txt");
     pix = selaDisplayInPix(sela1, 31, 3, 15, 4);
-	pixSetDiagnosticsSpec(pix, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pix, IFF_PNG);  /* 3 */
     pixDisplayWithTitle(pix, 100, 100, NULL);
     selaWrite("/tmp/lept/regout/sel.3.sela", sela1);

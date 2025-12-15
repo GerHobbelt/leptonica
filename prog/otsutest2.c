@@ -87,23 +87,22 @@ int main(int argc, const char** argv)
 	}
 
 	// every input file is treated as another round and represents the parent level in the step hierarchy:
-	leptDebugAddStepLevel(rp->diag_spec);
+	leptDebugAddStepLevel();
 
 	int argv_count = sarrayGetCount(sargv);
 	for (int argidx = 0; argidx < argv_count; argidx++)
 	{
 		const char* filename = sarrayGetString(sargv, argidx, L_NOCOPY);
 		const char* filepath = DEMOPATH(filename);
-		leptDebugSetFilenameForPrefix(rp->diag_spec, filepath, -1);
+		leptDebugSetFilenameForPrefix(filepath, -1);
 
-		leptDebugSetStepIdAtDepth(rp->diag_spec, -1, argidx + 1);   // inc parent level
+		leptDebugSetStepIdAtDepth(-1, argidx + 1);   // inc parent level
 
 
-		lept_stderr("\n\n\nProcessing image #%d~#%d: %s = %s :: %s\n", argidx + 1, leptDebugGetStepIdAtLevel(rp->diag_spec, -1), filename, filepath, leptDebugGetFilenameForPrefix(rp->diag_spec));
+		lept_stderr("\n\n\nProcessing image #%d~#%d: %s = %s :: %s\n", argidx + 1, leptDebugGetStepIdAtLevel(-1), filename, filepath, leptDebugGetFilenameForPrefix());
 
 
 		pixs = pixRead(filepath);
-		pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
 		snprintf(textstr, sizeof(textstr), "source: %s", filename);
 		pixSetText(pixs, textstr);
@@ -115,10 +114,8 @@ int main(int argc, const char** argv)
 
 		bmf = bmfCreate(NULL, 8);
 		pixad = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixad, rp->diag_spec);
 		for (i = 0; i < 3; i++) {
 			pixa1 = pixaCreate(2);
-			pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 			scorefract = 0.1 * i;
 			lept_stderr("\nScorefrac: %1.3f\n", scorefract);
 
@@ -140,7 +137,7 @@ int main(int argc, const char** argv)
 
 			/* Save and display the result */
 			pixaAddPix(pixad, pix2, L_INSERT);
-			const char *pixpath = leptDebugGenFilepath(rp->diag_spec, "ScoreFrac-%03d.png", (int)i);
+			const char *pixpath = leptDebugGenFilepath("ScoreFrac-%03d.png", (int)i);
 			pixWrite(pixpath, pix2, IFF_PNG);
 			pixDisplayWithTitle(pix2, 100, 100, "Split distribution in FG/BG");
 			pixDestroy(&pix1);
@@ -159,7 +156,7 @@ int main(int argc, const char** argv)
 				"Scorefract = %3.1f (%s)", scorefract, filename);
 			pix3 = pixAddSingleTextblock(pix2, bmf, textstr, 1,
 				L_ADD_BELOW, NULL);
-			const char* pixpath = leptDebugGenFilepath(rp->diag_spec, "AdaptiveOtsu-%03d.png", (int)i);
+			const char* pixpath = leptDebugGenFilepath("AdaptiveOtsu-%03d.png", (int)i);
 			pixWrite(pixpath, pix3, IFF_PNG);
 			pixaAddPix(pixad, pix3, L_INSERT);
 			pixDestroy(&pixb);
@@ -167,7 +164,7 @@ int main(int argc, const char** argv)
 			pixDestroy(&pix2);
 		}
 
-		const char* pdfpath = leptDebugGenFilepath(rp->diag_spec, "result.pdf");
+		const char* pdfpath = leptDebugGenFilepath("result.pdf");
 		char* out_fullname = genPathname(pdfpath, NULL);
 		lept_stderr("Writing to: %s --> %s\n", pdfpath, out_fullname);
 		pixaConvertToPdf(pixad, 75, 1.0, 0, 0, "Otsu thresholding", out_fullname);
@@ -181,7 +178,7 @@ int main(int argc, const char** argv)
 		LEPT_FREE(filepath);
 	}
 
-	leptDebugPopStepLevel(rp->diag_spec);
+	leptDebugPopStepLevel();
 
 	sarrayDestroy(&sargv);
 

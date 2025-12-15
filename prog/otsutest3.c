@@ -87,7 +87,7 @@ int main(int    argc,
 		//sargv = lept_locate_all_files_in_searchpaths(argc - 1, argv + 1);
 
 	// every input file is treated as another round and represents the parent level in the step hierarchy:
-	leptDebugAddStepLevel(rp->diag_spec);
+	leptDebugAddStepLevel();
 
 	int argv_count = regGetArgCount(rp);
 	if (argv_count == 0) {
@@ -96,14 +96,13 @@ int main(int    argc,
 	for (regMarkStartOfFirstTestround(rp, +1); regHasFileArgsAvailable(rp); regMarkEndOfTestround(rp))
 	{
 		const char* filepath = regGetFileArgOrDefault(rp, "1555.007.jpg");
-		leptDebugSetFilenameForPrefix(rp->diag_spec, filepath, -2);
+		leptDebugSetFilenameForPrefix(filepath, -2);
 
-		leptDebugSetStepIdAtDepth(rp->diag_spec, -1, regGetCurrentArgIndex(rp));   // inc parent level
+		leptDebugSetStepIdAtDepth(-1, regGetCurrentArgIndex(rp));   // inc parent level
 
-		lept_stderr("\n\n\nProcessing image #%d~#%d: %s :: %s\n", regGetCurrentArgIndex(rp), leptDebugGetStepIdAtLevel(rp->diag_spec, -1), filepath, leptDebugGetFilenameForPrefix(rp->diag_spec));
+		lept_stderr("\n\n\nProcessing image #%d~#%d: %s :: %s\n", regGetCurrentArgIndex(rp), leptDebugGetStepIdAtLevel(-1), filepath, leptDebugGetFilenameForPrefix());
 
 		pixs = pixRead(filepath);
-		pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
 		snprintf(textstr, sizeof(textstr), "source: %s", filepath);
 		pixSetText(pixs, textstr);
@@ -117,7 +116,6 @@ int main(int    argc,
 
 		bmf = bmfCreate(NULL, 8);
 		pixad = pixaCreate(0);
-		pixaSetDiagnosticsSpec(pixad, rp->diag_spec);
 		for (int grid = 3; grid <= L_MIN(w / 2, h / 2); grid += L_MAX(1, grid / 2)) {
 			// aim for single-tile processing:
 			int sx = w / grid;
@@ -139,7 +137,6 @@ int main(int    argc,
 
 			for (i = 0; i < 3; i++) {
 				pixa1 = pixaCreate(2);
-				pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 				scorefract = 0.1 * i;
 				lept_stderr("\nScorefrac: %1.1f, Grid: %d\n", scorefract, grid);
 
@@ -230,7 +227,7 @@ int main(int    argc,
 
 				/* Save and display the result */
 				pixaAddPix(pixad, pix2, L_INSERT);
-				const char *pixpath = leptDebugGenFilepath(rp->diag_spec, "ScoreFrac-%03d.png", (int)i);
+				const char *pixpath = leptDebugGenFilepath("ScoreFrac-%03d.png", (int)i);
 				pixWrite(pixpath, pix2, IFF_PNG);
 #if 01
 				pixDisplayWithTitle(pix2, 100, 100, "Split distribution in FG/BG");
@@ -243,7 +240,7 @@ int main(int    argc,
 			prev_sy = sy;
 		}
 
-		const char* pdfpath = leptDebugGenFilepath(rp->diag_spec, "result.pdf");
+		const char* pdfpath = leptDebugGenFilepath("result.pdf");
 		char* out_fullname = genPathname(pdfpath, NULL);
 		lept_stderr("Writing to: %s --> %s\n", pdfpath, out_fullname);
 		pixaConvertToPdf(pixad, 75, 1.0, 0, 0, "Otsu thresholding", out_fullname);
@@ -256,7 +253,7 @@ int main(int    argc,
 		LEPT_FREE(filepath);
 	}
 
-	leptDebugPopStepLevel(rp->diag_spec);
+	leptDebugPopStepLevel();
 
 	return regTestCleanup(rp);
 }

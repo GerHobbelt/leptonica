@@ -205,7 +205,6 @@ PIX     *pix1, *pixd;
     if (n == 0) {
         L_WARNING("no components; returning empty 1 bpp pix\n", __func__);
         pix1 = pixCreate(w, h, 1);
-		pixSetDiagnosticsSpec(pix1, pixaGetDiagnosticsSpec(pixa));
 		return pix1;
     }
 
@@ -227,7 +226,6 @@ PIX     *pix1, *pixd;
 
     if ((pixd = pixCreate(w, h, d)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-	pixSetDiagnosticsSpec(pixd, pixaGetDiagnosticsSpec(pixa));
 	pixSetResolution(pixd, res, res);
     if (d > 1)
         pixSetAll(pixd);
@@ -869,7 +867,6 @@ PIXA     *pixan;
     if (boxaWriteMem(&data, &size, boxa) == 0)
         pixSetText(pixd, (char *)data);  /* data is ascii */
 
-	pixSetDiagnosticsSpec(pixd, pixaGetDiagnosticsSpec(pixa));
 
     LEPT_FREE(data);
     boxaDestroy(&boxa);

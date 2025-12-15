@@ -70,10 +70,8 @@ PIXA         *pixa1;
 
 	/* Find the most populated colors */
     pix1 = pixRead(DEMOPATH("fish24.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixGetMostPopulatedColors(pix1, 2, 3, 10, &colors, NULL);
     pix2 = pixDisplayColorArray(colors, 10, 200, 5, 6);
-	pixSetDiagnosticsSpec(pix2, rp->diag_spec);
 	pixDisplayWithTitle(pix2, 0, 0, NULL);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
     lept_free(colors);
@@ -95,7 +93,6 @@ PIXA         *pixa1;
          * Roundoff from different jpeg decompression algorithms can
          * result in differing numbers of colors by a few percent.  */
     pix1 = pixRead(DEMOPATH("wyom.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pixNumColors(pix1, 1, &ncolors);  /* >255, so should give 0 */
     regTestCompareValues(rp, ncolors, 132165, 10000.0);  /* 4 */
     pix2 = pixSimpleColorQuantize(pix1, 3, 3, 20);
@@ -108,7 +105,6 @@ PIXA         *pixa1;
 
         /* Find the number of perceptually significant gray intensities */
     pix1 = pixRead(DEMOPATH("marge.jpg"));
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixConvertTo8(pix1, 0);
     pixNumSignificantGrayColors(pix2, 20, 236, 0.0001, 1, &ncolors);
     regTestCompareValues(rp, ncolors, 219, 0.0);  /* 7 */
@@ -118,8 +114,6 @@ PIXA         *pixa1;
         /* Find background color in image with light color regions */
     pix1 = pixRead(DEMOPATH("map.057.jpg"));
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 
     pixFindColorRegions(pix1, NULL, 4, 200, 70, 10, 90, 0.05,
                           &fcolor, &pix2, NULL, pixa1);
@@ -134,7 +128,6 @@ PIXA         *pixa1;
 
         /* Show binary classification of RGB colors using a plane */
     pix1 = pixMakeGamutRGB(3);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixMakeArbMaskFromRGB(pix1, -0.5, -0.5, 1.0, 20);
     pixGetDimensions(pix1, &w, &h, NULL);
     pix3 = pixCreate(w, h, 32);
@@ -151,10 +144,8 @@ PIXA         *pixa1;
         /* Show use of more than one plane to further restrict the
            allowed region of RGB color space */
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
 
     pix1 = pixMakeGamutRGB(3);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 	pix2 = pixMakeArbMaskFromRGB(pix1, -0.5, -0.5, 1.0, 20);
     pix3 = pixMakeArbMaskFromRGB(pix1, 1.5, -0.5, -1.0, 0);
     pix4 = pixMakeArbMaskFromRGB(pix1, 0.4, 0.3, 0.3, 60);
@@ -184,7 +175,7 @@ PIXA         *pixa1;
     pixaConvertToPdf(pixa1, 0, 0.5, L_FLATE_ENCODE, 0, NULL, fname);
     regTestCheckFile(rp, fname);  /* 18 */
     lept_stderr("Wrote %s\n", fname);
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pix8 = pixaDisplayTiledInColumns(pixa1, 2, 0.5, 15, 2);
         pixDisplay(pix8, 800, 1300);
         pixDestroy(&pix8);

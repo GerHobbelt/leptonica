@@ -76,9 +76,8 @@ PIX      *pixs, *pixd, *pixd2, *pixd3;
 PIX      *pixt, *pixc, *pixc2;
 
     pixs = pixRead(fname);
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 
-	disp = leptIsInDisplayMode(rp->diag_spec);
+	disp = leptIsInDisplayMode();
 
     /*------------------------------------------------------------------*
      *        Get border representation and verify border pixels        *
@@ -91,7 +90,6 @@ PIX      *pixt, *pixc, *pixc2;
     ccbaGenerateGlobalLocs(ccba);
     if (disp) lept_stderr("display border representation...");
     pixd = ccbaDisplayBorder(ccba);
-	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 0,7 */
     pixDisplayWithTitle(pixd, 0, 0, NULL);
     pixDestroy(&pixd);
@@ -103,7 +101,6 @@ PIX      *pixt, *pixc, *pixc2;
     ccbaStepChainsToPixCoords(ccba, CCB_GLOBAL_COORDS);
     if (disp) lept_stderr("display border representation\n");
     pixd = ccbaDisplayBorder(ccba);
-	pixSetDiagnosticsSpec(pixd, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1,8 */
     pixDisplayWithTitle(pixd, 200, 0, NULL);
 
@@ -120,7 +117,6 @@ PIX      *pixt, *pixc, *pixc2;
         /* Display image */
     lept_stderr("Reconstruct image\n");
     pixc = ccbaDisplayImage2(ccba);
-	pixSetDiagnosticsSpec(pixc, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pixc, IFF_PNG);  /* 2,9 */
     pixDisplayWithTitle(pixc, 400, 0, NULL);
 
@@ -160,7 +156,6 @@ PIX      *pixt, *pixc, *pixc2;
     ccbaStepChainsToPixCoords(ccba2, CCB_GLOBAL_COORDS);
     if (disp) lept_stderr("display border representation\n");
     pixd2 = ccbaDisplayBorder(ccba2);
-	pixSetDiagnosticsSpec(pixd2, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pixd2, IFF_PNG);  /* 3,10 */
     pixDisplayWithTitle(pixd2, 600, 0, NULL);
 
@@ -179,7 +174,6 @@ PIX      *pixt, *pixc, *pixc2;
     ccbaStepChainsToPixCoords(ccba2, CCB_LOCAL_COORDS);
     lept_stderr("Reconstruct image from file\n");
     pixc2 = ccbaDisplayImage2(ccba2);
-	pixSetDiagnosticsSpec(pixc2, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pixc2, IFF_PNG);  /* 4,11 */
     pixDisplayWithTitle(pixc2, 800, 0, NULL);
 
@@ -220,7 +214,6 @@ PIX      *pixt, *pixc, *pixc2;
         /* Display border pixels from single path */
     if (disp) lept_stderr("display border from single path\n");
     pixd3 = ccbaDisplaySPBorder(ccba);
-	pixSetDiagnosticsSpec(pixd3, rp->diag_spec);
 	regTestWritePixAndCheck(rp, pixd3, IFF_PNG);  /* 5,12 */
     pixDisplayWithTitle(pixd3, 1000, 0, NULL);
 

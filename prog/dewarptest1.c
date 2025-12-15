@@ -86,10 +86,10 @@ L_REGPARAMS* rp;
     dewarpaUseBothArrays(dewa, 1);
     dew1 = dewarpCreate(pixb, 35);
     dewarpaInsertDewarp(dewa, dew1);
-	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_model1.pdf");
-	dewarpBuildPageModel(dew1, rp->diag_spec);
-	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_apply1.pdf");
-	dewarpaApplyDisparity(dewa, 35, pixg, 200, 0, 0, &pixd, rp->diag_spec);
+	leptDebugSetFilenameBasename("dewarp_model1.pdf");
+	dewarpBuildPageModel(dew1);
+	leptDebugSetFilenameBasename("dewarp_apply1.pdf");
+	dewarpaApplyDisparity(dewa, 35, pixg, 200, 0, 0, &pixd);
 
          /* Write out some of the files to be imaged */
     lept_rmdir("lept/dewtest");
@@ -146,10 +146,10 @@ L_REGPARAMS* rp;
         /* Apply the previous disparity model to this image */
     dew2 = dewarpCreate(pixb2, 7);
     dewarpaInsertDewarp(dewa, dew2);
-    dewarpaInsertRefModels(dewa, 0, rp->diag_spec);
+    dewarpaInsertRefModels(dewa, 0);
     dewarpaInfo(stderr, dewa);
-	leptDebugSetFilenameBasename(rp->diag_spec, "dewarp_apply2.pdf");
-	dewarpaApplyDisparity(dewa, 7, pixg2, 200, 0, 0, &pixd2, rp->diag_spec);
+	leptDebugSetFilenameBasename("dewarp_apply2.pdf");
+	dewarpaApplyDisparity(dewa, 7, pixg2, 200, 0, 0, &pixd2);
     dewarpaDestroy(&dewa);
 
         /* Write out files for the second image */

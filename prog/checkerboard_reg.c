@@ -76,8 +76,6 @@ PTA     *pta1;
 
     pix1 = pixRead(fname);
     pixa1 = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa1, rp->diag_spec);
-	pixSetDiagnosticsSpec(pix1, rp->diag_spec);
 
 	pixFindCheckerboardCorners(pix1, 15, 3, nsels, &pix2, &pta1, pixa1);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);    /* 0, 3 */
@@ -86,12 +84,11 @@ PTA     *pta1;
     pixDisplayWithTitle(pix3, 100 * (nsels - 2), 100, NULL);
     pixGetDimensions(pix1, &w, &h, NULL);
     pix4 = pixGenerateFromPta(pta1, w, h);
-	pixSetDiagnosticsSpec(pix4, rp->diag_spec);
 	pixDilateBrick(pix4, pix4, 5, 5);
     regTestWritePixAndCheck(rp, pix4, IFF_PNG);  /* 2, 5 */
     pixDestroy(&pix1);
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         n = pixaGetCount(pixa1);
         for (i = 0; i < n; i++) {
             pix1 = pixaGetPix(pixa1, i, L_CLONE);

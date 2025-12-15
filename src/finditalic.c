@@ -116,8 +116,7 @@ l_ok
 pixItalicWords(PIX     *pixs,
                BOXA    *boxaw,
                PIX     *pixw,
-               BOXA   **pboxa,
-               LDIAG_CTX diagspec)
+               BOXA   **pboxa)
 {
 char     opstring[32], buf[32];
 l_int32  size, type;
@@ -133,7 +132,7 @@ SEL     *sel_ital1, *sel_ital2, *sel_ital3;
     if (boxaw && pixw)
         return ERROR_INT("both boxaw and pixw are defined", __func__, 1);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     sel_ital1 = selCreateFromString(str_ital1, 13, 6, NULL);
     sel_ital2 = selCreateFromString(str_ital2, 10, 6, NULL);
@@ -227,7 +226,7 @@ SEL     *sel_ital1, *sel_ital2, *sel_ital3;
         upper = L_MAX(30, 3 * size);
         na = pixRunHistogramMorph(pix1, L_RUN_OFF, L_HORIZ, upper);
         pixDestroy(&pix1);
-        gplot = gplotCreate(diagspec, "/tmp/lept/ital/runhisto", GPLOT_PNG,
+        gplot = gplotCreate("/tmp/lept/ital/runhisto", GPLOT_PNG,
                 "Histogram of horizontal runs of white pixels, vs length",
                 "run length", "number of runs");
         gplotAddPlot(gplot, NULL, na, GPLOT_LINES, "plot1");

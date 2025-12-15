@@ -73,7 +73,7 @@ BOXAA        *baa;
     baa = boxaaQuadtreeRegions(1000, 500, 3);
     boxaaWriteMem(&data, &size, baa);
     regTestWriteDataAndCheck(rp, data, size, "baa");  /* 0 */
-    if (leptIsInDisplayMode(rp->diag_spec)) boxaaWriteStream(stderr, baa);
+    if (leptIsInDisplayMode()) boxaaWriteStream(stderr, baa);
     boxaaDestroy(&baa);
     lept_free(data);
     baa = boxaaQuadtreeRegions(1001, 501, 3);
@@ -84,7 +84,6 @@ BOXAA        *baa;
 
         /* Test quadtree stats generation */
     pixs = pixRead(DEMOPATH("rabi.png"));
-	pixSetDiagnosticsSpec(pixs, rp->diag_spec);
 	pixg = pixScaleToGray4(pixs);
     pixDestroy(&pixs);
     pixQuadtreeMean(pixg, 8, NULL, &fpixam);

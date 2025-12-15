@@ -1515,23 +1515,19 @@ PIX      *pix1, *pix2;
     }
 
     if (pixadb) {
-		LDIAG_CTX diagspec = pixaGetDiagnosticsSpec(pixadb);
-		if (!diagspec) {
-			diagspec = pixGetDiagnosticsSpecFromAny(2, pixs, (ppixm ? *ppixm : NULL));
-		}
         //lept_mkdir("lept/jb");
         {NUMA  *naseq;
          PIX   *pix3, *pix4;
             L_INFO("Best dilation: %d\n", __func__, L_MAX(3, ibest + 1));
             naseq = numaMakeSequence(1, 1, numaGetCount(nacc));
-            pix3 = gplotGeneralPix2(diagspec, naseq, nacc, GPLOT_LINES,
+            pix3 = gplotGeneralPix2(naseq, nacc, GPLOT_LINES,
                                     "/tmp/lept/jb/numcc",
                                     "Number of cc vs. horizontal dilation",
                                     "Sel horiz", "Number of cc");
             pixaAddPix(pixadb, pix3, L_INSERT);
             numaDestroy(&naseq);
             naseq = numaMakeSequence(1, 1, numaGetCount(nadiff));
-            pix3 = gplotGeneralPix2(diagspec, naseq, nadiff, GPLOT_LINES,
+            pix3 = gplotGeneralPix2(naseq, nadiff, GPLOT_LINES,
                                     "/tmp/lept/jb/diffcc",
                                     "Diff count of cc vs. horizontal dilation",
                                     "Sel horiz", "Diff in cc");
@@ -2080,8 +2076,7 @@ SARRAY   *sa;
  *              NULL on error
  */
 PIXA *
-jbDataRender(JBDATA   *data,
-             LDIAG_CTX diagspec)
+jbDataRender(JBDATA   *data)
 {
 l_int32   i, w, h, cellw, cellh, x, y, iclass, ipage;
 l_int32   npages, nclass, ncomp, wp, hp;
@@ -2098,7 +2093,7 @@ PTA      *ptaul;
     if (!data)
         return (PIXA *)ERROR_PTR("data not defined", __func__, NULL);
 
-	l_ok debugflag = leptIsDebugModeActive(diagspec);
+	l_ok debugflag = leptIsDebugModeActive();
 
     npages = data->npages;
     w = data->w;
@@ -2191,7 +2186,6 @@ PTA      *ptaul;
         boxaaDestroy(&baa);
     }
 
-	pixaSetDiagnosticsSpecPervasively(pixad, diagspec);
 
     pixaDestroy(&pixat);
     return pixad;

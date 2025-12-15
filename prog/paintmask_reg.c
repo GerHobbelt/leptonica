@@ -215,7 +215,7 @@ L_REGPARAMS* rp;
     boxDestroy(&box);
 
         /* If in testing mode, make a pdf */
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         pixaConvertToPdf(pixa, 100, 1.0, L_FLATE_ENCODE, 0,
                          "Paint through mask", "/tmp/lept/regout/paintmask.pdf");
         L_INFO("Output pdf: /tmp/lept/regout/paintmask.pdf\n", rp->testname);

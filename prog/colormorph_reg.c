@@ -61,7 +61,6 @@ L_REGPARAMS* rp;
 
     pixs = pixRead(DEMOPATH("wyom.jpg"));
     pixa = pixaCreate(0);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     pix1 = pixColorMorph(pixs, L_MORPH_DILATE, SIZE, SIZE);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 0 */
@@ -95,7 +94,7 @@ L_REGPARAMS* rp;
     pixaAddPix(pixa, pix1, L_INSERT);
     pixDestroy(&pix2);
 
-    if (leptIsInDisplayMode(rp->diag_spec)) {
+    if (leptIsInDisplayMode()) {
         //lept_mkdir("lept/cmorph");
         lept_stderr("Writing to: /tmp/lept/cmorph/colormorph.pdf\n");
         pixaConvertToPdf(pixa, 0, 1.0, L_FLATE_ENCODE, 0, "colormorph-test",

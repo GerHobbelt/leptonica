@@ -61,7 +61,6 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/regout");
 
     pixa = pixaCreate(6);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
     pixt = BlendTest("marge.jpg", "feyn-word.tif", 0.5, rp);
     pixaAddPix(pixa, pixt, L_INSERT);
@@ -118,12 +117,9 @@ snprintf(file2, sizeof(file2), "%s%s", DEMOPATH(""), filename2);
 
     pixs1 = pixRead(file1);
     pixs2 = pixRead(file2);
-	pixSetDiagnosticsSpec(pixs1, rp->diag_spec);
-	pixSetDiagnosticsSpec(pixs2, rp->diag_spec);
 	d1 = pixGetDepth(pixs1);
     d2 = pixGetDepth(pixs2);
     pixa = pixaCreate(7);
-	pixaSetDiagnosticsSpec(pixa, rp->diag_spec);
 
 #if ALL
     if (d1 == 1) {
