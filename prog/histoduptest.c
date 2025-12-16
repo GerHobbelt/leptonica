@@ -112,7 +112,7 @@ L_REGPARAMS* rp;
 
         /* Show the similarity classes. */
     numaWriteStderr(nai);
-	const char* pixpath = leptDebugGenFilepath("comp/photoclass1.jpg");
+	const char* pixpath = leptDebugGenFilepath("/tmp/lept/comp/photoclass1.jpg");
     pixWrite(pixpath, pix1, IFF_JFIF_JPEG);
     lept_stderr("Writing photo classes: %s\n", pixpath);
     numaDestroy(&nai);
@@ -145,7 +145,7 @@ L_REGPARAMS* rp;
 
         /* Show the similarity classes. */
     numaWriteStderr(nai);
-	const char* pixpath = leptDebugGenFilepath("comp/photoclass2.jpg");
+	const char* pixpath = leptDebugGenFilepath("/tmp/lept/comp/photoclass2.jpg");
 	pixWrite(pixpath, pix1, IFF_JFIF_JPEG);
     lept_stderr("Writing photo classes: %s\n", pixpath);
     numaDestroy(&nai);
@@ -280,7 +280,7 @@ L_REGPARAMS* rp;
         pixDestroy(&pix1);
         boxDestroy(&box1);
     }
-	const char* pdfpath = leptDebugGenFilepath("comp/isphoto1.pdf");
+	const char* pdfpath = leptDebugGenFilepath("/tmp/lept/comp/isphoto1.pdf");
 	lept_stderr("Writing to: %s\n", pdfpath);
     pixaConvertToPdf(pixa2, 300, 1.0, L_FLATE_ENCODE, 0, NULL,
                          pdfpath);
@@ -290,6 +290,7 @@ L_REGPARAMS* rp;
 #endif
 
     pixacompDestroy(&pac);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

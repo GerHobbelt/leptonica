@@ -253,7 +253,8 @@ PIX       *pixd, *pixt;
         } else {
             L_WARNING("pixacc not 32 bpp; making new one\n", __func__);
 			if ((pixt = pixBlockconvAccum(pixs)) == NULL) {
-		if (edge_fix) pixDestroy(&pixs);
+				if (edge_fix) 
+					pixDestroy(&pixs);
 				return (PIX*)ERROR_PTR("pixt not made", __func__, NULL);
 			}
         }
@@ -1323,7 +1324,6 @@ FPIX       *fpixv, *fpixrv;  /* variance and square root of variance */
     if (w != ws || h != hs)
         return ERROR_INT("pixm and pixms sizes differ", __func__, 1);
 
-
     if (pfpixv) {
         fpixv = fpixCreate(w, h);
 		*pfpixv = fpixv;
@@ -2218,7 +2218,6 @@ FPIX       *fpixt, *fpixd;
         keln = kernelNormalize(keli, 1.0);
     else
         keln = kernelCopy(keli);
-
 
     fpixGetDimensions(fpixs, &w, &h);
     fpixt = fpixAddMirroredBorder(fpixs, cx, sx - cx, cy, sy - cy);

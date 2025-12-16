@@ -65,6 +65,7 @@ L_PDF_DATA   *lpd;
 PIX          *pix1, *pix2, *pix3;
 PIX          *pixs, *pixt, *pixg, *pixgc, *pixc;
 PIXCMAP      *cmap;
+L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "pdfio1_reg");
@@ -78,8 +79,6 @@ PIXCMAP      *cmap;
     L_ERROR("This test requires libtiff to run.\n", "pdfio1_reg");
     exit(77);
 #endif
-
-	L_REGPARAMS* rp;
 
 	if (regTestSetup(argc, argv, "pdf_io", &rp))
 		return 1;

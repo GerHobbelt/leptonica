@@ -107,8 +107,13 @@ static void send_to_devnull(const char *msg) {}
 #define main   lept_message_test_main
 #endif
 
-int main (void)
+int main (int argc, const char **argv)
 {
+L_REGPARAMS* rp;
+
+	if (regTestSetup(argc, argv, "message", &rp))
+		return 1;
+
         /* Part 1: all output to stderr */
     lept_stderr("\nSeverity tests\n");
     TestMessageControl(L_SEVERITY_EXTERNAL);
@@ -139,7 +144,7 @@ int main (void)
     lept_stderr("5. text\n");
     lept_stderr("6. text\n");
 
-    return 0;
+	return regTestCleanup(rp);
 }
 
 void TestMessageControl(l_int32  severity)

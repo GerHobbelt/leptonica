@@ -87,7 +87,8 @@ L_REGPARAMS* rp;
     pixWrite("/tmp/junkpixd.png", pixd, IFF_PNG);
     pixDestroy(&pixd);
     pixaDestroy(&pixa);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 
 

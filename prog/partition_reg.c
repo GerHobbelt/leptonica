@@ -59,6 +59,7 @@ int main(int    argc,
 {
 PIX          *pix1;
 PIXA         *pixad;
+L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBTIFF)
     L_ERROR("This test requires libtiff to run.\n", __func__);
@@ -68,8 +69,6 @@ PIXA         *pixad;
     L_ERROR("This test requires libjpeg to run.\n", __func__);
     exit(77);
 #endif
-
-	L_REGPARAMS* rp;
 
 	if (regTestSetup(argc, argv, "partition", &rp))
 		return 1;

@@ -177,7 +177,8 @@ L_REGPARAMS* rp;
         lept_stderr("\n---------- Success: no errors ----------\n");
     else
         lept_stderr("\n---------- Failure: error(s) found -----------\n");
-    return 0;
+
+	return regTestCleanup(rp) || !success;
 }
 
 

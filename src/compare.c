@@ -2429,7 +2429,7 @@ PIXA   *pixa;
     }
 
     if (pixa) {
-		const char* pdfpath = leptDebugGenFilepath("comp/tiledhistos.%d.pdf", leptDebugGetStepId());
+		const char* pdfpath = leptDebugGenFilepath("/tmp/lept/comp/tiledhistos.%d.pdf", leptDebugGetStepId());
         lept_stderr("Writing to %s\n", pdfpath);
         pixaConvertToPdf(pixa, 300, 1.0, L_FLATE_ENCODE, 0, NULL, pdfpath);
         pixaDestroy(&pixa);
@@ -2632,9 +2632,6 @@ PIXA      *pixa1, *pixa2, *pixa3;
     if (w == 0 || h == 0)
         return ERROR_INT("invalid pix dimension", __func__, 1);
     findHistoGridDimensions(n, w, h, &nx, &ny, 1);
-
-	if (pixadebug) {
-	}
 
         /* Evaluate histograms in each tile */
     pixa1 = pixaSplitPix(pix, nx, ny, 0, 0);
@@ -3688,7 +3685,7 @@ PIX       *pix3, *pix4;
         pix3 = fpixDisplayMaxDynamicRange(fpix);
         pix4 = pixExpandReplicate(pix3, 20);
 		if (leptIsDebugModeActive()) {
-			const char* pixpath = leptDebugGenFilepath("comp/correl_%d.png", leptDebugGetStepId());
+			const char* pixpath = leptDebugGenFilepath("/tmp/lept/comp/correl_%d.png", leptDebugGetStepId());
 			pixWrite(pixpath, pix4, IFF_PNG);
 		}
         pixDestroy(&pix3);

@@ -317,7 +317,6 @@ DoBlendTest(PIX *pix, BOX *box, l_uint32 color, l_float32 gamma,
 PIX   *pix1, *pix2, *pix3, *pixd;
 PIXA  *pixa;
   pixa = pixaCreate(5);
-
   pix1 = pixRemoveColormap(pix, REMOVE_CMAP_TO_FULL_COLOR);
   pix2 = pixCopy(NULL, pix1);
   pixaAddPix(pixa, pix2, L_COPY);

@@ -151,6 +151,7 @@ L_REGPARAMS* rp;
     boxaaDestroy(&baa);
     numaaDestroy(&naa);
     sarrayDestroy(&safiles);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

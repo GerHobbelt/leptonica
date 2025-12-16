@@ -839,7 +839,7 @@ PIX        *pixt, *pixt1, *pixt2;
         //lept_mkdir("lept/recog");
         pixt1 = fpixDisplayMaxDynamicRange(fpix);
         pixt2 = pixExpandReplicate(pixt1, 5);
-		const char *pixpath = leptDebugGenFilepath("recog/junkbs_@STEPID@.png");
+		const char *pixpath = leptDebugGenFilepath("/tmp/lept/recog/junkbs_@STEPID@.png");
         pixWrite(pixpath, pixt2, IFF_PNG);
         pixDestroy(&pixt1);
         pixDestroy(&pixt2);

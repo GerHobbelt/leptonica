@@ -109,6 +109,7 @@ L_REGPARAMS* rp;
     lept_free(textstr);
     pixDestroy(&pixs);
     bmfDestroy(&bmf);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

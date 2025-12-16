@@ -141,6 +141,7 @@ L_REGPARAMS* rp;
     jbClasserDestroy(&classer);
     jbDataDestroy(&data);
     numaDestroy(&natl);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

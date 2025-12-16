@@ -67,6 +67,7 @@ PIX          *pixhm, *pixtm, *pixtb, *pixdb;
 PIXA         *pixadb;
 PIXAC        *pixac;
 SARRAY       *sa;
+L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "pageseg_reg");
@@ -80,8 +81,6 @@ SARRAY       *sa;
     L_ERROR("This test requires libtiff to run.\n", "pageseg_reg");
     exit(77);
 #endif
-
-	L_REGPARAMS* rp;
 
 	if (regTestSetup(argc, argv, "pageseg", &rp))
 		return 1;

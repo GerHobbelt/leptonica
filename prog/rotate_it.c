@@ -120,5 +120,6 @@ L_REGPARAMS* rp;
     pixWrite(fileout, pixd, format);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
-    return 0;
+
+    return regTestCleanup(rp);
 }

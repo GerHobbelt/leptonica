@@ -212,7 +212,6 @@ L_STACK  *stack, *auxstack;
     if (connectivity != 4 && connectivity != 8)
         return (BOXA *)ERROR_PTR("connectivity not 4 or 8", __func__, NULL);
 
-
     pix1 = pix2 = pix3 = pix4 = NULL;
     stack = NULL;
     pixa = pixaCreate(0);
@@ -285,7 +284,6 @@ cleanup:
     lstackDestroy(&stack, TRUE);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
-
 
     return boxa;
 }

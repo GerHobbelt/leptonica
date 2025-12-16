@@ -78,6 +78,7 @@ return 1;
 
     pixDestroy(&pixs);
     pixaDestroy(&pixa);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

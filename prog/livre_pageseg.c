@@ -80,7 +80,8 @@ L_REGPARAMS* rp;
     for (i = 1; i <= 4; i++)
         DoPageSegmentation(pixs, i);
     pixDestroy(&pixs);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 
 

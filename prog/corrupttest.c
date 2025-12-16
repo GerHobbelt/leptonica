@@ -278,6 +278,7 @@ L_REGPARAMS* rp;
             lept_fclose(fp);
         }
     }
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

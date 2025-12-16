@@ -109,7 +109,6 @@ L_REGPARAMS* rp;
      *          Normalize for rapidly varying background          *
      * ---------------------------------------------------------- */
     pixa1 = pixaCreate(0);
-
 	pixs = pixRead(DEMOPATH("w91frag.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
     pixaAddPix(pixa1, pixs, L_INSERT);

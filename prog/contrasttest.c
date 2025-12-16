@@ -100,6 +100,7 @@ L_REGPARAMS* rp;
     pixContrastTRC(pixs, pixs, factor);
     pixWrite(fileout, pixs, IFF_PNG);
     pixDestroy(&pixs);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

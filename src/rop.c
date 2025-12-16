@@ -216,7 +216,6 @@ l_int32  dpw, dph, dpd, spw, sph, spd;
     if (!pixd)
         return ERROR_INT("pixd not defined", __func__, 1);
 
-
     if (op == PIX_DST)   /* no-op */
         return 0;
 

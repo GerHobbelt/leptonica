@@ -130,7 +130,7 @@ L_REGPARAMS* rp;
     boxaDestroy(&boxa1);
     recogDestroy(&recog);
 
-    return 0;
+    return regTestCleanup(rp);
 }
 
 

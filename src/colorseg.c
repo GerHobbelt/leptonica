@@ -153,7 +153,7 @@ PIX       *pixd;
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
     if (debugflag) {
         //lept_mkdir("lept/segment");
-		const char* pixpath = leptDebugGenFilepath("segment/colorseg1.png");
+		const char* pixpath = leptDebugGenFilepath("/tmp/lept/segment/colorseg1.png");
         pixWriteDebug(pixpath, pixd, IFF_PNG);
     }
 
@@ -161,7 +161,7 @@ PIX       *pixd;
     countarray = (l_int32 *)LEPT_CALLOC(256, sizeof(l_int32));
     pixAssignToNearestColor(pixd, pixs, NULL, LEVEL_IN_OCTCUBE, countarray);
     if (debugflag) {
-		const char* pixpath = leptDebugGenFilepath("segment/colorseg2.png");
+		const char* pixpath = leptDebugGenFilepath("/tmp/lept/segment/colorseg2.png");
 		pixWriteDebug(pixpath, pixd, IFF_PNG);
 	}
 
@@ -169,7 +169,7 @@ PIX       *pixd;
     pixColorSegmentClean(pixd, selsize, countarray);
     LEPT_FREE(countarray);
     if (debugflag) {
-		const char* pixpath = leptDebugGenFilepath("segment/colorseg3.png");
+		const char* pixpath = leptDebugGenFilepath("/tmp/lept/segment/colorseg3.png");
 		pixWriteDebug(pixpath, pixd, IFF_PNG);
 	}
 

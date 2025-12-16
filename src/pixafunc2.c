@@ -867,7 +867,6 @@ PIXA     *pixan;
     if (boxaWriteMem(&data, &size, boxa) == 0)
         pixSetText(pixd, (char *)data);  /* data is ascii */
 
-
     LEPT_FREE(data);
     boxaDestroy(&boxa);
 

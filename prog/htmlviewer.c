@@ -98,7 +98,8 @@ L_REGPARAMS* rp;
     viewwidth = atoi(argv[5]);
 
     pixHtmlViewer(dirin, dirout, rootname, thumbwidth, viewwidth);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 
 

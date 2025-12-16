@@ -136,5 +136,6 @@ L_REGPARAMS* rp;
            __func__);
     pixaDestroy(&pixa);
     sarrayDestroy(&sa);
-    return 0;
+
+	return regTestCleanup(rp);
 }

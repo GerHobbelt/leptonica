@@ -103,6 +103,7 @@ L_REGPARAMS* rp;
     }
 
     lept_free(tempfile);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

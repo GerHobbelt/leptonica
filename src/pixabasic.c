@@ -172,8 +172,7 @@ PIXA  *pixa;
         n = InitialPtrArraySize;
 
     pixa = (PIXA *)LEPT_CALLOC(1, sizeof(PIXA));
-	if (pixa)
-	{
+	if (pixa) {
 		pixa->n = 0;
 		pixa->nalloc = n;
 		pixa->refcount = 1;
@@ -185,8 +184,7 @@ PIXA  *pixa;
 		}
 		return pixa;
 	}
-	else
-	{
+	else {
 		return (PIXA*)ERROR_PTR("pixa not made", __func__, NULL);
 	}
 }
@@ -1662,7 +1660,6 @@ PIX     *pix;
     if (istart > iend)
         return ERROR_INT("istart > iend; nothing to add", __func__, 1);
 
-
     for (i = istart; i <= iend; i++) {
         pix = pixaGetPix(pixas, i, L_CLONE);
         pixaAddPix(pixad, pix, L_INSERT);
@@ -1722,7 +1719,6 @@ PIXA    *pixad;
         L_WARNING("counts differ: %d != %d\n", __func__, n1, n2);
 
     pixad = pixaCreate(2 * n);
-
 
 	nb1 = pixaGetBoxaCount(pixa1);
     nb2 = pixaGetBoxaCount(pixa2);

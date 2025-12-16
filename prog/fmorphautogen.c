@@ -80,6 +80,7 @@ L_REGPARAMS* rp;
         return 1;
 
     selaDestroy(&sela);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

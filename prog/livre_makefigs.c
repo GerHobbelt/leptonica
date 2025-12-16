@@ -111,7 +111,6 @@ L_REGPARAMS* rp;
         /* Run livre_adapt to generate an expanded version of Figure 9 */
     callSystemDebug("livre_adapt");
 
-
-    return 0;
+	return regTestCleanup(rp);
 }
 

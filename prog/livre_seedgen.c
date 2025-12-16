@@ -84,6 +84,7 @@ L_REGPARAMS* rp;
     pixDisplay(pix1, 1100, 0);
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

@@ -225,7 +225,7 @@ static const char *header = {"\n=======================\n"
 int main(int    argc,
          const char **argv)
 {
-char    *str, *results_file = NULL;
+char    *str, *results_file;
 char     command[256], buf[256];
 l_int32  i, ntests, dotest, nfail, ret, start, stop;
 SARRAY  *sa;
@@ -234,19 +234,19 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "all_tests", &rp))
 		return 1;
 
-	// TODO
-    if (argc != 2)
-        return ERROR_INT(" Syntax alltests_reg [generate | compare | display]",
-                         __func__, 1);
+	if (regGetArgCount(rp) != 0) {
+		return ERROR_INT("application does not expect any file/value parameters.",
+                         rp->testname, 1);
+	}
 
-    setLeptDebugOK(1);  /* required for testing */
+    //setLeptDebugOK(1);  /* required for testing */
     l_getCurrentTime(&start, NULL);
     ntests = sizeof(tests) / sizeof(char *);
     lept_stderr("Running alltests_reg:\n"
             "This currently tests %d regression test\n"
             "programs in the /prog directory.\n", ntests);
 
-	results_file = genPathname("/tmp/lept", "reg_results.txt");
+	results_file = stringNew(leptDebugGenFilename("/tmp/lept/reg_results.txt"));
 
         /* Clear the output file if we're doing the set of reg tests */
     dotest = strcmp(argv[1], "compare") ? 0 : 1;
@@ -316,5 +316,6 @@ L_REGPARAMS* rp;
 
     l_getCurrentTime(&stop, NULL);
     lept_stderr("Time for all regression tests: %d sec\n", stop - start);
-    return 0;
+
+	return regTestCleanup(rp);
 }

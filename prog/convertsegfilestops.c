@@ -141,9 +141,11 @@ L_REGPARAMS* rp;
     if (!strcmp(maskstr, "allfiles"))
         maskstr = NULL;
 
-    return convertSegmentedPagesToPS(pagedir, pagestr, page_numpre,
+    int ret = convertSegmentedPagesToPS(pagedir, pagestr, page_numpre,
                                      maskdir, maskstr, mask_numpre,
                                      numpost, maxnum, textscale,
                                      imagescale, threshold, fileout);
+
+	return regTestCleanup(rp) || ret;
 }
 

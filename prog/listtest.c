@@ -286,6 +286,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
     boxaDestroy(&boxa);
     boxaDestroy(&boxan);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

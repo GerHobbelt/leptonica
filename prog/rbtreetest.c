@@ -117,6 +117,6 @@ L_REGPARAMS* rp;
     l_rbtreePrint(stderr, t);
     lept_free(t);
 
-    return 0;
+    return regTestCleanup(rp);
 }
 

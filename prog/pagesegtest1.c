@@ -79,6 +79,7 @@ L_REGPARAMS* rp;
     pixWrite("/tmp/lept/pageseg/debug.png", pixd, IFF_PNG);
     pixaDestroy(&pixadb);
     pixDestroy(&pixd);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

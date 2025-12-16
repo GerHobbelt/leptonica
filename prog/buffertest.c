@@ -121,5 +121,6 @@ L_REGPARAMS* rp;
 #endif
 
     lept_free(array1);
-    return 0;
+
+	return regTestCleanup(rp);
 }

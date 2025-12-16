@@ -76,6 +76,7 @@ L_REGPARAMS* rp;
     pixWrite(fileout, pixd, IFF_JFIF_JPEG);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

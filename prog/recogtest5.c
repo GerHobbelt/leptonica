@@ -107,7 +107,8 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
     recogDestroy(&recog);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 
 static PIX *

@@ -204,7 +204,7 @@ PTA       *pta;
 
 	if (pixadb) {  /* show the difference signal */
 		//lept_mkdir("lept/baseline");
-        pix2 = gplotSimplePix1(nadiff, "lept/baseline/diffsig", "Diff Sig");
+        pix2 = gplotSimplePix1(nadiff, "/tmp/lept/baseline/diffsig", "Diff Sig");
         pixaAddPix(pixadb, pix2, L_INSERT);
     }
 

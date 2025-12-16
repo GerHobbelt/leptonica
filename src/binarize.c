@@ -200,7 +200,6 @@ PIXTILING  *pt;
 				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
 				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
-				stringDestroy(&pixd_path);
 			}
 
             pixSetPixel(pixthresh, j, i, thresh);  /* see note (4) */
@@ -1207,7 +1206,7 @@ NUMA      *na1, *na2, *na3;
 
     if (ppixhisto) {
 		//lept_mkdir("lept/histo");
-		*ppixhisto = gplotSimplePix1(na3, "lept/histo/histo", "thresholds histogram");
+		*ppixhisto = gplotSimplePix1(na3, "/tmp/lept/histo/histo", "thresholds histogram");
     }
     if (pnahisto)
         *pnahisto = na3;

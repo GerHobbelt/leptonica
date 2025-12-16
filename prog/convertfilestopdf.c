@@ -118,5 +118,6 @@ L_REGPARAMS* rp;
 
     ret = convertFilesToPdf(dirin, substr, res, scalefactor, type,
                             quality, title, fileout);
-    return ret;
+
+	return regTestCleanup(rp) || ret;
 }

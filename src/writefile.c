@@ -672,10 +672,13 @@ PIXCMAP  *cmap;
     return 0;
 }
 
-l_ok isSupportedFormat(l_int32 format) {
+
+l_ok 
+isSupportedFormat(l_int32 format) {
 	return !(format < 0 || format == IFF_UNKNOWN ||
 		format >= NumImageFileFormatExtensions);
 }
+
 
 /*!
  * \brief   getFormatExtension()
@@ -969,7 +972,6 @@ size_t         fullpathsize;
 		return 0;
 	if (!debugflag && var_DISPLAY_PROG == L_DISPLAY_WITH_NONE)
 		return 0;
-
 
 #ifndef _WIN32  /* unix */
     if (var_DISPLAY_PROG != L_DISPLAY_WITH_XZGV &&

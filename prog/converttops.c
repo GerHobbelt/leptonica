@@ -76,5 +76,6 @@ L_REGPARAMS* rp;
     }
 
     convertToPSEmbed(filein, fileout, level);
-    return 0;
+
+	return regTestCleanup(rp);
 }

@@ -104,6 +104,7 @@ L_REGPARAMS* rp;
     gplotDestroy(&gplot);
     l_fileDisplay("/tmp/lept/gamma/corr.png", 100, 100, 1.0);
     numaDestroy(&nax);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

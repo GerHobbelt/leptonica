@@ -178,5 +178,6 @@ L_REGPARAMS* rp;
     numaDestroy(&nax);
     numaDestroy(&nay1);
     numaDestroy(&nay2);
-    return 0;
+
+	return regTestCleanup(rp);
 }

@@ -185,5 +185,6 @@ L_REGPARAMS* rp;
 
     recogDestroy(&recog1);
     recogDestroy(&recog2);
-    return 0;
+
+    return regTestCleanup(rp);
 }

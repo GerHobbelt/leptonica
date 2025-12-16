@@ -3402,7 +3402,11 @@ PIX       *pixg, *pixm;
 }
 
 
-static inline l_float32 lifted_and_bounded(l_float32 num, l_float32 lift_perunage, l_float32 numtotal, l_float32 maxnum)
+static inline l_float32 
+lifted_and_bounded(l_float32 num, 
+                   l_float32 lift_perunage, 
+				   l_float32 numtotal, 
+				   l_float32 maxnum)
 {
 	l_float32 rv = lift_perunage * numtotal;
 	l_float32 scale = (1.0 - lift_perunage);
@@ -3465,7 +3469,6 @@ PIX       *pixg;
         /* Make the fg/bg estimates */
     na = pixGetGrayHistogram(pixg, 1);
     if (ppixdb) {
-
         numaSplitDistribution(na, scorefract, &thresh, &avefg, &avebg,
                               &numfg, &numbg, &nascore);
         numaDestroy(&nascore);

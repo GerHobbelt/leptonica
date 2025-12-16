@@ -76,6 +76,7 @@ L_REGPARAMS* rp;
     pixb = pixThresholdToBinary(pixgr, THRESHOLD);
     pixInvert(pixb, pixb);
     pixWrite(outfile, pixb, IFF_PNG);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

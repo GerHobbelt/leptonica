@@ -175,5 +175,6 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa);
     pixDestroy(&pixs);
     ptaaDestroy(&ptaa2);
-    return 0;
+
+	return regTestCleanup(rp);
 }

@@ -88,6 +88,7 @@ L_REGPARAMS* rp;
     l_binaryWrite("/tmp/lept/auto/fontnames.txt", "w", filetext,
                   strlen(filetext));
     strcodeCreateFromFile("/tmp/lept/auto/fontnames.txt", 138, NULL);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

@@ -217,7 +217,6 @@ struct BG_THRES_PT_INFO {
 				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
 				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
-				stringDestroy(&pixd_path);
 			}
 
 			ptpx->thresh = thresh;
@@ -438,7 +437,6 @@ struct BG_THRES_PT_INFO {
 						gplotAddPlot(gplot, nax, nay, GPLOT_LINES, NULL);
 						gplotMakeOutput(gplot);
 						gplotDestroy(&gplot);
-						stringDestroy(&plot_path);
 						numaDestroy(&nax);
 						numaDestroy(&nay);
 						numaDestroy(&nascore);

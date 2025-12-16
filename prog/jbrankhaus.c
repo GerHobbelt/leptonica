@@ -175,6 +175,8 @@ L_REGPARAMS* rp;
     PIX     *newpix;
     PIXA    *newpixa;
     l_int32  same, iofail;
+	
+	leptDebugIncrementStepId();
 
         /* Read the data back in and render the pages */
     newdata = jbDataRead(rootname);
@@ -202,8 +204,13 @@ L_REGPARAMS* rp;
   #endif  /* DEBUG_TEST_DATA_IO */
 
   #if  RENDER_DEBUG
+	
+	leptDebugIncrementStepId();
+  
         /* Use debugflag == TRUE to see outlines of each component. */
+    leptActivateDebugMode(+1, 0);
     pixadb = jbDataRender(data);
+    leptActivateDebugMode(-1, 0);
         /* Write the debug pages out */
     npages = pixaGetCount(pixadb);
     for (i = 0; i < npages; i++) {
@@ -233,5 +240,5 @@ L_REGPARAMS* rp;
 
 #endif  /* Choose library function or detailed steps */
 
-    return 0;
+	return regTestCleanup(rp);
 }

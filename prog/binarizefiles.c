@@ -130,6 +130,7 @@ L_REGPARAMS* rp;
         pixDestroy(&pix3);
     }
     sarrayDestroy(&sa);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

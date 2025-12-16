@@ -80,7 +80,7 @@ L_REGPARAMS* rp;
     dew = dewarpCreate(pixb, pageno);
     dewarpaInsertDewarp(dewa, dew);
 
-		leptDebugSetFilenameBasename("dewarp_build_%d.pdf", pageno);
+		leptDebugSetFilenameBasename("/tmp/lept/dewarp_build_%d.pdf", pageno);
 		leptActivateDebugMode(0, build_output);
 			dewarpBuildPageModel(dew);
 		leptActivateDebugMode(0, -build_output);
@@ -88,7 +88,7 @@ L_REGPARAMS* rp;
         /* Apply the model */
     dewarpPopulateFullRes(dew, pixg, 0, 0);
 
-		leptDebugSetFilenameBasename("dewarp_apply_%d.pdf", pageno);
+		leptDebugSetFilenameBasename("/tmp/lept/dewarp_apply_%d.pdf", pageno);
 		leptActivateDebugMode(0, apply_output);
 		dewarpaApplyDisparity(dewa, pageno, pixb, 200, 0, 0, &pix2);
 		leptActivateDebugMode(0, -apply_output);
@@ -102,7 +102,7 @@ L_REGPARAMS* rp;
     pixDisplay(pix3, 400, 100);
 
         /* ... and map to the word boxes for the input image */
-		leptDebugSetFilenameBasename("dewarp_map1_%d.pdf", pageno);
+		leptDebugSetFilenameBasename("/tmp/lept/dewarp_map1_%d.pdf", pageno);
 		leptActivateDebugMode(0, map_output);
 		dewarpaApplyDisparityBoxa(dewa, pageno, pix2, boxa1, 0, 0, 0, &boxa2);
 		leptActivateDebugMode(0, -map_output);
@@ -118,7 +118,7 @@ L_REGPARAMS* rp;
     pixDisplay(pix5, 800, 100);
 
         /* ... and map to the word boxes for the dewarped image */
-		leptDebugSetFilenameBasename("dewarp_map2_%d.pdf", pageno);
+		leptDebugSetFilenameBasename("/tmp/lept/dewarp_map2_%d.pdf", pageno);
 		leptActivateDebugMode(0, map_output);
 		dewarpaApplyDisparityBoxa(dewa, pageno, pixb, boxa3, 1, 0, 0, &boxa4);
 		leptActivateDebugMode(0, -map_output);
@@ -141,5 +141,6 @@ L_REGPARAMS* rp;
     boxaDestroy(&boxa2);
     boxaDestroy(&boxa3);
     boxaDestroy(&boxa4);
-    return 0;
+
+	return regTestCleanup(rp);
 }

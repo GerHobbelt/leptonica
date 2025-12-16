@@ -85,6 +85,7 @@ L_REGPARAMS* rp;
     if (fmorphautogen(sela, 3, "dwalinear"))
         return 1;
     selaDestroy(&sela);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

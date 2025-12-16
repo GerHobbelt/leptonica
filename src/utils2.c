@@ -1984,6 +1984,8 @@ FILE  *fp;
         return (FILE *)ERROR_PTR("filename not defined", __func__, NULL);
 
     fname = genPathname(filename, NULL);
+	if (fname == NULL)
+		return NULL;
 	lept_mkdir_basedir(fname);
     fp = fopen(fname, modestring);
     if (!fp)
@@ -3485,6 +3487,8 @@ pathJoinEx(const char* restrict dir,
 
 	return dest;
 }
+
+
 char *
 pathJoin(const char* restrict dir,
 		 const char* restrict fname)
@@ -3702,162 +3706,70 @@ stringOrEmpty(const char* str)
  * </pre>
  */
 char *
-genPathname(const char  *dir,
-            const char  *fname)
+genPathname(const char* dir,
+	const char* fname)
 {
-#if defined(REWRITE_TMP) || defined(BUILD_MONOLITHIC)
-l_int32  rewrite_tmp = TRUE;
-#else
-l_int32  rewrite_tmp = FALSE;
-#endif  /* REWRITE_TMP */
-char    *cdir, *pathout;
-l_int32  dirlen, reldirlen, namelen, dir_root_len;
-size_t   size;
+	char* cdir, * pathout;
+	char* basedir;
+	l_int32  dir_root_len;
 
-    if (!dir && !fname)
-        return (char *)ERROR_PTR("no input", __func__, NULL);
+	if (!dir && !fname)
+		return (char*)ERROR_PTR("no input", __func__, NULL);
 
 	dir_root_len = getPathRootLength(dir);
 
-		/* First handle %dir (which may be a full pathname).
-		 * There is no path rewriting on unix, and on win32, we do not
-		 * rewrite unless the specified directory is /tmp or
-		 * a subdirectory of /tmp */
-	if (rewrite_tmp && dir && (
+	/*
+	 * As genPathname() MAY have been called recursively
+	 * (and /tmp/ MAY expand into /tmp/... on UNIX at least)
+	 * we first check to see if our %dir already contains a fully
+	 * expanded basedir:
+	 */
+	const char* tmp_basedir = leptDebugGenTmpDirPath();
+	if (dir && strncmp(dir, tmp_basedir, strlen(tmp_basedir)) == 0) {
+		if ((cdir = stringNew(dir)) == NULL)
+			return (char*)ERROR_PTR("stringNew failed", __func__, NULL);
+		// any '../' hackery in %dir will be resolved further below in the pathSafeJoin() calls.
+		dir = NULL;
+	}
+	/* First handle %dir (which may be a full pathname).
+	 * There is no path rewriting on unix, and on win32, we do not
+	 * rewrite unless the specified directory is /tmp or
+	 * a subdirectory of /tmp */
+	else if (dir && (
 		strncmp(dir, "/tmp/", 5) == 0 || strcmp(dir, "/tmp") == 0
-	)) {
+		)) {
 		/* in "/tmp": to be rewritten */
-
-		cdir = NULL;
-		const char* tmpDir = getenv("TMPDIR");
-		if (tmpDir != NULL) {
-			/* must be an absolute path and it must exist! */
-			if (getPathRootLength(tmpDir) > 0) {
-				l_int32 exists = 0;
-				lept_dir_exists(tmpDir, &exists);
-				if (exists) {
-					cdir = stringNew(tmpDir);
-				}
-			}
-		}
-		if (!cdir) {
-#if defined(__APPLE__)
-			size = L_MAX(256, MAX_PATH);
-			if ((cdir = (char*)LEPT_CALLOC(size, sizeof(char))) == NULL) {
-				return (char*)ERROR_PTR("cdir not made", __func__, NULL);
-			}
-			size_t n = confstr(_CS_DARWIN_USER_TEMP_DIR, cdir, size);
-			if (n == 0 || n > size) {
-				/* Fall back to using /tmp */
-				stringCopy(cdir, "/tmp", size);
-			}
-#elif defined(_WIN32)
-			l_int32 tmpdirlen;
-			char tmpdir[MAX_PATH];
-			GetTempPathA(sizeof(tmpdir), tmpdir);  /* get the Windows temp dir */
-			tmpdirlen = strlen(tmpdir);
-			cdir = stringNew(tmpdir);
-#else
-			cdir = stringNew("/tmp");
-#endif  /* _WIN32 */
-		}
-
+		cdir = stringNew(tmp_basedir);
+		if (cdir == NULL)
+			return (char*)ERROR_PTR("stringNew failed", __func__, NULL);
 		dir_root_len = getPathRootLength(cdir);
 		dir += 4;
 		// skip / after /tmp if it exists:
 		if (leptIsSeparator(*dir))
 			dir++;
-		reldirlen = strlen(dir);
 	}
 	else {
-		rewrite_tmp = FALSE;
-
 		/* Handle the case where we start from the current directory */
 		if (dir_root_len == 0) {
 			if ((cdir = getcwd(NULL, 0)) == NULL)
 				return (char*)ERROR_PTR("no current dir found", __func__, NULL);
 			dir_root_len = getPathRootLength(cdir);
-			reldirlen = (dir ? strlen(dir) : 0);
 		}
 		else {
 			if ((cdir = stringNew(dir)) == NULL)
 				return (char*)ERROR_PTR("stringNew failed", __func__, NULL);
-			reldirlen = 0;
 			dir = NULL;
 		}
 	}
 
-        /* Convert to unix path separators, and remove the trailing
-         * slash in the directory, except when dir == "/"  */
-    dirlen = strlen(cdir);
-    if (leptIsSeparator(cdir[dirlen - 1]) && dirlen > dir_root_len) {
-        cdir[dirlen - 1] = '\0';
-    }
+	basedir = pathSafeJoin(cdir, dir);
 
-    namelen = (fname) ? strlen(fname) : 0;
-    size = dirlen + reldirlen + namelen + 16;
-    if ((pathout = (char *)LEPT_CALLOC(size, sizeof(char))) == NULL) {
-        LEPT_FREE(cdir);
-        return (char *)ERROR_PTR("pathout not made", __func__, NULL);
-    }
+	// don't listen to LeptDebugOK any more: we ALWAYS generate the /tmp/lept-XYZ basedir -- done that above.
+	pathout = pathSafeJoin(basedir, fname);
+	stringDestroy(&basedir);
+	stringDestroy(&cdir);
 
-	if (rewrite_tmp) {  /* in "/tmp" */
-		stringCopy(pathout, cdir, size);
-
-		/*
-		 * We also have code *clean* this TEMP directory elsewhere:
-		 * as other applications WILL be using the general /tmp/ directory
-		 * too, we SHOULD ensure we use our own 'subset' of that and
-		 * only clean that part of the /tmp/ hierarchy!
-		 *
-		 * The quick fix for this is to always prefix all our /tmp/...
-		 * paths with a leptonica-specific path prefix:
-		 */
-		if (!LeptDebugOK) {
-			// produce a randomized, unique directory name.
-			stringCat(pathout, size, "/lept-tmpXXXXXX");
-			char* dp = mkdtemp(pathout);
-			if (!dp) {
-				LEPT_FREE(pathout);
-				L_ERROR("mkdtemp failed: %s", __func__, strerror(errno));
-				return NULL;
-			}
-			assert(dp == pathout);
-		}
-		else {
-			stringCat(pathout, size, "/lept-tmp");
-		}
-
-		/* Add the rest of dir */
-		if (*dir != '\0') {
-			stringCat(pathout, size, "/");
-			stringCat(pathout, size, dir);
-		}
-	}
-	else {  /* relative path: prefix CWD */
-		stringCopy(pathout, cdir, size);
-
-		/* Add the relative dir */
-		if (dir && *dir != '\0') {
-			stringCat(pathout, size, "/");
-			stringCat(pathout, size, dir);
-		}
-	}
-
-	/* remove the trailing slash in the directory, except when dir == "/"  */
-	dirlen = strlen(pathout);
-	if (dirlen > dir_root_len && leptIsSeparator(pathout[dirlen - 1])) {
-		pathout[dirlen - 1] = '\0';
-	}
-
-        /* Now handle %fname */
-    if (fname && strlen(fname) > 0) {
-		stringCat(pathout, size, "/");
-        stringCat(pathout, size, fname);
-    }
-    LEPT_FREE(cdir);
-
-    convertSepCharsInPath(pathout, UNIX_PATH_SEPCHAR);
+	//convertSepCharsInPath(pathout, UNIX_PATH_SEPCHAR);   <-- done by pathJoin() already!
 
 	// see if the path has a 'random ID to be injected here' marker:
 	// (used in, f.e.: leptDebugGetFileBasePath() when userland hasn't configured some expected components)
@@ -3880,7 +3792,7 @@ size_t   size;
 		}
 	}
 
-    return pathout;
+	return pathout;
 }
 
 
@@ -4141,3 +4053,4 @@ string_vasprintf(_In_z_ _Printf_format_string_ const char* filename_fmt_str, va_
 	}
 	return buf;
 }
+

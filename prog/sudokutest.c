@@ -98,7 +98,7 @@ L_REGPARAMS* rp;
         lept_stderr("Sudoku is NOT unique\n");
     lept_free(array);
 
-    return 0;
+    return regTestCleanup(rp);
 }
 
 

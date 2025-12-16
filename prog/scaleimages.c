@@ -125,5 +125,6 @@ L_REGPARAMS* rp;
     }
 
     sarrayDestroy(&sa1);
-    return 0;
+
+    return regTestCleanup(rp);
 }

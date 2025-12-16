@@ -257,7 +257,7 @@ PTAA    *ptaa1, *ptaa2;
             pixDisplay(pix1, 1000, 0);
             pixDestroy(&pix1);
         }
-		const char *debugfile = leptDebugGenFilepath("page.pdf");
+		const char *debugfile = leptDebugGenFilepath("%s.pdf", __func__);
         convertFilesToPdf("/tmp/lept/dewmod", NULL, 135, 1.0, 0, 0,
                           "Dewarp Build Model", debugfile);
         lept_stderr("pdf file: %s\n", debugfile);
@@ -855,10 +855,10 @@ PTAA     *ptaa;
 
     if (debugflag) {
         //lept_mkdir("lept/dewmod");
-		const char* pixpath = leptDebugGenFilepath("dewmod/0011.tif");
+		const char* pixpath = leptDebugGenFilepath("/tmp/lept/dewmod/0011.tif");
         pixWriteDebug(pixpath, pix1, IFF_TIFF_G4);
         pixDisplayWithTitle(pix1, 0, 600, "pix1");
-		pixpath = leptDebugGenFilepath("dewmod/0012.tif");
+		pixpath = leptDebugGenFilepath("/tmp/lept/dewmod/0012.tif");
 		pixWriteDebug(pixpath, pix2, IFF_TIFF_G4);
         pixDisplayWithTitle(pix2, 0, 800, "pix2");
     }
@@ -883,7 +883,7 @@ PTAA     *ptaa;
     }
     if (debugflag) {
         pix2 = pixaDisplay(pixa2, w, h);
-		const char* pixpath = leptDebugGenFilepath("dewmod/0013.tif");
+		const char* pixpath = leptDebugGenFilepath("/tmp/lept/dewmod/0013.tif");
 		pixWriteDebug(pixpath, pix2, IFF_TIFF_G4);
         pixDisplayWithTitle(pix2, 0, 1000, "pix2");
         pixDestroy(&pix2);
@@ -903,7 +903,7 @@ PTAA     *ptaa;
     if (debugflag) {
         pix1 = pixCreateTemplate(pixs);
         pix2 = pixDisplayPtaa(pix1, ptaa);
-		const char* pixpath = leptDebugGenFilepath("dewmod/0014.tif");
+		const char* pixpath = leptDebugGenFilepath("/tmp/lept/dewmod/0014.tif");
 		pixWriteDebug(pixpath, pix2, IFF_PNG);
         pixDisplayWithTitle(pix2, 0, 1200, "pix3");
         pixDestroy(&pix1);
@@ -1884,7 +1884,7 @@ PTAA    *ptaa1, *ptaa2;
             pixDisplay(pix1, 1000, 0);
             pixDestroy(&pix1);
         }
-		const char* debugfile = leptDebugGenFilepath("dewline.pdf");
+		const char* debugfile = leptDebugGenFilepath("%s.pdf", __func__);
 		convertFilesToPdf("/tmp/lept/dewline", NULL, 135, 1.0, 0, 0,
                           "Dewarp Build Line Model", debugfile);
         lept_stderr("pdf file: %s\n", debugfile);

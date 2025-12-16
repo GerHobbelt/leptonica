@@ -122,9 +122,9 @@ L_REGPARAMS* rp;
         pixWrite("/tmp/lept/dewarp/pixb.tif", pixb, IFF_TIFF_G4);
         dew1 = dewarpCreate(pixb, pageno);
         dewarpaInsertDewarp(dewa, dew1);
-		leptDebugSetFilenameBasename("test2_model.pdf");
+		leptDebugSetFilenameBasename("/tmp/lept/dewarp/test2_model.pdf");
 		dewarpBuildPageModel(dew1);
-		leptDebugSetFilenameBasename("test2_apply.pdf");
+		leptDebugSetFilenameBasename("/tmp/lept/dewarp/test2_apply.pdf");
 		dewarpaApplyDisparity(dewa, pageno, pixb, -1, 0, 0, &pixd);
 
         dewarpaInfo(stderr, dewa);
@@ -134,5 +134,6 @@ L_REGPARAMS* rp;
 
     pixDestroy(&pixs);
     pixDestroy(&pixd);
-    return 0;
+
+	return regTestCleanup(rp);
 }

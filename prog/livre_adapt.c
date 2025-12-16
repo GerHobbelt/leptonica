@@ -113,6 +113,7 @@ L_REGPARAMS* rp;
                      "/tmp/lept/livre/adapt.pdf");
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

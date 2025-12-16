@@ -179,14 +179,9 @@ typedef struct StepsArray {
 	// Note: the last depth level is permanently auto-incrementing and serves as a 'persisted' %item_id_is_forever_increasing counter.
 } StepsArray;
 
-typedef struct FilepathCache {
-#define L_PATH_CACHE_SIZE 16         // minimum requirement due to some regression test implementations in /prog/: 2
-	unsigned int active_index;
-	const char * path[L_PATH_CACHE_SIZE];
-} FilepathCache;
-
 struct l_diag_predef_parts {
 	const char* basepath;            //!< the base path within where every generated file must land.
+	const char* expanded_tmpdir;     //!< internal use/cache: the (re)generated CVE-safe expansion/replacement for '/tmp/'
 #if 0
 	NUMA *steps;                     //!< a hierarchical step numbering system; the last number level will (auto)increment, or RESET every time when a more major step level incremented/changed (unless %item_id_is_forever_increasing is set).
 #else
@@ -198,9 +193,8 @@ struct l_diag_predef_parts {
 	const char* filename_prefix;     //!< a file name prefix, NULL if unspecified. To be used (in reduced form) as a target filename prefix.
 	const char* filename_basename;   //!< a file name basename, NULL if unspecified. To be used (in reduced form) as a target filename base, after the prefix.
 	const char* process_name;        //!< the part which identifies what we are doing right now (at a high abstraction level)
-	const char* default_path_template_str; //!< you can customize the preferred file path formatting template.
 
-	FilepathCache last_generated_paths;  //!< internal cache: stores the last generated file path (for re-use and reference)
+	SARRAY *last_generated_paths;	 //!< internal cache: stores the last generated file path (for re-use and reference)
 	char* last_generated_step_id_string; //!< internal cache: stores the last generated steps[] id string (for re-use and reference)
 
 	l_int32 debugging;				 //!< 1 if debugging mode is activated, resulting in several leptonica APIs producing debug/info messages and/or writing diagnostic plots and images to the basepath filesystem.
@@ -213,6 +207,7 @@ struct l_diag_predef_parts {
 	unsigned int regressiontest_mode : 1;  //!< 1 if in regression test mode; 0 otherwise; when active, this means the generated paths in /tmp/ and elsewhere WILL NOT be randomized.
 	unsigned int display : 1;        //!< 1 if in display mode; 0 otherwise                
 
+	unsigned int is_tmpdir_expanded : 1;  //!< 1 when the '/tmp/' path replacement has been (re)generated. This path is kept for the duration, unless this flag is RESET to 0.
 	unsigned int is_init : 1;        //!< 1 if diagspec structure has been initialized; 0 otherwise                
 };
 
@@ -229,6 +224,8 @@ void
 leptCreateDiagnoticsSpecInstance(void)
 {
 	if (!diag_spec.is_init) {
+		diag_spec.last_generated_paths = sarrayCreate(16);
+
 		diag_spec.step_width = 1;
 
 		diag_spec.is_init = 1;
@@ -245,14 +242,12 @@ leptDestroyDiagnoticsSpecInstance(void)
 	}
 
 	stringDestroy(&diag_spec.basepath);
+	stringDestroy(&diag_spec.expanded_tmpdir);
 	stringDestroy(&diag_spec.filename_prefix);
 	stringDestroy(&diag_spec.filename_basename);
 	stringDestroy(&diag_spec.process_name);
-	stringDestroy(&diag_spec.default_path_template_str);
 
-	for (unsigned int i = 0; i < L_PATH_CACHE_SIZE; i++) {
-		stringDestroy(&diag_spec.last_generated_paths.path[i]);
-	}
+	sarrayDestroy(diag_spec.last_generated_paths);
 
 	stringDestroy(&diag_spec.last_generated_step_id_string);
 
@@ -1000,7 +995,8 @@ leptDebugGetStepDepth(void)
 }
 
 
-uint16_t leptDebugAddStepLevel(void)
+uint16_t
+leptDebugAddStepLevel(void)
 {
 	leptCreateDiagnoticsSpecInstance();
 
@@ -1130,134 +1126,6 @@ leptDebugGetProcessName(void)
 
 
 /*!
- * \brief   leptDebugSetFilepathDefaultFormat()
- *
- * \param[in]    path_template_str     the filepath/name template to use when generating new target file paths.
- *
- * <pre>
- * Notes:
- *      (1) The given %path_template_str is always processed as a relative path, appended to the preset base path.
- *          This ensures that all generated file paths will remain inside the preset base path directory tree.
- *          Indeed, attempts to walk outside this dir tree by using one or more '../' path elements in your
- *          %path_template_str is rejected with an error and the given %path_template_str will be rejected.
- *      (2) By passing NULL, the default %path_template_str will be used:
- *               'arbitrar/{5b}.{2s}.{3i}#{5H}.{30f:@#-_.~}.{20p:@#-_.~}-{20t:@#-_.~}.'
- *      (3) These '{nx:@}' template elements are recognized:
- *          - The field type 'x' can be:
- *            + 'b' : batch [unique] id (numeric, managed by the application code via leptDebugSetBetchUniqueId() et al). Default width: 5.
- *            + 's' : step id (numeric, managed by the application code via leptDebugSetStepUniqueId() et al). Default width: 2.
- *            + 'i' : item id (numeric, auto-incremented for each leptDebugGenFilename() / leptDebugGenFilepath() request;
- *                    optionally managed by the application code via leptDebugSetItemId() et al). Default width: 3.
- *            + 'f' : the filename as set by leptDebugSetFilenameForPrefix(), properly sanitized and shortended to fit the indicated field width.
- *                    When empty/NULL, this field, plus its immediately preceding non-alphanumeric separator character in the template format string
- *                    will be removed from the resulting filename/path, i.e. when NULL this chunk will be utterly absent from the output.
- *                    Default width: 30.
- *            + 'p' : the process name as set by leptDebugSetProcessName(), properly sanitized and shortended to fit the indicated field width.
- *                    When empty/NULL, this field, plus its immediately preceding non-alphanumeric separator character in the template format string
- *                    will be removed from the resulting filename/path, i.e. when NULL this chunk will be utterly absent from the output.
- *                    Default width: 20.
- *            + 't' : the filename/'title' part of the template string provided by the leptDebugGenFilename() / leptDebugGenFilpath() API call.
- *                    This allows us to use simple identifier-like strings for those API calls, while we keep the default template format
- *                    involved to help produce unique and deterministically identifiable filenames & ~paths for all output files in a large
- *                    multi-batch application run.
- *                    Default width: 20.
- *            + 'H' : hash, as calculated from the collective source elements (batch#, step#, item#, filename, processname, title) and base58-encoded.
- *                    Default width: 5.
- *          - The field width 'n' can be:
- *            - for *numeric* fields: the target width, i.e. the width to which the numeric field will be *expanded*, by using leading '0' zeroes.
- *              Ergo, this is similar to C `printf("%0*u", n, field)` behaviour: the field will be AT LEAST this wide and all-numeric-digits.
- *            - for *hash* fields: the target width, i.e. the number of alphanumeric (ASCII) characters the hash will be compacted into.
- *            - for *text/string* fields: the maximum target width, i.e. the (sanitized) field will be shortended to fit within this maximum width.
- *              The 'filename' field ('f') is left-truncated, i.e. the tail end is kept intact as much as possible.
- *              The 'processname' field ('p') is middle-truncated, i.e. both leading part and tail end are kept intact as much as possible, while
- *              the middle section will be removed to make the 'processname' fit.
- *          - The OPTIONAL text sanitizer filter expression '@' field, following the ':' colon in the format spec, is only accepted and used
- *            with the text fields ('f', 'p' and 't'): this is a series of *additionally accepted characters* that (next to all 26+26+10 ASCII
- *            alphanumeric characters) will be passed unsanitized from the source.
- *
- *            The very last character in this series is also designated as the replacement character for any character sequence in the
- *            source that gets sanitized.
- *
- *            When the sanitizer filter spec is empty, the default '_' string is assumed and text fields will each be sanitized suitable for
- *            all (non-antiquated) file systems -- MSDOS/FAT comes to mind: there we have a 8.3 filename size restriction,
- *            which is not met by our default template; if you wish to support such a filesystem, you are well-advised to use
- *            a '{8H}.' template instead to ensure your filenames at least will suit the target filesystem. But I digress...
- *          - Whatever the OPTIONAL text sanitizer filter expression '@' field may be, empty or otherwise, any sanitized string will:
- *            + have any sanitized character sequence replaced by a single replacement character,
- *            + have both head and tail ends trimmed to either a single '_' underscore or nothing-at-all.
- *
- *            The latter rule is to prevent ever generating filenames which start or end with '.' dots or one or more '~' or '$' characters, which
- *            have special meaning and/or effects in many operation systems. In other words: the sanitizer prevents you from ever being able
- *            to produce filenames such as UNIX-hidden '.gitignore' or NTFS-endangering '$Index' or Unix-hairy '~home` when passing anything
- *            through our sanitization filter. We also do not ever produce filenames that might look like command line arguments, such as '-xvzf'
- *            when using a format spec like this one: '{t:@_-}'
- *		(4) Only when the leptDebugGenFilename() / leptDebugGenFilpath() API calls supply their own template strings containing
- *          at least one or more of the supported template fields as specified above, will the default template be overridden by the
- *          ad hoc specified template string. This behaviour has been chosen to allow both very simple and bespoke template strings
- *         as first leptDebugGenFilename() / leptDebugGenFilpath() argument.
- *
- *          I.e. when you want to (locally) OVERRIDE the configured default behaviour,
- *          your leptDebugGenFilename() / leptDebugGenFilpath() API call MUST use a template format string
- *          which contains AT LEAST one valid, supported '{nx}' template format field!
- *          Hence
- *
- *               const char *s = leptDebugGenFilpath("/b0rk.png")
- *
- *          will use the preconfigured/default template and produce a path like this one:
- *
- *               s == "/tmp/lept/debug/arbitrar/00001.01.001#Xq74A.fname~4~prefix.{5b}.{2s}.{3i}#{5H}.{30f:@#-_~}.{20p:@#-_~}-{20t:@#-_~}.'
- *
- *
- *            + 'b' : batch [unique] id (numeric, managed by the application code via leptDebugSetBetchUniqueId() et al)
- *            + 'b' : batch [unique] id (numeric, managed by the application code via leptDebugSetBetchUniqueId() et al)
- *            + 'b' : batch [unique] id (numeric, managed by the application code via leptDebugSetBetchUniqueId() et al)
- *            + 'b' : batch [unique] id (numeric)
- *          - if 'nn' is a zero-prefixed decimal number, the field is always extended to this width, using leading
- *            zeroes if necessary. Thus '{05i}' is equivalent to C `printf("%05u", item_id)`.
- *          - If 'nn' is a non-zero-prefixed decimal number and the field type (x) is numeric, , it : the maximum width of the field.
- *            If 'nn' is 0-prefixed, the field is always extended to its maximum width, using leading zeroes.
- *            Hence '{5i}' is equivalent to C `printf("%.5s", ...)`
- *      (3) To keep matters sane all around, the prefix size is limited to 40 characters and is sanitized
- *          by sanitizePathToIdentifier(...,%numeric_id,%filename_prefix) before use.
- * </pre>
- */
-void
-leptDebugSetFilepathDefaultFormat(const char* path_template_str)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	// TODO: parse format string and check for errors.
-
-	if (diag_spec.default_path_template_str) {
-		stringDestroy(&diag_spec.default_path_template_str);
-	}
-	if (path_template_str && *path_template_str) {
-		diag_spec.default_path_template_str = stringNew(path_template_str);
-	}
-	else {
-		diag_spec.default_path_template_str = stringNew("arbitrar/{5b}.{2s}.{3i}#{5H}.{30f:@#-_.~}.{20p:@#-_.~}-{20t:@#-_.~}");
-	}
-
-	diag_spec.must_regenerate = 1;
-
-}
-
-
-/*!
- * \brief   leptDebugGetFilenamePrefix()
- *
- * \return  the previously set filename prefix string or an empty string if no prefix has been set up.
- */
-const char*
-leptDebugGetFilepathDefaultFormat(void)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	return diag_spec.default_path_template_str;
-}
-
-
-/*!
  * \brief   leptDebugGenFilename()
  *
  * \return  the previously set filename prefix string or an empty string if no prefix has been set up.
@@ -1295,9 +1163,9 @@ leptDebugGenFilepath(const char* path_fmt_str, ...)
 	va_start(va, path_fmt_str);
 	const char *fn = string_vasprintf(path_fmt_str, va);
 	va_end(va);
-	const char* f = pathJoin(leptDebugGetFileBasePath(), fn);
+	const char* f = pathSafeJoin(leptDebugGetFileBasePath(), fn);
 	stringDestroy(&fn);
-	// TODO: cache & cycle through about 16 filepath slots. AT LEAST 2 as boxa1_reg.c is assuming the last 2 generated paths remain valid for a while!
+	sarrayAddString(diag_spec.last_generated_paths, f, L_INSERT);
 	return f;
 }
 
@@ -1311,6 +1179,7 @@ leptDebugGenFilepathEx(const char* directory, const char* path_fmt_str, ...)
 	va_end(va);
 	const char* f = pathJoin(leptDebugGetFileBasePath(), fn);
 	stringDestroy(&fn);
+	sarrayAddString(diag_spec.last_generated_paths, f, L_INSERT);
 	return f;
 }
 
@@ -1325,14 +1194,21 @@ leptDebugGetLastGenFilepath(void)
 {
 	leptCreateDiagnoticsSpecInstance();
 
-	int index = diag_spec.last_generated_paths.active_index + L_PATH_CACHE_SIZE - 1;
-	index %= L_PATH_CACHE_SIZE;
-	const char* s = diag_spec.last_generated_paths.path[index];
-	if (s == NULL) {
+	int index = sarrayGetCount(diag_spec.last_generated_paths);
+	if (index == 0) {
 		// no previous path has been generated, ever.
 		return (const char*)ERROR_PTR("no generated filepaths have been generated before: cannot comply with this request to produce the previously generated path.", __func__, NULL);
 	}
-	return s;
+	return sarrayGetString(diag_spec.last_generated_paths, index - 1, L_NOCOPY);
+}
+
+
+void
+leptDebugClearLastGenFilepathCache(void)
+{
+	leptCreateDiagnoticsSpecInstance();
+
+	sarrayClear(diag_spec.last_generated_paths);
 }
 
 
@@ -1394,7 +1270,6 @@ leptActivateDebugMode(l_int32 activate_count_add, l_int32 activate_count_subtrac
 }
 
 
-
 // generates a (probably unique) semi-random ID string.
 void
 leptDebugMkRndToken6(char dest[6])
@@ -1437,3 +1312,395 @@ leptDebugMkRndToken6(char dest[6])
 	h >>= 5;
 	dest[5] = lu[h & 0x1F];
 }
+
+
+// WARNING: this function CANNOT use any of the other file/path APIs as those invoke genPathname() under the hood
+// and that's precisely what we DO NOT want here: we're setting up for that one!!!1! ;-)
+//
+// Hence we replicate/unroll all important APIs in-place, but with the caveat that *those* DO NOT invoke genPathname()!
+static void 
+mkTmpDirPath(void)
+{
+	// generate a randomized /tmp/... subdir and CREATE it right away: kinda mkdtemp() within /tmp/ to ensure nobody can 'hijack' our temp output.
+
+	for (int round = 0; round < 42 /* heuristic; see below */; round++) {
+		char* cdir = NULL;
+		const char* tmpDir = getenv("TMPDIR");
+		if (tmpDir != NULL) {
+			/* must be an absolute path and it must exist! */
+			if (getPathRootLength(tmpDir) > 0) {
+				l_int32 exists = 0;
+#if 0
+				lept_dir_exists(tmpDir, &exists);
+#else
+#ifndef _WIN32
+				{
+					struct stat s;
+					l_int32 err = stat(tmpDir, &s);
+					if (err != -1 && S_ISDIR(s.st_mode))
+						exists = 1;
+				}
+#else  /* _WIN32 */
+				{
+					l_uint32  attributes;
+					attributes = GetFileAttributesA(tmpDir);
+					if (attributes != INVALID_FILE_ATTRIBUTES &&
+						(attributes & FILE_ATTRIBUTE_DIRECTORY)) {
+						exists = 1;
+					}
+				}
+#endif  /* _WIN32 */
+#endif
+				if (exists) {
+					cdir = stringNew(tmpDir);
+				}
+			}
+		}
+		if (!cdir) {
+#if defined(__APPLE__)
+			size = L_MAX(256, MAX_PATH);
+			if ((cdir = (char*)LEPT_CALLOC(size, sizeof(char))) == NULL) {
+				return (char*)ERROR_PTR("cdir not made", __func__, NULL);
+			}
+			size_t n = confstr(_CS_DARWIN_USER_TEMP_DIR, cdir, size);
+			if (n == 0 || n > size) {
+				/* Fall back to using /tmp */
+				stringCopy(cdir, "/tmp", size);
+			}
+#elif defined(_WIN32)
+			l_int32 tmpdirlen;
+			char tmpdir[MAX_PATH];
+			GetTempPathA(sizeof(tmpdir), tmpdir);  /* get the Windows temp dir */
+			tmpdirlen = strlen(tmpdir);
+			cdir = stringNew(tmpdir);
+#endif  /* _WIN32 */
+		}
+
+		if (!cdir) {
+			cdir = stringNew("/tmp");
+		}
+
+		// NOTE:
+		//
+		// DO NOT use mkdtemp() as we want an 'arbitrary' subdirectory that is alphabetically sortable over time,
+		// i.e. it's first dirname part should 'increase' with every regeneration, so bulk & batch runs
+		// show up in increasingly 'late' /tmp/ subdir trees.
+		//
+		// To accomplish this **beyond the current session** we first do scan the /tmp/ directory to see which
+		// ones exist already (and then produce a name that's 'later' than all previous ones.
+		// 
+		// To prevent adversarial 'name starvation' (by someone creating a, say, 'ZZZZZY`-named template-matching dir)
+		// we only look for the 'latest' that's currently present and jump/wrap-around from that 'number', so
+		// there's always ample namespace for us to generate additional dirnames: this scan is only done *once*
+		// per session.
+		// 
+		// The random part of the directory name will take care of attacks and parallel running leptonica
+		// libraries-in-debug-mode, even when the basename happens to be the same.
+		// 
+
+		static char counter_prefix[5] = { 0 };
+
+		if (counter_prefix[0] == 0) {
+			// copy the 'currently existing latest counter' marker into our register.
+			//
+			// before we do that, though, we fill the register with an IV, because
+			// current_match MAY have been obtained from an adversarial directory entry:
+			// (len != 4)
+			strcpy(counter_prefix, "ZZZZ");
+
+#if 0
+			{
+				SARRAY* sa = getFilenamesInDirectoryEx(cdir, TRUE, FALSE);
+				if (sa != NULL) {
+					const char* current_match = "";
+					int count = sarrayGetCount(sa);
+					for (int i = 0; i < count; i++) {
+						const char* str = sarrayGetString(sa, i, L_NOCOPY);
+						if (strncasecmp(str, "lept-", 5) == 0) {
+							// a match: decide if this one is 'later' than what we have
+							if (strcasecmp(current_match, str + 5) > 0) {
+								current_match = str + 5;
+							}
+						}
+					}
+
+					// copy the 'currently existing latest counter' marker into our register.
+					//
+					// filter out any adversarial input: [A-Z] is the accepted set.
+					for (int i = 0; i < 4 && *current_match; current_match++) {
+						unsigned char c = *current_match;
+						if (c >= 'A' && c <= 'Z') {
+							counter_prefix[i++] = c;
+						}
+					}
+
+					sarrayDestroy(&sa);
+				}
+			}
+#else
+#ifndef _WIN32
+
+			{
+				char* realdir;
+				char* stat_path;
+				size_t          size;
+				DIR* pdir;
+				struct dirent* pdirentry;
+				int             dfd, stat_ret;
+				struct stat     st;
+
+				/* Who would have thought it was this fiddly to open a directory
+				   and get the files inside?  fstatat() works with relative
+				   directory paths, and stat() requires using the absolute path.
+				   realpath() works as follows for files and directories:
+					* If the file or directory exists, realpath returns its path;
+					  else it returns NULL.
+					* For realpath() we use the POSIX 2008 implementation, where
+					  the second arg is NULL and the path is malloc'd and returned
+					  if the file or directory exists.  All versions of glibc
+					  support this.  */
+				realdir = realpath(cdir, NULL);
+				if (realdir == NULL) {
+					L_ERROR("realdir not made\n", __func__);
+				}
+				else if ((pdir = opendir(realdir)) != NULL) {
+					const char* current_match = stringNew("");
+
+					while ((pdirentry = readdir(pdir))) {
+						if (strcmp(pdirentry->d_name, "..") == 0 || strcmp(pdirentry->d_name, ".") == 0)
+							continue;
+#if HAVE_DIRFD && HAVE_FSTATAT
+						/* Platform issues: although Linux has these POSIX functions,
+						 * AIX doesn't have fstatat() and Solaris doesn't have dirfd(). */
+						dfd = dirfd(pdir);
+						stat_ret = fstatat(dfd, pdirentry->d_name, &st, 0);
+#else
+						size = strlen(realdir) + strlen(pdirentry->d_name) + 2;
+						stat_path = (char*)LEPT_CALLOC(size, 1);
+						snprintf(stat_path, size, "%s/%s", realdir, pdirentry->d_name);
+						stat_ret = stat(stat_path, &st);
+						LEPT_FREE(stat_path);
+#endif
+						if (stat_ret == 0 && (!!wantSubdirs ^ !!S_ISDIR(st.st_mode)))
+							continue;
+
+						const char* str = pdirentry->d_name;
+						if (strncasecmp(str, "lept-", 5) == 0) {
+							// a match: decide if this one is 'later' than what we have
+							if (strcasecmp(current_match, str + 5) > 0) {
+								stringDestroy(&current_match);
+								current_match = stringNew(str + 5);
+							}
+						}
+					}
+					closedir(pdir);
+					LEPT_FREE(realdir);
+
+					// copy the 'currently existing latest counter' marker into our register.
+					//
+					// filter out any adversarial input: [A-Z] is the accepted set.
+					{
+						const char* cm = current_match;
+						for (int i = 0; i < 4 && *cm; cm++) {
+							unsigned char c = *cm;
+							if (c >= 'A' && c <= 'Z') {
+								counter_prefix[i++] = c;
+							}
+						}
+					}
+					stringDestroy(&current_match);
+				}
+			}
+
+#else  /* _WIN32 */
+
+			/* http://msdn2.microsoft.com/en-us/library/aa365200(VS.85).aspx */
+#include <windows.h>
+
+			{
+				char* pszDir;
+
+				pszDir = stringJoin(cdir, "\\*");
+
+				if (strlen(pszDir) + 1 > MAX_PATH) {
+					LEPT_FREE(pszDir);
+					L_ERROR("dirname is too long\n", __func__);
+				}
+				else {
+					HANDLE            hFind;
+					WIN32_FIND_DATAA  ffd;
+
+					hFind = FindFirstFileA(pszDir, &ffd);
+					if (INVALID_HANDLE_VALUE != hFind) {
+						const char* current_match = stringNew("");
+
+						if (0 != (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && strcmp(ffd.cFileName, "..") != 0 && strcmp(ffd.cFileName, ".") != 0)  /* pick up subdir */
+						{
+							convertSepCharsInPath(ffd.cFileName, UNIX_PATH_SEPCHAR);
+							const char* str = ffd.cFileName;
+							if (strncasecmp(str, "lept-", 5) == 0) {
+								// a match: decide if this one is 'later' than what we have
+								if (strcasecmp(current_match, str + 5) > 0) {
+									stringDestroy(&current_match);
+									current_match = stringNew(str + 5);
+								}
+							}
+						}
+
+						while (FindNextFileA(hFind, &ffd) != 0) {
+							if ((0 == (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) || strcmp(ffd.cFileName, "..") == 0 || strcmp(ffd.cFileName, ".") == 0))  /* pick up subdir */
+								continue;
+
+							//convertSepCharsInPath(ffd.cFileName, UNIX_PATH_SEPCHAR);
+							const char* str = ffd.cFileName;
+							if (strncasecmp(str, "lept-", 5) == 0) {
+								// a match: decide if this one is 'later' than what we have
+								if (strcasecmp(current_match, str + 5) < 0) {
+									stringDestroy(&current_match);
+									current_match = stringNew(str + 5);
+								}
+							}
+						}
+
+						FindClose(hFind);
+						LEPT_FREE(pszDir);
+
+						// copy the 'currently existing latest counter' marker into our register.
+						//
+						// filter out any adversarial input: [A-Z] is the accepted set.
+						{
+							const char* cm = current_match;
+							for (int i = 0; i < 4 && *cm; cm++) {
+								unsigned char c = *cm;
+								if (c >= 'A' && c <= 'Z') {
+									counter_prefix[i++] = c;
+								}
+							}
+						}
+						stringDestroy(&current_match);
+					}
+				}
+			}
+
+#endif  /* _WIN32 */
+#endif
+
+			assert(strlen(counter_prefix) == 4);
+
+			// now bump the counter by 1:
+			{
+				unsigned char carry = 0;
+				for (int i = 3; i >= 0; i--) {
+					unsigned char c = counter_prefix[i];
+					c++;
+					if (c > 'Z') {
+						c = 'A';
+						carry = 1;
+					}
+					counter_prefix[i] = c;
+				}
+			}
+
+			// once-per-session setup has completed.
+			//
+			// The rest is up to the 'random'-generating part below...
+		}
+
+		// now generate a candidate (or a few) to allocate.
+		//
+		// Heuristic: if this fails to deliver, we re-run the entire init cycle from scratch,
+		// until we run out of breath, at which point it's entirely unsafe to run this
+		// library and we hit APPLICATION EXIT/ABORT.
+
+		// max 5 attempts when things go badly wrong.
+		for (int i = 0; i < 5; i++) {
+			char arbitrar[7];
+			leptDebugMkRndToken6(arbitrar);
+			arbitrar[6] = 0;
+
+			char* path = stringConcatNew(cdir, "/lept-", counter_prefix, "-", arbitrar, NULL);
+			// cleanup double slashes and other cruft that might have come in from the env.var. and/or MSWindows API:
+			{
+				char* p2 = pathSafeJoin(path, NULL);
+				stringDestroy(&path);
+				path = p2;
+			}
+
+			l_ok ret;
+#ifndef _WIN32
+			ret = (mkdir(path, 0770) == 0);
+#else
+			ret = (CreateDirectoryA(path, NULL) != 0);
+#endif
+			if (ret) {
+				// the proof is in the pudding: does the directory exist now?
+				ret = FALSE;
+#ifndef _WIN32
+				{
+					struct stat s;
+					l_int32 err = stat(path, &s);
+					if (err != -1 && S_ISDIR(s.st_mode)) {
+						ret = TRUE;
+					}
+				}
+#else  /* _WIN32 */
+				{
+					l_uint32  attributes;
+					attributes = GetFileAttributesA(path);
+					if (attributes != INVALID_FILE_ATTRIBUTES &&
+						(attributes & FILE_ATTRIBUTE_DIRECTORY)) {
+						ret = TRUE;
+					}
+				}
+#endif  /* _WIN32 */
+			}
+
+			// success?
+			if (ret) {
+				stringDestroy(&diag_spec.expanded_tmpdir);
+				diag_spec.expanded_tmpdir = stringNew(path);
+				diag_spec.is_tmpdir_expanded = 1;
+
+				stringDestroy(&cdir);
+				return;
+			}
+
+			L_WARNING("Setting up the TMP directory basedir turns out to take a little more work... Retrying '%s' with another value.\n", __func__, path);
+
+			stringDestroy(&path);
+		}
+
+		// whoops... more than 5 attempts at the current counter_prefix...
+		// 
+		// Better run the entire cycle again, but HARD FAIL when we fail
+		// to accomplish any decent result within, say, 42 rounds of this!
+
+		stringDestroy(&cdir);
+
+		// Nuke our counter_prefix so that one gets rescanned as well!
+		memset(counter_prefix, 0, sizeof(counter_prefix));
+
+		L_ERROR("Setting up the TMP directory basedir turns out to be real hassle: multiple retries failed; now resetting everything and executing this setup once again...\n", __func__);
+	}
+
+	// when we get here, we've attempted to set up our environment plenty
+	// of times and failed consistently.
+
+	L_ERROR("Utterly failed to set up the TMP directory basedir. Aborting the application as it's unsafe to continue executing it...\n", __func__);
+	exit(66);
+}
+
+
+const char*
+leptDebugGenTmpDirPath(void)
+{
+	if (diag_spec.is_tmpdir_expanded && diag_spec.expanded_tmpdir)
+		return diag_spec.expanded_tmpdir;
+
+	// generate a randomized /tmp/... subdir and CREATE it right away: kinda mkdtemp() within /tmp/ to ensure nobody can 'hijack' our temp output.
+	mkTmpDirPath();
+
+	assert(diag_spec.expanded_tmpdir != NULL);
+	return diag_spec.expanded_tmpdir;
+}
+

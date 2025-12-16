@@ -85,7 +85,8 @@ L_REGPARAMS* rp;
     TestSetIterator(s, FALSE);
     l_asetDestroy(&s);
     pixDestroy(&pix);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 
 static L_ASET *

@@ -106,6 +106,6 @@ L_REGPARAMS* rp;
 		stringDestroy(&outfile);
     }
 
-    return 0;
+	return regTestCleanup(rp);
 }
 

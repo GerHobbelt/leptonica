@@ -59,5 +59,6 @@ L_REGPARAMS* rp;
     filein = argv[1];
 
     writeImageFileInfo(filein, stderr, 0);
-    return 0;
+
+	return regTestCleanup(rp);
 }

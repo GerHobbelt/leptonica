@@ -98,5 +98,6 @@ L_REGPARAMS* rp;
     strc = strcodeCreate(212);   // arbitrary integer
     strcodeGenerate(strc, "/tmp/lept/digit/bootnum4.pa", "PIXA");
     strcodeFinalize(&strc, ".");
-    return 0;
+
+    return regTestCleanup(rp);
 }

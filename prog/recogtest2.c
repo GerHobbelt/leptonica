@@ -201,5 +201,5 @@ L_REGPARAMS* rp;
     numaaDestroy(&naa);
     recogDestroy(&recog1);
 
-    return 0;
+    return regTestCleanup(rp);
 }

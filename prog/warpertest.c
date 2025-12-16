@@ -264,5 +264,6 @@ L_REGPARAMS* rp;
 #endif
 
     bmfDestroy(&bmf);
-    return 0;
+
+    return regTestCleanup(rp);
 }

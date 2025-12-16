@@ -225,7 +225,7 @@ PIXAC    **pixaca;
 
         /* Output separate pdfs for each part */
     for (i = 0; i < nparts; i++) {
-		const char* debugfile = leptDebugGenFilepath("@PREFIX@-%d.pdf", i);
+		const char* debugfile = leptDebugGenFilepath("%s-%d.pdf", __func__, i);
         L_INFO("writing part %d: %s\n", __func__, i, debugfile);
         pixacompConvertToPdf(pixaca[i], 300, 1.0, L_G4_ENCODE, 0, NULL, debugfile);
         pixacompDestroy(&pixaca[i]);

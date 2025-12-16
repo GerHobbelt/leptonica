@@ -151,7 +151,8 @@ PIXA      *pixa1, *pixa2, *pixa3;
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
     pixaDestroy(&pixa3);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 
 

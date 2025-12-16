@@ -67,7 +67,7 @@ l_int32       w, h;
 PIX          *pixs, *pixg, *pixim, *pixgm, *pixmi, *pix1, *pix2;
 PIX          *pixmr, *pixmg, *pixmb, *pixmri, *pixmgi, *pixmbi;
 PIXA         *pixa;
-L_REGPARAMS* rp;
+L_REGPARAMS  *rp;
 
 	if (regTestSetup(argc, argv, "adaptmap", &rp))
 		return 1;
@@ -76,7 +76,6 @@ L_REGPARAMS* rp;
 
     pixs = pixRead(DEMOPATH("wet-day.jpg"));
     pixa = pixaCreate(0);
-
     pixg = pixConvertRGBToGray(pixs, 0.33, 0.34, 0.33);
     pixaAddPix(pixa, pixs, L_INSERT);
     pixaAddPix(pixa, pixg, L_INSERT);
@@ -178,7 +177,6 @@ L_REGPARAMS* rp;
 
         /* Check pixFillMapHoles() */
     pixa = pixaCreate(3);
-
 	pix1 = pixRead(DEMOPATH("weasel8.png"));  /* use this as the map */
     pixGammaTRC(pix1, pix1, 1.0, 0, 270);  /* darken white pixels */
     pixaAddPix(pixa, pix1, L_COPY);
@@ -200,8 +198,7 @@ L_REGPARAMS* rp;
 
         /* An even simpler check of pixFillMapHoles() */
     pixa = pixaCreate(2);
-
-	pix1 = pixCreate(3, 3, 8);
+    pix1 = pixCreate(3, 3, 8);
     pixSetPixel(pix1, 1, 0, 128);
     pix2 = pixExpandReplicate(pix1, 25);
     pixaAddPix(pixa, pix2, L_INSERT);

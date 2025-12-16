@@ -965,7 +965,6 @@ PIXAA     *paa;
     if (!pixas)
         return (PIXA *)ERROR_PTR("pixas not defined", __func__, NULL);
 
-
     if ((paa = recogSortPixaByClass(pixas, setsize)) == NULL)
         return (PIXA *)ERROR_PTR("paa not made", __func__, NULL);
     nc = pixaaGetCount(paa, NULL);
@@ -2199,7 +2198,6 @@ PIXA      *pixa1;
     n = pixaGetCount(pixas);
     if (numaGetCount(nas) != n)
         return (PIX *)ERROR_PTR("pixas and nas sizes differ", __func__, NULL);
-
 
     pixa1 = pixaCreate(n);
 	for (i = 0; i < n; i++) {

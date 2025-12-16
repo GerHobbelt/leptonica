@@ -38,7 +38,7 @@
  *         - extrema finding
  *         - frequency and crossing analysis
  *      --------------------------------------
-
+ *
  *      Morphological (min/max) operations
  *          NUMA        *numaErode()
  *          NUMA        *numaDilate()

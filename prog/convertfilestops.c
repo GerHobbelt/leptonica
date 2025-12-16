@@ -90,8 +90,11 @@ L_REGPARAMS* rp;
 
     if (!strcmp(substr, "allfiles"))
         substr = NULL;
+	int ret;
     if (res != 0)
-        return convertFilesToPS(dirin, substr, res, fileout);
+        ret = convertFilesToPS(dirin, substr, res, fileout);
     else
-        return convertFilesFittedToPS(dirin, substr, 0.0, 0.0, fileout);
+        ret = convertFilesFittedToPS(dirin, substr, 0.0, 0.0, fileout);
+
+	return regTestCleanup(rp) || ret;
 }

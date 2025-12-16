@@ -119,6 +119,12 @@ int main(int argc, const char** argv)
 			scorefract = 0.1 * i;
 			lept_stderr("\nScorefrac: %1.3f\n", scorefract);
 
+            /* Get a 1 bpp version; use a single tile */
+        pixOtsuAdaptiveThreshold(pixg, 2000, 2000, 0, 0, scorefract,
+                                 NULL, &pixb);
+        pixaAddPix(pixa1, pixg, L_COPY);
+        pixaAddPix(pixa1, pixb, L_INSERT);
+
 			/* Show the histogram of gray values and the split location */
 			pixSplitDistributionFgBg(pixg, scorefract, 1,
 				&thresh, &fgval, &bgval, &pixp);
@@ -165,10 +171,8 @@ int main(int argc, const char** argv)
 		}
 
 		const char* pdfpath = leptDebugGenFilepath("result.pdf");
-		char* out_fullname = genPathname(pdfpath, NULL);
-		lept_stderr("Writing to: %s --> %s\n", pdfpath, out_fullname);
-		pixaConvertToPdf(pixad, 75, 1.0, 0, 0, "Otsu thresholding", out_fullname);
-		stringDestroy(&out_fullname);
+		lept_stderr("Writing to: %s\n", pdfpath);
+		pixaConvertToPdf(pixad, 75, 1.0, 0, 0, "Otsu thresholding", pdfpath);
 		bmfDestroy(&bmf);
 		pixDestroy(&pixs);
 		pixDestroy(&pixg);

@@ -2026,17 +2026,49 @@ SARRAY  *saout;
  *          
  * </pre>
  */
-
 SARRAY*
 getFilenamesInDirectory(const char* dirname)
 {
 	return getFilenamesInDirectoryEx(dirname, FALSE, TRUE);
 }
 
+
+/*!
+ * \brief   getFilenamesInDirectoryEx()
+ *
+ * \param[in]    dirname        directory name
+ * \param[in]    wantSubdirs    !0 to produce a list of subdirectories, 0 to produce a list of files
+ * \param[in]    reportDirNotExistErrors   !0 to report an error when the scanned directory does not exit, 0 to silently ignore this fact (and return an empty sarray)
+ * \return  sarray of file names, or NULL on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) The versions compiled under unix and cygwin use the POSIX C
+ *          library commands for handling directories.  For Windows,
+ *          there is a separate implementation.
+ *      (2) It returns an array of filename tails; i.e., only the part of
+ *          the path after the last slash.
+ *      (3) Use of the d_type field of dirent is not portable:
+ *          "According to POSIX, the dirent structure contains a field
+ *          char d_name[] of unspecified size, with at most NAME_MAX
+ *          characters preceding the terminating null character.  Use
+ *          of other fields will harm the portability of your programs."
+ *      (4) As a consequence of (3), we note several things:
+ *           ~ MINGW doesn't have a d_type member.
+ *           ~ Older versions of gcc (e.g., 2.95.3) return DT_UNKNOWN
+ *             for d_type from all files.
+ *          On these systems, this function will return directories
+ *          (except for '.' and '..', which are eliminated using
+ *          the d_name field).
+ *      (5) For unix, we avoid the bug in earlier versions of realpath()
+ *          by requiring either POSIX 2008 or use of glibc.
+ *          
+ * </pre>
+ */
 #ifndef _WIN32
 
 SARRAY *
-getFilenamesInDirectoryEx(const char  *dirname, l_ok wantSubdirs, l_ok reportDirNotExistErrors)
+getFilenamesInDirectoryEx(const char *dirname, l_ok wantSubdirs, l_ok reportDirNotExistErrors)
 {
 char           *gendir, *realdir, *stat_path;
 size_t          size;

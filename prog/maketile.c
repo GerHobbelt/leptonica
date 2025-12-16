@@ -124,6 +124,7 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa);
     pixDestroy(&pixd);
     sarrayDestroy(&safiles);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

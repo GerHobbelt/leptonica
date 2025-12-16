@@ -205,6 +205,7 @@ L_REGPARAMS* rp;
     compressFilesToPdf(safiles, onebit, savecolor, scalefactor, quality,
                        title, fileout);
     sarrayDestroy(&safiles);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

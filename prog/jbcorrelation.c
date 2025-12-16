@@ -232,7 +232,7 @@ L_REGPARAMS* rp;
 
 #endif  /* Choose library function or detailed steps */
 
-    return 0;
+	return regTestCleanup(rp);
 }
 
 

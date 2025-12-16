@@ -86,9 +86,9 @@ L_REGPARAMS* rp;
     dewarpaUseBothArrays(dewa, 1);
     dew1 = dewarpCreate(pixb, 35);
     dewarpaInsertDewarp(dewa, dew1);
-	leptDebugSetFilenameBasename("dewarp_model1.pdf");
+	leptDebugSetFilenameBasename("/tmp/lept/model/dewarp_model1.pdf");
 	dewarpBuildPageModel(dew1);
-	leptDebugSetFilenameBasename("dewarp_apply1.pdf");
+	leptDebugSetFilenameBasename("/tmp/lept/model/dewarp_apply1.pdf");
 	dewarpaApplyDisparity(dewa, 35, pixg, 200, 0, 0, &pixd);
 
          /* Write out some of the files to be imaged */
@@ -148,7 +148,7 @@ L_REGPARAMS* rp;
     dewarpaInsertDewarp(dewa, dew2);
     dewarpaInsertRefModels(dewa, 0);
     dewarpaInfo(stderr, dewa);
-	leptDebugSetFilenameBasename("dewarp_apply2.pdf");
+	leptDebugSetFilenameBasename("/tmp/lept/model/dewarp_apply2.pdf");
 	dewarpaApplyDisparity(dewa, 7, pixg2, 200, 0, 0, &pixd2);
     dewarpaDestroy(&dewa);
 
@@ -191,5 +191,6 @@ L_REGPARAMS* rp;
     pixDestroy(&pixg2);
     pixDestroy(&pixb2);
     pixDestroy(&pixd2);
-    return 0;
+
+	return regTestCleanup(rp);
 }

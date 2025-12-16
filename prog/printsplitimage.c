@@ -158,6 +158,7 @@ L_REGPARAMS* rp;
     sarrayDestroy(&sa);
     pixaDestroy(&pixa);
     pixDestroy(&pixs);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

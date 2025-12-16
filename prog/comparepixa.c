@@ -107,6 +107,7 @@ L_REGPARAMS* rp;
                      fontsize, fileout);
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

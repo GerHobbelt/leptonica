@@ -193,5 +193,6 @@ L_REGPARAMS* rp;
     }
 
     pixWrite(fileout, pixs, format);
-    return 0;
+
+	return regTestCleanup(rp);
 }

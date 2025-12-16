@@ -104,6 +104,6 @@ L_REGPARAMS* rp;
     lept_stderr("no comparison selected\n");
 #endif
 
-    return 0;
+	return regTestCleanup(rp);
 }
 

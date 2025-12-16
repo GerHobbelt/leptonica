@@ -87,5 +87,6 @@ L_REGPARAMS* rp;
     pixWrite(fileout, pixd, IFF_PNG);
     pixDestroy(&pixs);
     pixDestroy(&pixd);
-    return 0;
+
+    return regTestCleanup(rp);
 }

@@ -241,10 +241,8 @@ int main(int    argc,
 		}
 
 		const char* pdfpath = leptDebugGenFilepath("result.pdf");
-		char* out_fullname = genPathname(pdfpath, NULL);
-		lept_stderr("Writing to: %s --> %s\n", pdfpath, out_fullname);
-		pixaConvertToPdf(pixad, 75, 1.0, 0, 0, "Otsu thresholding", out_fullname);
-		stringDestroy(&out_fullname);
+		lept_stderr("Writing to: %s\n", pdfpath);
+		pixaConvertToPdf(pixad, 75, 1.0, 0, 0, "Otsu thresholding", pdfpath);
 		bmfDestroy(&bmf);
 		pixDestroy(&pixs);
 		pixDestroy(&pixg);

@@ -1733,7 +1733,6 @@ FPIXA      *fpixa;
     if (!pixs || pixGetDepth(pixs) != 32)
         return (FPIXA *)ERROR_PTR("pixs undefined or not rgb", __func__, NULL);
 
-
         /* Convert RGB image */
     pixGetDimensions(pixs, &w, &h, NULL);
     fpixa = fpixaCreate(3);
@@ -1950,7 +1949,6 @@ FPIXA      *fpixad;
     if (fpixaGetFPixDimensions(fpixas, 0, &w, &h))
         return (FPIXA *)ERROR_PTR("fpixas sizes not found", __func__, NULL);
 
-
 	fpixad = fpixaCreate(3);
     for (i = 0; i < 3; i++) {
         fpix = fpixCreate(w, h);
@@ -2015,7 +2013,6 @@ FPIXA      *fpixad;
         /* Convert LAB image */
     if (fpixaGetFPixDimensions(fpixas, 0, &w, &h))
         return (FPIXA *)ERROR_PTR("fpixas sizes not found", __func__, NULL);
-
 
 	fpixad = fpixaCreate(3);
 	for (i = 0; i < 3; i++) {
@@ -2203,7 +2200,6 @@ FPIXA      *fpixa;
     if (!pixs || pixGetDepth(pixs) != 32)
         return (FPIXA *)ERROR_PTR("pixs undefined or not rgb", __func__, NULL);
 
-
         /* Convert RGB image */
     pixGetDimensions(pixs, &w, &h, NULL);
     fpixa = fpixaCreate(3);
@@ -2262,7 +2258,6 @@ FPIX       *fpix;
         /* Convert LAB image */
     if (fpixaGetFPixDimensions(fpixa, 0, &w, &h))
         return (PIX *)ERROR_PTR("fpixa dimensions not found", __func__, NULL);
-
 
 	pixd = pixCreate(w, h, 32);
 	wpld = pixGetWpl(pixd);

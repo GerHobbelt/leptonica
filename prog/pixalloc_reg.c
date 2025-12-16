@@ -169,7 +169,8 @@ L_REGPARAMS* rp;
     }
     pixDestroy(&pixs);
     lept_stderr("Time (standard) = %7.3f sec\n", stopTimer());
-    return 0;
+
+    return regTestCleanup(rp);
 }
 
 

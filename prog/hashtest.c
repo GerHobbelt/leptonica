@@ -261,7 +261,8 @@ skipped_2:
     sarrayDestroy(&sa2);
 
 skipped_3:
-    return 0;
+
+	return regTestCleanup(rp);
 }
 
 

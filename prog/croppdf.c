@@ -152,6 +152,7 @@ L_REGPARAMS* rp;
     cropFilesToPdf(safiles, lrclear, tbclear, edgeclean, lrborder, tbborder,
                    maxwiden, printwiden, title, fileout);
     sarrayDestroy(&safiles);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

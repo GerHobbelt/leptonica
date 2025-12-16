@@ -2186,7 +2186,6 @@ PTA      *ptaul;
         boxaaDestroy(&baa);
     }
 
-
     pixaDestroy(&pixat);
     return pixad;
 }

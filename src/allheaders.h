@@ -2878,13 +2878,13 @@ LEPT_DLL extern uint64_t leptDebugGetHashId ( void );
 LEPT_DLL extern void leptDebugSetProcessName ( const char * name );
 LEPT_DLL extern const char * leptDebugGetProcessName ( void );
 
-LEPT_DLL extern void leptDebugSetFilepathDefaultFormat ( const char * path_template_str );
-LEPT_DLL extern const char * leptDebugGetFilepathDefaultFormat ( void );
+LEPT_DLL extern const char * leptDebugGenTmpDirPath ( void );
 
 LEPT_DLL extern const char * leptDebugGenFilename ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 2, 3)));
 LEPT_DLL extern const char * leptDebugGenFilepath ( _In_z_ _Printf_format_string_ const char * path_fmt_str , ... ) __attribute__((__format__(__printf__, 2, 3)));
 LEPT_DLL extern const char * leptDebugGenFilepathEx ( const char * directory, _In_z_ _Printf_format_string_ const char * path_fmt_str, ... ) __attribute__((__format__(__printf__, 2, 3)));
 LEPT_DLL extern const char * leptDebugGetLastGenFilepath ( void );
+LEPT_DLL extern void leptDebugClearLastGenFilepathCache ( void );
 
 LEPT_DLL extern l_ok leptIsInDisplayMode ( void );
 LEPT_DLL extern void leptSetInDisplayMode ( l_ok activate );

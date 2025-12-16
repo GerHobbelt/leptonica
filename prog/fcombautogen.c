@@ -86,6 +86,7 @@ L_REGPARAMS* rp;
     if (argc == 2)
         lept_free(filename);
     selaDestroy(&sela);
-    return ret;
+
+	return regTestCleanup(rp) || ret;
 }
 

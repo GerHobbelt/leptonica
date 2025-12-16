@@ -101,6 +101,7 @@ L_REGPARAMS* rp;
 
     pixDestroy(&pix1);
     selaDestroy(&sela);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

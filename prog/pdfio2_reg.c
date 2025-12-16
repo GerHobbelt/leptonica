@@ -58,6 +58,7 @@ size_t        nbytes;
 BOXA         *boxa1, *boxa2;
 L_BYTEA      *ba;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
+L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "pdfio2_reg");
@@ -71,8 +72,6 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
     L_ERROR("This test requires libtiff to run.\n", "pdfio2_reg");
     exit(77);
 #endif
-
-	L_REGPARAMS* rp;
 
 	if (regTestSetup(argc, argv, "pdf_io", &rp))
 		return 1;
@@ -358,7 +357,6 @@ PIXA  *pixa;
         pix4 = pixaDisplayTiledInRows(pixa, 32, 1800, 0.25, 0, 25, 2);
 		const char* pixfilepath = leptDebugGenFilepath("%s.%s", __func__, ".jpg");
         pixWrite(debugfile, pix4, IFF_JFIF_JPEG);
-		stringDestroy(&pixfilepath);
         pixDisplayWithTitle(pix4, 100, 100, NULL);
         pixDestroy(&pix4);
         pixaDestroy(&pixa);

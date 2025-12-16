@@ -1923,13 +1923,6 @@ if (01)
 
 	}
 
-
-
-
-
-
-	
-
 	for (int i = 0; i < sizeof(pix) / sizeof(pix[0]); i++)
 		pixDestroy(&pix[i]);
 

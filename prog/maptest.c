@@ -159,7 +159,7 @@ L_REGPARAMS* rp;
     l_amapDestroy(&m);
     pixDestroy(&pix);
 
-    return 0;
+	return regTestCleanup(rp);
 }
 
 static L_AMAP *

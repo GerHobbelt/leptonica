@@ -80,6 +80,7 @@ L_REGPARAMS* rp;
 #endif
 
     pixWrite(fileout, pixd, IFF_TIFF_G4);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

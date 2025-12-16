@@ -57,13 +57,12 @@ NUMA         *na;
 PIX          *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixadb;
 PTA          *pta;
+L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "baseline_reg");
     exit(77);
 #endif
-
-	L_REGPARAMS* rp;
 
 	if (regTestSetup(argc, argv, "baseline", &rp))
 		return 1;

@@ -769,7 +769,7 @@ PIXA      *pixa1;
         boxDestroy(&box2);
     if (pixa1) {
        pixaAddPix(pixa1, pix4, L_COPY);
-	   const char* pdfpath = leptDebugGenFilepath("@PREFIX@.pdf");
+	   const char* pdfpath = leptDebugGenFilepath("%s.pdf", __func__);
        lept_stderr("Writing debug file: %s\n", pdfpath);
        pixaConvertToPdf(pixa1, 0, 1.0, L_DEFAULT_ENCODE, 0, NULL, pdfpath);
        pixaDestroy(&pixa1);
@@ -1298,7 +1298,6 @@ PIXA   *pixa1, *pixadb;
     if (!pixs || pixGetDepth(pixs) != 1)
         return ERROR_INT("pixs not defined or not 1 bpp", __func__, 1);
 
-
         /* Remove the small stuff */
     pix1 = pixSelectBySize(pixs, minw, minh, 8, L_SELECT_IF_BOTH,
                            L_SELECT_IF_GT, NULL);
@@ -1398,7 +1397,6 @@ PIX      *pix1, *pixdb;
     if (ppixdebug) *ppixdebug = NULL;
     if (!pixs || pixGetDepth(pixs) != 1)
         return (BOXA *)ERROR_PTR("pixa undefined or not 1 bpp", __func__, NULL);
-
 
     pixGetDimensions(pixs, &w, &h, NULL);
 
@@ -1555,7 +1553,6 @@ PIXA    *pixa1, *pixa2, *pixa3;
 
     if (!pixs)
         return (PIXA *)ERROR_PTR("pixs not defined", __func__, NULL);
-
 
         /* Binarize carefully, if necessary */
     if (pixGetDepth(pixs) > 1) {

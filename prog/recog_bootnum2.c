@@ -65,7 +65,8 @@ l_int32 main(int    argc,
 	//lept_mkdir("lept/digit");
 
     ProcessDigits(5);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 
 /* ----------------------------------------------------- */

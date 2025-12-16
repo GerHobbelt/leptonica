@@ -169,5 +169,6 @@ L_REGPARAMS* rp;
     ret = convertSegmentedFilesToPdf(pagedir, pagesubstr, res, type, thresh,
                                      baa, 75, scalefactor, title, fileout);
     boxaaDestroy(&baa);
-    return ret;
+
+	return regTestCleanup(rp) || ret;
 }

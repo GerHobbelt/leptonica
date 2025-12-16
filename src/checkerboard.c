@@ -133,7 +133,6 @@ SELA    *sela;
     if (nsels != 2 && nsels != 4)
         return ERROR_INT("nsels not 2 or 4", __func__, 1);
 
-
         /* Generate the hit-miss sels for finding corners */
     sela = makeCheckerboardCornerSela(size, dilation, nsels, pixadb);
     if (!sela)

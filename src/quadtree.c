@@ -127,7 +127,6 @@ PIX       *pix_mac;
         return ERROR_INT("baa not made", __func__, 1);
     }
 
-
     *pfpixa = fpixaCreate(nlevels);
 	for (i = 0; i < nlevels; i++) {
         boxa = boxaaGetBoxa(baa, i, L_CLONE);
@@ -194,7 +193,6 @@ DPIX      *dpix_msac;  /* msa clone */
     pixGetDimensions(pixs, &w, &h, NULL);
     if (nlevels > quadtreeMaxLevels(w, h))
         return ERROR_INT("nlevels too large for image", __func__, 1);
-
 
     if (!pix_ma)
         pix_mac = pixBlockconvAccum(pixs);

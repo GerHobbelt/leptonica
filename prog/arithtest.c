@@ -80,7 +80,7 @@ L_REGPARAMS* rp;
     pixWrite("/tmp/lept/arith/pix2.png", pix3, IFF_PNG);
 
         /* Convert it back to 8 bpp using the MSB */
-    pix4 = pixRead("/tmp/pix1.png");
+    pix4 = pixRead("/tmp/lept/arith/pix1.png");
     pix5 = pixConvert16To8(pix4, L_LS_BYTE);
     pixWrite("/tmp/lept/arith/pix3.png", pix5, IFF_PNG);
 
@@ -90,5 +90,6 @@ L_REGPARAMS* rp;
     pixDestroy(&pix3);
     pixDestroy(&pix4);
     pixDestroy(&pix5);
-    return 0;
+
+	return regTestCleanup(rp);
 }

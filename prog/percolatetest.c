@@ -282,7 +282,7 @@ L_REGPARAMS* rp;
          * Speed: this does about 1.3M pixel adds/sec.  Most of the time
          * is used to write the 280MB plot data file and then generate
          * the plot (percolate-4cc.png, percolate-8cc.png). */
-#if 0
+#if 1
     pixs = pixRead(DEMOPATH("feyn.tif"));
 //    pixs = pixCreate(2500, 3200, 1);
     na1 = numaCreate(10000000);
@@ -310,7 +310,8 @@ L_REGPARAMS* rp;
     ptaaDestroy(&ptaa);
     numaDestroy(&na1);
 #endif
-    return 0;
+
+    return regTestCleanup(rp);
 }
 
 

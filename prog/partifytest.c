@@ -64,5 +64,6 @@ L_REGPARAMS* rp;
 	leptDebugReplaceEntireFilePathPart("ortiz");
 	partifyFiles(".", "ortiz", 5);
 #endif
-    return 0;
+
+    return regTestCleanup(rp);
 }

@@ -423,5 +423,5 @@ L_REGPARAMS* rp;
   #endif  /* HAVE_LIBWEBP */
     pixDestroy(&pix1);
 
-    return 0;
+	return regTestCleanup(rp);
 }

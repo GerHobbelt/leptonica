@@ -152,6 +152,7 @@ L_REGPARAMS* rp;
     selDestroy(&sel_2h);
     boxaDestroy(&boxa1);
     boxaDestroy(&boxa2);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

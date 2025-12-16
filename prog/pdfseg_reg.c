@@ -62,6 +62,7 @@ BOX         *box;
 BOXA        *boxa1, *boxa2;
 BOXAA       *baa;
 PIX         *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8, *pix9;
+L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "pdfseg_reg");
@@ -75,8 +76,6 @@ PIX         *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8, *pix9;
     L_ERROR("This test requires libtiff to run.\n", "pdfseg_reg");
     exit(77);
 #endif
-
-	L_REGPARAMS* rp;
 
 	if (regTestSetup(argc, argv, "pdf_seg", &rp))
 		return 1;

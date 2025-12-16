@@ -96,13 +96,12 @@ int main(int    argc,
 {
 const char    dirout[] = "/tmp/lept/pngio/";
 l_int32       success, failure;
+L_REGPARAMS  *rp;
 
 #if !defined(HAVE_LIBPNG)
     L_ERROR("This test requires libpng to run.\n", "pngio_reg");
     exit(77);
 #endif
-
-	L_REGPARAMS* rp;
 
 	if (regTestSetup(argc, argv, "png_io", &rp))
 		return 1;

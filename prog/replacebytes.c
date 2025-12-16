@@ -90,5 +90,7 @@ L_REGPARAMS* rp;
         return fileReplaceBytes(filein, start, nbytes, (l_uint8 *)newstr,
                                 strlen(newstr), fileout);
     }
+
+    return regTestCleanup(rp);
 }
 

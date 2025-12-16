@@ -368,7 +368,6 @@ regTestSetup(int argc,
 	}
 	leptDebugSetStepLevelAsForeverIncreasing(FALSE);
 	leptDebugSetProcessName(testname);
-	leptDebugSetFilepathDefaultFormat("{R}-{p}.{i}");
 
 	leptActivateDebugMode(!!debug_mode, 0);
 

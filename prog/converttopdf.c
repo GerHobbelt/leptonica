@@ -88,5 +88,6 @@ L_REGPARAMS* rp;
     fileout = (argc == 4) ? argv[3] : argv[2];
 
     ret = convertUnscaledFilesToPdf(dirin, substr, "", fileout);
-    return ret;
+
+	return regTestCleanup(rp);
 }

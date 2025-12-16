@@ -199,5 +199,6 @@ L_REGPARAMS* rp;
     cleanTo1bppFilesToPdf(safiles, res, contrast, rotation, opensize,
                           title, fileout);
     sarrayDestroy(&safiles);
-    return 0;
+
+	return regTestCleanup(rp);
 }

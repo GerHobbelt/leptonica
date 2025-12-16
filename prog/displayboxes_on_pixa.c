@@ -105,6 +105,7 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);
     boxaaDestroy(&baa);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 

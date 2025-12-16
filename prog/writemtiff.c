@@ -67,6 +67,7 @@ L_REGPARAMS* rp;
         writeMultipageTiff(argv[1], NULL, argv[2]);
     else  /* argc == 4 */
         writeMultipageTiff(argv[1], argv[2], argv[3]);
-    return 0;
+
+    return regTestCleanup(rp);
 }
 

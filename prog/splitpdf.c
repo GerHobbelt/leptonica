@@ -115,5 +115,6 @@ L_REGPARAMS* rp;
     }
 
     numaDestroy(&naeach);    
-    return 0;
+
+    return regTestCleanup(rp);
 }
