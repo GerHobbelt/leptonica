@@ -48,68 +48,68 @@
 #endif
 
 int main(int    argc,
-         const char **argv)
+	const char** argv)
 {
-const char    *filein;
-l_int32  i, n, ns;
-BOXA    *boxa;
-PIX     *pixs, *pixt;
-PIXA    *pixa, *pixas, *pixas2;
-L_REGPARAMS* rp;
+	const char* filein;
+	l_int32  i, n, ns;
+	BOXA* boxa;
+	PIX* pixs, * pixt;
+	PIXA* pixa, * pixas, * pixas2;
+	L_REGPARAMS* rp;
 
 	if (regTestSetup(argc, argv, "sort", &rp))
 		return 1;
 
-    if (argc != 2)
-        return ERROR_INT(" Syntax:  sorttest filein", __func__, 1);
+	if (argc != 2)
+		return ERROR_INT(" Syntax:  sorttest filein", __func__, 1);
 
-    filein = argv[1];
+	filein = argv[1];
 
-    if ((pixs = pixRead(filein)) == NULL)
-        return ERROR_INT("pixs not made", __func__, 1);
+	if ((pixs = pixRead(filein)) == NULL)
+		return ERROR_INT("pixs not made", __func__, 1);
 
 #if 1
-    boxa = pixConnComp(pixs, NULL, 8);
-    n = boxaGetCount(boxa);
+	boxa = pixConnComp(pixs, NULL, 8);
+	n = boxaGetCount(boxa);
 
-    BOXA *boxas = boxaSort(boxa, L_SORT_BY_PERIMETER, L_SORT_DECREASING, NULL);
-    ns = boxaGetCount(boxas);
-    lept_stderr("Number of cc: n = %d, ns = %d\n", n, ns);
-    boxaWrite("/tmp/junkboxa.ba", boxas);
+	BOXA* boxas = boxaSort(boxa, L_SORT_BY_PERIMETER, L_SORT_DECREASING, NULL);
+	ns = boxaGetCount(boxas);
+	lept_stderr("Number of cc: n = %d, ns = %d\n", n, ns);
+	boxaWrite("/tmp/junkboxa.ba", boxas);
 
-    for (i = 0; i < n; i++) {
-        BOX *box = boxaGetBox(boxas, i, L_CLONE);
-        pixRenderBox(pixs, box, 2, L_FLIP_PIXELS);
-        boxDestroy(&box);
-    }
-    pixWrite("/tmp/junkout.png", pixs, IFF_PNG);
-    boxaDestroy(&boxa);
-    boxaDestroy(&boxas);
+	for (i = 0; i < n; i++) {
+		BOX* box = boxaGetBox(boxas, i, L_CLONE);
+		pixRenderBox(pixs, box, 2, L_FLIP_PIXELS);
+		boxDestroy(&box);
+	}
+	pixWrite("/tmp/junkout.png", pixs, IFF_PNG);
+	boxaDestroy(&boxa);
+	boxaDestroy(&boxas);
 #endif
 
 
 #if 1
-    boxa = pixConnComp(pixs, &pixa, 8);
-    n = pixaGetCount(pixa);
+	boxa = pixConnComp(pixs, &pixa, 8);
+	n = pixaGetCount(pixa);
 
-    pixas = pixaSort(pixa, L_SORT_BY_Y, L_SORT_INCREASING, NULL, L_CLONE);
-    ns = pixaGetCount(pixas);
-    lept_stderr("Number of cc: n = %d, ns = %d\n", n, ns);
-    pixaWrite("/tmp/pixa.pa", pixas);
-    pixas2 = pixaRead("/tmp/pixa.pa");
-    pixaWrite("/tmp/pixa2.pa", pixas2);
+	pixas = pixaSort(pixa, L_SORT_BY_Y, L_SORT_INCREASING, NULL, L_CLONE);
+	ns = pixaGetCount(pixas);
+	lept_stderr("Number of cc: n = %d, ns = %d\n", n, ns);
+	pixaWrite("/tmp/pixa.pa", pixas);
+	pixas2 = pixaRead("/tmp/pixa.pa");
+	pixaWrite("/tmp/pixa2.pa", pixas2);
 
-    pixt = pixaDisplayOnLattice(pixas, 100, 100, NULL, NULL);
-    pixWrite("/tmp/sorted.png", pixt, IFF_PNG);
-    boxaWrite("/tmp/boxa.ba", pixas->boxa);
-    pixDestroy(&pixt);
-    pixaDestroy(&pixa);
-    pixaDestroy(&pixas);
-    pixaDestroy(&pixas2);
-    boxaDestroy(&boxa);
+	pixt = pixaDisplayOnLattice(pixas, 100, 100, NULL, NULL);
+	pixWrite("/tmp/sorted.png", pixt, IFF_PNG);
+	boxaWrite("/tmp/boxa.ba", pixas->boxa);
+	pixDestroy(&pixt);
+	pixaDestroy(&pixa);
+	pixaDestroy(&pixas);
+	pixaDestroy(&pixas2);
+	boxaDestroy(&boxa);
 #endif
 
-    pixDestroy(&pixs);
- 
-    return regTestCleanup(rp);
+	pixDestroy(&pixs);
 
+	return regTestCleanup(rp);
+}

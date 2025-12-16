@@ -294,7 +294,7 @@ L_REGPARAMS* rp;
     lept_stderr("Now add 10M points: this takes about 7 seconds!\n");
     for (i = 0; i < 10000000; i++) {
         pixGetRandomPixel(pix1, NULL, &x, &y);
-        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y, 0);
+        pixConnCompIncrAdd(pix1, ptaa, &ncc, x, y);
         numaAddNumber(na1, ncc);
     }
 

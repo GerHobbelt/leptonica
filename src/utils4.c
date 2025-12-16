@@ -247,7 +247,7 @@ leptDestroyDiagnoticsSpecInstance(void)
 	stringDestroy(&diag_spec.filename_basename);
 	stringDestroy(&diag_spec.process_name);
 
-	sarrayDestroy(diag_spec.last_generated_paths);
+	sarrayDestroy(&diag_spec.last_generated_paths);
 
 	stringDestroy(&diag_spec.last_generated_step_id_string);
 
