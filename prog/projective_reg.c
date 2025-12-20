@@ -46,14 +46,14 @@ static void MakePtas(l_int32 i, PTA **pptas, PTA **pptad);
      *    4: comparison between sampling and sequential
      *    5: test with large distortion
      */
-static const l_int32  x1[] =  { 300,  300,  300,  300,   32};
-static const l_int32  y1[] =  {1200, 1200, 1250, 1250,  934};
-static const l_int32  x2[] =  {1200, 1200, 1125, 1300,  487};
-static const l_int32  y2[] =  {1100, 1100, 1100, 1250,  934};
-static const l_int32  x3[] =  { 200,  200,  200,  250,   32};
-static const l_int32  y3[] =  { 200,  200,  200,  300,   67};
-static const l_int32  x4[] =  {1200, 1200, 1300, 1250,  332};
-static const l_int32  y4[] =  { 400,  200,  200,  300,   57};
+static const l_int32  xx1[] =  { 300,  300,  300,  300,   32};
+static const l_int32  yy1[] =  {1200, 1200, 1250, 1250,  934};
+static const l_int32  xx2[] =  {1200, 1200, 1125, 1300,  487};
+static const l_int32  yy2[] =  {1100, 1100, 1100, 1250,  934};
+static const l_int32  xx3[] =  { 200,  200,  200,  250,   32};
+static const l_int32  yy3[] =  { 200,  200,  200,  300,   67};
+static const l_int32  xx4[] =  {1200, 1200, 1300, 1250,  332};
+static const l_int32  yy4[] =  { 400,  200,  200,  300,   57};
 
 static const l_int32  xp1[] = { 300,  300, 1150,  300,   32};
 static const l_int32  yp1[] = {1200, 1400, 1150, 1350,  934};
@@ -229,10 +229,10 @@ MakePtas(l_int32  i,
 {
 
     *pptas = ptaCreate(4);
-    ptaAddPt(*pptas, x1[i], y1[i]);
-    ptaAddPt(*pptas, x2[i], y2[i]);
-    ptaAddPt(*pptas, x3[i], y3[i]);
-    ptaAddPt(*pptas, x4[i], y4[i]);
+    ptaAddPt(*pptas, xx1[i], yy1[i]);
+    ptaAddPt(*pptas, xx2[i], yy2[i]);
+    ptaAddPt(*pptas, xx3[i], yy3[i]);
+    ptaAddPt(*pptas, xx4[i], yy4[i]);
     *pptad = ptaCreate(4);
     ptaAddPt(*pptad, xp1[i], yp1[i]);
     ptaAddPt(*pptad, xp2[i], yp2[i]);

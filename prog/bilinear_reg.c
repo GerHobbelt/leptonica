@@ -28,11 +28,6 @@
  * bilinear_reg.c
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -44,14 +39,14 @@ static void MakePtas(l_int32 i, PTA **pptas, PTA **pptad);
      *    1: test with relatively large distortion
      *    2-3: invertability tests
      */
-static const l_int32  x1[] =  {  32,   32,   32};
-static const l_int32  y1[] =  { 150,  150,  150};
-static const l_int32  x2[] =  { 520,  520,  520};
-static const l_int32  y2[] =  { 150,  150,  150};
-static const l_int32  x3[] =  {  32,   32,   32};
-static const l_int32  y3[] =  { 612,  612,  612};
-static const l_int32  x4[] =  { 520,  520,  520};
-static const l_int32  y4[] =  { 612,  612,  612};
+static const l_int32  xx1[] =  {  32,   32,   32};
+static const l_int32  yy1[] =  { 150,  150,  150};
+static const l_int32  xx2[] =  { 520,  520,  520};
+static const l_int32  yy2[] =  { 150,  150,  150};
+static const l_int32  xx3[] =  {  32,   32,   32};
+static const l_int32  yy3[] =  { 612,  612,  612};
+static const l_int32  xx4[] =  { 520,  520,  520};
+static const l_int32  yy4[] =  { 612,  612,  612};
 
 static const l_int32  xp1[] = {  32,   32,   32};
 static const l_int32  yp1[] = { 150,  150,  150};
@@ -261,10 +256,10 @@ MakePtas(l_int32  i,
          PTA    **pptad)
 {
     *pptas = ptaCreate(4);
-    ptaAddPt(*pptas, x1[i], y1[i]);
-    ptaAddPt(*pptas, x2[i], y2[i]);
-    ptaAddPt(*pptas, x3[i], y3[i]);
-    ptaAddPt(*pptas, x4[i], y4[i]);
+    ptaAddPt(*pptas, xx1[i], yy1[i]);
+    ptaAddPt(*pptas, xx2[i], yy2[i]);
+    ptaAddPt(*pptas, xx3[i], yy3[i]);
+    ptaAddPt(*pptas, xx4[i], yy4[i]);
     *pptad = ptaCreate(4);
     ptaAddPt(*pptad, xp1[i], yp1[i]);
     ptaAddPt(*pptad, xp2[i], yp2[i]);

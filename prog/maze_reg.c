@@ -42,10 +42,10 @@
 
 
 #define  NPATHS     6
-static const l_int32 x0[NPATHS] = {42, 73, 73, 42, 324, 471};
-static const l_int32 y0[NPATHS] = {117, 319, 319, 117, 170, 201};
-static const l_int32 x1[NPATHS] = {419, 419, 233, 326, 418, 128};
-static const l_int32 y1[NPATHS] = {383, 383, 112, 168, 371, 341};
+static const l_int32 xx0[NPATHS] = {42, 73, 73, 42, 324, 471};
+static const l_int32 yy0[NPATHS] = {117, 319, 319, 117, 170, 201};
+static const l_int32 xx1[NPATHS] = {419, 419, 233, 326, 418, 128};
+static const l_int32 yy1[NPATHS] = {383, 383, 112, 168, 371, 341};
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -91,11 +91,11 @@ L_REGPARAMS* rp;
 	pixGetDimensions(pixg, &w, &h, NULL);
     ptaa = ptaaCreate(NPATHS);
     for (i = 0; i < NPATHS; i++) {
-        if (x0[i] >= w || x1[i] >= w || y0[i] >= h || y1[i] >= h) {
+        if (xx0[i] >= w || xx1[i] >= w || yy0[i] >= h || yy1[i] >= h) {
             lept_stderr("path %d extends beyond image; skipping\n", i);
             continue;
         }
-        pta = pixSearchGrayMaze(pixg, x0[i], y0[i], x1[i], y1[i], NULL);
+        pta = pixSearchGrayMaze(pixg, xx0[i], yy0[i], xx1[i], yy1[i], NULL);
         ptaaAddPta(ptaa, pta, L_INSERT);
     }
 

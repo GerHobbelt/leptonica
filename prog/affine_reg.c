@@ -30,11 +30,6 @@
  *   Tests affine transforms, including invertability and large distortions.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -49,12 +44,12 @@ static l_int32 RenderHashedBoxa(PIX *pixt, BOXA *boxa, l_int32 i);
      *    4: comparison between sampling and sequential
      *    5: test with large distortion
      */
-static const l_int32  x1[] =  { 300,  300,  300,  95,    32};
-static const l_int32  y1[] =  {1200, 1200, 1250, 2821,  934};
-static const l_int32  x2[] =  {1200, 1200, 1125, 1432,  487};
-static const l_int32  y2[] =  {1100, 1100, 1100, 2682,  934};
-static const l_int32  x3[] =  { 200,  200,  200,  232,   32};
-static const l_int32  y3[] =  { 200,  200,  200,  657,   67};
+static const l_int32  xx1[] =  { 300,  300,  300,  95,    32};
+static const l_int32  yy1[] =  {1200, 1200, 1250, 2821,  934};
+static const l_int32  xx2[] =  {1200, 1200, 1125, 1432,  487};
+static const l_int32  yy2[] =  {1100, 1100, 1100, 2682,  934};
+static const l_int32  xx3[] =  { 200,  200,  200,  232,   32};
+static const l_int32  yy3[] =  { 200,  200,  200,  657,   67};
 
 static const l_int32  xp1[] = { 500,  300,  350,  117,   32};
 static const l_int32  yp1[] = {1700, 1400, 1400, 2629,  934};
@@ -400,9 +395,9 @@ MakePtas(l_int32  i,
 {
 
     *pptas = ptaCreate(3);
-    ptaAddPt(*pptas, x1[i], y1[i]);
-    ptaAddPt(*pptas, x2[i], y2[i]);
-    ptaAddPt(*pptas, x3[i], y3[i]);
+    ptaAddPt(*pptas, xx1[i], yy1[i]);
+    ptaAddPt(*pptas, xx2[i], yy2[i]);
+    ptaAddPt(*pptas, xx3[i], yy3[i]);
     *pptad = ptaCreate(3);
     ptaAddPt(*pptad, xp1[i], yp1[i]);
     ptaAddPt(*pptad, xp2[i], yp2[i]);
