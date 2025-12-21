@@ -30,11 +30,6 @@
  *    Testing basic ptra operations
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -63,7 +58,7 @@ PIXA         *pixas, *pixa1, *pixa2, *pixac1, *pixac2;
 L_PTRA       *papix, *pabox, *papix2, *pabox2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "ptra", &rp))
+	if (regTestSetup(argc, argv, "ptra", NULL, &rp))
 		return 1;
 
     pixac1 = pixaCreate(0);

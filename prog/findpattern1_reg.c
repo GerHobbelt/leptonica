@@ -44,11 +44,6 @@
  *    in the Document Image Applications chapter.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -77,7 +72,7 @@ int main(int    argc,
 l_int32      patno, red;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pattern", &rp))
+	if (regTestSetup(argc, argv, "pattern", NULL, &rp))
 		return 1;
 
     for (patno = 0; patno < 2; patno++) {

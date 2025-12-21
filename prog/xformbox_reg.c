@@ -31,11 +31,6 @@
  *      Also tests the various box hashing graphics operations.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -76,7 +71,7 @@ PIX          *pix, *pixs, *pixc, *pixt, *pix1, *pix2, *pix3;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "xform", &rp))
+	if (regTestSetup(argc, argv, "xform", NULL, &rp))
 		return 1;
 
     /* ----------------------------------------------------------- *

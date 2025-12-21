@@ -30,15 +30,6 @@
  *      Regression test for adaptive threshold normalization.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include <stdint.h>
-#include <ctype.h>
-#include <assert.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -1083,7 +1074,7 @@ const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
 
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "thresholding", &rp))
+	if (regTestSetup(argc, argv, "thresholding", NULL, &rp))
 		return 1;
 
 	if (argc >= 3)

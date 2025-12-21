@@ -31,11 +31,6 @@
  *   pix with 1, 2, 4, 8 and 32 bpp.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -55,7 +50,7 @@ FILE         *fp;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pnm_io", &rp))
+	if (regTestSetup(argc, argv, "pnm_io", NULL, &rp))
 		return 1;
 
 #if !USE_PNMIO

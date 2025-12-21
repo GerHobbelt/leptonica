@@ -30,7 +30,6 @@
  *    Regression test for all rotateorth functions
  */
 
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -56,7 +55,7 @@ int main(int    argc,
 PIX          *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "rotate_ortho", &rp))
+	if (regTestSetup(argc, argv, "rotate_ortho", NULL, &rp))
 		return 1;
 
     lept_stderr("\nTest binary image:\n");

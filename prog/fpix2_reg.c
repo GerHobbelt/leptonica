@@ -32,11 +32,6 @@
  *       - adding borders of various types
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -54,7 +49,7 @@ FPIX         *fpix1, *fpix2, *fpix3, *fpix4;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "fpix", &rp))
+	if (regTestSetup(argc, argv, "fpix", NULL, &rp))
 		return 1;
 
         /* Test orthogonal rotations */

@@ -30,12 +30,6 @@
  *   Tests basic functioning of L_Dna (number array of doubles)
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -63,7 +57,7 @@ NUMA         *na, *nahisto, *nax;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "dna", &rp))
+	if (regTestSetup(argc, argv, "dna", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

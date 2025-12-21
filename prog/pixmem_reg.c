@@ -30,11 +30,6 @@
  *  Tests low-level pix data accessors, and functions that call them.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -53,7 +48,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pix_mem", &rp))
+	if (regTestSetup(argc, argv, "pix_mem", NULL, &rp))
 		return 1;
 
     pixa = pixaCreate(0);

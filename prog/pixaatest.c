@@ -30,11 +30,6 @@
  *     Syntax:  pixaatest
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 #include "pix_internal.h"
 
@@ -59,7 +54,7 @@ PIXA    *pixa, *pixad1, *pixad2;
 PIXAA   *pixaa1, *pixaa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pixaa", &rp))
+	if (regTestSetup(argc, argv, "pixaa", NULL, &rp))
 		return 1;
 
     if (argc != 1)

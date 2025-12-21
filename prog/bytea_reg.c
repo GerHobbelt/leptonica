@@ -30,12 +30,6 @@
  *  This tests the byte array utility.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 #include "array_internal.h"
 
@@ -66,7 +60,7 @@ L_BYTEA      *lba1, *lba2, *lba3, *lba4;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "bytea", &rp))
+	if (regTestSetup(argc, argv, "bytea", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/bytea");

@@ -44,21 +44,10 @@
  *    (3) luminance only reading
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
-
-    /* Needed for HAVE_LIBJPEG */
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
 
 #include "monolithic_examples.h"
 
-#endif /* HAVE_CONFIG_H */
 
 void DoJpegTest1(L_REGPARAMS *rp, const char *fname);
 void DoJpegTest2(L_REGPARAMS *rp, const char *fname);
@@ -83,7 +72,7 @@ int main(int    argc,
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "jpeg_io", &rp))
+	if (regTestSetup(argc, argv, "jpeg_io", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

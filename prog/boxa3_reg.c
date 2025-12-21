@@ -33,11 +33,6 @@
  *  sides of the outlier boxes.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -68,7 +63,7 @@ l_int32       i;
 
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "boxa", &rp))
+	if (regTestSetup(argc, argv, "boxa", NULL, &rp))
 		return 1;
 
     for (i = 0; i < 3; i++)

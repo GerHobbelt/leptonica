@@ -43,11 +43,6 @@
  *   be most influential in determining the actual number of colors.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -71,7 +66,7 @@ PIXA         *pixa;
 PIXCMAP      *cmap, *cmapr;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "color_seg", &rp))
+	if (regTestSetup(argc, argv, "color_seg", NULL, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("tetons.jpg"));

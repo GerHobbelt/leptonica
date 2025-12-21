@@ -56,12 +56,6 @@
  *     that is used to identify unknown (scaled) samples.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "string.h"
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -84,7 +78,7 @@ PIXA      *pixa1, *pixa2, *pixa3, *pixa4;
 L_RECOG   *recog1, *recog2, *recog3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "recog", &rp))
+	if (regTestSetup(argc, argv, "recog", NULL, &rp))
 		return 1;
 
     if (argc != 1) {

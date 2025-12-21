@@ -51,11 +51,6 @@
  *     displayboxes_on_pixa showboxes.pac showboxes2.baa 4 2 /tmp/result.pa 1
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -76,7 +71,7 @@ PIX     *pix1;
 PIXA    *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "display", &rp))
+	if (regTestSetup(argc, argv, "display", NULL, &rp))
 		return 1;
 
     if (argc != 7) {

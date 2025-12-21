@@ -28,12 +28,6 @@
  *   warper_reg.c
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -65,7 +59,7 @@ PIX          *pixs, *pixt, *pixg, *pixd;
 PIXA         *pixac;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "warp", &rp))
+	if (regTestSetup(argc, argv, "warp", NULL, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-word.tif"));

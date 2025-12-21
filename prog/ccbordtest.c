@@ -31,11 +31,6 @@
  *      of binary images.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -56,7 +51,7 @@ PIX      *pixs, *pixd, *pixd2, *pixd3;
 PIX      *pixt, *pixc, *pixc2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "ccbord", &rp))
+	if (regTestSetup(argc, argv, "ccbord", NULL, &rp))
 		return 1;
 
     if (argc != 2)

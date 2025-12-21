@@ -30,12 +30,6 @@
  *   This tests simple coloring functions.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "string.h"
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -71,7 +65,7 @@ PIXCMAP      *cmap;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "coloring", &rp))
+	if (regTestSetup(argc, argv, "coloring", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

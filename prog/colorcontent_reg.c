@@ -31,12 +31,6 @@
  *   color quantization method.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "string.h"
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -65,7 +59,7 @@ PIXA         *pixa1;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "color_content", &rp))
+	if (regTestSetup(argc, argv, "color_content", NULL, &rp))
 		return 1;
 
 	/* Find the most populated colors */

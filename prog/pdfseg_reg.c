@@ -35,11 +35,6 @@
  *   Uses 6 images, all segmented and scaled to a fixed width
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -77,7 +72,7 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-	if (regTestSetup(argc, argv, "pdf_seg", &rp))
+	if (regTestSetup(argc, argv, "pdf_seg", NULL, &rp))
 		return 1;
 
 	lept_rmdir("lept/pdfseg");

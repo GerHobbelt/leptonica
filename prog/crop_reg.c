@@ -32,11 +32,6 @@
  *   * undercropping from a box (i.e., with an added border)
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -66,7 +61,7 @@ PIX          *pixs, *pixr, *pixg, *pixgi, *pixd, *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "crop", &rp))
+	if (regTestSetup(argc, argv, "crop", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/crop");

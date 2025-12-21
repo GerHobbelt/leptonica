@@ -35,9 +35,6 @@
  *   varies linearly with radius from the center (which is transparent).
  */
 
-#include "allheaders.h"
-#include <math.h>
-
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -61,7 +58,7 @@ PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "blend", &rp))
+	if (regTestSetup(argc, argv, "blend", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

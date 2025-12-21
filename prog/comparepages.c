@@ -32,11 +32,6 @@
  *    two pages are the same.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -57,7 +52,7 @@ NUMAA   *naa1, *naa2;
 PIX     *pixs, *pixt, *pixb1, *pixb2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "compare", &rp))
+	if (regTestSetup(argc, argv, "compare", NULL, &rp))
 		return 1;
 
 	l_ok debugflag = leptIsDebugModeActive();

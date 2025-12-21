@@ -30,11 +30,6 @@
  *   Tests sudoku solver and generator.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -63,7 +58,7 @@ l_int32   *array;
 L_SUDOKU  *sud;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "sudoku", &rp))
+	if (regTestSetup(argc, argv, "sudoku", NULL, &rp))
 		return 1;
 
     if (argc != 1 && argc != 2)

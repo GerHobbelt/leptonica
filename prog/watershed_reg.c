@@ -28,12 +28,6 @@
  * watershed_reg.c
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -54,7 +48,7 @@ l_float32     f;
 PIX          *pix1, *pix2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "watershed", &rp))
+	if (regTestSetup(argc, argv, "watershed", NULL, &rp))
 		return 1;
 
     pix1 = pixCreate(500, 500, 8);

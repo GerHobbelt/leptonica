@@ -36,11 +36,6 @@
  *    Results must be identical for all operations.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -61,7 +56,7 @@ SEL          *sel;
 SELA         *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "fhmt_auto", &rp))
+	if (regTestSetup(argc, argv, "fhmt_auto", NULL, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));

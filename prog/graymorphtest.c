@@ -30,11 +30,6 @@
  *     Implements basic grayscale morphology; tests speed
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -53,7 +48,7 @@ l_int32  wsize, hsize, w, h, d;
 PIX     *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "gray_morph", &rp))
+	if (regTestSetup(argc, argv, "gray_morph", NULL, &rp))
 		return 1;
 
     if (argc != 5)

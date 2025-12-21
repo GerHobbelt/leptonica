@@ -31,12 +31,6 @@
  *   It also plots atan curves for different width parameters.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -60,7 +54,7 @@ NUMA      *na, *nax;
 PIX       *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "contrast", &rp))
+	if (regTestSetup(argc, argv, "contrast", NULL, &rp))
 		return 1;
 
     if (argc != 4)

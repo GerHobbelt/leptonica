@@ -31,7 +31,6 @@
 --- *            PIX      *pixFHMTGen_*()
  */
 
-#include <string.h>
 #include "allheaders.h"
 
 ---               This file is:  hmttemplate1.txt

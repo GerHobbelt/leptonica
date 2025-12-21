@@ -88,11 +88,10 @@
 #include <config_auto.h>
 #endif  /* HAVE_CONFIG_H */
 
-#include <string.h>
 #include "allheaders.h"
-#include "../src/environ.h"
 #include "demo_settings.h"
 
+#include "../src/environ.h"
 #include "mupdf/fitz.h"
 #include "tessocr.h"
 

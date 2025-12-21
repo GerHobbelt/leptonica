@@ -45,13 +45,7 @@
  *         binary and ascii colormap serialization.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
-#include "pix_internal.h"
 
 #include "monolithic_examples.h"
 
@@ -83,7 +77,7 @@ PIXCMAP      *cmap, *cmap2;
 RGBA_QUAD    *cta;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "alpha_ops", &rp))
+	if (regTestSetup(argc, argv, "alpha_ops", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

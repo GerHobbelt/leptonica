@@ -32,11 +32,6 @@
  *     It also tests debug output of word masking.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -63,7 +58,7 @@ PIXA         *pixadb;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "ital", &rp))
+	if (regTestSetup(argc, argv, "ital", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/ital");

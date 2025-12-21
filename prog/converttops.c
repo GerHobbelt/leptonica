@@ -32,11 +32,6 @@
  *      where level = {1,2,3} and 2 is the default
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -55,7 +50,7 @@ char     error_msg[] = " ps level = {1,2,3}; level 2 is default";
 l_int32  level;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "convert", &rp))
+	if (regTestSetup(argc, argv, "convert", NULL, &rp))
 		return 1;
 
     if (argc != 3 && argc != 4) {

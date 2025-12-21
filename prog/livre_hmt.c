@@ -40,11 +40,6 @@
  *           fig 8:  livre_hmt 2 4
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -76,7 +71,7 @@ PIXA    *pixa;
 SEL     *selhm;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "livre", &rp))
+	if (regTestSetup(argc, argv, "livre", NULL, &rp))
 		return 1;
 
     if (argc != 3)

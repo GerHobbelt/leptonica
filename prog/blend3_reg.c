@@ -31,7 +31,6 @@
  *    42 results: 6 input image combinations * 7 blendings
  */
 
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -55,7 +54,7 @@ PIX          *pixt, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "blend", &rp))
+	if (regTestSetup(argc, argv, "blend", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

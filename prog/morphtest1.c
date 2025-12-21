@@ -31,11 +31,6 @@
  *   - Example repository of binary morph operations
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -63,7 +58,7 @@ SEL       *sel;
 SELA      *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "morph", &rp))
+	if (regTestSetup(argc, argv, "morph", NULL, &rp))
 		return 1;
 
     if (argc != 3)

@@ -30,11 +30,6 @@
  *   Returns information about the image data file
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -51,7 +46,7 @@ int main(int    argc,
 const char  *filein;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "file", &rp))
+	if (regTestSetup(argc, argv, "file", NULL, &rp))
 		return 1;
 
     if (argc != 2)

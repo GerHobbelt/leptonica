@@ -37,11 +37,6 @@
  *          are identical (rotated) to those on un-rotated components.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -66,7 +61,7 @@ PIX          *pixs, *pixc, *pixt, *pixd, *pix32;
 PIXA         *pixas, *pixad;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "split_comp", &rp))
+	if (regTestSetup(argc, argv, "split_comp", NULL, &rp))
 		return 1;
 
         /* Generate and save 1 bpp masks */

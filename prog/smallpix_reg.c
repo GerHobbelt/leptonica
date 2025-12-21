@@ -46,11 +46,6 @@
  *  effects (e.g., in pixScaleSmooth()) do not affect the results.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -73,7 +68,7 @@ PIXA         *pixa;
 PTA          *pta1, *pta2, *pta3, *pta4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "small", &rp))
+	if (regTestSetup(argc, argv, "small", NULL, &rp))
 		return 1;
 
         /* Make a small test image, the hard way! */

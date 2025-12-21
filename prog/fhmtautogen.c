@@ -41,11 +41,6 @@
  *    were made using index = 1.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -64,7 +59,7 @@ l_int32  index;
 SELA    *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "fhmt_auto", &rp))
+	if (regTestSetup(argc, argv, "fhmt_auto", NULL, &rp))
 		return 1;
 
     if (argc != 2 && argc != 3)

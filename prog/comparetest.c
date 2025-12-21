@@ -52,11 +52,6 @@
  *    the change?  Answer:  75 (!)
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -78,7 +73,7 @@ NUMA      *na1, *na2;
 PIX       *pixs1, *pixs2, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "compare", &rp))
+	if (regTestSetup(argc, argv, "compare", NULL, &rp))
 		return 1;
 
     if (argc != 5)

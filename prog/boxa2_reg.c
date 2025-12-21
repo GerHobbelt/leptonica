@@ -35,11 +35,6 @@
  *  separating them into subsets of different parity.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -67,7 +62,7 @@ PIX          *pix1;
 PIXA         *pixa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "boxa", &rp))
+	if (regTestSetup(argc, argv, "boxa", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/boxa");

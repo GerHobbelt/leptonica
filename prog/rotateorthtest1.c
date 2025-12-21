@@ -33,11 +33,6 @@
  *        direction = 1 for cw; -1 for ccw
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -63,7 +58,7 @@ l_float32  pops;
 const char      *filein, *fileout;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "rotate_ortho", &rp))
+	if (regTestSetup(argc, argv, "rotate_ortho", NULL, &rp))
 		return 1;
 
     if (argc != 3 && argc != 4)

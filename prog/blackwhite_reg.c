@@ -30,11 +30,6 @@
  *   Tests functions that handle black and white pixels in an image.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -62,7 +57,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "blackwhite", &rp))
+	if (regTestSetup(argc, argv, "blackwhite", NULL, &rp))
 		return 1;
 
         /* Scale each image and add a white boundary */

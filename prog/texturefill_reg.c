@@ -43,12 +43,6 @@
  *  texture through a mask.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
-#include "demo_settings.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -73,7 +67,7 @@ PIX          *pixs, *pixm, *pixd;
 PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "texture_fill", &rp))
+	if (regTestSetup(argc, argv, "texture_fill", NULL, &rp))
 		return 1;
 
         /* Find a mask for repainting pixels */

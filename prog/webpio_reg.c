@@ -39,13 +39,7 @@
  *    Lossless writing is extremely slow.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
-#include <math.h>
 
 #include "monolithic_examples.h"
 
@@ -65,7 +59,7 @@ int main(int    argc,
 {
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "webp_io", &rp))
+	if (regTestSetup(argc, argv, "webp_io", NULL, &rp))
 		return 1;
 
 #if !HAVE_LIBJPEG

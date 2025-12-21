@@ -30,11 +30,6 @@
  *    Bitwise comparison of two binary images
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -58,7 +53,7 @@ const char    *filein1, *filein2, *fileout;
 PIX     *pixs1, *pixs2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "bincompare", &rp))
+	if (regTestSetup(argc, argv, "bincompare", NULL, &rp))
 		return 1;
 
     if (argc != 4)

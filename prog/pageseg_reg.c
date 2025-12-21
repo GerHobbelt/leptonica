@@ -38,11 +38,6 @@
  *      - Text auto-inversion
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -82,7 +77,7 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-	if (regTestSetup(argc, argv, "pageseg", &rp))
+	if (regTestSetup(argc, argv, "pageseg", NULL, &rp))
 		return 1;
 
 #if 1

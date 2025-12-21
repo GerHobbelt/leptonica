@@ -42,11 +42,6 @@
  *    Use pageseg*.tif input images.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -67,7 +62,7 @@ l_int32  i;
 PIX     *pixs;   /* input image should be at least 300 ppi */
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "livre", &rp))
+	if (regTestSetup(argc, argv, "livre", NULL, &rp))
 		return 1;
 
     if (argc != 2)

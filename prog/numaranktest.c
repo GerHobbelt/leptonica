@@ -30,11 +30,6 @@
  *    Test on 8 bpp grayscale (e.g., w91frag.jpg)
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -58,7 +53,7 @@ NUMA      *na, *nah, *nar, *nav;
 PIX       *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "numa_rank", &rp))
+	if (regTestSetup(argc, argv, "numa_rank", NULL, &rp))
 		return 1;
 
     if (argc != 3)

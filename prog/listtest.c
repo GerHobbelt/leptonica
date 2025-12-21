@@ -32,11 +32,6 @@
  *    list facility, given in list.c and list.h.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 #include "pix_internal.h"
 
@@ -59,7 +54,7 @@ DLLIST  *head, *tail, *head2, *tail2, *elem, *nextelem;
 PIX     *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "list", &rp))
+	if (regTestSetup(argc, argv, "list", NULL, &rp))
 		return 1;
 
     if (argc != 2)

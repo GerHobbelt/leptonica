@@ -30,11 +30,6 @@
  *    Tests removal of connected components.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -58,7 +53,7 @@ PIX          *pixs, *pix1, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pixa1", &rp))
+	if (regTestSetup(argc, argv, "pixa1", NULL, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));

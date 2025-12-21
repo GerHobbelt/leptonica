@@ -30,11 +30,6 @@
  *     Regression test for skew detection.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -72,7 +67,7 @@ PIX          *pixs, *pixb1, *pixb2, *pixr, *pixf, *pixd, *pixc;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "skew", &rp))
+	if (regTestSetup(argc, argv, "skew", NULL, &rp))
 		return 1;
 
     deg2rad = 3.1415926535 / 180.;

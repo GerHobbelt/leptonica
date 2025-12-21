@@ -33,12 +33,6 @@
  *   Default for ncontours is 40.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -60,7 +54,7 @@ FPIX    *fpix;
 PIX     *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "fpix_contours", &rp))
+	if (regTestSetup(argc, argv, "fpix_contours", NULL, &rp))
 		return 1;
 
     if (argc != 2 && argc != 3) {

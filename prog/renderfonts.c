@@ -30,11 +30,6 @@
  *     This tests the font rendering functions
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -56,7 +51,7 @@ L_BMF   *bmf;
 PIX     *pixs, *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "fonts", &rp))
+	if (regTestSetup(argc, argv, "fonts", NULL, &rp))
 		return 1;
 
     if (argc != 1)

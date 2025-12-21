@@ -35,11 +35,6 @@
  *   which is a much simpler function.  See testmisc1.c for examples.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -85,7 +80,7 @@ PIXAA     *pixaa, *pixaa2;
 SEL       *selsplit;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "lineseg", &rp))
+	if (regTestSetup(argc, argv, "lineseg", NULL, &rp))
 		return 1;
 
     if (argc != 1)

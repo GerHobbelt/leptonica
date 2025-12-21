@@ -31,11 +31,6 @@
  *     based on size, using logical combinations of indicator arrays.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -80,7 +75,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2, *pixa3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "filter", &rp))
+	if (regTestSetup(argc, argv, "filter", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/filter");

@@ -28,12 +28,6 @@
  * recogsort.c
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "string.h"
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -59,7 +53,7 @@ L_RECOG  *recog;
 SARRAY   *sa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "recog", &rp))
+	if (regTestSetup(argc, argv, "recog", NULL, &rp))
 		return 1;
 
     /* ----- Example identifying samples using training data ----- */

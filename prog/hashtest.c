@@ -43,12 +43,6 @@
  *   will test all 26^4 alphabetic strings of length 4.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 #include "array_internal.h"
 #include "pix_internal.h"
@@ -75,7 +69,7 @@ PTA        *pta0, *pta1, *pta2, *pta3;
 SARRAY     *sa0, *sa1, *sa2, *sa3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "hash", &rp))
+	if (regTestSetup(argc, argv, "hash", NULL, &rp))
 		return 1;
 
     if (argc != 4)

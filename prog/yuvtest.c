@@ -34,11 +34,6 @@
  *    yuv value does not necessarily represent a valid rgb value.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -63,7 +58,7 @@ PIX        *pixd;
 PIXA       *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "yuv", &rp))
+	if (regTestSetup(argc, argv, "yuv", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/yuv");

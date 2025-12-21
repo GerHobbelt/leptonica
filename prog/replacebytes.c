@@ -44,13 +44,7 @@
  *        replacebytes <filein.pdf> 86 12 000000000000 <outfile.pdf>
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
-#include "string.h"
 
 #include "monolithic_examples.h"
 
@@ -67,7 +61,7 @@ l_int32  start, nbytes;
 const char    *filein, *fileout, *newstr = NULL;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "replace", &rp))
+	if (regTestSetup(argc, argv, "replace", NULL, &rp))
 		return 1;
 
     if (argc != 5 && argc != 6)

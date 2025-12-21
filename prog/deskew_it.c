@@ -46,11 +46,6 @@
  *    regression test skew_reg.c.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -77,7 +72,7 @@ l_float32  sweeprange, angle, conf;
 PIX       *pixs, *pix1, *pix2, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "deskew", &rp))
+	if (regTestSetup(argc, argv, "deskew", NULL, &rp))
 		return 1;
 
     if (argc != 6)

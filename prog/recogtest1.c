@@ -33,12 +33,6 @@
  *     An example of greedy splitting of touching characters is given.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "string.h"
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -66,7 +60,7 @@ PIXA     *pixa1, *pixa2, *pixa3;
 L_RECOG  *recog1, *recog2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "recog_digits", &rp))
+	if (regTestSetup(argc, argv, "recog_digits", NULL, &rp))
 		return 1;
 
     if (argc != 1) {

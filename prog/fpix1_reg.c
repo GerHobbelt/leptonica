@@ -32,12 +32,6 @@
  *    convolution, with conversions to and from Pix.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -92,7 +86,7 @@ PTA          *ptas, *ptad;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "fpix", &rp))
+	if (regTestSetup(argc, argv, "fpix", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

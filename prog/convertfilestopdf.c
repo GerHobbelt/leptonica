@@ -49,12 +49,6 @@
  *      require lossless, but this is very expensive and not recommended.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -73,7 +67,7 @@ l_int32    ret, res, type, quality;
 l_float32  scalefactor;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "convert", &rp))
+	if (regTestSetup(argc, argv, "convert", NULL, &rp))
 		return 1;
 
     if (argc != 9) {

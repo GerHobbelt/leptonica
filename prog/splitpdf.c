@@ -44,11 +44,6 @@
  *       write 'npages' files, with one page per file.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -68,7 +63,7 @@ l_int32  i, n, npages, nfiles, val, start, end;
 NUMA    *naeach;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "split_pdf", &rp))
+	if (regTestSetup(argc, argv, "split_pdf", NULL, &rp))
 		return 1;
 
     if (argc != 4)

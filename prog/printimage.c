@@ -69,11 +69,6 @@
  *   ***************************************************************
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -102,7 +97,7 @@ PIX       *pixs, *pix1;
 SARRAY    *sa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "print", &rp))
+	if (regTestSetup(argc, argv, "print", NULL, &rp))
 		return 1;
 
     if (argc < 2)

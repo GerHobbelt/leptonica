@@ -59,11 +59,6 @@
  *      the rasterop brick.  See binmorph2_reg.c.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -86,7 +81,7 @@ int main(int    argc,
 PIX  *pixs;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "binmorph", &rp))
+	if (regTestSetup(argc, argv, "binmorph", NULL, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));

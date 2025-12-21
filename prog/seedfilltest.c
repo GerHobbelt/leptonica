@@ -30,11 +30,6 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -61,7 +56,7 @@ l_float32  size;
 PIX       *pixs, *pixd, *pixm, *pixmi, *pixt1, *pixt2, *pixt3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "seed_fill", &rp))
+	if (regTestSetup(argc, argv, "seed_fill", NULL, &rp))
 		return 1;
 
     if (argc != 3)

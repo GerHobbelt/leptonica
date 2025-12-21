@@ -30,11 +30,6 @@
  *   Tests the heap utility.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -69,7 +64,7 @@ NUMA         *na1, *na2, *na3, *na4, *na5;
 L_HEAP       *lh;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "heap", &rp))
+	if (regTestSetup(argc, argv, "heap", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/heap");

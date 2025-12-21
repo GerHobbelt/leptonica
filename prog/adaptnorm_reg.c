@@ -32,11 +32,6 @@
  *       * good contrast but fast varying background
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -57,7 +52,7 @@ PIX         *pix6, *pix7, *pix8, *pix9, *pix10, *pix11;
 PIXA        *pixa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "adaptnorm", &rp))
+	if (regTestSetup(argc, argv, "adaptnorm", NULL, &rp))
 		return 1;
 
     /* ---------------------------------------------------------- *

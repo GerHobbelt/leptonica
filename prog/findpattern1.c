@@ -40,11 +40,6 @@
  *    image of the Sel superimposed on the "c" bitmap.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 #include "pix_internal.h"
 
@@ -78,7 +73,7 @@ PIXCMAP  *cmap;
 SEL      *sel_2h, *sel;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pattern", &rp))
+	if (regTestSetup(argc, argv, "pattern", NULL, &rp))
 		return 1;
 
     if (argc != 4)

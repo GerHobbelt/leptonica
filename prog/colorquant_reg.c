@@ -30,11 +30,6 @@
  *    Regression test for various color quantizers
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -61,7 +56,7 @@ int main(int    argc,
 l_int32       i;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "color_quant", &rp))
+	if (regTestSetup(argc, argv, "color_quant", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

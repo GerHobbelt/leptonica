@@ -31,11 +31,6 @@
  *    in memory and the deserialization back to a pix.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -74,7 +69,7 @@ BOX          *box;
 PIX          *pixs, *pixt, *pixt2, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pix_serial", &rp))
+	if (regTestSetup(argc, argv, "pix_serial", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

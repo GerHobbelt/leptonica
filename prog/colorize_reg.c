@@ -34,11 +34,6 @@
  *  The input image is rgb.  Other examples are breviar.32 and amoris.2.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -72,7 +67,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "colorize", &rp))
+	if (regTestSetup(argc, argv, "colorize", NULL, &rp))
 		return 1;
 
 	pixa = pixaCreate(0);

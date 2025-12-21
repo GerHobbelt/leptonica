@@ -33,12 +33,6 @@
  *   (2) only slightly different in content
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "string.h"
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -64,7 +58,7 @@ PIX          *pix0, *pix1, *pix2, *pix3, *pix4, *pix5;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "compare", &rp))
+	if (regTestSetup(argc, argv, "compare", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/comp");

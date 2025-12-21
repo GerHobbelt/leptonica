@@ -69,12 +69,6 @@
  *    generates images and the boxaa file in /tmp/segtest/.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -100,7 +94,7 @@ L_REGPARAMS* rp;
 
     if (argc != 12) {
         lept_stderr(
-	    " Syntax: convertsegfilestopdf dirin substr res type thresh \\ \n"
+		    " Syntax: convertsegfilestopdf dirin substr res type thresh \\ \n"
             "                       boxaafile scalefactor title fileout\n"
             "     where\n"
             "         pagedir:  input directory for image files\n"

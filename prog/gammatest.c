@@ -28,12 +28,6 @@
  * gammatest.c
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -60,7 +54,7 @@ NUMA      *na, *nax;
 PIX       *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "gamma", &rp))
+	if (regTestSetup(argc, argv, "gamma", NULL, &rp))
 		return 1;
 
     if (argc != 4)

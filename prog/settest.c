@@ -36,11 +36,6 @@
  *  For a more complete set of tests, see the operations tested in maptest.c.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -62,7 +57,7 @@ L_ASET  *s;
 PIX     *pix;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "set", &rp))
+	if (regTestSetup(argc, argv, "set", NULL, &rp))
 		return 1;
 
     pix = pixRead(DEMOPATH("weasel8.240c.png"));

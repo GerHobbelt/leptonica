@@ -32,11 +32,6 @@
  *   - Use of thinning and thickening in stroke width normalization
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -64,7 +59,7 @@ SELA         *sela;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "ccthin", &rp))
+	if (regTestSetup(argc, argv, "ccthin", NULL, &rp))
 		return 1;
 
 	/* Clip to foreground to see if there are any boundary

@@ -30,11 +30,6 @@
  *     This tests quadtree statistical functions
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -64,7 +59,7 @@ BOXAA        *baa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "quadtree", &rp))
+	if (regTestSetup(argc, argv, "quadtree", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/quad");

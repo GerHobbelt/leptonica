@@ -43,12 +43,6 @@
  *    Note: this program is Unix only; it will not compile under cygwin.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -74,7 +68,7 @@ PIX     *pixd;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "scale", &rp))
+	if (regTestSetup(argc, argv, "scale", NULL, &rp))
 		return 1;
 
     if (argc != 7)

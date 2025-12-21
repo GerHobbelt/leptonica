@@ -33,11 +33,6 @@
  *         Color coded transform of 1 bpp images
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -59,7 +54,7 @@ NUMA         *na1, *na2;
 PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "label", &rp))
+	if (regTestSetup(argc, argv, "label", NULL, &rp))
 		return 1;
 
         /* Test earthmover distance: extreme example */

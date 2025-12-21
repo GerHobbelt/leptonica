@@ -46,12 +46,6 @@
  *   tiff compression sizes for TIFF_ZIP and TIFF_JPEG.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "string.h"
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -77,7 +71,7 @@ PIXA         *pixa;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "io", &rp))
+	if (regTestSetup(argc, argv, "io", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/io");

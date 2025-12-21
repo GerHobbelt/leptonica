@@ -33,11 +33,6 @@
  *   Scientific Publishing, Ltd, 2010.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -54,7 +49,7 @@ int main(int    argc,
 char  buf[256];
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "livre", &rp))
+	if (regTestSetup(argc, argv, "livre", NULL, &rp))
 		return 1;
 
     if (argc != 1)

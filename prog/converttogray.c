@@ -29,11 +29,6 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -53,7 +48,7 @@ l_int32  d, same;
 PIX     *pixs, *pixd, *pix1, *pix2, *pix3, *pix4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "gray", &rp))
+	if (regTestSetup(argc, argv, "gray", NULL, &rp))
 		return 1;
 
     if (argc != 2 && argc != 3)

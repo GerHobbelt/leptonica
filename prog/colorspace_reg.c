@@ -32,11 +32,6 @@
  *       - global linear color mapping and extraction of color magnitude
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -68,7 +63,7 @@ PIXCMAP      *cmap;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "colorspace", &rp))
+	if (regTestSetup(argc, argv, "colorspace", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

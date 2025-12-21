@@ -36,8 +36,8 @@
 --- *       1         PIXA         pixaRead       chars-10.pa
  */
 
-#include <string.h>
 #include "allheaders.h"
+#include <string.h>
 --- #include "autogen.*.h"
 
 /*---------------------------------------------------------------------*/

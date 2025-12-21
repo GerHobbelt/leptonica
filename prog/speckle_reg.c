@@ -31,11 +31,6 @@
  *    noise, followed by attempts to remove some of the speckle.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -67,7 +62,7 @@ PIXA         *pixa1;
 SEL          *sel1, *sel2, *sel3, *sel4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "speckle", &rp))
+	if (regTestSetup(argc, argv, "speckle", NULL, &rp))
 		return 1;
 
         /*  Normalize for rapidly varying background */

@@ -30,11 +30,6 @@
  *    Tests a number of convolution functions.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -71,7 +66,7 @@ PIX          *pixs, *pixacc, *pixg, *pixt, *pixd;
 PIX          *pixb, *pixm, *pixms, *pixrv, *pix1, *pix2, *pix3, *pix4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "convolve", &rp))
+	if (regTestSetup(argc, argv, "convolve", NULL, &rp))
 		return 1;
 
         /* Test pixBlockconvGray() on 8 bpp */

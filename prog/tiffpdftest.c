@@ -35,11 +35,6 @@
  *   be part of the alltests_reg regression test suite.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -65,7 +60,7 @@ PIXA      *pixa1, *pixa2, *pixa3;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "tiff", &rp))
+	if (regTestSetup(argc, argv, "tiff", NULL, &rp))
 		return 1;
 
 	l_pdfSetDateAndVersion(0);

@@ -51,11 +51,6 @@
  *    If you run 'paintmask_reg display', a pdf of the results is made.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -74,7 +69,7 @@ PIX          *pixs, *pixs8, *pixm, *pixt1, *pixt2, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "paintmask", &rp))
+	if (regTestSetup(argc, argv, "paintmask", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

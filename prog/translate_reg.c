@@ -30,11 +30,6 @@
  *    Regression test for in-place translation
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -66,7 +61,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "translate", &rp))
+	if (regTestSetup(argc, argv, "translate", NULL, &rp))
 		return 1;
 
         /* Set up images */

@@ -42,11 +42,6 @@
  *     colorpage.030.jpg
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -72,7 +67,7 @@ PIX       *pix1, *pix2, *pix3, *pix4;
 PIXA      *pixadb;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "color_regions", &rp))
+	if (regTestSetup(argc, argv, "color_regions", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/color");

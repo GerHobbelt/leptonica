@@ -30,11 +30,6 @@
  *   Determines if there are light colors on the image.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -58,7 +53,7 @@ PIXA      *pixa, *pixa1;
 SARRAY    *sa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "light_color", &rp))
+	if (regTestSetup(argc, argv, "light_color", NULL, &rp))
 		return 1;
 
     if (argc != 1)

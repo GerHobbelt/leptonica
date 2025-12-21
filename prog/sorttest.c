@@ -31,13 +31,7 @@
  *   in increasing or decreasing order.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
-#include "pix_internal.h"
 
 #include "monolithic_examples.h"
 
@@ -57,7 +51,7 @@ int main(int    argc,
 	PIXA* pixa, * pixas, * pixas2;
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "sort", &rp))
+	if (regTestSetup(argc, argv, "sort", NULL, &rp))
 		return 1;
 
 	if (argc != 2)

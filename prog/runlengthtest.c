@@ -31,11 +31,6 @@
  *    Set 2 tests the 3-component (rgb) dynamic range transform.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -53,7 +48,7 @@ l_float32  avediff, rmsdiff;
 PIX       *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "runlength", &rp))
+	if (regTestSetup(argc, argv, "runlength", NULL, &rp))
 		return 1;
 
     if (argc != 1)

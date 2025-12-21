@@ -35,11 +35,6 @@
  *      (2) after 180 degree rotation
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 #include "readbarcode.h"
 
@@ -59,7 +54,7 @@ PIX     *pixs;
 SARRAY  *saw1, *saw2, *sad1, *sad2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "barcode", &rp))
+	if (regTestSetup(argc, argv, "barcode", NULL, &rp))
 	return 1;
 
     if (argc != 2)

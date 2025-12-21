@@ -32,11 +32,6 @@
  *    text orientation.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -79,7 +74,7 @@ SEL   *sel1, *sel2, *sel3, *sel4;
 SELA  *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "livre", &rp))
+	if (regTestSetup(argc, argv, "livre", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/livre");

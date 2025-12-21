@@ -30,11 +30,6 @@
  *    Test dithering from 8 bpp to 1 bpp and 2 bpp.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -51,7 +46,7 @@ int main(int    argc,
 PIX          *pix, *pixs, *pix1, *pix2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "dither", &rp))
+	if (regTestSetup(argc, argv, "dither", NULL, &rp))
 		return 1;
 
     pix = pixRead(DEMOPATH("test8.jpg"));

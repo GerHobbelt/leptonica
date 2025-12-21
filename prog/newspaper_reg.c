@@ -33,11 +33,6 @@
  *  which makes it very fast.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -59,7 +54,7 @@ PIXA         *pixa1, *pixa2;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "newspaper", &rp))
+	if (regTestSetup(argc, argv, "newspaper", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

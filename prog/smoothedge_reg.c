@@ -30,11 +30,6 @@
  *   Analyzes edges of a 1 bpp (connected component) image for smoothness.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"

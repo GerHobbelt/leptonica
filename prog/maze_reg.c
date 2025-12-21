@@ -30,12 +30,6 @@
  *    Tests the functions in maze.c: binary and gray maze search
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -63,7 +57,7 @@ PTA          *pta;
 PTAA         *ptaa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "maze", &rp))
+	if (regTestSetup(argc, argv, "maze", NULL, &rp))
 		return 1;
 
     paa = pixaaCreate(2);

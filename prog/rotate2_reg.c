@@ -31,11 +31,6 @@
  *    Displays results from all the various types of rotations.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -67,7 +62,7 @@ int main(int    argc,
 PIX          *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "rotate", &rp))
+	if (regTestSetup(argc, argv, "rotate", NULL, &rp))
 		return 1;
 
     lept_stderr("Test binary image:\n");

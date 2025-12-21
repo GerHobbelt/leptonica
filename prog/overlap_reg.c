@@ -33,11 +33,6 @@
  *    Also tests the overlap and separation distance between boxes.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -70,7 +65,7 @@ PIX          *pix1, *pix2, *pix3;
 PIXA         *pixa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "overlap", &rp))
+	if (regTestSetup(argc, argv, "overlap", NULL, &rp))
 		return 1;
 
     /* -------------------------------------------------------- */

@@ -30,11 +30,6 @@
  *    Tests various functions against a set of the different image types.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -76,7 +71,7 @@ PIX          *pix1, *pix2, *pix3, *pix4, *pix5;
 PIXA         *pixas, *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "multitype", &rp))
+	if (regTestSetup(argc, argv, "multitype", NULL, &rp))
 		return 1;
 
     pixas = pixaCreate(11);

@@ -31,11 +31,6 @@
  *   for both 4 and 8 connectivity.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -56,7 +51,7 @@ PIX          *pixsq, *pixs, *pixc, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "seed_spread", &rp))
+	if (regTestSetup(argc, argv, "seed_spread", NULL, &rp))
 		return 1;
 
     pixsq = pixCreate(3, 3, 32);

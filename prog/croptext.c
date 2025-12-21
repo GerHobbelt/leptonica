@@ -38,11 +38,6 @@
  *     If dirout is the same as dirin, you overwrite the input files.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -64,7 +59,7 @@ PIX     *pixs, *pixt1, *pixd;
 SARRAY  *safiles;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "crop", &rp))
+	if (regTestSetup(argc, argv, "crop", NULL, &rp))
 		return 1;
 
     if (argc != 4)

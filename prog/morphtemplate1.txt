@@ -31,7 +31,6 @@
 --- *            PIX      *pixFMorphopGen_*()
  */
 
-#include <string.h>
 #include "allheaders.h"
 
 ---              This file is:  morphtemplate1.txt

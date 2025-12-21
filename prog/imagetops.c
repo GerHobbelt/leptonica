@@ -44,11 +44,6 @@
  *       lp -d <printer> -o ColorModel=Color <ps-file>
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -71,7 +66,7 @@ FILE      *fp;
 PIX       *pixs, *pix1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "convert", &rp))
+	if (regTestSetup(argc, argv, "convert", NULL, &rp))
 		return 1;
 
     if (argc != 4)

@@ -42,11 +42,6 @@
  *        * Demonstrate read of cmap+alpha png, and I/O of rgba pnm, bmp, webp
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -73,7 +68,7 @@ PIXAA    *paa;
 PIXCMAP  *cmap, *cmapg;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "misc", &rp))
+	if (regTestSetup(argc, argv, "misc", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/misc");

@@ -321,8 +321,12 @@ MONOLITHIC_CMD_TABLE_START()
 { "yuvtest", { .fa = lept_yuvtest_main } },
 { "issue675_check", { .fa = lept_issue675_check_main } },
 { "misctest2", {.fa = lept_misctest2_main } },
-{ "message_test", {.f = lept_message_test_main } },
+{ "message_test", {.fa = lept_message_test_main } },
 { "demo_pix_apis", { .fa = lept_demo_pix_apis_main } },
+{ "img_compression_test", {.fa = lept_img_compression_test_main } },
+{ "reg_test_loop_test", {.fa = lept_reg_test_loop_test_main } },
+
+//{ "xtractprotos", {.fa = lept_xtractprotos_main } },
 
 MONOLITHIC_CMD_TABLE_END();
 

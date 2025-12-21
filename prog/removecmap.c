@@ -37,11 +37,6 @@
  *      Works on palette images of 2, 4 and 8 bpp
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -61,7 +56,7 @@ PIX      *pixs, *pixd;
 PIXCMAP  *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "cmap", &rp))
+	if (regTestSetup(argc, argv, "cmap", NULL, &rp))
 		return 1;
 
     if (argc != 4)

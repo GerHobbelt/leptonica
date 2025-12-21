@@ -30,11 +30,6 @@
  *   e.g., use on witten.png
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -58,7 +53,7 @@ PTA     *pta;
 PTAA    *ptaa, *ptaa2, *ptaa3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "corner", &rp))
+	if (regTestSetup(argc, argv, "corner", NULL, &rp))
 		return 1;
 
     if (argc != 3)

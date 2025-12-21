@@ -42,11 +42,6 @@
  *               /tmp/lept/jb_correl/result
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -86,7 +81,7 @@ PIX        *pix;
 PIXA       *pixa, *pixadb;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "correlation", &rp))
+	if (regTestSetup(argc, argv, "correlation", NULL, &rp))
 		return 1;
 
     if (argc != 4 && argc != 6)

@@ -31,12 +31,6 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -88,7 +82,7 @@ SEL          *sel;
 SELA         *sela1, *sela2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "sel_io", &rp))
+	if (regTestSetup(argc, argv, "sel_io", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

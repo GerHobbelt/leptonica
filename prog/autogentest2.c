@@ -34,11 +34,6 @@
  *  It then writes them to file and compares with the original.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 #include "autogen.137.h"    /* this must be included */
 
@@ -60,7 +55,7 @@ l_int32  i, same;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "autogen", &rp))
+	if (regTestSetup(argc, argv, "autogen", NULL, &rp))
 	return 1;
 
     //lept_mkdir("lept/auto");

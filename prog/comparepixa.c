@@ -57,11 +57,6 @@
  *      %fontsize = 10
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -80,7 +75,7 @@ l_int32  nx, ny, tw, spacing, border, fontsize;
 PIXA    *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "compare", &rp))
+	if (regTestSetup(argc, argv, "compare", NULL, &rp))
 		return 1;
 
     if (argc != 10) {

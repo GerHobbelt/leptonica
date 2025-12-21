@@ -33,12 +33,6 @@
  *    We also show some other ways to accumulate and display pixa.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 #include "pix_internal.h"
 
@@ -71,7 +65,7 @@ SARRAY       *sa;
 
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pix_comp", &rp))
+	if (regTestSetup(argc, argv, "pix_comp", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/comp");

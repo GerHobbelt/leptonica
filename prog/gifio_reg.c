@@ -54,20 +54,14 @@
  *             (note: no lossless mode; gif can't write out rgb)
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #if HAVE_LIBGIF || HAVE_LIBUNGIF
 #include "gif_lib.h"
+#endif  /* HAVE_LIBGIF || HAVE_LIBUNGIF */
 
 #include "monolithic_examples.h"
 
-#endif  /* HAVE_LIBGIF || HAVE_LIBUNGIF */
 
 #define   FILE_1BPP     "feyn.tif"
 #define   FILE_2BPP     "weasel2.4g.png"
@@ -95,7 +89,7 @@ PIX          *pix;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "gif_io", &rp))
+	if (regTestSetup(argc, argv, "gif_io", NULL, &rp))
 		return 1;
 
 #if !HAVE_LIBGIF && !HAVE_LIBUNGIF

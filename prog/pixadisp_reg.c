@@ -30,11 +30,6 @@
  *     Regression test exercising various pixaDisplay*() functions.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -61,7 +56,7 @@ PIXA         *pixa, *pixa1, *pixa2, *pixa3;
 SARRAY       *sa1, *sa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pixa_display", &rp))
+	if (regTestSetup(argc, argv, "pixa_display", NULL, &rp))
 		return 1;
 
     pixa = pixaCreate(0);

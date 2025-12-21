@@ -36,11 +36,6 @@
  *   quadratic LSF for the textlines.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -63,7 +58,7 @@ PTA        *pta, *ptad;
 PTAA       *ptaa1, *ptaa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "dewarp", &rp))
+	if (regTestSetup(argc, argv, "dewarp", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/dewarp");

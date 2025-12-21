@@ -30,11 +30,6 @@
  *     A fun little application, saved as a regression test.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -54,7 +49,7 @@ PIX          *pix6, *pix7, *pix8, *pix9;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "lines", &rp))
+	if (regTestSetup(argc, argv, "lines", NULL, &rp))
 		return 1;
 
     deg2rad = 3.14159 / 180.;

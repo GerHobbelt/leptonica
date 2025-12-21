@@ -46,12 +46,6 @@
  *    is written with default quality factor 75.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -71,7 +65,7 @@ const char      *filein, *fileout, *type = NULL, *incolor = NULL;
 PIX       *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "rotate", &rp))
+	if (regTestSetup(argc, argv, "rotate", NULL, &rp))
 		return 1;
 
     if (argc != 4 && argc != 6)

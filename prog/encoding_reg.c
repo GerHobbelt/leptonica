@@ -33,11 +33,6 @@
  *    bytes after the final full word.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -57,7 +52,7 @@ l_uint8      *bina, *bina2, *bin85c, *bin85c2;
 PIX          *pix1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "encode", &rp))
+	if (regTestSetup(argc, argv, "encode", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/encode");

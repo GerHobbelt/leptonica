@@ -33,11 +33,6 @@
  *    visualizing the difference between sampling and interpolation.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -70,7 +65,7 @@ PIX       *pixs, *pix1, *pix2, *pixd;
 PIXA      *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "warp", &rp))
+	if (regTestSetup(argc, argv, "warp", NULL, &rp))
 		return 1;
 
     if (argc != 1)

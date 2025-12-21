@@ -31,11 +31,6 @@
  *                   pageseg1.tif, pageseg2.tif, pageseg3.tif, pageseg4.tif
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -54,7 +49,7 @@ PIXA  *pixadb;
 const char  *filein;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "page_seg", &rp))
+	if (regTestSetup(argc, argv, "page_seg", NULL, &rp))
 		return 1;
 
     if (argc != 2)

@@ -35,11 +35,6 @@
  *     boundary cond :  L_BOUNDARY_BG or L_BOUNDARY_FG
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -65,7 +60,7 @@ PIX          *pix, *pixs, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "distance", &rp))
+	if (regTestSetup(argc, argv, "distance", NULL, &rp))
 		return 1;
 
     pix = pixRead(DEMOPATH("feyn.tif"));

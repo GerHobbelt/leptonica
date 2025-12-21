@@ -32,16 +32,11 @@
 *   * useful to visualize the various processes/effects using selected image files for input.
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
+#include "demo_settings.h"
 
 #include "mupdf/mutool.h"
 #include "mupdf/fitz.h"
 #include "mupdf/helpers/jmemcust.h"
-
-#include "allheaders.h"
-#include "demo_settings.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #  define strcasecmp _stricmp
@@ -75,9 +70,8 @@
 #define MIN(a, b)  ((a) < (b) ? (a) : (b))
 #endif
 
-
-
 #include "monolithic_examples.h"
+
 
 
 static const char *fnames[] = {"lyra.005.jpg", "lyra.036.jpg"};
@@ -714,7 +708,7 @@ int main(int argc, const char **argv)
 {
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "api_demo", &rp))
+	if (regTestSetup(argc, argv, "api_demo", NULL, &rp))
 		return 1;
 
 	l_chooseDisplayProg(L_DISPLAY_WITH_OPEN);

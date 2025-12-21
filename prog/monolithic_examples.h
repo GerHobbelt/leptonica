@@ -310,10 +310,12 @@ int lept_writetext_reg_main(int argc, const char **argv);
 int lept_xformbox_reg_main(int argc, const char **argv);
 int lept_yuvtest_main(int argc, const char **argv);
 int lept_issue675_check_main(int argc, const char **argv);
-int lept_message_test_main(void);
+int lept_message_test_main(int argc, const char **argv);
 int lept_misctest2_main(int argc, const char **argv);
 
 int lept_demo_pix_apis_main(int argc, const char **argv);
+int lept_img_compression_test_main(int argc, const char **argv);
+int lept_reg_test_loop_test_main(int argc, const char **argv);
 
 #ifdef __cplusplus
 }

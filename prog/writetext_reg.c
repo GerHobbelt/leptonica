@@ -32,11 +32,6 @@
  *   Output is written to /tmp/lept/regout/pixd[1,2,3,4].png
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -90,7 +85,7 @@ SARRAY       *sa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "write_text", &rp))
+	if (regTestSetup(argc, argv, "write_text", NULL, &rp))
 		return 1;
 
 	bmf = bmfCreate(DEMOPATH("fonts"), 6);

@@ -86,7 +86,7 @@ PIXA         *pixa;
 PTA          *ptas, *ptad;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "affine", &rp))
+	if (regTestSetup(argc, argv, "affine", NULL, &rp))
 		return 1;
 
     pix = pixRead(DEMOPATH("feyn.tif"));

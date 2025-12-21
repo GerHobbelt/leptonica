@@ -30,11 +30,6 @@
  *    Test false color generation from 8 and 16 bpp gray
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -56,7 +51,7 @@ PIX          *pix1, *pix8, *pix16, *pix8f, *pix16f;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "falsecolor", &rp))
+	if (regTestSetup(argc, argv, "falsecolor", NULL, &rp))
 		return 1;
 
     pix8 = pixCreate(768, 100, 8);

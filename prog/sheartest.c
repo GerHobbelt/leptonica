@@ -32,11 +32,6 @@
  *     where angle is expressed in degrees
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -58,7 +53,7 @@ l_float32  angle, deg2rad;
 PIX       *pixt1, *pixt2, *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "shear", &rp))
+	if (regTestSetup(argc, argv, "shear", NULL, &rp))
 		return 1;
 
     if (argc != 4)

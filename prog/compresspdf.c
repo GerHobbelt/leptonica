@@ -125,11 +125,6 @@
  *              poppler-0.26.5-1
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -149,7 +144,7 @@ l_float32  scalefactor;
 SARRAY    *safiles;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "compress_pdf", &rp))
+	if (regTestSetup(argc, argv, "compress_pdf", NULL, &rp))
 		return 1;
 
     if (argc != 9)

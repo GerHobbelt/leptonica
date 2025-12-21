@@ -36,12 +36,6 @@
  *      * string length and string cancatenation
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -68,7 +62,7 @@ L_DNA        *da;
 SARRAY       *sa1, *sa2, *sa3, *sa4, *sa5;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "string", &rp))
+	if (regTestSetup(argc, argv, "string", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/string");

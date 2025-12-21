@@ -31,11 +31,6 @@
  *   near a specified line.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -62,7 +57,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "nearline", &rp))
+	if (regTestSetup(argc, argv, "nearline", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

@@ -47,11 +47,6 @@
  *   about 600 ppi.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -79,7 +74,7 @@ PIX     *pixs, *pixg, *pixb;
 PIX     *pixmask4, *pixseed4, *pixsf4, *pixd4, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "page_seg", &rp))
+	if (regTestSetup(argc, argv, "page_seg", NULL, &rp))
 		return 1;
 
     if (argc != 4)

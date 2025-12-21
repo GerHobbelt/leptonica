@@ -30,11 +30,6 @@
  *  e.g.:   graphicstest fish24.jpg junkout
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -56,7 +51,7 @@ PIX     *pixs, *pix1;
 PTA     *pta;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "graphics", &rp))
+	if (regTestSetup(argc, argv, "graphics", NULL, &rp))
 		return 1;
 
     if (argc != 3)

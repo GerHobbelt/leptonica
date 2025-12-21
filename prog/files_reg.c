@@ -33,25 +33,10 @@
  *    use "/tmp" for string compares.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
-#include <string.h>
-#ifndef _MSC_VER
-#include <unistd.h>
-#else
-#include <direct.h>
 
 #include "monolithic_examples.h"
 
-#ifndef getcwd
-#define getcwd _getcwd  /* fix MSVC warning */
-#endif
-
-#endif  /* !_MSC_VER */
 
 void TestPathJoin(L_REGPARAMS *rp, const char *first, const char *second,
                   const char *result);
@@ -71,7 +56,7 @@ l_int32 main(int    argc,
 l_int32       exists;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "files", &rp))
+	if (regTestSetup(argc, argv, "files", NULL, &rp))
 		return 1;
 
     lept_stderr(" ===================================================\n");

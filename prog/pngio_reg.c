@@ -39,20 +39,10 @@
  *        libpng, libz
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
-
-    /* Needed for checking libraries */
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
 
 #include "monolithic_examples.h"
 
-#endif /* HAVE_CONFIG_H */
 
 #define   FILE_1BPP             "rabi.png"
 #define   FILE_2BPP             "speckle2.png"
@@ -103,7 +93,7 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-	if (regTestSetup(argc, argv, "png_io", &rp))
+	if (regTestSetup(argc, argv, "png_io", NULL, &rp))
 		return 1;
 
 	failure = FALSE;

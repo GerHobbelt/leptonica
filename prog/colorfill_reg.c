@@ -30,11 +30,6 @@
  *   This tests the utility that does color segmentation by region growing.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -56,7 +51,7 @@ PIX          *pix1, *pix2, *pix3, *pix4;
 PIXA         *pixa1, *pixa2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "color_fill", &rp))
+	if (regTestSetup(argc, argv, "color_fill", NULL, &rp))
 		return 1;
 
 	// TODO: run pixColorContentByLocation() both with debug mode ON and OFF to see the difference, because

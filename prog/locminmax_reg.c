@@ -31,12 +31,6 @@
  *             pix3 = pixRemoveBorderConnComps(pix1, 8);
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -57,7 +51,7 @@ l_float32     f;
 PIX          *pix1, *pix2, *pix3;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "minmax", &rp))
+	if (regTestSetup(argc, argv, "minmax", NULL, &rp))
 		return 1;
 
     pix1 = pixCreate(500, 500, 8);

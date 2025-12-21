@@ -34,11 +34,6 @@
  *     We use it on an image with FG extending to the edges.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -59,7 +54,7 @@ PIX          *pix0, *pixs, *pixse, *pixd1, *pixd2;
 SEL          *sel;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "raster_op", &rp))
+	if (regTestSetup(argc, argv, "raster_op", NULL, &rp))
 		return 1;
 
     pix0 = pixRead(DEMOPATH("feyn-fract.tif"));

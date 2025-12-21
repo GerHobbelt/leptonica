@@ -38,13 +38,6 @@
  *          rotateAMColorFastLow2()
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include <math.h>   /* required for sin and tan */
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -72,7 +65,7 @@ l_float32  angle, deg2rad;
 PIX       *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "rotate", &rp))
+	if (regTestSetup(argc, argv, "rotate", NULL, &rp))
 		return 1;
 
     if (argc != 4)

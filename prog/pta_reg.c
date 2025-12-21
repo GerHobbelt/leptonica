@@ -41,12 +41,6 @@
  *     -  ptaPolygonIsConvex()
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -73,7 +67,7 @@ PTA          *pta, *pta1, *pta2, *pta3;
 PTAA         *ptaafg, *ptaabg;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pta", &rp))
+	if (regTestSetup(argc, argv, "pta", NULL, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn-fract.tif"));

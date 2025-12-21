@@ -30,11 +30,6 @@
  *    Tests various replacement functions on pixa.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -56,7 +51,7 @@ PIXA         *pixa;
 SARRAY       *sa1, *sa2, *sa3, *sa4;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pixa2", &rp))
+	if (regTestSetup(argc, argv, "pixa2", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

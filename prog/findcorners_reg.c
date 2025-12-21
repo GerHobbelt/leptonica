@@ -47,11 +47,6 @@
  *        /tmp/lept/regout/tickets.pdf  (deskewed result for the set of tickets)
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -93,7 +88,7 @@ SEL          *sel;
 SELA         *sela;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "corners", &rp))
+	if (regTestSetup(argc, argv, "corners", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

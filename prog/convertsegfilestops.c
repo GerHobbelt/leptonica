@@ -70,12 +70,6 @@
  *    (i.e., non-image) regions of every page.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -94,7 +88,7 @@ l_int32    threshold, page_numpre, mask_numpre, numpost, maxnum;
 l_float32  textscale, imagescale;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "convert", &rp))
+	if (regTestSetup(argc, argv, "convert", NULL, &rp))
 		return 1;
 
     if (argc != 13) {

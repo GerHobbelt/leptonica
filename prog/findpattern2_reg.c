@@ -39,11 +39,6 @@
  *    as a set of steps.  Not recommended because it is too expensive.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -68,7 +63,7 @@ PIXA         *pixa1;
 SEL          *sel_ast, *sel1, *sel2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pattern", &rp))
+	if (regTestSetup(argc, argv, "pattern", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/pattern");

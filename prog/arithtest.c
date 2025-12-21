@@ -31,11 +31,6 @@
  *   back and forth between 8 and 16 bpp.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -54,7 +49,7 @@ l_int32  w, h;
 PIX     *pixs, *pix1, *pix2, *pix3, *pix4, *pix5;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "arith", &rp))
+	if (regTestSetup(argc, argv, "arith", NULL, &rp))
 		return 1;
 
     if (argc != 2)

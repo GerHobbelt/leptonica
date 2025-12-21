@@ -49,11 +49,6 @@
  *   images, such as w91frag.jpg.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -77,7 +72,7 @@ PIX      *pix1, *pix2;
 PIXA     *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "binarize", &rp))
+	if (regTestSetup(argc, argv, "binarize", NULL, &rp))
 		return 1;
 
     if (argc != 2)

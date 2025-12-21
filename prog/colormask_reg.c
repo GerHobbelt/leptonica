@@ -32,11 +32,6 @@
  *   peaks in HS.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -66,7 +61,7 @@ PTA          *ptapk;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "color_mask", &rp))
+	if (regTestSetup(argc, argv, "color_mask", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

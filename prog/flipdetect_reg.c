@@ -35,11 +35,6 @@
  *   - Shows the typical 'confidence' outputs from functions in flipdetect.c.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -59,7 +54,7 @@ PIX          *pix, *pixs, *pix1, *pix2;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "flip", &rp))
+	if (regTestSetup(argc, argv, "flip", NULL, &rp))
 		return 1;
 
 	l_ok debugflag = leptIsDebugModeActive();

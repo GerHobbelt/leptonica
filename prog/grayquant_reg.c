@@ -30,11 +30,6 @@
  *     Tests gray thresholding to 1, 2 and 4 bpp, with and without colormaps
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -61,7 +56,7 @@ PIXA         *pixa;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "gray_quant", &rp))
+	if (regTestSetup(argc, argv, "gray_quant", NULL, &rp))
 		return 1;
 
     /* ------------------------------------------------------------- */

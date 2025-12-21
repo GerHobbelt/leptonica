@@ -41,11 +41,6 @@
  *   * test RGB histogram and counting functions in pix4.c
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -79,7 +74,7 @@ RB_TYPE    key, value;
 RB_TYPE   *pval;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "map", &rp))
+	if (regTestSetup(argc, argv, "map", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/map");

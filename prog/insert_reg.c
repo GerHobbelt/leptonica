@@ -30,12 +30,6 @@
  *  This tests removal and insertion operations in numa, boxa and pixa.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -64,7 +58,7 @@ PIXA         *pixa1, *pixa2, *pixa3, *pixa4;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "insert", &rp))
+	if (regTestSetup(argc, argv, "insert", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

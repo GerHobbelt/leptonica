@@ -40,11 +40,6 @@
  *          original image in the counting, because it can have noise.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -72,7 +67,7 @@ PIXA         *pixas, *pixa1, *pixa2;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "circle", &rp))
+	if (regTestSetup(argc, argv, "circle", NULL, &rp))
 		return 1;
 
 	/* Read the images */

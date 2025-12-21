@@ -29,11 +29,6 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -52,7 +47,7 @@ int main(int    argc,
 {
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "hard_light", &rp))
+	if (regTestSetup(argc, argv, "hard_light", NULL, &rp))
 		return 1;
 
     TestHardlight(DEMOPATH("hardlight1_1.jpg"), DEMOPATH("hardlight1_2.jpg"), rp);

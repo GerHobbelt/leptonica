@@ -30,11 +30,6 @@
  *   Regression test demonstrating adaptive mappings in both gray and color
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -69,7 +64,7 @@ PIX          *pixmr, *pixmg, *pixmb, *pixmri, *pixmgi, *pixmbi;
 PIXA         *pixa;
 L_REGPARAMS  *rp;
 
-	if (regTestSetup(argc, argv, "adaptmap", &rp))
+	if (regTestSetup(argc, argv, "adaptmap", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/adapt");

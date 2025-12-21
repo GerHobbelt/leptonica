@@ -31,11 +31,6 @@
  *   against the general case.  Require exact equality.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -53,7 +48,7 @@ PIX          *pixs, *pix1, *pix2, *pixd;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "gray_morph", &rp))
+	if (regTestSetup(argc, argv, "gray_morph", NULL, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("test8.jpg"));

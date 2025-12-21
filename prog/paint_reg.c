@@ -32,11 +32,6 @@
  *      (2) painting through masks (test by reconstructing cmapped image)
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 #include "pix_internal.h"
 
@@ -65,7 +60,7 @@ PIXA         *pixa;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "paint", &rp))
+	if (regTestSetup(argc, argv, "paint", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

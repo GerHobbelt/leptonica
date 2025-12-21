@@ -37,11 +37,6 @@
  *     Example: modifyhuesat test24.jpg 5 0.2 5 0.2 /tmp/junkout.jpg
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -62,7 +57,7 @@ PIX       *pixs, *pixt1, *pixt2, *pixd;
 PIXA      *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "hue_sat", &rp))
+	if (regTestSetup(argc, argv, "hue_sat", NULL, &rp))
 		return 1;
 
     if (argc != 7)

@@ -36,11 +36,6 @@
  *      minimum spanning rectangles.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -64,7 +59,7 @@ PIXA         *pixa1;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "conn_comp", &rp))
+	if (regTestSetup(argc, argv, "conn_comp", NULL, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("feyn.tif"));

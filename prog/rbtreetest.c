@@ -31,11 +31,6 @@
  * CC0 1.0 waiver (http://creativecommons.org/publicdomain/zero/1.0/).
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -58,7 +53,7 @@ RB_TYPE   *pval;
 L_RBTREE  *t;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "rb-tree", &rp))
+	if (regTestSetup(argc, argv, "rb-tree", NULL, &rp))
 		return 1;
 
     t = l_rbtreeCreate(L_INT_TYPE);

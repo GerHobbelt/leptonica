@@ -38,11 +38,6 @@
  *    (2) We do the same with the word "Caltech".
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -67,7 +62,7 @@ PIX  *pixd1, *pixd2, *pixd3;
 SEL  *selhm;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "pattern", &rp))
+	if (regTestSetup(argc, argv, "pattern", NULL, &rp))
 		return 1;
 
     if (argc != 1)

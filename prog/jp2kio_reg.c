@@ -42,21 +42,10 @@
  *      the library gives opj_start_compress() encoding errors!
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
-
-    /* Needed for HAVE_LIBJP2K */
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
 
 #include "monolithic_examples.h"
 
-#endif /* HAVE_CONFIG_H */
 
 void DoJp2kTest1(L_REGPARAMS *rp, const char *fname);
 void DoJp2kTest2(L_REGPARAMS *rp, const char *fname);
@@ -87,7 +76,7 @@ int main(int    argc,
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "jp2k_io", &rp))
+	if (regTestSetup(argc, argv, "jp2k_io", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/regout");

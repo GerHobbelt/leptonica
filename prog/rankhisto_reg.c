@@ -32,12 +32,6 @@
  *      (2) numaDiscretizeHistoInBins()
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <math.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -65,7 +59,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "rank_histo", &rp))
+	if (regTestSetup(argc, argv, "rank_histo", NULL, &rp))
 		return 1;
 
 	/* Find the rank bin colors */

@@ -35,11 +35,6 @@
  *   Downscaling uses area mapping to avoid moire.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -57,7 +52,7 @@ PIX   *pixs;
 const char  *filein;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "display", &rp))
+	if (regTestSetup(argc, argv, "display", NULL, &rp))
 		return 1;
 
     if (argc != 2)

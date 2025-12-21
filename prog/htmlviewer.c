@@ -46,20 +46,9 @@
  *            /tmp/lept/lion-out/lion-links.html   (html file of links)
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
-#ifdef _WIN32
-#include <windows.h>   /* for CreateDirectory() */
-
 #include "monolithic_examples.h"
-
-#endif
 
 static const l_int32  DEFAULT_THUMB_WIDTH = 120;
 static const l_int32  DEFAULT_VIEW_WIDTH = 800;
@@ -84,7 +73,7 @@ const char    *dirin, *dirout, *rootname;
 l_int32  thumbwidth, viewwidth;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "html", &rp))
+	if (regTestSetup(argc, argv, "html", NULL, &rp))
 		return 1;
 
     if (argc != 6)

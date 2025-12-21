@@ -28,12 +28,6 @@
  *  pdfio2_reg.c
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include <string.h>
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -73,7 +67,7 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-	if (regTestSetup(argc, argv, "pdf_io", &rp))
+	if (regTestSetup(argc, argv, "pdf_io2", NULL, &rp))
 		return 1;
 
 	l_pdfSetDateAndVersion(0);

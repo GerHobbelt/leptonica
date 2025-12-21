@@ -30,11 +30,6 @@
  *    Regression test for shear, both IP and to new pix.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -67,7 +62,7 @@ PIX          *pixs, *pix1, *pixc, *pixd;
 PIXCMAP      *cmap;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "shear", &rp))
+	if (regTestSetup(argc, argv, "shear", NULL, &rp))
 		return 1;
 
     lept_stderr("Test binary image:\n");

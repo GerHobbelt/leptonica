@@ -30,11 +30,6 @@
  *   Example: trctest wet-day.jpg 3.1 50 160 /tmp/junk.png
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -54,7 +49,7 @@ l_float32  gamma;
 const char      *filein, *fileout;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "trc", &rp))
+	if (regTestSetup(argc, argv, "trc", NULL, &rp))
 		return 1;
 
     if (argc != 6)

@@ -31,11 +31,6 @@
  *    Just for interest, a number of different tests are done.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -54,7 +49,7 @@ int main(int    argc,
 PIX          *pixs, *pix1, *pix2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "projection", &rp))
+	if (regTestSetup(argc, argv, "projection", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/projection");

@@ -30,11 +30,6 @@
  *   Regression test for gray filling operations
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -58,7 +53,7 @@ PIX          *pixb1, *pixb2, *pixb3, *pixmin;
 PIXA         *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "gray_fill", &rp))
+	if (regTestSetup(argc, argv, "gray_fill", NULL, &rp))
 		return 1;
 
         /* Mask */

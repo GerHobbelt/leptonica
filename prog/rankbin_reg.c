@@ -33,11 +33,6 @@
  *      (3) pixRankBinByStrip()
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config_auto.h>
-#endif  /* HAVE_CONFIG_H */
-
-#include "allheaders.h"
 #include "demo_settings.h"
 
 #include "monolithic_examples.h"
@@ -67,7 +62,7 @@ PIXA         *pixa;
 
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "rank_bin", &rp))
+	if (regTestSetup(argc, argv, "rank_bin", NULL, &rp))
 		return 1;
 
 	/* Generate arrays of word widths and heights */
