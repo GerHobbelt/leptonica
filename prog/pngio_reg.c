@@ -631,7 +631,8 @@ PIXCMAP  *cmap;
         lept_stderr("8bpp_trans: correct -- transparency found\n");
     else
         lept_stderr("8bpp_trans: error -- no transparency found!\n");
-    if (leptIsInDisplayMode()) pixcmapWriteStream(stderr, cmap);
+    if (leptIsInDisplayMode())
+		pixcmapWriteStream(stderr, cmap);
     pixcmapDestroy(&cmap);
     return same;
 }

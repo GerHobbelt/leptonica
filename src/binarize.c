@@ -197,7 +197,7 @@ PIXTILING  *pt;
 
 			if (pixplt) {
 				//lept_mkdir("lept/otsu");
-				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				const char* pixd_path = leptDebugGenFilepath("%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
 				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
 			}

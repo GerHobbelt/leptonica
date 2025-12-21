@@ -121,7 +121,7 @@ static const l_float32  DefaultScaling = 1.0;
     /* the array refers to the strings in the array; the ptr to the      */
     /* array is not const and can be used 'extern' in other files.)      */
 LEPT_DLL const char *ImageFileFormatExtensions[] =
-         {"unknown",         // IFF_UNKNOWN = 0
+         {NULL,              // IFF_UNKNOWN = 0
           "bmp",             // IFF_BMP = 1
           "jpg",             // IFF_JFIF_JPEG = 2
           "png",             // IFF_PNG = 3
@@ -139,8 +139,8 @@ LEPT_DLL const char *ImageFileFormatExtensions[] =
           "webp",            // IFF_WEBP = 15
           "pdf",             // IFF_LPDF = 16
           "tif",             // IFF_TIFF_JPEG = 17
-          "default",         // IFF_DEFAULT = 18
-          ""};               // IFF_SPIX = 19
+          NULL,              // IFF_DEFAULT = 18
+          "spix"};           // IFF_SPIX = 19
 
 LEPT_DLL l_int32 NumImageFileFormatExtensions = sizeof(ImageFileFormatExtensions) / sizeof(ImageFileFormatExtensions[0]); /* array size */
 
@@ -675,7 +675,7 @@ PIXCMAP  *cmap;
 
 l_ok 
 isSupportedFormat(l_int32 format) {
-	return !(format < 0 || format == IFF_UNKNOWN ||
+	return !(format <= IFF_UNKNOWN || format == IFF_UNKNOWN ||
 		format >= NumImageFileFormatExtensions);
 }
 
@@ -695,7 +695,7 @@ isSupportedFormat(l_int32 format) {
 const char *
 getFormatExtension(l_int32  format)
 {
-    if (format < 0 || format >= NumImageFileFormatExtensions)
+    if (format <= IFF_UNKNOWN || format >= NumImageFileFormatExtensions)
         return (const char *)ERROR_PTR("invalid format", __func__, NULL);
 
     return ImageFileFormatExtensions[format];
@@ -939,7 +939,6 @@ pixDisplayWithTitle(PIX         *pixs,
 {
 char           *tempname;
 char            buffer[Bufsize];
-static l_atomic index = 0;  /* caution: not .so safe */
 l_int32         w, h, d, spp, maxheight, opaque, threeviews;
 l_float32       ratw, rath, ratmin;
 PIX            *pix0, *pix1, *pix2;
@@ -991,7 +990,10 @@ size_t         fullpathsize;
                          __func__, 1);
 #endif  /* _WIN32 */
 
-        /* Display with three views if either spp = 4 or if colormapped
+	leptDebugAddStepLevel();
+	leptDebugSetFilePathPart("disp");
+
+	/* Display with three views if either spp = 4 or if colormapped
          * and the alpha component is not fully opaque */
     opaque = TRUE;
     if ((cmap = pixGetColormap(pixs)) != NULL)
@@ -1029,8 +1031,10 @@ size_t         fullpathsize;
             pix1 = pixScale(pix0, ratmin, ratmin);
     }
     pixDestroy(&pix0);
-    if (!pix1)
-        return ERROR_INT("pix1 not made", __func__, 1);
+	if (!pix1) {
+		leptDebugPopStepLevel();
+		return ERROR_INT("pix1 not made", __func__, 1);
+	}
 
         /* Generate the three views if required */
     if (threeviews)
@@ -1038,19 +1042,16 @@ size_t         fullpathsize;
     else
         pix2 = pixClone(pix1);
 
-    if (index == 0) {  /* erase any existing images */
-        lept_rmdir("lept/disp");
-        //lept_mkdir("lept/disp");
-    }
+    //lept_rmdir("lept/disp");
+    //lept_mkdir("lept/disp");
 
-    index++;
 	const char* pixpath;
     if (pixGetDepth(pix2) < 8 || pixGetColormap(pix2) ||
         (w < MaxSizeForPng && h < MaxSizeForPng)) {
-		pixpath = leptDebugGenFilepath("disp/%s.%05d.png", __func__, (int)index);
+		pixpath = leptDebugGenFilepath("%s.png", __func__);
         pixWrite(pixpath, pix2, IFF_PNG);
     } else {
-		pixpath = leptDebugGenFilepath("disp/%s.%05d.jpg", __func__, (int)index);
+		pixpath = leptDebugGenFilepath("%s.jpg", __func__);
         pixWrite(pixpath, pix2, IFF_JFIF_JPEG);
     }
     tempname = genPathname(pixpath, NULL);
@@ -1129,6 +1130,8 @@ size_t         fullpathsize;
 	LEPT_FREE(pathname);
 
 #endif  /* _WIN32 */
+
+	leptDebugPopStepLevel();
 
     pixDestroy(&pix1);
     pixDestroy(&pix2);

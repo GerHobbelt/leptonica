@@ -57,30 +57,30 @@ PIX   *pix1, *pix2, *pix3;
 PIXA  *pixa1;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "misc", &rp))
+	if (regTestSetup(argc, argv, "misc", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/misc");
 
         /* Page cropping with light filtering */
     pix1 = pixRead("tel_3.tif");
-	leptDebugSetFilenameForPrefix("/tmp/lept/misc/crop_tel3_light", 0);
+	leptDebugSetFilePathPartFromTail("/tmp/lept/misc/crop_tel3_light", 0);
     pix2 = pixCropImage(pix1, 30, 30, 4, 25, 25, 1.15, 0, NULL);
-    pixDestroy(&pix1);
+	pixDestroy(&pix1);
     pixDestroy(&pix2);
 
         /* Page cropping with removal of fg on left and right sides */
     pix1 = pixRead("boismort.1.tif");
-	leptDebugSetFilenameForPrefix("/tmp/lept/misc/crop_bois1", 0);
+	leptDebugSetFilePathPartFromTail("/tmp/lept/misc/crop_bois1", 0);
 	pix2 = pixCropImage(pix1, 50, 50, -1, 70, 70, 1.1, 0, NULL);
-    pixDestroy(&pix1);
+	pixDestroy(&pix1);
     pixDestroy(&pix2);
 
         /* Page cropping with removal of fg on left and right sides */
     pix1 = pixRead("boismort.15.tif");
-	leptDebugSetFilenameForPrefix("/tmp/lept/misc/crop_bois15", 0);
+	leptDebugSetFilePathPartFromTail("/tmp/lept/misc/crop_bois15", 0);
 	pix2 = pixCropImage(pix1, 50, 50, -1, 70, 70, 1.1, 0, NULL);
-    pixDestroy(&pix1);
+	pixDestroy(&pix1);
     pixDestroy(&pix2);
 
         /* Page cropping for 2 columns with junk on left and right sides,

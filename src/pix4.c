@@ -3463,6 +3463,9 @@ PIX       *pixg;
     if (!pixs)
         return ERROR_INT("pixs not defined", __func__, 1);
 
+	leptDebugAddStepLevel();
+	leptDebugSetFreshCleanFilePathPart("redout");
+
         /* Generate a subsampled 8 bpp version */
     pixg = pixConvertTo8BySampling(pixs, factor, 0);
 
@@ -3508,19 +3511,12 @@ PIX       *pixg;
     if (pbgval) *pbgval = (l_int32)(avebg + 0.5);
 
     if (ppixdb) {
-		static int index = 0;
 		PIX* pixplot, * pixtsc, * pixtbr, * pixtctr;
 		PIXA* pixadb;
-		char namebuf[100];
 		l_float32 sumfg, sumbg;
 
-		if (index == 0) {
-			lept_rmdir("lept/redout");
-		}
-		index++;
-		//lept_mkdir("lept/redout");
-		snprintf(namebuf, sizeof(namebuf), "/tmp/lept/redout/histplot-%03d", index);
-		gplot = gplotCreate(namebuf, GPLOT_PNG, "Histogram",
+		//	lept_rmdir("lept/redout");
+		gplot = gplotCreate("hist", GPLOT_PNG, "Histogram",
                             "Grayscale value", "Number of pixels");
         gplotAddPlot(gplot, NULL, na, GPLOT_LINES, NULL);
 
@@ -3585,6 +3581,8 @@ PIX       *pixg;
 		pixDestroy(&pixtbr);
 		gplotDestroy(&gplot);
     }
+
+	leptDebugPopStepLevel();
 
     pixDestroy(&pixg);
     numaDestroy(&na);

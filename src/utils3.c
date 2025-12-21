@@ -326,19 +326,25 @@ getPathRootLength(const char* path)
 
 
 /*!
- * \brief   getPathBasename()
+ * \brief   pathExtractTail()
  *
- * \param[in]    path
+ * \param[in]    path                  the path to the file; may be relative or absolute or just the file name itself. Anything goes.
  * \param[in]    strip_off_parts_code
  * \return  the basename part of the given path, e.g. /a/b/ccc.x --> ccc.x (or ccc when strip_off_parts_code is negative)
  *
  * <pre>
  * Notes:
  *      (1) The returned filename must be freed by the caller, using lept_free.
+ *      (2) The produced 'part' may be used to help produce recognizable path parts for the
+ *          leptDebugSetFilePathPart API family.
+ *          This is useful when, for example, processing source images in bulk and you wish to quickly
+ *          locate the relevant debug/diagnostics outputs for a given source image.
+ *      (3) %strip_off_parts_code is the (maximum available) number of path elements to keep for the prefix, where negative
+ *          counts indicate the filename extension should be stripped off. code 0 is treated the same as -1.
  * </pre>
  */
 char *
-getPathBasename(const char* path, l_int32 strip_off_parts_code)
+pathExtractTail(const char* path, l_int32 strip_off_parts_code)
 {
 	if (!path)
 		return (char *)ERROR_PTR("path not defined", __func__, NULL);

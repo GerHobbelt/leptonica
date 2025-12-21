@@ -2429,7 +2429,7 @@ PIXA   *pixa;
     }
 
     if (pixa) {
-		const char* pdfpath = leptDebugGenFilepath("/tmp/lept/comp/tiledhistos.%d.pdf", leptDebugGetStepId());
+		const char* pdfpath = leptDebugGenFilepath("comp/tiledhistos.pdf");
         lept_stderr("Writing to %s\n", pdfpath);
         pixaConvertToPdf(pixa, 300, 1.0, L_FLATE_ENCODE, 0, NULL, pdfpath);
         pixaDestroy(&pixa);
@@ -2808,13 +2808,14 @@ compareTilesByHisto(NUMAA      *naa1,
                     l_int32     w2,
                     l_int32     h2,
                     l_float32  *pscore,
-                    PIXA       *pixadebug)
+                    PIXA       * const pixadebug)
 {
-char       buf1[128], buf2[128];
+char       buf2[128];
 l_int32    i, n;
 l_float32  wratio, hratio, score, minscore, dist;
 L_BMF     *bmf;
 NUMA      *na1, *na2, *nadist, *nascore;
+PIXA      *pixadbplots;
 
     if (!pscore)
         return ERROR_INT("&score not defined", __func__, 1);
@@ -2839,10 +2840,11 @@ NUMA      *na1, *na2, *nadist, *nascore;
         return 0;
     }
 
-	if (pixadebug) {
-		lept_rmdir("lept/comptile");
-        //lept_mkdir("lept/comptile");
-    }
+	leptDebugAddStepLevel();
+	leptDebugSetFreshCleanFilePathPart("comptile");
+
+	//lept_rmdir("lept/comptile");
+    //lept_mkdir("lept/comptile");
 
         /* Evaluate histograms in each tile.  Remove white before
          * computing EMD, because there are may be a lot of white
@@ -2851,7 +2853,12 @@ NUMA      *na1, *na2, *nadist, *nascore;
     minscore = 1.0;
     nadist = numaCreate(n);
     nascore = numaCreate(n);
-    bmf = (pixadebug) ? bmfCreate(NULL, 6) : NULL;
+	bmf = NULL;
+	pixadbplots = NULL;
+	if (pixadebug) {
+		bmf = bmfCreate(NULL, 6);
+		pixadbplots = pixaCreate(0);
+	}
     for (i = 0; i < n; i++) {
         na1 = numaaGetNuma(naa1, i, L_CLONE);
         na2 = numaaGetNuma(naa2, i, L_CLONE);
@@ -2868,8 +2875,8 @@ NUMA      *na1, *na2, *nadist, *nascore;
         numaAddNumber(nascore, score);
         minscore = L_MIN(minscore, score);
         if (pixadebug) {
-            snprintf(buf1, sizeof(buf1), "/tmp/lept/comptile/plot.%d", i);
-            gplotSimple2(na1, na2, GPLOT_PNG, buf1, "Histos");
+            PIX *pixplot = gplotSimplePix2(na1, na2, leptDebugGenFilepath("comptile-plot"), "Histos");
+			pixaAddPix(pixadbplots, pixplot, L_INSERT);
         }
         numaDestroy(&na1);
         numaDestroy(&na2);
@@ -2879,8 +2886,7 @@ NUMA      *na1, *na2, *nadist, *nascore;
     if (pixadebug) {
         for (i = 0; i < n; i++) {
             PIX  *pix1, *pix2;
-            snprintf(buf1, sizeof(buf1), "/tmp/lept/comptile/plot.%d.png", i);
-            pix1 = pixRead(buf1);
+			pix1 = pixaGetPix(pixadbplots, i, L_CLONE);
             numaGetFValue(nadist, i, &dist);
             numaGetFValue(nascore, i, &score);
             snprintf(buf2, sizeof(buf2),
@@ -2889,12 +2895,16 @@ NUMA      *na1, *na2, *nadist, *nascore;
             pixaAddPix(pixadebug, pix2, L_INSERT);
             pixDestroy(&pix1);
         }
-        lept_stderr("Writing to /tmp/lept/comptile/comparegray.pdf\n");
-        pixaConvertToPdf(pixadebug, 300, 1.0, L_FLATE_ENCODE, 0, NULL,
-                         "/tmp/lept/comptile/comparegray.pdf");
-        numaWriteDebug("/tmp/lept/comptile/scores.na", nascore);
-        numaWriteDebug("/tmp/lept/comptile/dists.na", nadist);
+		pixaDestroy(&pixadbplots);
+		const char* pdfname = leptDebugGenFilepath("comparegray.pdf");
+        lept_stderr("Writing to %s\n", pdfname);
+        pixaConvertToPdf(pixadebug, 300, 1.0, L_FLATE_ENCODE, 0, NULL, pdfname);
+		stringDestroy(&pdfname);
+        numaWriteDebug(leptDebugGenFilepath("scores.na"), nascore);
+        numaWriteDebug(leptDebugGenFilepath("dists.na"), nadist);
     }
+
+	leptDebugPopStepLevel();
 
     bmfDestroy(&bmf);
     numaDestroy(&nadist);
@@ -3118,7 +3128,7 @@ l_int32    w, h, i, j, nx, ny, ngr;
 l_float32  score, minscore, maxval1, maxval2, dist;
 L_BMF     *bmf;
 NUMA      *na1, *na2, *na3, *na4, *na5, *na6, *na7;
-PIX       *pix3, *pix4;
+PIX       *pix3, *pix4, *pixdbg;
 PIXA      *pixa1, *pixa2;
 
     if (!pscore)
@@ -3157,8 +3167,9 @@ PIXA      *pixa1, *pixa2;
         numaGetMax(na4, &maxval2, NULL);
         na5 = numaTransform(na3, 0, 255.0 / maxval1);
         na6 = numaTransform(na4, 0, 255.0 / maxval2);
+		pixdbg = NULL;
         if (pixadebug) {
-            gplotSimple2(na5, na6, GPLOT_PNG, "/tmp/lept/comp/plot1", "Histos");
+			pixdbg = gplotSimplePix2(na5, na6, "/tmp/lept/comp/plot1", "Histos");
         }
 
             /* To compare histograms, use the normalized earthmover distance.
@@ -3180,8 +3191,7 @@ PIXA      *pixa1, *pixa2;
             pix6 = pixScaleToSize(pix4, wscale, 0);
             pixaAddPix(pixa3, pix5, L_INSERT);
             pixaAddPix(pixa3, pix6, L_INSERT);
-            pix7 = pixRead("/tmp/lept/comp/plot1.png");
-			// TODO: grab the images straight from the gplotSimple2() call above: forego the round-trip via the filesystem..
+			pix7 = pixClone(pixdbg);
             pix8 = pixScaleToSize(pix7, 700, 0);
             snprintf(buf, sizeof(buf), "%5.3f", score);
             pix9 = pixAddTextlines(pix8, bmf, buf, 0x0000ff00, L_ADD_RIGHT);
@@ -3190,7 +3200,7 @@ PIXA      *pixa1, *pixa2;
             pixaAddPix(pixadebug, pix10, L_INSERT);
             pixDestroy(&pix7);
             pixDestroy(&pix8);
-            pixaDestroy(&pixa3);
+			pixaDestroy(&pixa3);
         }
         numaDestroy(&na1);
         numaDestroy(&na2);
@@ -3200,7 +3210,8 @@ PIXA      *pixa1, *pixa2;
         numaDestroy(&na6);
         pixDestroy(&pix3);
         pixDestroy(&pix4);
-    }
+		pixDestroy(&pixdbg);
+	}
     *pscore = minscore;
 
     if (pixadebug) {
@@ -3685,7 +3696,7 @@ PIX       *pix3, *pix4;
         pix3 = fpixDisplayMaxDynamicRange(fpix);
         pix4 = pixExpandReplicate(pix3, 20);
 		if (leptIsDebugModeActive()) {
-			const char* pixpath = leptDebugGenFilepath("/tmp/lept/comp/correl_%d.png", leptDebugGetStepId());
+			const char* pixpath = leptDebugGenFilepath("comp/correl.png");
 			pixWrite(pixpath, pix4, IFF_PNG);
 		}
         pixDestroy(&pix3);

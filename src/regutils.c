@@ -141,6 +141,7 @@ regTestSetup(int argc,
 	int           opt;
 	int           longopt_index;
 	int           debug_mode = 1;
+	int           gplot_mode = 1;
 	int           list_argv_mode = 0;
 
 	if (!prp)
@@ -157,7 +158,6 @@ regTestSetup(int argc,
 	rp->testappmode = 0;
 	rp->argv_search_mode = L_LOCATE_IN_FIRST_ANY;
 	rp->help_mode = (argc <= 1 ? stringNew("?") : NULL);
-	rp->tmpdirpath = NULL;
 	rp->outpath = NULL;
 	rp->searchpaths = sarrayCreate(4);
 	if (!rp->searchpaths)
@@ -197,12 +197,7 @@ regTestSetup(int argc,
 			continue;
 
 		case 1:
-			if (rp->tmpdirpath) {
-				L_ERROR("Must not define tmpdirpath twice on the command line.\n", __func__);
-				fail = TRUE;
-				continue;
-			}
-			rp->tmpdirpath = stringNew(optarg);
+			leptDebugSetTmpDirBasePath(optarg);
 			continue;
 
 		case 2:
@@ -216,15 +211,15 @@ regTestSetup(int argc,
 
 		case 3:
 			// process the searchpaths list: first, determine which separator has been used: | ;
-		{
-			const char* sep_marker_p = strpbrk(optarg, "|;");
-			char sep_marker[2] = { (sep_marker_p ? *sep_marker_p : ';'), 0 };
-			SARRAY* srch_arr = sarrayCreate(1);
-			sarraySplitString(srch_arr, optarg, sep_marker);
-			// append to existing set:
-			sarrayJoin(rp->searchpaths, srch_arr);
-			sarrayDestroy(&srch_arr);
-		}
+			if (TRUE) {
+				const char* sep_marker_p = strpbrk(optarg, "|;");
+				char sep_marker[2] = { (sep_marker_p ? *sep_marker_p : ';'), 0 };
+				SARRAY* srch_arr = sarrayCreate(1);
+				sarraySplitString(srch_arr, optarg, sep_marker);
+				// append to existing set:
+				sarrayJoin(rp->searchpaths, srch_arr);
+				sarrayDestroy(&srch_arr);
+			}
 			continue;
 
 		case 'd':
@@ -240,29 +235,29 @@ regTestSetup(int argc,
 			continue;
 
 		case 'q':
-		{
-			int m = atoi(optarg);
-			switch (m) {
-			case L_LOCATE_IN_ALL:
-			case L_LOCATE_IN_FIRST_ANY:
-			case L_LOCATE_IN_FIRST_ONE:
-			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_ALL:
-			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ANY:
-			case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ONE:
-				rp->argv_search_mode = (l_LocateMode_t)m;
-				break;
+			if (TRUE) {
+				int m = atoi(optarg);
+				switch (m) {
+				case L_LOCATE_IN_ALL:
+				case L_LOCATE_IN_FIRST_ANY:
+				case L_LOCATE_IN_FIRST_ONE:
+				case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_ALL:
+				case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ANY:
+				case L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ONE:
+					rp->argv_search_mode = (l_LocateMode_t)m;
+					break;
 
-			default:
-				L_ERROR("Unknown/unsupported file arg locate/expand mode: %d. Supported modes are: %d (all), %d (all-in-first), %d (first one), %d (all, ignore cwd), %d (all-in-first, ignore cwd), %d (first one, ignore cwd)\n", __func__, m,
-					L_LOCATE_IN_ALL,
-					L_LOCATE_IN_FIRST_ANY,
-					L_LOCATE_IN_FIRST_ONE,
-					L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_ALL,
-					L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ANY,
-					L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ONE);
-				break;
+				default:
+					L_ERROR("Unknown/unsupported file arg locate/expand mode: %d. Supported modes are: %d (all), %d (all-in-first), %d (first one), %d (all, ignore cwd), %d (all-in-first, ignore cwd), %d (first one, ignore cwd)\n", __func__, m,
+						L_LOCATE_IN_ALL,
+						L_LOCATE_IN_FIRST_ANY,
+						L_LOCATE_IN_FIRST_ONE,
+						L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_ALL,
+						L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ANY,
+						L_LOCATE_IGNORE_CURRENT_DIR_FLAG | L_LOCATE_IN_FIRST_ONE);
+					break;
+				}
 			}
-		}
 			continue;
 
 		case 'h':
@@ -359,17 +354,10 @@ regTestSetup(int argc,
         return 1;
     }
 
-	if (rp->cmd_mode == L_REG_BASIC_EXEC) {
-		leptDebugSetFileBasepath("lept/regout");
-	}
-	else {
-		leptDebugSetFileBasepath("lept");
-		leptDebugAppendFileBasepath(output_path_base);
-	}
 	leptDebugSetStepLevelAsForeverIncreasing(FALSE);
-	leptDebugSetProcessName(testname);
 
 	leptActivateDebugMode(!!debug_mode, 0);
+	leptActivateGplotMode(!!gplot_mode, 0);
 
     setLeptDebugOK(1);  /* required for testing */
 
@@ -388,8 +376,7 @@ regTestSetup(int argc,
         /* Only open a stream to a temp file for the 'compare' case */
 	switch (rp->cmd_mode) {
 	case L_REG_COMPARE:
-		leptDebugSetFileBasepath("lept/regout");
-		leptDebugAppendFileBasepath(output_path_base);
+		leptDebugSetFileBasepath("/tmp/lept/regout");
 		rp->tempfile = stringNew("/tmp/lept/regout/regtest_output.txt");
 		rp->fp = fopenWriteStream(rp->tempfile, "wb");
 		if (rp->fp == NULL) {
@@ -399,20 +386,17 @@ regTestSetup(int argc,
 		break;
 
 	case L_REG_GENERATE:
-		leptDebugSetFileBasepath("lept/golden");
-		leptDebugAppendFileBasepath(output_path_base);
+		leptDebugSetFileBasepath("/tmp/lept/golden");
 		//lept_mkdir("lept/golden");
 		break;
 
 	case L_REG_DISPLAY:
-		leptDebugSetFileBasepath("lept/display");
-		leptDebugAppendFileBasepath(output_path_base);
+		leptDebugSetFileBasepath("/tmp/lept/display");
 		leptSetInDisplayMode(TRUE);
 		break;
 
 	default: // L_REG_BASIC_EXEC;
-		leptDebugSetFileBasepath("lept/prog");
-		leptDebugAppendFileBasepath(output_path_base);
+		leptDebugSetFileBasepath("/tmp/lept/prog");
 		break;
 	}
 
@@ -420,6 +404,13 @@ regTestSetup(int argc,
 	/* Make sure the lept/regout subdirectory exists */
 	lept_mkdir(leptDebugGetFileBasePath());
 #endif
+
+	rp->base_step_level = leptDebugGetStepLevel();
+
+	if (output_path_base && *output_path_base) {
+		leptDebugSetFilePathPart(output_path_base);
+		rp->base_step_level = leptDebugAddStepLevel();
+	}
 
         /* Print out test name and both the leptonica and
          * image library versions */
@@ -471,10 +462,24 @@ regTestSetup(int argc,
 	}
 
 	// now deal with the responsefiles (if any) and attempt to resolve every argv[] path we've got:
-	SARRAY* lcl_arr = leptProcessResponsefileLines(rp->argvfiles, rp->searchpaths, rp->argv_search_mode, rp->tmpdirpath, "\x01" /* stmt marker */, "\x02 FAIL: " /* fail marker */, "\x03# " /* ignore marker */);
+	SARRAY* lcl_arr = leptProcessResponsefileLines(rp->argvfiles, rp->searchpaths, rp->argv_search_mode, rp->outpath, "\x01" /* stmt marker */, "\x02 FAIL: " /* fail marker */, "\x03# " /* ignore marker */);
 	sarrayDestroy(&rp->argvfiles);
 	rp->argvfiles = lcl_arr;
+	if (lcl_arr == NULL) {
+		rp->success = FALSE;
+		return ERROR_INT("lcl_arr could not be allocated", __func__, 1);
+	}
 
+	// heuristic estimate for a good display width of the step numbers:
+	// as these are, at least at level 2, related to our input set, we take
+	// the size of *that* for a start.
+	{
+		int count = sarrayGetCount(lcl_arr);
+		unsigned int dw = (unsigned int)(ceil(log10(count + 0.1)));
+		if (dw < 2)
+			dw = 2;
+		leptDebugSetStepDisplayWidth(dw);
+	}
 
 	if (list_argv_mode) {
 		lept_stderr("\n========== EXPANDED CLI input 'lines' (a.k.a. argv[] set) ============\n");
@@ -1026,6 +1031,7 @@ char  namebuf[256];
     changeFormatForMissingLib(&format);
 
         /* Generate the local file name */
+	assert(getFormatExtension(format) != NULL);
     snprintf(namebuf, sizeof(namebuf), "/tmp/lept/regout/%s.%02d.%s",
              rp->testname, rp->index + 1, getFormatExtension(format));
 

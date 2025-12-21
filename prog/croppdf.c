@@ -91,7 +91,7 @@
  *    in RGB ppm images representing page images  at about 300 ppi.
  *    These images are about 25MB, and are written quickly because
  *    there is no compression.
-
+ *
  *    N.B.  This requires running pdftoppm from the Poppler package
  *          of pdf utilities.  For non-unix systems, this requires
  *          installation of the cygwin Poppler package:
@@ -122,7 +122,7 @@ l_float32  maxwiden;
 SARRAY    *safiles;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "crop", &rp))
+	if (regTestSetup(argc, argv, "crop", NULL, &rp))
 		return 1;
 
     if (argc != 11)

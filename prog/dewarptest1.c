@@ -64,7 +64,7 @@ PIX        *pixs, *pixn, *pixg, *pixb, *pixd, *pixt1, *pixt2;
 PIX        *pixs2, *pixn2, *pixg2, *pixb2, *pixd2;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "dewarp_model", &rp))
+	if (regTestSetup(argc, argv, "dewarp_model", NULL, &rp))
 		return 1;
 
     lept_rmdir("lept/dewmod");
@@ -86,9 +86,11 @@ L_REGPARAMS* rp;
     dewarpaUseBothArrays(dewa, 1);
     dew1 = dewarpCreate(pixb, 35);
     dewarpaInsertDewarp(dewa, dew1);
-	leptDebugSetFilenameBasename("/tmp/lept/model/dewarp_model1.pdf");
+
+	leptDebugSetFilePathPartFromTail("/tmp/lept/model/dewarp_model1.pdf", -2);
 	dewarpBuildPageModel(dew1);
-	leptDebugSetFilenameBasename("/tmp/lept/model/dewarp_apply1.pdf");
+
+	leptDebugSetFilePathPartFromTail("/tmp/lept/model/dewarp_apply1.pdf", -2);
 	dewarpaApplyDisparity(dewa, 35, pixg, 200, 0, 0, &pixd);
 
          /* Write out some of the files to be imaged */
@@ -148,7 +150,7 @@ L_REGPARAMS* rp;
     dewarpaInsertDewarp(dewa, dew2);
     dewarpaInsertRefModels(dewa, 0);
     dewarpaInfo(stderr, dewa);
-	leptDebugSetFilenameBasename("/tmp/lept/model/dewarp_apply2.pdf");
+	leptDebugSetFilePathPartFromTail("/tmp/lept/model/dewarp_apply2.pdf", 0);
 	dewarpaApplyDisparity(dewa, 7, pixg2, 200, 0, 0, &pixd2);
     dewarpaDestroy(&dewa);
 

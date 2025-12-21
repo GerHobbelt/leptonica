@@ -241,6 +241,7 @@ L_DEWARP    *dew;
         return ERROR_INT("dewa not defined", __func__, 1);
 
 	l_ok debugflag = leptIsDebugModeActive();
+	unsigned int dbg_step_level = leptDebugAddStepLevel();
 
 	if (debugflag) {
 		//lept_mkdir("lept/dewarp");
@@ -249,21 +250,22 @@ L_DEWARP    *dew;
         /* Generate the page model */
     dew = dewarpCreate(pixb, 0);
     dewarpaInsertDewarp(dewa, dew);
-    leptDebugSetFilenameForPrefix("/tmp/lept/dewarp/singlepage_model.pdf", -2);
+	leptDebugSetFilePathPartFromTail("/tmp/lept/dewarp/singlepage_model.pdf", -2);
     dewarpBuildPageModel(dew);
     dewarpaModelStatus(dewa, 0, &vsuccess, NULL);
-    if (vsuccess == 0) {
+	if (vsuccess == 0) {
         L_ERROR("failure to build model for vertical disparity\n", __func__);
         *ppixd = pixCopy(NULL, pixs);
         return 0;
     }
 
         /* Apply the page model */
-	leptDebugSetFilenameForPrefix("/tmp/lept/dewarp/singlepage_apply.pdf", -2);
+	leptDebugSetFilePathPartFromTail("/tmp/lept/dewarp/singlepage_apply.pdf", -2);
     ret = dewarpaApplyDisparity(dewa, 0, pixs, 255, 0, 0, ppixd);
     if (ret)
         L_ERROR("invalid model; failure to apply disparity\n", __func__);
-    return 0;
+	leptDebugPopStepLevelTo(dbg_step_level);
+	return 0;
 }
 
 

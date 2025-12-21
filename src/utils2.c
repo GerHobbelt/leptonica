@@ -3765,32 +3765,16 @@ genPathname(const char* dir,
 	basedir = pathSafeJoin(cdir, dir);
 
 	// don't listen to LeptDebugOK any more: we ALWAYS generate the /tmp/lept-XYZ basedir -- done that above.
-	pathout = pathSafeJoin(basedir, fname);
-	stringDestroy(&basedir);
+	if (fname != NULL) {
+		pathout = pathSafeJoin(basedir, fname);
+		stringDestroy(&basedir);
+	}
+	else {
+		pathout = basedir;
+	}
 	stringDestroy(&cdir);
 
 	//convertSepCharsInPath(pathout, UNIX_PATH_SEPCHAR);   <-- done by pathJoin() already!
-
-	// see if the path has a 'random ID to be injected here' marker:
-	// (used in, f.e.: leptDebugGetFileBasePath() when userland hasn't configured some expected components)
-	{
-		char* p;
-		while ((p = strchr(pathout, '\x1F')) != NULL) {
-			char idstr[7];
-			leptDebugMkRndToken6(idstr);
-			idstr[6] = 0;
-
-			size_t l1 = p - pathout;
-			char* p1 = (l1 > 0 ? stringCopySegment(pathout, 0, l1) : NULL);
-			char* p2 = (p[1] != '\0' ? stringCopySegment(pathout, l1 + 1, -1) : NULL);
-
-			char* np = stringConcatNew(stringOrEmpty(p1), idstr, stringOrEmpty(p2), NULL);
-			stringDestroy(&pathout);
-			stringDestroy(&p1);
-			stringDestroy(&p2);
-			pathout = np;
-		}
-	}
 
 	return pathout;
 }

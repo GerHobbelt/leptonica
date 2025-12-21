@@ -48,7 +48,7 @@ int main(int    argc,
 {
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "partify", &rp))
+	if (regTestSetup(argc, argv, "partify", NULL, &rp))
 		return 1;
 
     if (argc != 1)
@@ -56,12 +56,12 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("lept/partify");
 
-	leptDebugSetFilenameForPrefix("debug", 0);
+	leptDebugSetFilePathPartFromTail("debug", 0);
 #if 0
-	leptDebugReplaceEntireFilePathPart("bois");
+	leptDebugSetFilePathPartFromTail("bois", -1);
 	partifyFiles(".", "bois", 3);
 #else
-	leptDebugReplaceEntireFilePathPart("ortiz");
+	leptDebugSetFilePathPartFromTail("ortiz", -1);
 	partifyFiles(".", "ortiz", 5);
 #endif
 

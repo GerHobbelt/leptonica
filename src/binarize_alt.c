@@ -214,7 +214,7 @@ struct BG_THRES_PT_INFO {
 
 			if (pixplt) {
 				//lept_mkdir("lept/otsu");
-				const char* pixd_path = leptDebugGenFilepathEx("lept/otsu", "%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
+				const char* pixd_path = leptDebugGenFilepath("%s.histo4bin-%dx%dof%dx%d.SXY.%d.%d.%d.%d.ScoreF-%.1f.png", __func__, i, j, nx, ny, sx, sy, smoothx, smoothy, scorefract);
 				pixWrite(pixd_path, pixplt, IFF_PNG);
 				pixDestroy(&pixplt);
 			}
@@ -426,7 +426,7 @@ struct BG_THRES_PT_INFO {
 						/* Plot the score function */
 						char title[32];
 						//lept_mkdir("lept/otsu3");
-						const char* plot_path = leptDebugGenFilepathEx("lept/otsu3", "%s.plots.%d", __func__, i);
+						const char* plot_path = leptDebugGenFilepath("%s.plots.%d", __func__, i);
 						snprintf(title, sizeof(title), "Plot %d", i);
 						gplot = gplotCreate(plot_path, GPLOT_PNG,
 							"Otsu score function for splitting",

@@ -127,6 +127,7 @@ struct L_RegParams
     char    *testname;  /*!< name of test, without '_reg'                     */
     char    *tempfile;  /*!< name of temp file for compare mode output        */
 	l_atomic index;     /*!< index into saved files for this test; 0-based    */
+	int      base_step_level;
 	int      argv_index;               /*!< index of the next argv[] element from argvfiles[] to produce via regGetArg() */
 	int      argv_index_base;          /*!< start-of-round index into argvfiles[]; 0 on the first round; incremented by %argv_step_size_per_round */
 	int      argv_step_size_per_round; /*!< number of argv[] elements to move forward per test round; default: -1/0 ~ all argv[] element consumed in the current round */
@@ -141,10 +142,45 @@ struct L_RegParams
 	const char* help_mode;
 	const char* tmpdirpath;
 	const char* outpath;
+	const char* results_file_path; // --> .../reg_results.txt
+
 	SARRAY* searchpaths;
 	SARRAY* argvfiles;
 };
 typedef struct L_RegParams  L_REGPARAMS;
+
+enum L_CmdOptionArgRequirement {
+	L_CMD_OPT_NIL = 0,
+	L_CMD_OPT_W_NO_ARG,					// e.g. '-x'
+	L_CMD_OPT_W_REQUIRED_ARG,			// e.g. '-r VAL'
+	L_CMD_OPT_W_OPTIONAL_ARG,			// e.g. '-o [VAL]'
+	L_CMD_VAR_ASSIGNMENT,				// e.g. 'VARNAME=VAL'
+	L_CMD_PLAIN_OPTIONAL_ARGUMENT,		// e.g. '[VAL]'
+	L_CMD_PLAIN_REQUIRED_ARGUMENT,		// e.g. 'VAL'
+};
+
+struct L_RegCmdOptionSpec;
+typedef struct L_RegCmdOptionSpec *L_REGCMD_OPTION_SPEC;
+
+typedef int L_RegCmdOptionHandler_f(const L_REGCMD_OPTION_SPEC spec, const char *value, int *argc_ref, const char **argv_ref);
+
+struct L_RegCmdOptionSpec {
+	enum L_CmdOptionArgRequirement type;
+	const char* name;
+	const char* help_description;
+	L_RegCmdOptionHandler_f *handler;
+	void* data;
+};
+
+struct L_RegExtraConfigParams
+{
+	const char *testname;  /*!< name of test, without '_reg'                     */
+	int      min_required_argc;
+	int      max_required_argc;
+	const L_REGCMD_OPTION_SPEC extra_options;		/*!< NULL or NIL-terminated array of additional command line options */
+	l_LocateMode_t   argv_search_mode;		/*!< argv[] path resolve/expansion mode: l_LocateMode_t */
+};
+typedef struct L_RegExtraConfigParams  L_REG_EXTRA_CONFIG;
 
 
     /*! Running modes for the test */

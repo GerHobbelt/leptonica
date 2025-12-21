@@ -78,7 +78,7 @@ l_float32    minupconf, minratio;
 PIX         *pixs, *pixd;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "text_orient", &rp))
+	if (regTestSetup(argc, argv, "text_orient", NULL, &rp))
 		return 1;
 
     if (argc != 5) {
@@ -95,6 +95,7 @@ L_REGPARAMS* rp;
 	pixd = pixOrientCorrect(pixs, minupconf, minratio, NULL, NULL, NULL);
 
     pixformat = pixChooseOutputFormat(pixd);
+	assert(getFormatExtension(pixformat) != NULL);
     snprintf(buf, BUF_SIZE, "%s.%s", fileout,
 		     getFormatExtension(pixformat));
     pixWrite(buf, pixd, pixformat);

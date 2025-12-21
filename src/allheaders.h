@@ -400,6 +400,7 @@ LEPT_DLL extern L_BYTEA * l_byteaCopy ( L_BYTEA *bas, l_int32 copyflag );
 LEPT_DLL extern void l_byteaDestroy ( L_BYTEA **pba );
 LEPT_DLL extern size_t l_byteaGetSize ( L_BYTEA *ba );
 LEPT_DLL extern l_uint8 * l_byteaGetData ( L_BYTEA *ba, size_t *psize );
+LEPT_DLL extern l_uint8 * l_byteaGetDataRef ( L_BYTEA *ba );
 LEPT_DLL extern l_uint8 * l_byteaCopyData ( L_BYTEA *ba, size_t *psize );
 LEPT_DLL extern l_ok l_byteaAppendData ( L_BYTEA *ba, const l_uint8 *newdata, size_t newbytes );
 LEPT_DLL extern l_ok l_byteaAppendString ( L_BYTEA *ba, const char *str );
@@ -1514,6 +1515,7 @@ LEPT_DLL extern l_int32 pixGetInputFormat ( const PIX *pix );
 LEPT_DLL extern l_int32 pixSetInputFormat ( PIX *pix, l_int32 informat );
 LEPT_DLL extern l_int32 pixCopyInputFormat ( PIX *pixd, const PIX *pixs );
 LEPT_DLL extern l_int32 pixSetSpecial ( PIX *pix, l_int32 special );
+LEPT_DLL extern l_int32 pixGetSpecial ( PIX *pix );
 LEPT_DLL extern char * pixGetText ( PIX *pix );
 LEPT_DLL extern l_ok pixSetText ( PIX *pix, const char *textstring );
 LEPT_DLL extern l_ok pixAddText ( PIX *pix, const char *textstring );
@@ -2773,7 +2775,7 @@ LEPT_DLL extern SARRAY* pathDeducePathSet (const SARRAY *pathset, const char *ab
 LEPT_DLL extern char * appendSubdirs ( const char *basedir, const char *subdirs );
 LEPT_DLL extern l_ok convertSepCharsInPath ( char *path, l_int32 type );
 LEPT_DLL extern l_int32 getPathRootLength ( const char* path );
-LEPT_DLL extern char * getPathBasename ( const char* path, l_int32 strip_off_parts_code );
+LEPT_DLL extern char * pathExtractTail ( const char* path, l_int32 strip_off_parts_code );
 LEPT_DLL extern uint64_t getPathHash ( const char* path );
 LEPT_DLL extern char * genPathname ( const char *dir, const char *fname );
 //LEPT_DLL extern char * sanitizePathToIdentifier ( char *dst, size_t dstsize, const char *str, const char *additional_acceptable_set );
@@ -2808,6 +2810,15 @@ LEPT_DLL extern l_ok pixWriteWebP ( const char *filename, PIX *pixs, l_int32 qua
 LEPT_DLL extern l_ok pixWriteStreamWebP ( FILE *fp, PIX *pixs, l_int32 quality, l_int32 lossless );
 LEPT_DLL extern l_ok pixWriteMemWebP ( l_uint8 **pencdata, size_t *pencsize, PIX *pixs, l_int32 quality, l_int32 lossless );
 LEPT_DLL extern l_int32 l_jpegSetQuality ( l_int32 new_quality );
+LEPT_DLL extern l_int32 l_pngSetQuality ( l_int32 new_quality );
+LEPT_DLL extern l_int32 l_tiffSetQuality ( l_int32 new_quality );
+LEPT_DLL extern l_int32 l_webpSetQuality ( l_int32 new_quality );
+LEPT_DLL extern l_int32 l_jp2SetQuality ( l_int32 new_quality );
+LEPT_DLL extern l_int32 l_jpegGetQuality ( void );
+LEPT_DLL extern l_int32 l_pngGetQuality ( void );
+LEPT_DLL extern l_int32 l_tiffGetQuality ( void );
+LEPT_DLL extern l_int32 l_webpGetQuality ( void );
+LEPT_DLL extern l_int32 l_jp2GetQuality ( void );
 LEPT_DLL extern void setLeptDebugOK ( l_int32 allow );
 LEPT_DLL extern l_ok pixaWriteFiles ( const char *rootname, PIXA *pixa, l_int32 format );
 LEPT_DLL extern l_ok pixWriteDebug ( const char *fname, PIX *pix, l_int32 format );
@@ -2818,6 +2829,7 @@ LEPT_DLL extern l_ok pixWriteImpliedFormat ( const char *filename, PIX *pix, l_i
 LEPT_DLL extern l_int32 pixChooseOutputFormat ( PIX *pix );
 LEPT_DLL extern l_int32 getImpliedFileFormat ( const char *filename );
 LEPT_DLL extern l_int32 getFormatFromExtension ( const char *extension );
+LEPT_DLL extern const char * getFormatExtension ( l_int32 format );
 LEPT_DLL extern l_ok pixGetAutoFormat ( PIX *pix, l_int32 *pformat );
 LEPT_DLL extern const char * getFormatExtension ( l_int32 format );
 LEPT_DLL extern l_ok isSupportedFormat (l_int32 format);
@@ -2836,38 +2848,34 @@ LEPT_DLL extern void leptCreateDiagnoticsSpecInstance ( void );
 LEPT_DLL extern void leptDestroyDiagnoticsSpecInstance ( void );
 
 LEPT_DLL extern void leptDebugSetFileBasepath ( const char * directory );
-LEPT_DLL extern void leptDebugAppendFileBasepath ( const char * directory );
 LEPT_DLL extern const char * leptDebugGetFileBasePath (void);
 
-LEPT_DLL extern void leptDebugAppendFilePathPart ( const char * directory );
-LEPT_DLL extern void leptDebugReplaceEntireFilePathPart ( const char * directory );
-LEPT_DLL extern void leptDebugReplaceOneFilePathPart ( const char * directory );
-LEPT_DLL extern void leptDebugEraseFilePathPart ( void );
-LEPT_DLL extern void leptDebugEraseOneFilePathPart ( void );
+LEPT_DLL extern void leptDebugSetFilePathPart ( const char * directory );
+LEPT_DLL extern void leptDebugSetFilePathPartFromTail ( const char* filepath, l_int32 strip_off_parts_code );
+LEPT_DLL extern void leptDebugSetFreshCleanFilePathPart ( const char * directory_namebase );
 LEPT_DLL extern const char * leptDebugGetFilePathPart ( void );
 
-LEPT_DLL extern void leptDebugSetFilenameForPrefix ( const char * source_filename, l_int32 strip_off_parts_code );
-LEPT_DLL extern const char * leptDebugGetFilenameForPrefix ( void );
+LEPT_DLL extern void leptDebugSetFilePathPartAtSLevel ( int relative_depth, const char * directory );
+LEPT_DLL extern void leptDebugSetFilePathPartAtSLevelFromTail ( int relative_depth, const char* filepath, l_int32 strip_off_parts_code );
+LEPT_DLL extern const char * leptDebugGetFilePathPartAtSLevel ( int relative_depth );
 
-LEPT_DLL extern void leptDebugSetFilenameBasename ( _In_z_ _Printf_format_string_ const char * filename_fmt, ... ) __attribute__((__format__(__printf__, 2, 3)));
-LEPT_DLL extern const char * leptDebugGetFilenameBasename ( void );
-
-LEPT_DLL extern void leptDebugSetStepId ( uint32_t numeric_id );
+LEPT_DLL extern void leptDebugSetStepId ( unsigned int numeric_id );
 LEPT_DLL extern void leptDebugIncrementStepId ( void );
-LEPT_DLL extern uint32_t leptDebugGetStepId ( void );
+LEPT_DLL extern unsigned int leptDebugGetStepId ( void );
 LEPT_DLL extern const char *leptDebugGetStepIdAsString ( void );
 LEPT_DLL extern void leptDebugMarkStepIdForIncrementing ( void );
 LEPT_DLL extern void leptDebugSetStepLevelAsForeverIncreasing ( l_ok enable );
 
-LEPT_DLL extern void leptDebugSetStepIdAtDepth ( int relative_depth, uint32_t numeric_id );
-LEPT_DLL extern void leptDebugIncrementStepIdAtDepth ( int relative_depth );
-LEPT_DLL extern uint32_t leptDebugGetStepIdAtLevel ( int relative_depth );
-LEPT_DLL extern void leptDebugSetStepLevelAtLevelAsForeverIncreasing ( int relative_depth, l_ok enable );
+LEPT_DLL extern void leptDebugSetStepIdAtSLevel ( int relative_depth, unsigned int numeric_id );
+LEPT_DLL extern void leptDebugIncrementStepIdAtSLevel ( int relative_depth );
+LEPT_DLL extern unsigned int leptDebugGetStepIdAtSLevel ( int relative_depth );
+LEPT_DLL extern void leptDebugSetStepLevelAtSLevelAsForeverIncreasing ( int relative_depth, l_ok enable );
 
 LEPT_DLL extern NUMA * leptDebugGetStepNuma ( void );
-LEPT_DLL extern uint16_t leptDebugGetStepDepth ( void );
-LEPT_DLL extern uint16_t leptDebugAddStepLevel ( void );
-LEPT_DLL extern uint32_t leptDebugPopStepLevel ( void );
+LEPT_DLL extern unsigned int leptDebugGetStepLevel ( void );
+LEPT_DLL extern unsigned int leptDebugAddStepLevel ( void );
+LEPT_DLL extern unsigned int leptDebugPopStepLevel ( void );
+LEPT_DLL extern void leptDebugPopStepLevelTo ( int relative_depth );
 
 LEPT_DLL extern void leptDebugSetStepDisplayWidth ( unsigned int width_per_level );
 LEPT_DLL extern unsigned int leptDebugGetStepDisplayWidth ( void );
@@ -2875,14 +2883,10 @@ LEPT_DLL extern unsigned int leptDebugGetStepDisplayWidth ( void );
 LEPT_DLL extern void leptDebugSetHashId ( uint64_t hash_id );
 LEPT_DLL extern uint64_t leptDebugGetHashId ( void );
 
-LEPT_DLL extern void leptDebugSetProcessName ( const char * name );
-LEPT_DLL extern const char * leptDebugGetProcessName ( void );
-
+LEPT_DLL extern void leptDebugSetTmpDirBasePath ( const char *basepath );
 LEPT_DLL extern const char * leptDebugGenTmpDirPath ( void );
 
-LEPT_DLL extern const char * leptDebugGenFilename ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 2, 3)));
-LEPT_DLL extern const char * leptDebugGenFilepath ( _In_z_ _Printf_format_string_ const char * path_fmt_str , ... ) __attribute__((__format__(__printf__, 2, 3)));
-LEPT_DLL extern const char * leptDebugGenFilepathEx ( const char * directory, _In_z_ _Printf_format_string_ const char * path_fmt_str, ... ) __attribute__((__format__(__printf__, 2, 3)));
+LEPT_DLL extern char * leptDebugGenFilepath ( _In_z_ _Printf_format_string_ const char * path_fmt_str , ... ) __attribute__((__format__(__printf__, 2, 3)));
 LEPT_DLL extern const char * leptDebugGetLastGenFilepath ( void );
 LEPT_DLL extern void leptDebugClearLastGenFilepathCache ( void );
 
@@ -2895,7 +2899,11 @@ LEPT_DLL extern void leptSetInRegressionTestMode ( l_ok activate );
 LEPT_DLL extern l_ok leptIsDebugModeActive ( void );
 LEPT_DLL extern void leptActivateDebugMode ( l_int32 activate_count_add, l_int32 activate_count_subtract );
 
+LEPT_DLL extern l_ok leptIsGplotModeActive ( void );
+LEPT_DLL extern void leptActivateGplotMode ( l_int32 activate_count_add, l_int32 activate_count_subtract );
+
 LEPT_DLL extern void leptDebugMkRndToken6 ( char dest[6] );
+LEPT_DLL extern unsigned int leptDebugGetForeverIncreasingIdValue ( void );
 
 LEPT_DLL extern char* string_asprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, ... ) __attribute__((__format__(__printf__, 1, 2)));
 LEPT_DLL extern char* string_vasprintf ( _In_z_ _Printf_format_string_ const char * filename_fmt_str, va_list args );

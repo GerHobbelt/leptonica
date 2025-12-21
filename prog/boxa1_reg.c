@@ -61,7 +61,7 @@ PIX          *pix1;
 PTA          *pta;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "boxa", &rp))
+	if (regTestSetup(argc, argv, "boxa", NULL, &rp))
 		return 1;
 
     //lept_mkdir("lept/boxa");
@@ -115,8 +115,8 @@ L_REGPARAMS* rp;
     boxa1 = boxaReadMem(data1, size1);
     boxaWriteMem(&data2, &size2, boxa1);
     boxa2 = boxaReadMem(data2, size2);
-	const char* boxpath1 = leptDebugGenFilepath("/tmp/lept/boxa/boxa1.ba");
-	const char* boxpath2 = leptDebugGenFilepath("/tmp/lept/boxa/boxa2.ba");
+	const char* boxpath1 = leptDebugGenFilepath("boxa1.ba");
+	const char* boxpath2 = leptDebugGenFilepath("boxa2.ba");
 	boxaWrite(boxpath1, boxa1);
     boxaWrite(boxpath2, boxa2);
     filesAreIdentical(boxpath1, boxpath2,

@@ -2003,6 +2003,10 @@ l_ok      rv = 0;
     numaGetSum(na, &sum);
     if (sum <= 0.0)
         return ERROR_INT("sum <= 0.0", __func__, 1);
+
+	leptDebugAddStepLevel();
+	leptDebugSetFreshCleanFilePathPart("nascore");
+
     norm = 4.0f / ((l_float32)(n - 1) * (n - 1));
     ave1prev = 0.0;
     numaGetHistogramStats(na, 0.0, 1.0, &ave2prev, &median, &mode, &variance);
@@ -2056,8 +2060,10 @@ l_ok      rv = 0;
         /* Split the histogram with [0 ... i] in the lower part
          * and [i+1 ... n-1] in upper part.  First, compute an otsu
          * score for each possible splitting.  */
-    if ((nascore = numaCreate(n)) == NULL)
-        return ERROR_INT("nascore not made", __func__, 1);
+	if ((nascore = numaCreate(n)) == NULL) {
+		leptDebugPopStepLevel();
+		return ERROR_INT("nascore not made", __func__, 1);
+	}
     naave1 = (pave1) ? numaCreate(n) : NULL;
     naave2 = (pave2) ? numaCreate(n) : NULL;
     nanum1 = (pnum1) ? numaCreate(n) : NULL;
@@ -2261,15 +2267,8 @@ l_ok      rv = 0;
 	    if (pnum2) numaGetFValue(nanum2, bestsplit, pnum2);
 
 	    if (pnascore) {  /* debug mode */
-			static int index = 0;
-			char namebuf[100];
-
-			if (index == 0) {
-				lept_rmdir("lept/nascore");
-			}
-			index++;
+			//lept_rmdir("lept/nascore");
 			//lept_mkdir("lept/nascore");
-			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-scores-%03d", index);
 
 			lept_stderr("left = %d, right = %d\n", left, right);
 			lept_stderr("minrange = %d, maxrange = %d\n", minrange, maxrange);
@@ -2280,16 +2279,13 @@ l_ok      rv = 0;
 			lept_stderr("num1prev = %f, num2prev = %f\n", num1prev, num2prev);
 			lept_stderr("ave1prev = %f, ave2prev = %f\n", ave1prev, ave2prev);
 			lept_stderr("mean = %f, median = %f, mode = %f, variance = %f\n", average, median, mode, variance);
-	        gplotSimple1(nascore, GPLOT_PNG, namebuf,
+	        gplotSimple1(nascore, GPLOT_PNG, "splitdistribution-scores",
 	                     "Score for split distribution");
-			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-histovalues-%03d", index);
-			gplotSimple1(na, GPLOT_PNG, namebuf,
+			gplotSimple1(na, GPLOT_PNG, "splitdistribution-histovalues",
 				"Raw histogram values for split distribution");
-			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-na.num1-%03d", index);
-			gplotSimple1(nanum1, GPLOT_PNG, namebuf,
+			gplotSimple1(nanum1, GPLOT_PNG, "splitdistribution-na.num1",
 				"NANUM1 values for split distribution");
-			snprintf(namebuf, sizeof(namebuf), "/tmp/lept/nascore/splitdistribution-na.num2-%03d", index);
-			gplotSimple1(nanum2, GPLOT_PNG, namebuf,
+			gplotSimple1(nanum2, GPLOT_PNG, "splitdistribution-na.num2",
 				"NANUM2 values for split distribution");
 			*pnascore = nascore;
 			nascore = NULL;
@@ -2297,6 +2293,8 @@ l_ok      rv = 0;
 	}
 
 ende:
+	leptDebugPopStepLevel();
+
     if (pave1) numaDestroy(&naave1);
     if (pave2) numaDestroy(&naave2);
     if (pnum1) numaDestroy(&nanum1);

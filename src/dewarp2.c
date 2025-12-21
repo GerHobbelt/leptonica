@@ -827,6 +827,9 @@ PTAA     *ptaa;
         return (PTAA *)ERROR_PTR("pixs undefined or not 1 bpp", __func__, NULL);
     pixGetDimensions(pixs, &w, &h, NULL);
 
+	leptDebugAddStepLevel();
+	leptDebugSetFreshCleanFilePathPart("dewmod");
+
 	l_ok debugflag = leptIsDebugModeActive();
 
     if (debugflag)
@@ -855,10 +858,10 @@ PTAA     *ptaa;
 
     if (debugflag) {
         //lept_mkdir("lept/dewmod");
-		const char* pixpath = leptDebugGenFilepath("/tmp/lept/dewmod/0011.tif");
+		const char* pixpath = leptDebugGenFilepath("0011.tif");
         pixWriteDebug(pixpath, pix1, IFF_TIFF_G4);
         pixDisplayWithTitle(pix1, 0, 600, "pix1");
-		pixpath = leptDebugGenFilepath("/tmp/lept/dewmod/0012.tif");
+		pixpath = leptDebugGenFilepath("0012.tif");
 		pixWriteDebug(pixpath, pix2, IFF_TIFF_G4);
         pixDisplayWithTitle(pix2, 0, 800, "pix2");
     }
@@ -869,7 +872,8 @@ PTAA     *ptaa;
     pixDestroy(&pix2);
     boxaDestroy(&boxa);
     if (pixaGetCount(pixa1) == 0) {
-        pixaDestroy(&pixa1);
+		leptDebugPopStepLevel();
+		pixaDestroy(&pixa1);
         return NULL;
     }
 
@@ -877,13 +881,14 @@ PTAA     *ptaa;
     pixa2 = pixaSelectBySize(pixa1, 100, 4, L_SELECT_IF_BOTH,
                                    L_SELECT_IF_GT, NULL);
     if ((nsegs = pixaGetCount(pixa2)) == 0) {
-        pixaDestroy(&pixa1);
+		leptDebugPopStepLevel();
+		pixaDestroy(&pixa1);
         pixaDestroy(&pixa2);
         return NULL;
     }
     if (debugflag) {
         pix2 = pixaDisplay(pixa2, w, h);
-		const char* pixpath = leptDebugGenFilepath("/tmp/lept/dewmod/0013.tif");
+		const char* pixpath = leptDebugGenFilepath("0013.tif");
 		pixWriteDebug(pixpath, pix2, IFF_TIFF_G4);
         pixDisplayWithTitle(pix2, 0, 1000, "pix2");
         pixDestroy(&pix2);
@@ -903,12 +908,14 @@ PTAA     *ptaa;
     if (debugflag) {
         pix1 = pixCreateTemplate(pixs);
         pix2 = pixDisplayPtaa(pix1, ptaa);
-		const char* pixpath = leptDebugGenFilepath("/tmp/lept/dewmod/0014.tif");
+		const char* pixpath = leptDebugGenFilepath("0014.tif");
 		pixWriteDebug(pixpath, pix2, IFF_PNG);
         pixDisplayWithTitle(pix2, 0, 1200, "pix3");
         pixDestroy(&pix1);
         pixDestroy(&pix2);
     }
+
+	leptDebugPopStepLevel();
 
     pixaDestroy(&pixa1);
     pixaDestroy(&pixa2);

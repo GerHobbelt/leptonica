@@ -231,7 +231,7 @@ l_int32  i, ntests, dotest, nfail, ret, start, stop;
 SARRAY  *sa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "all_tests", &rp))
+	if (regTestSetup(argc, argv, "all_tests", NULL, &rp))
 		return 1;
 
 	if (regGetArgCount(rp) != 0) {
@@ -246,7 +246,7 @@ L_REGPARAMS* rp;
             "This currently tests %d regression test\n"
             "programs in the /prog directory.\n", ntests);
 
-	results_file = stringNew(leptDebugGenFilename("/tmp/lept/reg_results.txt"));
+	results_file = stringNew(leptDebugGenFilepath("../reg_results.txt"));
 
         /* Clear the output file if we're doing the set of reg tests */
     dotest = strcmp(argv[1], "compare") ? 0 : 1;

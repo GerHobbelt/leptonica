@@ -84,7 +84,7 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("dewarp");
 
-	leptDebugSetFilenameForPrefix("sud", 0);
+	leptDebugSetFilePathPart("sud");
 	leptDebugSetStepId(1);
 
 	if (select == 0) {

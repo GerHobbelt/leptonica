@@ -59,7 +59,8 @@
 #define main   lept_otsutest2_main
 #endif
 
-int main(int argc, const char** argv)
+int main(int          argc,
+         const char** argv)
 {
 	char       textstr[1024];
 	l_int32    i, thresh, fgval, bgval;
@@ -69,45 +70,38 @@ int main(int argc, const char** argv)
 	PIXA* pixa1, * pixad;
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "otsu2", &rp))
+	if (regTestSetup(argc, argv, "otsu2", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/otsu2");
 
-	SARRAY* sargv = NULL;
-	if (argc <= 1)
-	{
-		// default:
-		sargv = sarrayCreate(0);
-		sarrayAddString(sargv, "1555.007.jpg", L_COPY);
-	}
-	else
-	{
-		sargv = lept_locate_all_files_in_searchpaths(argc - 1, argv + 1);
-	}
+		//sarrayAddString(sargv, "1555.007.jpg", L_COPY);
 
 	// every input file is treated as another round and represents the parent level in the step hierarchy:
-	leptDebugAddStepLevel();
+	int steplevel = leptDebugAddStepLevel();
 
-	int argv_count = sarrayGetCount(sargv);
-	for (int argidx = 0; argidx < argv_count; argidx++)
+	int argv_count = regGetArgCount(rp);
+	if (argv_count == 0) {
+		L_WARNING("no image files specified on the command line for processing: assuming a default input set.\n", __func__);
+	}
+	for (regMarkStartOfFirstTestround(rp, +1); regHasFileArgsAvailable(rp); regMarkEndOfTestround(rp))
 	{
-		const char* filename = sarrayGetString(sargv, argidx, L_NOCOPY);
-		const char* filepath = DEMOPATH(filename);
-		leptDebugSetFilenameForPrefix(filepath, -1);
+		// precaution: make sure we are at the desired depth in every round, even if called code forgot or failed to pop their additional level(s)
+		leptDebugPopStepLevelTo(steplevel);
+		leptDebugSetStepIdAtSLevel(-1, regGetCurrentArgIndex(rp));   // inc parent level
 
-		leptDebugSetStepIdAtDepth(-1, argidx + 1);   // inc parent level
+		const char* filepath = regGetFileArgOrDefault(rp, "1555.007.jpg");
+		leptDebugSetFilePathPartFromTail(filepath, -2);
 
-
-		lept_stderr("\n\n\nProcessing image #%d~#%d: %s = %s :: %s\n", argidx + 1, leptDebugGetStepIdAtLevel(-1), filename, filepath, leptDebugGetFilenameForPrefix());
-
+		lept_stderr("\n\n\nProcessing image #%d~#%s: %s :: %s\n", regGetCurrentArgIndex(rp), leptDebugGetStepIdAsString(), filepath, leptDebugGenFilepath("<output>"));
 
 		pixs = pixRead(filepath);
 
-		snprintf(textstr, sizeof(textstr), "source: %s", filename);
+		snprintf(textstr, sizeof(textstr), "source: %s", filepath);
 		pixSetText(pixs, textstr);
 
 		pixg = pixConvertTo8(pixs, 0);
+		pixSetText(pixg, "(grayscale)");
 
 		int w, h;
 		pixGetDimensions(pixs, &w, &h, NULL);
@@ -128,6 +122,12 @@ int main(int argc, const char** argv)
 			/* Show the histogram of gray values and the split location */
 			pixSplitDistributionFgBg(pixg, scorefract, 1,
 				&thresh, &fgval, &bgval, &pixp);
+
+				snprintf(textstr, sizeof(textstr),
+					"histogram: frac=%1.1f thresh=%d fgval=%d bgval=%d",
+					scorefract, thresh, fgval, bgval);
+				pixSetText(pixp, textstr);
+
 			lept_stderr("thresh = %d, fgval = %d, bgval = %d\n",
 				thresh, fgval, bgval);
 			pixaAddPix(pixa1, pixs, L_COPY);
@@ -135,9 +135,9 @@ int main(int argc, const char** argv)
 			pixaAddPix(pixa1, pixp, L_INSERT);
 
 			/* Join these together and add some text */
-			pix1 = pixaDisplayTiledInColumns(pixa1, 3, 1.0, 20, 2);
+				pix1 = pixaDisplayTiledInColumnsWithText(pixa1, 3, 1.0, 20, 2, 6, 0x0f066700);
 			snprintf(textstr, sizeof(textstr),
-				"Scorefract = %3.1f\nH x W: %d x %d\nThresh = %d (%s)", scorefract, pixGetHeight(pixg), pixGetWidth(pixg), thresh, filename);
+				"Scorefract = %3.1f\nH x W: %d x %d\nThresh = %d (%s)", scorefract, pixGetHeight(pixg), pixGetWidth(pixg), thresh, filepath);
 			pix2 = pixAddSingleTextblock(pix1, bmf, textstr, 0x06670f00,
 				L_ADD_BELOW, NULL);
 
@@ -159,7 +159,7 @@ int main(int argc, const char** argv)
 			//pix2 = pixScale(pix1, 0.5, 0.5);
 			pix2 = pixClone(pix1);
 			snprintf(textstr, sizeof(textstr),
-				"Scorefract = %3.1f (%s)", scorefract, filename);
+				"Scorefract = %3.1f (%s)", scorefract, filepath);
 			pix3 = pixAddSingleTextblock(pix2, bmf, textstr, 1,
 				L_ADD_BELOW, NULL);
 			const char* pixpath = leptDebugGenFilepath("AdaptiveOtsu-%03d.png", (int)i);
@@ -178,13 +178,10 @@ int main(int argc, const char** argv)
 		pixDestroy(&pixg);
 		pixaDestroy(&pixad);
 
-		LEPT_FREE(filename);
 		LEPT_FREE(filepath);
 	}
 
 	leptDebugPopStepLevel();
-
-	sarrayDestroy(&sargv);
 
 	return regTestCleanup(rp);
 }

@@ -64,14 +64,14 @@ L_REGPARAMS  *rp;
     exit(77);
 #endif
 
-	if (regTestSetup(argc, argv, "baseline", &rp))
+	if (regTestSetup(argc, argv, "baseline", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/baseline");
 
 	const char* sourcefilepath = DEMOPATH("keystone.png");
+	leptDebugSetFilePathPartFromTail(sourcefilepath, -2);
     pixs = pixRead(sourcefilepath);
-	leptDebugSetFilenameForPrefix(sourcefilepath, -1);
 
         /* Test function for deskewing using projective transform
 	 * on linear approximation for local skew angle */

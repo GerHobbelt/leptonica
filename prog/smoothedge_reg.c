@@ -60,7 +60,7 @@ PIX     *pixs, *pixt, *pixd;
 PIXA    *pixa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "smooth", &rp))
+	if (regTestSetup(argc, argv, "smooth", NULL, &rp))
 		return 1;
 
     pixs = pixRead(DEMOPATH("raggededge.png"));
@@ -102,7 +102,7 @@ void PixAddEdgeData(PIXA    *pixa,
 l_float32  jpl, jspl, rpl;
 PIX       *pixt1, *pixt2;
 
-	leptDebugSetFilenameForPrefix("junkedge.png", -1);
+	leptDebugSetFilePathPartFromTail("junkedge.png", -1);
     pixMeasureEdgeSmoothness(pixs, side, minjump, minreversal, &jpl,
                              &jspl, &rpl);
     lept_stderr("side = %d: jpl = %6.3f, jspl = %6.3f, rpl = %6.3f\n",

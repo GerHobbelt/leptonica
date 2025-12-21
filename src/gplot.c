@@ -173,7 +173,7 @@ const char  *gplotfileoutputs[] = {"",
 /*!
  * \brief   gplotCreate()
  *
- * \param[in]    rootname    root for all output files
+ * \param[in]    rootname    root for all output files, MAY be NULL, in which case a new root path in /tmp/lept/ will be generated.
  * \param[in]    outformat   GPLOT_PNG, GPLOT_PS, GPLOT_EPS,
  *                           GPLOT_LATEX, GPLOT_PNM
  * \param[in]    title       [optional] overall title
@@ -195,20 +195,26 @@ gplotCreate(const char  *rootname,
             const char  *xlabel,
             const char  *ylabel)
 {
+char    *path;
 char    *newroot;
-char     buf[Bufsize];
-l_int32  badchar;
 GPLOT   *gplot;
 
-    if (!rootname)
-        return (GPLOT *)ERROR_PTR("rootname not defined", __func__, NULL);
+	if (!rootname || !*rootname) {
+		path = leptDebugGenFilepath("gplot");
+	}
+	else {
+		int rootlen = getPathRootLength(rootname);
+		if (rootlen > 0) {
+			path = stringNew(rootname);
+		}
+		else {
+			path = leptDebugGenFilepath("%s-plot", rootname);
+		}
+	}
     if (outformat != GPLOT_PNG && outformat != GPLOT_PS &&
         outformat != GPLOT_EPS && outformat != GPLOT_LATEX &&
         outformat != GPLOT_PNM)
         return (GPLOT *)ERROR_PTR("outformat invalid", __func__, NULL);
-    stringCheckForChars(rootname, "`;&|><\"?*$()", &badchar);
-    if (badchar)  /* danger of command injection */
-        return (GPLOT *)ERROR_PTR("invalid rootname", __func__, NULL);
 
 #if !defined(HAVE_LIBPNG)
     if (outformat == GPLOT_PNG) {
@@ -225,22 +231,22 @@ GPLOT   *gplot;
     gplot->plotstyles = numaCreate(0);
 
         /* Save title, labels, rootname, outformat, cmdname, outname */
-    newroot = genPathname(rootname, NULL);
+    newroot = genPathname(path, NULL);
     gplot->rootname = newroot;
     gplot->outformat = outformat;
-    snprintf(buf, Bufsize, "%s.cmd", rootname);
-    gplot->cmdname = stringNew(buf);
+	gplot->cmdname = stringJoin(newroot, ".cmd");
+	const char* ext = ".undefined";
     if (outformat == GPLOT_PNG)
-        snprintf(buf, Bufsize, "%s.png", newroot);
+        ext = ".png";
     else if (outformat == GPLOT_PS)
-        snprintf(buf, Bufsize, "%s.ps", newroot);
+        ext = ".ps";
     else if (outformat == GPLOT_EPS)
-        snprintf(buf, Bufsize, "%s.eps", newroot);
+        ext = ".eps";
     else if (outformat == GPLOT_LATEX)
-        snprintf(buf, Bufsize, "%s.tex", newroot);
+        ext = ".tex";
     else if (outformat == GPLOT_PNM)
-        snprintf(buf, Bufsize, "%s.pnm", newroot);
-    gplot->outname = stringNew(buf);
+        ext = ".pnm";
+	gplot->outname = stringJoin(newroot, ext);
     if (title) gplot->title = stringNew(title);
     if (xlabel) gplot->xlabel = stringNew(xlabel);
     if (ylabel) gplot->ylabel = stringNew(ylabel);
@@ -324,8 +330,6 @@ gplotAddPlot(GPLOT       *gplot,
              l_int32      plotstyle,
              const char  *plotlabel)
 {
-char       buf[Bufsize];
-char       emptystring[] = "";
 char      *datastr, *title;
 l_int32    n, i;
 l_float32  valx, valy, startx, delx;
@@ -354,23 +358,24 @@ SARRAY    *sa;
         title = stringNew(plotlabel);
         sarrayAddString(gplot->plotlabels, title, L_INSERT);
     } else {
-        sarrayAddString(gplot->plotlabels, emptystring, L_COPY);
+		sarrayAddString(gplot->plotlabels, "", L_COPY);
     }
 
         /* Generate and save data filename */
     gplot->nplots++;
-    snprintf(buf, Bufsize, "%s.data.%d", gplot->rootname, gplot->nplots);
-    sarrayAddString(gplot->datanames, buf, L_COPY);
+    const char *datapath = string_asprintf("%s.data.%d", gplot->rootname, gplot->nplots);
+    sarrayAddString(gplot->datanames, datapath, L_INSERT);
 
         /* Generate data and save as a string */
     sa = sarrayCreate(n);
     for (i = 0; i < n; i++) {
+		char buf[64];
         if (nax)
             numaGetFValue(nax, i, &valx);
         else
             valx = startx + i * delx;
         numaGetFValue(nay, i, &valy);
-        snprintf(buf, Bufsize, "%f %f\n", valx, valy);
+        snprintf(buf, 64, "%f %f\n", valx, valy);
         sarrayAddString(sa, buf, L_COPY);
     }
     datastr = sarrayToString(sa, 0);
@@ -432,6 +437,11 @@ gplotMakeOutputPix(GPLOT  *gplot)
     if (gplot->outformat != GPLOT_PNG && gplot->outformat != GPLOT_PNM)
         return (PIX *)ERROR_PTR("output format not an image", __func__, NULL);
 
+	if (!leptIsGplotModeActive()) {
+		return (PIX*)ERROR_PTR("running gnuplot is disabled; "
+			"use leptActivateGplotMode(1,0) to enable\n", __func__, NULL);
+	}
+
 	if (!LeptDebugOK) {
 		return (PIX*)ERROR_PTR("running gnuplot is disabled; "
 			"use setLeptDebugOK(1) to enable\n", __func__, NULL);
@@ -472,16 +482,20 @@ gplotMakeOutputPix(GPLOT  *gplot)
 l_ok
 gplotMakeOutput(GPLOT  *gplot)
 {
-char     buf[Bufsize];
+char    *cmdbuf;
 char    *cmdname;
 
     if (!gplot)
         return ERROR_INT("gplot not defined", __func__, 1);
 
-    if (!LeptDebugOK) {
-        L_WARNING("running gnuplot is disabled; "
-                  "use setLeptDebugOK(1) to enable\n", __func__);
-        return 0;
+	if (!leptIsGplotModeActive()) {
+		return ERROR_INT("running gnuplot is disabled; "
+			"use leptActivateGplotMode(1,0) to enable\n", __func__, 0);
+	}
+
+	if (!LeptDebugOK) {
+        return ERROR_INT("running gnuplot is disabled; "
+                  "use setLeptDebugOK(1) to enable\n", __func__, 0);
     }
 
 #ifdef OS_IOS /* iOS 11 does not support system() */
@@ -493,12 +507,12 @@ char    *cmdname;
     cmdname = genPathname(gplot->cmdname, NULL);
 
 #ifndef _WIN32
-    snprintf(buf, Bufsize, "gnuplot %s", cmdname);
+    cmdbuf = string_asprintf("gnuplot %s", cmdname);
 #else
-    snprintf(buf, Bufsize, "wgnuplot %s", cmdname);
+    cmdbuf = string_asprintf("wgnuplot %s", cmdname);
 #endif  /* _WIN32 */
 
-    callSystemDebug(buf);  /* gnuplot || wgnuplot */
+    callSystemDebug(cmdbuf);  /* gnuplot || wgnuplot */
     LEPT_FREE(cmdname);
     return 0;
 }
@@ -513,7 +527,7 @@ char    *cmdname;
 l_ok
 gplotGenCommandFile(GPLOT  *gplot)
 {
-char     buf[Bufsize];
+char    *linebuf;
 char    *cmdstr, *plotlabel, *dataname;
 l_int32  i, plotstyle, nplots;
 FILE    *fp;
@@ -526,46 +540,47 @@ FILE    *fp;
 
         /* Generate command data instructions */
     if (gplot->title) {   /* set title */
-        snprintf(buf, Bufsize, "set title '%s'", gplot->title);
-        sarrayAddString(gplot->cmddata, buf, L_COPY);
+        linebuf = string_asprintf("set title '%s'", gplot->title);
+        sarrayAddString(gplot->cmddata, linebuf, L_INSERT);
     }
     if (gplot->xlabel) {   /* set xlabel */
-        snprintf(buf, Bufsize, "set xlabel '%s'", gplot->xlabel);
-        sarrayAddString(gplot->cmddata, buf, L_COPY);
+        linebuf = string_asprintf("set xlabel '%s'", gplot->xlabel);
+        sarrayAddString(gplot->cmddata, linebuf, L_INSERT);
     }
     if (gplot->ylabel) {   /* set ylabel */
-        snprintf(buf, Bufsize, "set ylabel '%s'", gplot->ylabel);
-        sarrayAddString(gplot->cmddata, buf, L_COPY);
+        linebuf = string_asprintf("set ylabel '%s'", gplot->ylabel);
+        sarrayAddString(gplot->cmddata, linebuf, L_INSERT);
     }
 
         /* Set terminal type and output */
+	linebuf = NULL;
     if (gplot->outformat == GPLOT_PNG) {
-        snprintf(buf, Bufsize, "set terminal png; set output '%s'",
+        linebuf = string_asprintf("set terminal png; set output '%s'",
                  gplot->outname);
     } else if (gplot->outformat == GPLOT_PS) {
-        snprintf(buf, Bufsize, "set terminal postscript; set output '%s'",
+        linebuf = string_asprintf("set terminal postscript; set output '%s'",
                  gplot->outname);
     } else if (gplot->outformat == GPLOT_EPS) {
-        snprintf(buf, Bufsize, "set terminal postscript eps; set output '%s'",
+        linebuf = string_asprintf("set terminal postscript eps; set output '%s'",
                  gplot->outname);
     } else if (gplot->outformat == GPLOT_LATEX) {
-        snprintf(buf, Bufsize, "set terminal latex; set output '%s'",
+        linebuf = string_asprintf("set terminal latex; set output '%s'",
                  gplot->outname);
     } else if (gplot->outformat == GPLOT_PNM) {
-        snprintf(buf, Bufsize, "set terminal pbm color; set output '%s'",
+        linebuf = string_asprintf("set terminal pbm color; set output '%s'",
                  gplot->outname);
     }
-    sarrayAddString(gplot->cmddata, buf, L_COPY);
+    sarrayAddString(gplot->cmddata, linebuf, L_INSERT);
 
     if (gplot->scaling == GPLOT_LOG_SCALE_X ||
         gplot->scaling == GPLOT_LOG_SCALE_X_Y) {
-        snprintf(buf, Bufsize, "set logscale x");
-        sarrayAddString(gplot->cmddata, buf, L_COPY);
+        linebuf = string_asprintf("set logscale x");
+        sarrayAddString(gplot->cmddata, linebuf, L_INSERT);
     }
     if (gplot->scaling == GPLOT_LOG_SCALE_Y ||
         gplot->scaling == GPLOT_LOG_SCALE_X_Y) {
-        snprintf(buf, Bufsize, "set logscale y");
-        sarrayAddString(gplot->cmddata, buf, L_COPY);
+        linebuf = string_asprintf("set logscale y");
+        sarrayAddString(gplot->cmddata, linebuf, L_INSERT);
     }
 
     nplots = sarrayGetCount(gplot->datanames);
@@ -573,21 +588,23 @@ FILE    *fp;
         plotlabel = sarrayGetString(gplot->plotlabels, i, L_NOCOPY);
         dataname = sarrayGetString(gplot->datanames, i, L_NOCOPY);
         numaGetIValue(gplot->plotstyles, i, &plotstyle);
+		linebuf = NULL;
         if (nplots == 1) {
-            snprintf(buf, Bufsize, "plot '%s' title '%s' %s",
+            linebuf = string_asprintf("plot '%s' title '%s' %s",
                      dataname, plotlabel, gplotstylenames[plotstyle]);
         } else {
             if (i == 0)
-                snprintf(buf, Bufsize, "plot '%s' title '%s' %s, \\",
+                linebuf = string_asprintf("plot '%s' title '%s' %s, \\",
                      dataname, plotlabel, gplotstylenames[plotstyle]);
             else if (i < nplots - 1)
-                snprintf(buf, Bufsize, " '%s' title '%s' %s, \\",
+                linebuf = string_asprintf(" '%s' title '%s' %s, \\",
                      dataname, plotlabel, gplotstylenames[plotstyle]);
             else
-                snprintf(buf, Bufsize, " '%s' title '%s' %s",
+                linebuf = string_asprintf(" '%s' title '%s' %s",
                      dataname, plotlabel, gplotstylenames[plotstyle]);
         }
-        sarrayAddString(gplot->cmddata, buf, L_COPY);
+		assert(linebuf != NULL);
+        sarrayAddString(gplot->cmddata, linebuf, L_INSERT);
     }
 
         /* Write command data to file */
@@ -774,7 +791,6 @@ gplotSimplePix1(NUMA        *na,
 				const char  *outroot,
                 const char  *title)
 {
-char            buf[64];
 static l_atomic index;
 GPLOT          *gplot;
 PIX            *pix;
@@ -783,12 +799,7 @@ PIX            *pix;
         return (PIX *)ERROR_PTR("na not defined", __func__, NULL);
 
     //lept_mkdir("lept/gplot/pix");
-	if (!outroot || !*outroot)
-		snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix1.%d", index++);
-	else
-		snprintf(buf, sizeof(buf), "%s-pix1.%d", outroot, index++);
-
-	gplot = gplotSimpleXY1(NULL, na, GPLOT_LINES, GPLOT_PNG, buf, title);
+	gplot = gplotSimpleXY1(NULL, na, GPLOT_LINES, GPLOT_PNG, outroot, title);
     if (!gplot)
         return (PIX *)ERROR_PTR("failed to generate plot", __func__, NULL);
     pix = pixRead(gplot->outname);
@@ -821,7 +832,6 @@ gplotSimplePix2(NUMA        *na1,
 				const char  *outroot,
                 const char  *title)
 {
-char            buf[64];
 static l_atomic index;
 GPLOT          *gplot;
 PIX            *pix;
@@ -830,12 +840,7 @@ PIX            *pix;
         return (PIX *)ERROR_PTR("both na1, na2 not defined", __func__, NULL);
 
     //lept_mkdir("lept/gplot/pix");
-	if (!outroot || !*outroot)
-		snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pix2.%d", index++);
-	else
-		snprintf(buf, sizeof(buf), "%s-pix2.%d", outroot, index++);
-
-	gplot = gplotSimpleXY2(NULL, na1, na2, GPLOT_LINES, GPLOT_PNG, buf, title);
+	gplot = gplotSimpleXY2(NULL, na1, na2, GPLOT_LINES, GPLOT_PNG, outroot, title);
     if (!gplot)
         return (PIX *)ERROR_PTR("failed to generate plot", __func__, NULL);
     pix = pixRead(gplot->outname);
@@ -867,7 +872,6 @@ gplotSimplePixN(NUMAA       *naa,
 				const char  *outroot,
                 const char  *title)
 {
-char            buf[64];
 static l_atomic index;
 GPLOT          *gplot;
 PIX            *pix;
@@ -876,12 +880,7 @@ PIX            *pix;
         return (PIX *)ERROR_PTR("naa not defined", __func__, NULL);
 
     //lept_mkdir("lept/gplot/pix");
-	if (!outroot || !*outroot)
-		snprintf(buf, sizeof(buf), "/tmp/lept/gplot/pixN.%d", index++);
-	else
-		snprintf(buf, sizeof(buf), "%s-pixN.%d", outroot, index++);
-
-    gplot = gplotSimpleXYN(NULL, naa, GPLOT_LINES, GPLOT_PNG, buf, title);
+    gplot = gplotSimpleXYN(NULL, naa, GPLOT_LINES, GPLOT_PNG, outroot, title);
     if (!gplot)
         return (PIX *)ERROR_PTR("failed to generate plot", __func__, NULL);
     pix = pixRead(gplot->outname);
@@ -1232,7 +1231,7 @@ PIX     *pix;
 GPLOT *
 gplotRead(const char  *filename)
 {
-char     buf[Bufsize];
+char     buf[512];
 char    *rootname, *title, *xlabel, *ylabel;
 l_int32  outformat, ret, version;
 FILE    *fp;
@@ -1260,13 +1259,13 @@ GPLOT   *gplot;
     (void)fscanf(fp, "Rootname: %511s\n", buf);  /* Bufsize - 1 */
     rootname = stringNew(buf);
     (void)fscanf(fp, "Output format: %d\n", &outformat);
-    (void)fgets(buf, Bufsize, fp);   /* Title: ... */
+    (void)fgets(buf, 512, fp);   /* Title: ... */
     title = stringNew(buf + 7);
     title[strlen(title) - 1] = '\0';
-    (void)fgets(buf, Bufsize, fp);   /* X axis label: ... */
+    (void)fgets(buf, 512, fp);   /* X axis label: ... */
     xlabel = stringNew(buf + 14);
     xlabel[strlen(xlabel) - 1] = '\0';
-    (void)fgets(buf, Bufsize, fp);   /* Y axis label: ... */
+    (void)fgets(buf, 512, fp);   /* Y axis label: ... */
     ylabel = stringNew(buf + 14);
     ylabel[strlen(ylabel) - 1] = '\0';
 
@@ -1285,7 +1284,7 @@ GPLOT   *gplot;
     sarrayDestroy(&gplot->plotlabels);
     numaDestroy(&gplot->plotstyles);
 
-    (void)fscanf(fp, "Commandfile name: %s\n", buf);  /* Bufsize - 1 */
+    (void)fscanf(fp, "Commandfile name: %511s\n", buf);  /* Bufsize - 1 */
     stringReplace(&gplot->cmdname, buf);
     (void)fscanf(fp, "\nCommandfile data:");
     gplot->cmddata = sarrayReadStream(fp);
@@ -1299,7 +1298,7 @@ GPLOT   *gplot;
     gplot->plotstyles = numaReadStream(fp);
 
     (void)fscanf(fp, "Number of plots: %d\n", &gplot->nplots);
-    (void)fscanf(fp, "Output file name: %s\n", buf);
+    (void)fscanf(fp, "Output file name: %511s\n", buf);
     stringReplace(&gplot->outname, buf);
     (void)fscanf(fp, "Axis scaling: %d\n", &gplot->scaling);
 

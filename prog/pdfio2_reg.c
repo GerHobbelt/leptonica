@@ -348,14 +348,14 @@ PIXA  *pixa;
     pix3 = pixMorphSequence(pix2, "c20.1 + c1.20", 0);
     *pboxa = pixConnComp(pix3, NULL, 8);
     if (debugfile && leptIsDebugModeActive()) {
-		leptDebugSetFilenameForPrefix(debugfile, -1);
+		leptDebugSetFilePathPartFromTail(debugfile, -1);
         pixa = pixaCreate(0);
 		pixaAddPix(pixa, pixs, L_COPY);
         pixaAddPix(pixa, pix1, L_INSERT);
         pixaAddPix(pixa, pix2, L_INSERT);
         pixaAddPix(pixa, pix3, L_INSERT);
         pix4 = pixaDisplayTiledInRows(pixa, 32, 1800, 0.25, 0, 25, 2);
-		const char* pixfilepath = leptDebugGenFilepath("%s.%s", __func__, ".jpg");
+		const char* pixfilepath = leptDebugGenFilepath("%s.jpg", __func__);
         pixWrite(debugfile, pix4, IFF_JFIF_JPEG);
         pixDisplayWithTitle(pix4, 100, 100, NULL);
         pixDestroy(&pix4);

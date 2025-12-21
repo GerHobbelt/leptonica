@@ -305,6 +305,27 @@ l_byteaGetData(L_BYTEA  *ba,
 
 
 /*!
+ * \brief   l_byteaGetDataRef()
+ *
+ * \param[in]    ba
+ * \return  ptr to existing data array, or NULL on error
+ *
+ * <pre>
+ * Notes:
+ *      (1) The returned ptr is owned by %ba.  Do not free it!
+ * </pre>
+ */
+l_uint8 *
+l_byteaGetDataRef(L_BYTEA  *ba)
+{
+    if (!ba)
+        return (l_uint8 *)ERROR_PTR("ba not defined", __func__, NULL);
+
+    return ba->data;
+}
+
+
+/*!
  * \brief   l_byteaCopyData()
  *
  * \param[in]    ba

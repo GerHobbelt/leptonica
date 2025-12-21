@@ -1419,6 +1419,15 @@ pixSetSpecial(PIX     *pix,
 }
 
 
+l_int32
+pixGetSpecial(PIX* pix)
+{
+	if (!pix)
+		return 0;
+	return pix->special;
+}
+
+
 /*!
  * \brief   pixGetText()
  *
@@ -1988,6 +1997,7 @@ const PIXCMAP  *cmap;
     else
         fprintf(fp, "    no colormap\n");
     informat = pixGetInputFormat(pix);
+	assert(getFormatExtension(informat) != NULL);
     fprintf(fp, "    input format: %d (%s)\n", informat,
 		    getFormatExtension(informat));
     if (pix->text != NULL)

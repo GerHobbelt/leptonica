@@ -67,8 +67,8 @@
 #define main   lept_otsutest3_main
 #endif
 
-int main(int    argc,
-	const char** argv)
+int main(int          argc,
+         const char** argv)
 {
 	char       textstr[L_MAX(256, MAX_PATH)];
 	l_int32    i, thresh, fgval, bgval;
@@ -78,16 +78,15 @@ int main(int    argc,
 	PIXA* pixa1, * pixad;
 	L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "otsu3", &rp))
+	if (regTestSetup(argc, argv, "otsu3", NULL, &rp))
 		return 1;
 
 	//lept_mkdir("lept/otsu3");
 
 		//sarrayAddString(sargv, "1555.007.jpg", L_COPY);
-		//sargv = lept_locate_all_files_in_searchpaths(argc - 1, argv + 1);
 
 	// every input file is treated as another round and represents the parent level in the step hierarchy:
-	leptDebugAddStepLevel();
+	//int steplevel = leptDebugGetStepLevel();
 
 	int argv_count = regGetArgCount(rp);
 	if (argv_count == 0) {
@@ -95,12 +94,19 @@ int main(int    argc,
 	}
 	for (regMarkStartOfFirstTestround(rp, +1); regHasFileArgsAvailable(rp); regMarkEndOfTestround(rp))
 	{
+		// precaution: make sure we are at the desired depth in every round, even if called code forgot or failed to pop their additional level(s)
+		leptDebugPopStepLevelTo(rp->base_step_level);
+
 		const char* filepath = regGetFileArgOrDefault(rp, "1555.007.jpg");
-		leptDebugSetFilenameForPrefix(filepath, -2);
+		leptDebugSetStepIdAtSLevel(-1, regGetCurrentArgIndex(rp));   // inc parent level
+		leptDebugSetFilePathPartFromTail(filepath, -2);
 
-		leptDebugSetStepIdAtDepth(-1, regGetCurrentArgIndex(rp));   // inc parent level
-
-		lept_stderr("\n\n\nProcessing image #%d~#%d: %s :: %s\n", regGetCurrentArgIndex(rp), leptDebugGetStepIdAtLevel(-1), filepath, leptDebugGetFilenameForPrefix());
+		{
+			char* destdir = leptDebugGenFilepath("");
+			char* real_destdir = genPathname(destdir, "(output)");
+			lept_stderr("\n\n\nProcessing image #%d~#%s:\n  %s :: %s/(output)\n    --> %s\n", regGetCurrentArgIndex(rp), leptDebugGetStepIdAsString(), filepath, destdir, real_destdir);
+			stringDestroy(&real_destdir);
+		}
 
 		pixs = pixRead(filepath);
 

@@ -112,14 +112,20 @@ L_REGPARAMS* rp;
         lept_stderr("fname = %s, format: %d\n", fname, format);
 
             /* Determine the name of the output scaled image file */
-        extension = (char *)getFormatExtension(format);
-        snprintf(outname, sizeof(outname), "%s/%s%03d.%s",
-                 dirout, rootname, i + 1, extension);
-        lept_stderr("Writing %s\n", outname);
+        extension = getFormatExtension(format);
+		if (!extension) {
+			L_ERROR("Unsupported image file format %d (from '%s') for writing.\n", format, (comptype ? comptype : fname));
+			pix2 = NULL;
+		}
+		else {
+			snprintf(outname, sizeof(outname), "%s/%s%03d.%s",
+				dirout, rootname, i + 1, extension);
+			lept_stderr("Writing %s\n", outname);
 
-            /* Scale and output */
-        pix2 = pixScale(pix1, scalefactor, scalefactor);
-        pixWrite(outname, pix2, format);
+			/* Scale and output */
+			pix2 = pixScale(pix1, scalefactor, scalefactor);
+			pixWrite(outname, pix2, format);
+		}
         pixDestroy(&pix1);
         pixDestroy(&pix2);
     }

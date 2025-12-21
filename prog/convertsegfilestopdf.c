@@ -95,7 +95,7 @@ l_float32  scalefactor;
 BOXAA     *baa;
 L_REGPARAMS* rp;
 
-	if (regTestSetup(argc, argv, "convert", &rp))
+	if (regTestSetup(argc, argv, "convert", NULL, &rp))
 		return 1;
 
     if (argc != 12) {

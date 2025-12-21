@@ -176,32 +176,34 @@ typedef struct StepsArray {
 #define L_MAX_STEPS_DEPTH 10         // [batch:0, step:1, item:2, level:3, sublevel:4, ...]
 	unsigned int actual_depth;
 	l_atomic vals[L_MAX_STEPS_DEPTH];
+	l_atomic forever_incrementing_val;
 	// Note: the last depth level is permanently auto-incrementing and serves as a 'persisted' %item_id_is_forever_increasing counter.
 } StepsArray;
 
 struct l_diag_predef_parts {
 	const char* basepath;            //!< the base path within where every generated file must land.
+	const char* configured_tmpdir;   //!< the /tmp/-replacing 'base 'root' path within where every generated file must land.
 	const char* expanded_tmpdir;     //!< internal use/cache: the (re)generated CVE-safe expansion/replacement for '/tmp/'
 #if 0
 	NUMA *steps;                     //!< a hierarchical step numbering system; the last number level will (auto)increment, or RESET every time when a more major step level incremented/changed (unless %item_id_is_forever_increasing is set).
 #else
 	struct StepsArray steps;         //!< a hierarchical step numbering system; the last number level will (auto)increment, or RESET every time when a more major step level incremented/changed (unless %item_id_is_forever_increasing is set).
 #endif
-	unsigned int basepath_minlength; //!< minimum length of the basepath, i.e. append/remove/replace APIs are prohibited from editing the leading part of basepath that is shorter than this length.
+	SARRAY* step_paths;	             //!< one path part per step level; appended to the basepath when constructing a target path.
 
 	uint64_t active_hash_id;         //!< derived from the originally specified %active_filename path, or set explicitly (if user-land code has a better idea about what value this should be).
-	const char* filename_prefix;     //!< a file name prefix, NULL if unspecified. To be used (in reduced form) as a target filename prefix.
-	const char* filename_basename;   //!< a file name basename, NULL if unspecified. To be used (in reduced form) as a target filename base, after the prefix.
-	const char* process_name;        //!< the part which identifies what we are doing right now (at a high abstraction level)
 
 	SARRAY *last_generated_paths;	 //!< internal cache: stores the last generated file path (for re-use and reference)
 	char* last_generated_step_id_string; //!< internal cache: stores the last generated steps[] id string (for re-use and reference)
 
-	l_int32 debugging;				 //!< 1 if debugging mode is activated, resulting in several leptonica APIs producing debug/info messages and/or writing diagnostic plots and images to the basepath filesystem.
+	l_int32 debugging;				 //!< >0 if debugging mode is activated, resulting in several leptonica APIs producing debug/info messages and/or writing diagnostic plots and images to the basepath filesystem.
+	l_int32 using_gplot;
 
-	unsigned int must_regenerate : 1;		//!< set when l_filename_prefix changes mandate a freshly (re)generated target file prefix for subsequent requests.
-	unsigned int must_bump_step_id : 1;		//!< set when %step_id should be incremented before next use.
 	unsigned int step_id_is_forever_increasing : L_MAX_STEPS_DEPTH;
+
+	unsigned int must_regenerate_id : 1;	//!< set when l_filename_prefix changes mandate a freshly (re)generated target file prefix for subsequent requests.
+
+	unsigned int must_bump_step_id : 1;		//!< set when %step_id should be incremented before next use.
 	unsigned int step_width : 3;     //!< (width + 1): specifies the printed width of each step number at each steps level.
 
 	unsigned int regressiontest_mode : 1;  //!< 1 if in regression test mode; 0 otherwise; when active, this means the generated paths in /tmp/ and elsewhere WILL NOT be randomized.
@@ -217,16 +219,22 @@ struct l_diag_predef_parts {
 /*!
  * image diagnostics helper spec associated with pix & plots; used to help display/diagnose behaviour in the more complex algorithms
  */
-struct l_diag_predef_parts diag_spec = { NULL };
+static struct l_diag_predef_parts diag_spec = { NULL };
 
 
 void
 leptCreateDiagnoticsSpecInstance(void)
 {
 	if (!diag_spec.is_init) {
-		diag_spec.last_generated_paths = sarrayCreate(16);
+		memset(&diag_spec, 0, sizeof(diag_spec));
+
+		diag_spec.step_paths = sarrayCreateInitialized(L_MAX_STEPS_DEPTH, "");
+		diag_spec.last_generated_paths = sarrayCreate(0);
 
 		diag_spec.step_width = 1;
+
+		diag_spec.must_regenerate_id = 1;
+		diag_spec.must_bump_step_id = 1;
 
 		diag_spec.is_init = 1;
 	}
@@ -243,10 +251,8 @@ leptDestroyDiagnoticsSpecInstance(void)
 
 	stringDestroy(&diag_spec.basepath);
 	stringDestroy(&diag_spec.expanded_tmpdir);
-	stringDestroy(&diag_spec.filename_prefix);
-	stringDestroy(&diag_spec.filename_basename);
-	stringDestroy(&diag_spec.process_name);
 
+	sarrayDestroy(&diag_spec.step_paths);
 	sarrayDestroy(&diag_spec.last_generated_paths);
 
 	stringDestroy(&diag_spec.last_generated_step_id_string);
@@ -280,8 +286,7 @@ leptDebugSetFileBasepath(const char* directory)
 
 	leptCreateDiagnoticsSpecInstance();
 
-	if (diag_spec.basepath)
-		stringDestroy(&diag_spec.basepath);
+	stringDestroy(&diag_spec.basepath);
 
 	if (!directory[0]) {
 		diag_spec.basepath = NULL;
@@ -303,27 +308,12 @@ leptDebugSetFileBasepath(const char* directory)
 		}
 	}
 
-	diag_spec.basepath_minlength = diag_spec.basepath ? strlen(diag_spec.basepath) : 0;
-
-	diag_spec.must_regenerate = 1;
+	diag_spec.must_regenerate_id = 1;
 }
 
 
-/*!
- * \brief   leptDebugAppendFileBasepath()
- *
- * \param[in]    directory         always interpreted as relative to the currently configured base path (using /tmp/lept/ when NULL) where all target files are meant to land.
- *
- * <pre>
- * Notes:
- *      (1) The given directory will be used for every debug plot, image, etc. file produced by leptonica.
- *          This is useful when, for example, processing source images in bulk and you wish to quickly
- *          locate the relevant debug/diagnostics outputs for a given source image.
- *      (2) Changing the base path is not assumed to imply you're going to run another batch, unlike when you use leptDebugSetFileBasepath().
- * </pre>
- */
 void
-leptDebugAppendFileBasepath(const char* directory)
+leptDebugSetFilePathPartAtSLevel(int relative_depth, const char* directory)
 {
 	if (!directory) {
 		directory = "";
@@ -331,174 +321,127 @@ leptDebugAppendFileBasepath(const char* directory)
 
 	leptCreateDiagnoticsSpecInstance();
 
-	if (directory[0]) {
-		if (diag_spec.basepath) {
-			const char* base = diag_spec.basepath;
-			// TODO:
-			// do we allow '../' elements in a relative directory spec?
-			// 
-			// Current affairs assume this path is set by (safe) application code,
-			// rather than (unsafe) arbitrary end user input...
-			diag_spec.basepath = pathJoin(base, directory);
-			stringDestroy(&base);
+	// negative depths are relative; positive are absolute.
+	if (relative_depth < 0) {
+		relative_depth += diag_spec.steps.actual_depth;
+	}
+	if (relative_depth < 0 || diag_spec.steps.actual_depth < relative_depth) {
+		L_ERROR("specified depth outside currently active range.\n", __func__);
+		return;
+	}
+
+	sarrayReplaceString(diag_spec.step_paths, relative_depth, (char *)directory, L_COPY);
+
+	diag_spec.must_regenerate_id = 1;
+}
+
+
+void
+leptDebugSetFilePathPartAtSLevelFromTail(int relative_depth, const char* filepath, l_int32 strip_off_parts_code)
+{
+	leptDebugSetFilePathPartAtSLevel(relative_depth, NULL);
+
+	if (!filepath) {
+		L_WARNING("source path is NULL/empty: your generated target paths will suffer.", __func__);
+		return;
+	}
+
+	// help internal and /prog/ demo code: strip off any leading '/tmp/lept/' part before we proceed:
+	if (strncmp("/tmp/lept/", filepath, 10) == 0) {
+		filepath += 10;
+	}
+	// walk the path part list (stack) and skip/ignore any part matching the given path.
+	// Ignore the primary part, even when it's not '/lept/' or '/lept/prog/':
+	SARRAY* sa = sarrayCreate(0);
+	if (!sa) {
+		L_ERROR("sa could not be allocated.\n", __func__);
+		return;
+	}
+	sarraySplitString(sa, filepath, "/\\");
+	int cnt = sarrayGetCount(sa);
+	int pos = 0;
+	for (int i = 0; i <= diag_spec.steps.actual_depth && pos < cnt; i++) {
+		const char* elem = sarrayGetString(diag_spec.step_paths, i, L_NOCOPY);
+		const char* pfx = sarrayGetString(sa, pos, L_NOCOPY);
+		if (strcmp(elem, pfx) == 0) {
+			pos++;
+		}
+	}
+	int remain = cnt - pos;
+	if (abs(strip_off_parts_code) < remain) {
+		remain = abs(strip_off_parts_code);
+	}
+
+	char* p1 = NULL;
+	for (int i = remain; i > 0; i--) {
+		int index = cnt - i;
+		const char* pfx = sarrayGetString(sa, index, L_NOCOPY);
+
+		// strip the last part according to specified rules:
+		if (i == 1 && strip_off_parts_code <= 0) {
+			char* tail = pathExtractTail(pfx, -1);
+			char* p2 = pathJoin(p1, tail);
+			stringDestroy(&tail);
+			stringDestroy(&p1);
+			p1 = p2;
 		}
 		else {
-			// TODO:
-			// do we allow '../' elements in a relative directory spec?
-			// 
-			// Current affairs assume this path is set by (safe) application code,
-			// rather than (unsafe) arbitrary end user input...
-			diag_spec.basepath = pathJoin(leptDebugGetFileBasePath(), directory);
+			char* p2 = pathJoin(p1, pfx);
+			stringDestroy(&p1);
+			p1 = p2;
 		}
 	}
-	else if (!diag_spec.basepath) {
-		diag_spec.basepath = stringNew(leptDebugGetFileBasePath());
-	}
-
-	// ALWAYS recalculate the minlength as AppendFileBasepath() MAY immediately follow a FilePathPart() API call,
-	// thus including that previously-non-mandatory part in the basepath now, which implies the basebath HAS
-	// changed anyhow, even when %directory == "".
-	diag_spec.basepath_minlength = strlen(diag_spec.basepath);
-
-	diag_spec.must_regenerate = 1;
+	sarrayDestroy(&sa);
+	leptDebugSetFilePathPartAtSLevel(relative_depth, p1);
 }
 
 
 void
-leptDebugAppendFilePathPart(const char* directory)
+leptDebugSetFilePathPart(const char* directory)
 {
-	if (!directory) {
-		directory = "";
-	}
-
-	leptCreateDiagnoticsSpecInstance();
-
-	if (!diag_spec.basepath) {
-		diag_spec.basepath = stringNew(leptDebugGetFileBasePath());
-		diag_spec.basepath_minlength = strlen(diag_spec.basepath);
-	}
-
-	if (directory[0]) {
-		const char* base = diag_spec.basepath;
-		// TODO:
-		// do we allow '../' elements in a relative directory spec?
-		// 
-		// Current affairs assume this path is set by (safe) application code,
-		// rather than (unsafe) arbitrary end user input...
-		diag_spec.basepath = pathJoin(base, directory);
-		stringDestroy(&base);
-	}
-
-	diag_spec.must_regenerate = 1;
-}
-
-void
-leptDebugReplaceEntireFilePathPart(const char* directory)
-{
-	if (!directory) {
-		directory = "";
-	}
-
-	leptCreateDiagnoticsSpecInstance();
-
-	if (!diag_spec.basepath) {
-		diag_spec.basepath = stringNew(leptDebugGetFileBasePath());
-		diag_spec.basepath_minlength = strlen(diag_spec.basepath);
-	}
-
-	const char* base = diag_spec.basepath;
-	diag_spec.basepath = stringCopySegment(base, 0, diag_spec.basepath_minlength);
-	stringDestroy(&base);
-
-	if (directory[0]) {
-		leptDebugAppendFilePathPart(directory);
-	}
-	diag_spec.must_regenerate = 1;
+	leptDebugSetFilePathPartAtSLevel(diag_spec.steps.actual_depth, directory);
 }
 
 
 void
-leptDebugReplaceOneFilePathPart(const char* directory)
+leptDebugSetFilePathPartFromTail(const char* filepath, l_int32 strip_off_parts_code)
 {
-	if (!directory) {
-		directory = "";
-	}
-
-	leptCreateDiagnoticsSpecInstance();
-
-	if (!diag_spec.basepath) {
-		diag_spec.basepath = stringNew(leptDebugGetFileBasePath());
-		diag_spec.basepath_minlength = strlen(diag_spec.basepath);
-	}
-
-	const char* base = diag_spec.basepath;
-	char* dir;
-	splitPathAtDirectory(base, &dir, NULL);
-
-	size_t baselen = strlen(dir);
-	if (baselen >= diag_spec.basepath_minlength) {
-		if (directory[0]) {
-			diag_spec.basepath = pathJoin(dir, directory);
-			LEPT_FREE(dir); // stringDestroy(&dir);
-		}
-		else {
-			diag_spec.basepath = dir;
-		}
-		stringDestroy(&base);
-	}
-	else {
-		L_WARNING("Attempting to replace forbidden base path part! (base: \"%s\", replace: \"%s\")\n", __func__, base, directory);
-		LEPT_FREE(dir); // stringDestroy(&dir);
-	}
-
-	diag_spec.must_regenerate = 1;
+	leptDebugSetFilePathPartAtSLevelFromTail(diag_spec.steps.actual_depth, filepath, strip_off_parts_code);
 }
 
 
 void
-leptDebugEraseFilePathPart(void)
+leptDebugSetFreshCleanFilePathPart(const char* directory_namebase)
 {
-	leptCreateDiagnoticsSpecInstance();
+	if (!directory_namebase || !*directory_namebase)
+		directory_namebase = "l";
 
-	if (!diag_spec.basepath) {
-		diag_spec.basepath = stringNew(leptDebugGetFileBasePath());
-		diag_spec.basepath_minlength = strlen(diag_spec.basepath);
-	}
-	else {
-		const char* base = diag_spec.basepath;
-		diag_spec.basepath = stringCopySegment(base, 0, diag_spec.basepath_minlength);
-		stringDestroy(&base);
-	}
+	// goal: an alphabetically sortable-in-time per-session-unique suffix.
+	// (The overall-unique criterium should be upheld by using a unique, random, root path,
+	// which we accomplish through mkTmpDirPath() elsewhere in this path' construction run-time path.
+	char suffix[20];
+	snprintf(suffix, sizeof(suffix), "-%04u", leptDebugGetForeverIncreasingIdValue());
 
-	diag_spec.must_regenerate = 1;
+	char* p = stringJoin(directory_namebase, suffix);
+	leptDebugSetFilePathPartAtSLevel(diag_spec.steps.actual_depth, p);
+	stringDestroy(&p);
 }
 
 
-void
-leptDebugEraseOneFilePathPart(void)
+const char*
+leptDebugGetFilePathPartAtSLevel(int relative_depth)
 {
 	leptCreateDiagnoticsSpecInstance();
 
-	if (!diag_spec.basepath) {
-		diag_spec.basepath = stringNew(leptDebugGetFileBasePath());
-		diag_spec.basepath_minlength = strlen(diag_spec.basepath);
+	// negative depths are relative; positive are absolute.
+	if (relative_depth < 0) {
+		relative_depth += diag_spec.steps.actual_depth;
+	}
+	if (relative_depth < 0 || diag_spec.steps.actual_depth < relative_depth) {
+		return (const char *)ERROR_PTR("specified depth outside currently active range.", __func__, NULL);
 	}
 
-	const char* base = diag_spec.basepath;
-	char* dir;
-	splitPathAtDirectory(base, &dir, NULL);
-
-	size_t baselen = strlen(dir);
-	if (baselen >= diag_spec.basepath_minlength) {
-		diag_spec.basepath = dir;
-		stringDestroy(&base);
-	}
-	else {
-		L_WARNING("Attempting to erase part of the restricted base path! (base: \"%s\")\n", __func__, base);
-		LEPT_FREE(dir); // stringDestroy(&dir);
-	}
-
-	diag_spec.must_regenerate = 1;
+	return sarrayGetString(diag_spec.step_paths, relative_depth, L_NOCOPY);
 }
 
 
@@ -506,11 +449,7 @@ const char*
 leptDebugGetFilePathPart(void)
 {
 	leptCreateDiagnoticsSpecInstance();
-
-	const char* rv = diag_spec.basepath + diag_spec.basepath_minlength;
-	if (strchr("\\/", *rv))
-		rv++;
-	return rv;
+	return sarrayGetString(diag_spec.step_paths, diag_spec.steps.actual_depth, L_NOCOPY);
 }
 
 
@@ -525,149 +464,120 @@ leptDebugGetFileBasePath(void)
 	leptCreateDiagnoticsSpecInstance();
 
 	if (!diag_spec.basepath) {
-		return "/tmp/lept-dbg-\x1F/nodef";  // 0x1F: special low-ASCII signal to genPathname to ALWAYS generate a random-coded directory name there!
+		static /* not-const */ char path[] = "/tmp/lept-\x01XXXXX-nodef";
+
+		char* p;
+		p = strchr(path, '\x01');
+		if (p) {
+			leptDebugMkRndToken6(p);
+		}
+
+		return path;
 	}
 	return diag_spec.basepath;
 }
 
 
-/*!
- * \brief   leptDebugSetFilenameForPrefix()
- *
- * \param[in]    source_filename           the path to the file; may be relative or absolute or just the file name itself.
- * \param[in]    strip_off_parts_code
- *
- * <pre>
- * Notes:
- *      (1) The given prefix will be added to every debug plot, image, etc. file produced by leptonica.
- *          This is useful when, for example, processing source images in bulk and you wish to quickly
- *          locate the relevant debug/diagnostics outputs for a given source image.
- *      (2) By passing NULL, the prefix is erased.
- *      (3) %strip_off_parts_code is the number of path elements to keep for the prefix, where negative
- *          counts indicate the filename extension should be stripped off. code 0 is treated the same as -1.
- * </pre>
- */
-void
-leptDebugSetFilenameForPrefix(const char* source_filename, l_int32 strip_off_parts_code)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	if (diag_spec.filename_prefix)
-		stringDestroy(&diag_spec.filename_prefix);
-	if (!source_filename) {
-		diag_spec.filename_prefix = NULL;
-	}
-	else {
-		// when a full path has been specified, strip off any directories: we assume the filename is
-		// pretty unique by itself. When it isn't, there's little loss, as we also have the batch run #
-		// and the process step # to help make the target uniquely named.
-		diag_spec.filename_prefix = getPathBasename(source_filename, strip_off_parts_code);
-	}
-
-	diag_spec.must_regenerate = 1;
-}
-
-
-/*!
- * \brief   leptDebugGetFilenamePrefix()
- *
- * \return  the previously set source filename prefix meant for use as part of the target filepath.
- *
- * <pre>
- * Notes:
- *      (1) This path element (string) has NOT been sanitized yet: it may contain 'dangerous characters'
- *          when used directly for any target file path construction.
- *      (2) Will return NULL when not yet set (or when RESET).
- *      (3) When you want to use the cleaned-up and preformatted filename prefix, use the
- *          leptDebugGenFilename() API instead.
- * </pre>
- */
-const char*
-leptDebugGetFilenameForPrefix(void)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	return diag_spec.filename_prefix;
-}
-
-
-/*!
- * \brief   leptDebugSetFilenameBasename()
- *
- * \param[in]    filename_fmt           the path to the file; may be relative or absolute or just the file name itself.
- * \param[in]    ...
- *
- * <pre>
- * Notes:
- *      (1) The resulting, formatted filename will be added to every generated filename/path if the path format includes the @BASENAME@ macro.
- *          This is useful when, for example, processing multiple files, all part of the same run, e.g. in a regression test.
- *      (2) By passing NULL, the basename is erased.
- * </pre>
- */
-void
-leptDebugSetFilenameBasename(const char* filename_fmt, ...)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	if (diag_spec.filename_basename)
-		stringDestroy(&diag_spec.filename_basename);
-	if (!filename_fmt) {
-		diag_spec.filename_basename = NULL;
-	}
-	else {
-		// when a full path has been specified, strip off any directories: we assume the filename is
-		// pretty unique by itself. When it isn't, there's little loss, as we also have the batch run #
-		// and the process step # to help make the target uniquely named.
-		va_list va;
-		va_start(va, filename_fmt);
-		diag_spec.filename_basename = string_vasprintf(filename_fmt, va);
-		va_end(va);
-	}
-
-	diag_spec.must_regenerate = 1;
-}
-
-
-/*!
- * \brief   leptDebugGetFilenameBasename()
- *
- * \return  the previously set source filename basename meant for use as part of the target filepath.
- *
- * <pre>
- * Notes:
- *      (1) This path element (string) has NOT been sanitized yet: it may contain 'dangerous characters'
- *          when used directly for any target file path construction.
- *      (2) Will return NULL when not yet set (or when RESET).
- *      (3) When you want to use the cleaned-up and preformatted filename prefix, use the
- *          leptDebugGenFilename() API instead.
- * </pre>
- */
-const char*
-leptDebugGetFilenameBasename(void)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	return diag_spec.filename_basename;
-}
-
-
 static inline l_ok
-steps_is_level_forever_increasing(uint16_t depth, unsigned int forever_increasing_mask)
+steps_is_level_forever_increasing(unsigned int depth, unsigned int forever_increasing_mask)
 {
 	unsigned int mask = 1U << depth;
 	return (forever_increasing_mask & mask) != 0;
 }
 
 
-// return TRUE when new numeric value may be assigned to this steps level/depth.
+// return TRUE when new numeric value may be assigned to this step's level/depth.
 static inline l_ok
-steps_level_numeric_value_compares(uint16_t depth, unsigned int forever_increasing_mask, uint32_t level_numeric_id, uint32_t new_numeric_id)
+steps_level_numeric_value_compares(unsigned int depth, unsigned int forever_increasing_mask, unsigned int level_numeric_id, unsigned int new_numeric_id)
 {
 	if (steps_is_level_forever_increasing(depth, forever_increasing_mask))
 		// we cannot ever DECREMENT any step level: that would break our premise of delivering a unique hierarchical number set.
 		return (level_numeric_id < new_numeric_id);
 	else
 		return (level_numeric_id != new_numeric_id);
+}
+
+
+/*!
+ * \brief   leptDebugSetStepIdAtSLevel()
+ *
+ * \param[in]    numeric_id     sequence number; set to 0 to reset the sequence.
+ *
+ * <pre>
+ * Notes:
+ *      (1) The given id will be added to every debug plot, image, etc. file produced by leptonica.
+ *          This is useful when, for example, processing source images in bulk and you wish to quickly
+ *          locate the relevant debug/diagnostics outputs for a given source image.
+ *      (2) On every change (increment or otherwise) of the batch id, both the step id and
+ *          substep item id will be RESET.
+ * </pre>
+ */
+void
+leptDebugSetStepIdAtSLevel(int relative_depth, unsigned int numeric_id)
+{
+	leptCreateDiagnoticsSpecInstance();
+
+	// negative depths are relative; positive are absolute.
+	if (relative_depth < 0) {
+		relative_depth += diag_spec.steps.actual_depth;
+	}
+
+	if (relative_depth < 0 || diag_spec.steps.actual_depth < relative_depth) {
+		L_ERROR("specified depth outside currently active range.\n", __func__);
+		return;
+	}
+
+	if (numeric_id == 0) {
+		if (relative_depth == diag_spec.steps.actual_depth) {
+			diag_spec.must_bump_step_id = 1;
+		}
+		else {
+			assert(relative_depth < diag_spec.steps.actual_depth);
+			++diag_spec.steps.vals[relative_depth];
+
+			// bumping a parent level RESETS all relative children, unless they're set to 'forever increase', in which case they're kept as-is.
+			while (++relative_depth < diag_spec.steps.actual_depth) {
+				if (!steps_is_level_forever_increasing(relative_depth, diag_spec.step_id_is_forever_increasing)) {
+					diag_spec.steps.vals[relative_depth] = 1;
+				}
+			}
+
+			assert(relative_depth == diag_spec.steps.actual_depth);
+			if (steps_is_level_forever_increasing(relative_depth, diag_spec.step_id_is_forever_increasing)) {
+				diag_spec.must_bump_step_id = 1;
+			}
+			else {
+				diag_spec.steps.vals[relative_depth] = 1;
+				diag_spec.must_bump_step_id = 0;
+			}
+		}
+	}
+	else {
+		if (steps_level_numeric_value_compares(relative_depth, diag_spec.step_id_is_forever_increasing, diag_spec.steps.vals[relative_depth], numeric_id)) {
+			diag_spec.steps.vals[relative_depth] = numeric_id;
+
+			// bumping a parent level RESETS all relative children, unless they're set to 'forever increase', in which case they're kept as-is.
+			while (++relative_depth < diag_spec.steps.actual_depth) {
+				if (!steps_is_level_forever_increasing(relative_depth, diag_spec.step_id_is_forever_increasing)) {
+					diag_spec.steps.vals[relative_depth] = 1;
+				}
+			}
+
+			if (relative_depth == diag_spec.steps.actual_depth) {
+				if (steps_is_level_forever_increasing(relative_depth, diag_spec.step_id_is_forever_increasing)) {
+					diag_spec.must_bump_step_id = 1;
+				}
+				else {
+					diag_spec.steps.vals[relative_depth] = 1;
+					diag_spec.must_bump_step_id = 0;
+				}
+			}
+			else {
+				diag_spec.must_bump_step_id = 0;
+			}
+		}
+	}
+	diag_spec.must_regenerate_id = 1;
 }
 
 
@@ -686,34 +596,42 @@ steps_level_numeric_value_compares(uint16_t depth, unsigned int forever_increasi
  * </pre>
  */
 void
-leptDebugSetStepId(uint32_t numeric_id)
+leptDebugSetStepId(unsigned int numeric_id)
 {
 	leptCreateDiagnoticsSpecInstance();
 
-	// note: when we're at the maximum depth, we cannot change the step id any further, but for auto-incrementing (which is enforced at that level)
-	if (diag_spec.steps.actual_depth == L_MAX_STEPS_DEPTH - 1) {
-		diag_spec.must_bump_step_id = 0;
-		diag_spec.must_regenerate = 1;
-		++diag_spec.steps.vals[L_MAX_STEPS_DEPTH - 1];
-	}
-	else if (numeric_id == 0) {
+	if (numeric_id == 0) {
 		diag_spec.must_bump_step_id = 1;
-		diag_spec.must_regenerate = 1;
-		++diag_spec.steps.vals[L_MAX_STEPS_DEPTH - 1];
 	}
-	else if (diag_spec.steps.vals[diag_spec.steps.actual_depth] != numeric_id) {
+	else {
 		if (steps_level_numeric_value_compares(diag_spec.steps.actual_depth, diag_spec.step_id_is_forever_increasing, diag_spec.steps.vals[diag_spec.steps.actual_depth], numeric_id)) {
 			diag_spec.steps.vals[diag_spec.steps.actual_depth] = numeric_id;
 			diag_spec.must_bump_step_id = 0;
-			diag_spec.must_regenerate = 1;
-			++diag_spec.steps.vals[L_MAX_STEPS_DEPTH - 1];
-		}
-		else {
-			diag_spec.must_bump_step_id = 1;
-			diag_spec.must_regenerate = 1;
-			++diag_spec.steps.vals[L_MAX_STEPS_DEPTH - 1];
 		}
 	}
+	diag_spec.must_regenerate_id = 1;
+}
+
+
+void
+leptDebugIncrementStepIdAtSLevel(int relative_depth)
+{
+	leptCreateDiagnoticsSpecInstance();
+
+	// negative depths are relative; positive are absolute.
+	if (relative_depth < 0) {
+		relative_depth += diag_spec.steps.actual_depth;
+	}
+
+	if (relative_depth < 0 || diag_spec.steps.actual_depth < relative_depth) {
+		L_ERROR("specified depth outside currently active range.\n", __func__);
+		return;
+	}
+
+	++diag_spec.steps.vals[relative_depth];
+	diag_spec.must_bump_step_id = 0;
+
+	diag_spec.must_regenerate_id = 1;
 }
 
 
@@ -724,10 +642,63 @@ leptDebugIncrementStepId(void)
 
 	++diag_spec.steps.vals[diag_spec.steps.actual_depth];
 	diag_spec.must_bump_step_id = 0;
-	diag_spec.must_regenerate = 1;
-	if (diag_spec.steps.actual_depth < L_MAX_STEPS_DEPTH - 1) {
-		++diag_spec.steps.vals[L_MAX_STEPS_DEPTH - 1];
+
+	diag_spec.must_regenerate_id = 1;
+}
+
+
+static void
+updateStepId(void)
+{
+	if (diag_spec.must_bump_step_id) {
+		leptDebugIncrementStepId();
+		assert(diag_spec.must_bump_step_id == 0);
 	}
+
+	if (diag_spec.must_regenerate_id) {
+		++diag_spec.steps.forever_incrementing_val;
+		diag_spec.must_regenerate_id = 0;
+
+		if (steps_is_level_forever_increasing(diag_spec.steps.actual_depth, diag_spec.step_id_is_forever_increasing)) {
+			assert(diag_spec.steps.forever_incrementing_val >= diag_spec.steps.vals[diag_spec.steps.actual_depth]);
+			diag_spec.steps.vals[diag_spec.steps.actual_depth] = diag_spec.steps.forever_incrementing_val;
+		}
+
+		stringDestroy(&diag_spec.last_generated_step_id_string);
+	}
+}
+
+
+unsigned int
+leptDebugGetForeverIncreasingIdValue(void)
+{
+	++diag_spec.steps.forever_incrementing_val;
+	return diag_spec.steps.forever_incrementing_val;
+}
+
+
+/*!
+ * \brief   leptDebugGetStepIdAtSLevel()
+ *
+ * \return  the previously set step sequence id at the specified depth. Will be 1(one) when the sequence has been reset.
+ */
+unsigned int
+leptDebugGetStepIdAtSLevel(int relative_depth)
+{
+	leptCreateDiagnoticsSpecInstance();
+
+	// negative depths are relative; positive are absolute.
+	if (relative_depth < 0) {
+		relative_depth += diag_spec.steps.actual_depth;
+	}
+
+	if (relative_depth < 0 || diag_spec.steps.actual_depth < relative_depth) {
+		return ERROR_INT("specified depth outside currently active range.", __func__, 0);
+	}
+
+	updateStepId();
+
+	return diag_spec.steps.vals[relative_depth];
 }
 
 
@@ -736,35 +707,33 @@ leptDebugIncrementStepId(void)
  *
  * \return  the previously set step sequence id at the current depth. Will be 1(one) when the sequence has been reset.
  */
-uint32_t
+unsigned int
 leptDebugGetStepId(void)
 {
 	leptCreateDiagnoticsSpecInstance();
 
-	if (diag_spec.must_bump_step_id) {
-		leptDebugIncrementStepId();
-	}
+	updateStepId();
+
 	return diag_spec.steps.vals[diag_spec.steps.actual_depth];
 }
 
 
-// returned string is kept in the cache, so no need to destroy/free by caller.
 static void
-printStepIdAsString(char *buf, size_t bufsize, l_ok exclude_last_steps_level)
+printStepIdAsString(char *buf, size_t bufsize)
 {
 	char* p = buf;
 	char* e = buf + bufsize;
-	uint16_t maxdepth = diag_spec.steps.actual_depth + 1 - !!exclude_last_steps_level;
-	if (maxdepth == 0)
-		maxdepth = 1;
+	int max_level = diag_spec.steps.actual_depth + 1;
 	int w = diag_spec.step_width + 1;
-	for (uint16_t i = 0; i < maxdepth; i++) {
+	for (int i = 0; i < max_level; i++) {
 		unsigned int v = diag_spec.steps.vals[i];    // MSVC complains about feeding a l_atomic into a variadic function like printf() (because I was compiling in forced C++ mode, anyway). This hotfixes that.
+		assert(e - p > w);
 		int n = snprintf(p, e - p, "%0*u.", w, v);
+		assert(n > 0);
 		p += n;
 	}
-	p--;  // discard the trailing '.'
-	*p = 0;
+	// drop the trailing '.':
+	p[-1] = 0;
 }
 
 
@@ -774,18 +743,19 @@ leptDebugGetStepIdAsString(void)
 {
 	leptCreateDiagnoticsSpecInstance();
 
-	if (diag_spec.must_bump_step_id) {
-		leptDebugIncrementStepId();
-	}
-	const size_t bufsize = L_MAX_STEPS_DEPTH * 11 + 1; // max 10 digits (for uint32_t value) + '.' per level + '\0'
-	char* buf = diag_spec.last_generated_step_id_string;
-	if (!buf) {
-		buf = (char*)LEPT_CALLOC(bufsize, sizeof(char));
+	updateStepId();
+
+	if (!diag_spec.last_generated_step_id_string) {
+		const size_t bufsize = L_MAX_STEPS_DEPTH * 3 * sizeof(diag_spec.steps.vals[0]) + 1; // max 2.5 digits per byte (for unsigned int type values) + '.' per level + '\0'
+		char* buf = (char*)LEPT_MALLOC(bufsize);
+		if (!buf) {
+			return (const char*)ERROR_PTR("could not allocate string buffer", __func__, NULL);
+		}
+		printStepIdAsString(buf, bufsize);
 		diag_spec.last_generated_step_id_string = buf;
 	}
-	printStepIdAsString(buf, bufsize, FALSE);
 
-	return buf;
+	return diag_spec.last_generated_step_id_string;
 }
 
 
@@ -795,6 +765,33 @@ leptDebugMarkStepIdForIncrementing(void)
 	leptCreateDiagnoticsSpecInstance();
 
 	diag_spec.must_bump_step_id = 1;
+
+	diag_spec.must_regenerate_id = 1;
+}
+
+
+void
+leptDebugSetStepLevelAtSLevelAsForeverIncreasing(int relative_depth, l_ok enable)
+{
+	leptCreateDiagnoticsSpecInstance();
+
+	// negative depths are relative; positive are absolute.
+	if (relative_depth < 0) {
+		relative_depth += diag_spec.steps.actual_depth;
+	}
+
+	if (relative_depth < 0 || diag_spec.steps.actual_depth < relative_depth) {
+		L_ERROR("specified depth outside currently active range.\n", __func__);
+	}
+
+	if (enable) {
+		unsigned int mask = 1U << relative_depth;
+		diag_spec.step_id_is_forever_increasing |= mask;
+	}
+	else {
+		unsigned int mask = 1U << relative_depth;
+		diag_spec.step_id_is_forever_increasing &= ~mask;
+	}
 }
 
 
@@ -807,168 +804,21 @@ leptDebugSetStepLevelAsForeverIncreasing(l_ok enable)
 		unsigned int mask = 1U << diag_spec.steps.actual_depth;
 		diag_spec.step_id_is_forever_increasing |= mask;
 	}
-	else if (diag_spec.steps.actual_depth < L_MAX_STEPS_DEPTH - 1) {
-		unsigned int mask = ~(1U << diag_spec.steps.actual_depth);
-		diag_spec.step_id_is_forever_increasing &= mask;
+	else {
+		unsigned int mask = 1U << diag_spec.steps.actual_depth;
+		diag_spec.step_id_is_forever_increasing &= ~mask;
 	}
 }
 
 
 static inline void
-steps_reset_sub_levels(StepsArray* steps, uint16_t depth, uint16_t max_depth, unsigned int forever_increasing_mask)
+steps_reset_sub_levels(StepsArray* steps, unsigned int depth, unsigned int max_depth, unsigned int forever_increasing_mask)
 {
-	for (uint16_t d = depth; d <= max_depth; d++) {
+	for (unsigned int d = depth; d <= max_depth; d++) {
 		unsigned int mask = 1U << d;
 		if ((forever_increasing_mask & mask) == 0) {
 			steps->vals[d] = 0;
 		}
-	}
-}
-
-
-/*!
- * \brief   leptDebugSetStepIdAtDepth()
- *
- * \param[in]    relative_depth   0: current depth, -1/+1: parent depth, ...
- * \param[in]    numeric_id       (batch) step sequence number
- *
- * <pre>
- * Notes:
- *      (1) The given step id will be added to every debug plot, image, etc. file produced by leptonica.
- *          This is useful when, for example, processing source images in bulk and you wish to quickly
- *          locate the relevant debug/diagnostics outputs for a given source image.
- *      (2) By passing 0, the step sequence is reset.
- *      (3) On every change (increment or otherwise) of the step id, the substep item id will be RESET.
- *      (3) On every change (increment or otherwise) of the batch id, the step id will already have been RESET.
- * </pre>
- */
-void
-leptDebugSetStepIdAtDepth(int relative_depth, uint32_t numeric_id)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	// we can only address current or parent levels!
-	if (relative_depth > 0)
-		relative_depth = -relative_depth;
-
-	int target_depth = diag_spec.steps.actual_depth + relative_depth;
-	if (target_depth < 0)
-		target_depth = 0;
-	else if (target_depth >= L_MAX_STEPS_DEPTH)
-		target_depth = L_MAX_STEPS_DEPTH - 1;
-
-	if (target_depth == diag_spec.steps.actual_depth) {
-		leptDebugSetStepId(numeric_id);
-		return;
-	}
-
-	// here we only address any parent levels, hence we won't be touching level (L_MAX_STEPS_DEPTH - 1) which simplifies matters.
-	if (numeric_id == 0) {
-		++diag_spec.steps.vals[target_depth];
-		steps_reset_sub_levels(&diag_spec.steps, target_depth + 1, diag_spec.steps.actual_depth, diag_spec.step_id_is_forever_increasing);
-		diag_spec.must_bump_step_id = 1;
-		diag_spec.must_regenerate = 1;
-		++diag_spec.steps.vals[L_MAX_STEPS_DEPTH - 1];
-	}
-	else if (diag_spec.steps.vals[target_depth] != numeric_id) {
-		if (steps_level_numeric_value_compares(target_depth, diag_spec.step_id_is_forever_increasing, diag_spec.steps.vals[target_depth], numeric_id)) {
-			diag_spec.steps.vals[target_depth] = numeric_id;
-			steps_reset_sub_levels(&diag_spec.steps, target_depth + 1, diag_spec.steps.actual_depth, diag_spec.step_id_is_forever_increasing);
-			diag_spec.must_bump_step_id = 1;
-			diag_spec.must_regenerate = 1;
-			++diag_spec.steps.vals[L_MAX_STEPS_DEPTH - 1];
-		}
-		else {
-			++diag_spec.steps.vals[target_depth];
-			steps_reset_sub_levels(&diag_spec.steps, target_depth + 1, diag_spec.steps.actual_depth, diag_spec.step_id_is_forever_increasing);
-			diag_spec.must_bump_step_id = 1;
-			diag_spec.must_regenerate = 1;
-			++diag_spec.steps.vals[L_MAX_STEPS_DEPTH - 1];
-		}
-	}
-}
-
-
-void
-leptDebugIncrementStepIdAtDepth(int relative_depth)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	// we can only address current or parent levels!
-	if (relative_depth > 0)
-		relative_depth = -relative_depth;
-
-	int target_depth = diag_spec.steps.actual_depth + relative_depth;
-	if (target_depth < 0)
-		target_depth = 0;
-	else if (target_depth >= L_MAX_STEPS_DEPTH)
-		target_depth = L_MAX_STEPS_DEPTH - 1;
-
-	if (target_depth == diag_spec.steps.actual_depth) {
-		leptDebugIncrementStepId();
-		return;
-	}
-
-	// here we only address any parent levels, hence we won't be touching level (L_MAX_STEPS_DEPTH - 1) which simplifies matters.
-	++diag_spec.steps.vals[target_depth];
-	steps_reset_sub_levels(&diag_spec.steps, target_depth + 1, diag_spec.steps.actual_depth, diag_spec.step_id_is_forever_increasing);
-	diag_spec.must_bump_step_id = 1;
-	diag_spec.must_regenerate = 1;
-	++diag_spec.steps.vals[L_MAX_STEPS_DEPTH - 1];
-}
-
-
-uint32_t
-leptDebugGetStepIdAtLevel(int relative_depth)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	// we can only address current or parent levels!
-	if (relative_depth > 0)
-		relative_depth = -relative_depth;
-
-	int target_depth = diag_spec.steps.actual_depth + relative_depth;
-	if (target_depth < 0)
-		target_depth = 0;
-	else if (target_depth >= L_MAX_STEPS_DEPTH)
-		target_depth = L_MAX_STEPS_DEPTH - 1;
-
-	if (target_depth == diag_spec.steps.actual_depth) {
-		return leptDebugGetStepId();
-	}
-
-	// diag_spec.must_bump_step_id only applies to the active depth level, not any parent level.
-	return diag_spec.steps.vals[target_depth];
-}
-
-
-void
-leptDebugSetStepLevelAtLevelAsForeverIncreasing(int relative_depth, l_ok enable)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	// we can only address current or parent levels!
-	if (relative_depth > 0)
-		relative_depth = -relative_depth;
-
-	int target_depth = diag_spec.steps.actual_depth + relative_depth;
-	if (target_depth < 0)
-		target_depth = 0;
-	else if (target_depth >= L_MAX_STEPS_DEPTH)
-		target_depth = L_MAX_STEPS_DEPTH - 1;
-
-	if (target_depth == diag_spec.steps.actual_depth) {
-		leptDebugSetStepLevelAsForeverIncreasing(enable);
-		return;
-	}
-
-	if (enable) {
-		unsigned int mask = 1U << target_depth;
-		diag_spec.step_id_is_forever_increasing |= mask;
-	}
-	else if (target_depth < L_MAX_STEPS_DEPTH - 1) {
-		unsigned int mask = ~(1U << target_depth);
-		diag_spec.step_id_is_forever_increasing &= mask;
 	}
 }
 
@@ -979,15 +829,15 @@ leptDebugGetStepNuma(void)
 	leptCreateDiagnoticsSpecInstance();
 
 	NUMA* numa = numaCreate(L_MAX_STEPS_DEPTH);
-	for (uint16_t i = 0; i < diag_spec.steps.actual_depth; i++) {
+	for (unsigned int i = 0; i < diag_spec.steps.actual_depth; i++) {
 		numaAddNumber(numa, diag_spec.steps.vals[i]);
 	}
 	return numa;
 }
 
 
-uint16_t
-leptDebugGetStepDepth(void)
+unsigned int
+leptDebugGetStepLevel(void)
 {
 	leptCreateDiagnoticsSpecInstance();
 
@@ -995,38 +845,126 @@ leptDebugGetStepDepth(void)
 }
 
 
-uint16_t
+unsigned int
 leptDebugAddStepLevel(void)
 {
 	leptCreateDiagnoticsSpecInstance();
 
+	// before we push another level, we might need to bow to the pending 'bump' request:
+	if (diag_spec.must_bump_step_id) {
+		leptDebugIncrementStepId();
+		assert(diag_spec.must_bump_step_id == 0);
+	}
+	// ... while any 'must_regenerate_id' must remain pending, hence NO calling `updateStepId()` allowed around these premises! ;-)
+
 	if (diag_spec.steps.actual_depth < L_MAX_STEPS_DEPTH - 2) {
 		++diag_spec.steps.actual_depth;
 		diag_spec.steps.vals[diag_spec.steps.actual_depth] = 0;
-		diag_spec.must_bump_step_id = 1;
-		diag_spec.must_regenerate = 1;
 	}
 	else {
-		diag_spec.steps.actual_depth = L_MAX_STEPS_DEPTH - 1;
-		diag_spec.must_bump_step_id = 1;
-		diag_spec.must_regenerate = 1;
+		return ERROR_INT("cannot push another step level: maximum stack depth reached.", __func__, 0);
 	}
+
+	diag_spec.must_bump_step_id = 1;
+
+	diag_spec.must_regenerate_id = 1;
+
 	return diag_spec.steps.actual_depth;
 }
 
 
-uint32_t
+unsigned int
 leptDebugPopStepLevel(void)
 {
 	leptCreateDiagnoticsSpecInstance();
 
-	uint32_t rv = diag_spec.steps.vals[diag_spec.steps.actual_depth];
 	if (diag_spec.steps.actual_depth > 0) {
-		--diag_spec.steps.actual_depth;
-		diag_spec.must_bump_step_id = 1;
-		diag_spec.must_regenerate = 1;
+		unsigned int rv = diag_spec.steps.vals[diag_spec.steps.actual_depth];
+
+		unsigned int depth = diag_spec.steps.actual_depth--;
+
+		// clear forever-increasing bits for levels we do not have any more:
+		unsigned int mask = 1U << depth;
+		--mask;		/* 0x100.. -> 0xFF.. */
+		diag_spec.step_id_is_forever_increasing &= mask;
+
+		/*
+		* This is where our 'delayed incrementing of the id' needs some extra work from us:
+		*
+		* When you push and pop a level, you want the immediate next push/add
+		* to reside at the *next* (incremented) parent level no matter what.
+		*
+		* Hence, on POP, we DO NOT delay our step id increment, but execute it immediately!
+		*
+		* In an example of a step hierarchy + productions:
+		*
+		* - steps = 1.1.
+		* - Add (a.k.a. push)
+		* - steps = 1.1.0.
+		*   -->     1.1.1. (after delayed bumping on first path generate action)
+		* - inc --> 1.1.2. (after delayed bumping...)
+		* - inc --> 1.1.3. (ditto; you're getting it...)
+		* - Pop            (NO delayed bump pending: that was immediate inc execution)
+		*   -->     1.2.   (POP returns '3', BTW)
+		* - Add (a.k.a. push)    :: (user just popping and pushing levels immediately after one another.)
+		* - steps = 1.2.0. (with delayed bump pending...)
+		*   -->     1.2.1. (after delayed bumping on first path generate action)
+		* - inc --> 1.2.2. (after delayed bumping...)
+		* - inc --> 1.2.3. (ditto; you're getting it...)
+		* - Pop            (NO delayed bump pending: that was immediate inc execution)
+		*   -->     1.3.   (POP returns '3', BTW)
+		* - GenFile
+		*   -->     1.3.name
+		* - inc --> 1.4. 
+		* - GenFile
+		*   -->     1.4.name
+		* - Pop            (NO delayed bump pending: that was immediate inc execution)
+		*   -->     2.     (POP returns '4', BTW)
+		*/
+		++diag_spec.steps.vals[diag_spec.steps.actual_depth];
+		diag_spec.must_bump_step_id = 0;
+
+		diag_spec.must_regenerate_id = 1;
+
+		return rv;
 	}
-	return rv;
+	else {
+		return ERROR_INT("cannot pop the last (root) step level: stack depth has been depleted; @dev: check your Add-vs-Pop call pairs.", __func__, 0);
+	}
+}
+
+
+void
+leptDebugPopStepLevelTo(int relative_depth)
+{
+	leptCreateDiagnoticsSpecInstance();
+
+	// negative depths are relative; positive are absolute.
+	if (relative_depth < 0) {
+		relative_depth += diag_spec.steps.actual_depth;
+	}
+
+	if (relative_depth < 0 || diag_spec.steps.actual_depth < relative_depth) {
+		L_ERROR("specified depth outside currently active range.\n", __func__);
+		return;
+	}
+
+	if (diag_spec.steps.actual_depth != relative_depth) {
+		diag_spec.steps.actual_depth = relative_depth;
+
+		unsigned int depth = relative_depth + 1;
+
+		// clear forever-increasing bits for levels we do not have any more:
+		unsigned int mask = 1U << depth;
+		--mask;		/* 0x100.. -> 0xFF.. */
+		diag_spec.step_id_is_forever_increasing &= mask;
+
+		// see note in leptDebugPopStepLevel:
+		++diag_spec.steps.vals[diag_spec.steps.actual_depth];
+		diag_spec.must_bump_step_id = 0;
+
+		diag_spec.must_regenerate_id = 1;
+	}
 }
 
 
@@ -1040,6 +978,8 @@ leptDebugSetStepDisplayWidth(unsigned int width_per_level)
 	else if (width_per_level > 8)
 		width_per_level = 8;
 	diag_spec.step_width = width_per_level - 1;  // value 1..8: fits in 3 bits. :-)
+
+	diag_spec.must_regenerate_id = 1;
 }
 
 
@@ -1058,8 +998,9 @@ leptDebugSetHashId(uint64_t hash_id)
 	leptCreateDiagnoticsSpecInstance();
 
 	if (diag_spec.active_hash_id != hash_id) {
-		diag_spec.must_regenerate = 1;
 		diag_spec.active_hash_id = hash_id;
+
+		diag_spec.must_regenerate_id = 1;
 	}
 }
 
@@ -1074,113 +1015,172 @@ leptDebugGetHashId(void)
 
 
 /*!
- * \brief   leptDebugSetProcessName()
- *
- * \param[in]    name
- *
- * <pre>
- * Notes:
- *      (1) The given name will (in shortened and sanitized form) be added to every debug plot, image, etc. file produced by leptonica.
- *          This is useful when, for example, processing source images in bulk and you wish to quickly
- *          locate the relevant debug/diagnostics outputs for a given source image.
- *      (2) By passing NULL, the name is erased.
- * </pre>
- */
-void
-leptDebugSetProcessName(const char* name)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	if (diag_spec.process_name) {
-		stringDestroy(&diag_spec.process_name);
-	}
-	if (name && *name) {
-		diag_spec.process_name = stringNew(name);
-	}
-
-	diag_spec.must_regenerate = 1;
-}
-
-
-/*!
- * \brief   leptDebugGetProcessName()
- *
- * \return  the previously set process name meant for use as part of the target prefix string.
- *
- * <pre>
- * Notes:
- *      (1) This process name has NOT been sanitized yet: it may contain 'dangerous characters'
- *          when used directly for any target file path construction.
- *      (2) Will return NULL when not yet set (or when RESET).
- *      (3) When you want to use the cleaned-up and preformatted process name, use the
- *          leptDebugGenFilename() API instead.
- * </pre>
- */
-const char*
-leptDebugGetProcessName(void)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	return diag_spec.process_name;
-}
-
-
-/*!
- * \brief   leptDebugGenFilename()
- *
- * \return  the previously set filename prefix string or an empty string if no prefix has been set up.
- */
-const char*
-leptDebugGenFilename(const char* filename_fmt_str, ...)
-{
-	leptCreateDiagnoticsSpecInstance();
-
-	va_list va;
-	va_start(va, filename_fmt_str);
-	const char* fn = string_vasprintf(filename_fmt_str, va);
-	va_end(va);
-	const char* f = pathJoin(leptDebugGetFileBasePath(), fn);
-	stringDestroy(&fn);
-	return f;
-}
-
-
-/*!
  * \brief   leptDebugGenFilepath()
  *
  * \param[in]    template_printf_fmt_str
  *
  * <pre>
  * Notes:
+ * 
+ * - leptonica APIs will always follow-up with a call to genPathname() afterwards, before using the generated path.
+ *   This implies that leptDebugGenFilepath() MAY safely generate an unsafe.relative/incomplete path string.
+ * 
+ * - the returned string is stored in a cache array and will remain owned by the leptDebug code: callers MUST NOT free/release the returned string.
+ *
  *
  *
  * </pre>
  */
-const char*
+char *
 leptDebugGenFilepath(const char* path_fmt_str, ...)
 {
-	va_list va;
-	va_start(va, path_fmt_str);
-	const char *fn = string_vasprintf(path_fmt_str, va);
-	va_end(va);
-	const char* f = pathSafeJoin(leptDebugGetFileBasePath(), fn);
-	stringDestroy(&fn);
-	sarrayAddString(diag_spec.last_generated_paths, f, L_INSERT);
-	return f;
-}
+	leptCreateDiagnoticsSpecInstance();
 
+	updateStepId();
 
-const char*
-leptDebugGenFilepathEx(const char* directory, const char* path_fmt_str, ...)
-{
-	va_list va;
-	va_start(va, path_fmt_str);
-	const char* fn = string_vasprintf(path_fmt_str, va);
-	va_end(va);
-	const char* f = pathJoin(leptDebugGetFileBasePath(), fn);
-	stringDestroy(&fn);
-	sarrayAddString(diag_spec.last_generated_paths, f, L_INSERT);
-	return f;
+	/* if (diag_spec.must_regenerate_path)   -- we don't know the filename part so we have to the work anyway! */
+	{
+		char* fn = NULL;
+		size_t fn_len = 0;
+
+		if (path_fmt_str && path_fmt_str[0]) {
+			va_list va;
+			va_start(va, path_fmt_str);
+			fn = string_vasprintf(path_fmt_str, va);
+			va_end(va);
+
+			convertSepCharsInPath(fn, UNIX_PATH_SEPCHAR);
+			if (getPathRootLength(fn) != 0) {
+				L_WARNING("The intent of %s() is to generate full paths from RELATIVE paths; this is not: '%s'\n", __func__, fn);
+			}
+
+			fn_len = strlen(fn);
+		}
+
+		const char* bp = leptDebugGetFileBasePath();
+		size_t bp_len = strlen(bp);
+
+		// sorta like leptDebugGetStepIdAsString(), but with filepath elements thrown in:
+		size_t bufsize = L_MAX_STEPS_DEPTH * 4 * sizeof(diag_spec.steps.vals[0]) + 5 + 5;  // rough upper limit estimate...
+		//bufsize += bp_len;
+		bufsize += fn_len;
+		for (int i = 0; i < diag_spec.steps.actual_depth; i++) {
+			const char* str = sarrayGetString(diag_spec.step_paths, i, L_NOCOPY);
+			bufsize += strlen(str);
+		}
+		char* buf = (char*)LEPT_MALLOC(bufsize);
+		if (!buf) {
+			return (char*)ERROR_PTR("could not allocate string buffer", __func__, NULL);
+		}
+
+		{
+			char* p = buf;
+			char* e = buf + bufsize;
+			int max_level = diag_spec.steps.actual_depth + 1;
+			int w = diag_spec.step_width + 1;
+			for (int i = 0; i < max_level; i++) {
+				const char* str = sarrayGetString(diag_spec.step_paths, i, L_NOCOPY);
+				unsigned int v = diag_spec.steps.vals[i];    // MSVC complains about feeding a l_atomic into a variadic function like printf() (because I was compiling in forced C++ mode, anyway). This hotfixes that.
+				assert(e - p > w + 3 + strlen(str));
+				if (str && *str) {
+					int n = snprintf(p, e - p, "%s-%0*u/", str, w, v);
+					assert(n > 0);
+					p += n;
+				}
+				else {
+					// don't just produce numbered directories,
+					// instead append the depth number to the previous dir:
+					--p;
+					int n = snprintf(p, e - p, ".%0*u/", w, v);
+					assert(n > 0);
+					p += n;
+				}
+			}
+
+			char* fn_part = p;
+
+			// drop the trailing '/':
+			{
+				--p;
+
+				// the last level is not used as a directory, but as a filename PREFIX:
+				*p++ = '.';
+
+				// inject unique number in the last path element, just after the file prefix:
+				int l = snprintf(p, e - p, "%04u.", leptDebugGetForeverIncreasingIdValue());
+				assert(l < e - p);
+				assert(l > 0);
+				assert(p[l] == 0);
+				p += l;
+
+				// drop that last '.' if there's no filename suffix specified:
+				if (fn_len == 0) {
+					--p;
+					*p = 0;
+				}
+			}
+			assert(e - p > 2 + fn_len);
+			if (fn_len > 0) {
+				strcpy(p, fn);
+			}
+			else {
+				*p = 0;
+			}
+
+			assert(strlen(buf) + 1 < bufsize);
+
+			// now we sanitize the mother: '..' anywhere becomes '__' and non-ASCII, non-UTF8 is gentrified to '_' as well.
+			p = buf;
+			while (*p) {
+				unsigned char c = p[0];
+				if (c == '.' && p[1] == '.') {
+					p[0] = '_';
+					p[1] = '_';
+					p += 2;
+					continue;
+				}
+				else if (c == '.' && p > buf && p[-1] == '/') {
+					// dir/.dotfile --> dir/_dotfile  :: unhide UNIX-style 'hidden' files
+					p[0] = '_';
+					p += 1;
+					continue;
+				}
+				else if (c == '.' && (p[1] == '/' || p[1] == '\\' || p[1] == 0)) {
+					// dirs & files cannot end in a dot
+					p[0] = '_';
+					p += 1;
+					continue;
+				}
+				else if (c <= ' ') {   // replace spaces and low-ASCII chars
+					p[0] = '_';
+				}
+				else if (strchr("$~%^&*?|;:'\"<>`", c)) {
+					p[0] = '_';
+				}
+				else if (c == '\\') {
+					if (p < fn_part) {
+						p[0] = '/';
+					}
+					else {
+						p[0] = '_';
+					}
+				}
+				else if (c == '/' && p >= fn_part) {
+					p[0] = '_';
+				}
+				p++;
+			}
+		}
+
+		char* np = pathSafeJoin(bp, buf);
+
+		stringDestroy(&fn);
+		stringDestroy(&buf);
+
+		sarrayAddString(diag_spec.last_generated_paths, np, L_INSERT);
+
+		return np;
+	}
 }
 
 
@@ -1270,6 +1270,21 @@ leptActivateDebugMode(l_int32 activate_count_add, l_int32 activate_count_subtrac
 }
 
 
+l_ok
+leptIsGplotModeActive(void)
+{
+	return diag_spec.using_gplot > 0;
+}
+
+
+void
+leptActivateGplotMode(l_int32 activate_count_add, l_int32 activate_count_subtract)
+{
+	diag_spec.using_gplot += activate_count_add;
+	diag_spec.using_gplot -= activate_count_subtract;
+}
+
+
 // generates a (probably unique) semi-random ID string.
 void
 leptDebugMkRndToken6(char dest[6])
@@ -1312,6 +1327,35 @@ leptDebugMkRndToken6(char dest[6])
 	h >>= 5;
 	dest[5] = lu[h & 0x1F];
 }
+
+
+#ifdef _WIN32
+
+static uint64_t
+qword(FILETIME ts)
+{
+	uint64_t t = ts.dwHighDateTime;
+	t <<= 32;
+	t |= ts.dwLowDateTime;
+	return t;
+}
+
+static uint64_t
+latest3(FILETIME ftCreationTime, FILETIME ftLastAccessTime, FILETIME ftLastWriteTime)
+{
+	uint64_t ct = qword(ftCreationTime);
+	uint64_t wt = qword(ftLastAccessTime);
+	uint64_t at = qword(ftLastWriteTime);
+
+	uint64_t t = ct;
+	if (wt > t)
+		t = wt;
+	if (at > t)
+		t = at;
+	return t;
+}
+
+#endif
 
 
 // WARNING: this function CANNOT use any of the other file/path APIs as those invoke genPathname() under the hood
@@ -1515,8 +1559,6 @@ mkTmpDirPath(void)
 #else  /* _WIN32 */
 
 			/* http://msdn2.microsoft.com/en-us/library/aa365200(VS.85).aspx */
-#include <windows.h>
-
 			{
 				char* pszDir;
 
@@ -1534,15 +1576,30 @@ mkTmpDirPath(void)
 					if (INVALID_HANDLE_VALUE != hFind) {
 						const char* current_match = stringNew("");
 
+						// FILETIME contains the number of 100-nanosecond intervals since January 1, 1601 (UTC).
+						const uint64_t one_hour = 1 * 3600.0 * 1e9 / 100;
+						//const uint64_t one_month = 30 * 24 * one_hour;
+						uint64_t current_time = 0;
+
 						if (0 != (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && strcmp(ffd.cFileName, "..") != 0 && strcmp(ffd.cFileName, ".") != 0)  /* pick up subdir */
 						{
 							convertSepCharsInPath(ffd.cFileName, UNIX_PATH_SEPCHAR);
 							const char* str = ffd.cFileName;
 							if (strncasecmp(str, "lept-", 5) == 0) {
 								// a match: decide if this one is 'later' than what we have
-								if (strcasecmp(current_match, str + 5) > 0) {
+								uint64_t dt = latest3(ffd.ftCreationTime, ffd.ftLastWriteTime, ffd.ftLastAccessTime);
+								if (dt > current_time) {
 									stringDestroy(&current_match);
 									current_match = stringNew(str + 5);
+									current_time = dt;
+								}
+								// here we take the 'sorts as higher' directory entry when it occurred within the last hour.
+								else if (dt + one_hour >= current_time) {
+									if (strcasecmp(current_match, str + 5) < 0) {
+										stringDestroy(&current_match);
+										current_match = stringNew(str + 5);
+										current_time = dt;
+									}
 								}
 							}
 						}
@@ -1555,9 +1612,19 @@ mkTmpDirPath(void)
 							const char* str = ffd.cFileName;
 							if (strncasecmp(str, "lept-", 5) == 0) {
 								// a match: decide if this one is 'later' than what we have
-								if (strcasecmp(current_match, str + 5) < 0) {
+								uint64_t dt = latest3(ffd.ftCreationTime, ffd.ftLastWriteTime, ffd.ftLastAccessTime);
+								if (dt > current_time) {
 									stringDestroy(&current_match);
 									current_match = stringNew(str + 5);
+									current_time = dt;
+								}
+								// here we take the 'sorts as higher' directory entry when it occurred within the last hour.
+								else if (dt + one_hour >= current_time) {
+									if (strcasecmp(current_match, str + 5) < 0) {
+										stringDestroy(&current_match);
+										current_match = stringNew(str + 5);
+										current_time = dt;
+									}
 								}
 							}
 						}
@@ -1589,15 +1656,24 @@ mkTmpDirPath(void)
 
 			// now bump the counter by 1:
 			{
-				unsigned char carry = 0;
-				for (int i = 3; i >= 0; i--) {
-					unsigned char c = counter_prefix[i];
-					c++;
-					if (c > 'Z') {
-						c = 'A';
-						carry = 1;
-					}
-					counter_prefix[i] = c;
+				unsigned char c = ++counter_prefix[3];
+				if (c > 'Z') {
+					counter_prefix[3] = 'A';
+					++counter_prefix[2];
+				}
+				c = counter_prefix[2];
+				if (c > 'Z') {
+					counter_prefix[2] = 'A';
+					++counter_prefix[1];
+				}
+				c = counter_prefix[1];
+				if (c > 'Z') {
+					counter_prefix[1] = 'A';
+					++counter_prefix[0];
+				}
+				c = counter_prefix[0];
+				if (c > 'Z') {
+					counter_prefix[0] = 'A';
 				}
 			}
 
@@ -1704,3 +1780,28 @@ leptDebugGenTmpDirPath(void)
 	return diag_spec.expanded_tmpdir;
 }
 
+
+void
+leptDebugSetTmpDirBasePath(const char* basepath)
+{
+	stringDestroy(&diag_spec.expanded_tmpdir);
+	stringDestroy(&diag_spec.configured_tmpdir);
+
+	if (!basepath || !*basepath) {
+		diag_spec.configured_tmpdir = NULL;
+	}
+	else {
+		// we need to bootstrap the new base path as userland code MAY pass in a relative or otherwise insufficiently specified path:
+		char* p1 = pathSafeJoin(basepath, NULL);
+		char* p2 = leptDebugGenFilepath("%s", p1); // sanitizes, among other extra efforts...
+
+		stringDestroy(&p1);
+		// kill the tmpdir, which was regenerated as part of the above path manip calls:
+		stringDestroy(&diag_spec.expanded_tmpdir);
+		stringDestroy(&diag_spec.configured_tmpdir);
+
+		diag_spec.configured_tmpdir = p2;
+
+		(void)leptDebugGenTmpDirPath();
+	}
+}
