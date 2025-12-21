@@ -306,33 +306,34 @@ opj_stream_t      *l_stream = NULL;  /* opj stream */
 PIX               *pix = NULL;
 OpjBuffer          buffer;
 
-	opj_lock(fz_get_global_context());
+#if defined(BUILD_MONOLITHIC)
+	fz_context* ctx = fz_get_global_context();
+	assert(ctx != NULL);
+	opj_lock(ctx);
+#endif
 
     opjVersion = opj_version();
     if (!opjVersion || opjVersion[0] == '\0') {
-		opj_unlock(fz_get_global_context());
-        return (PIX *)ERROR_PTR("opj version not defined", __func__, NULL);
+		L_ERROR("opj version not defined\n", __func__);
+		goto err;
 	}
     if (opjVersion[0] - 0x30 < 2 ||
         (opjVersion[0] == '2' && opjVersion[2] - 0x30 == 0)) {
-		opj_unlock(fz_get_global_context());
-        L_ERROR("version is %s; must be 2.1 or higher\n", __func__, opjVersion);
-        return NULL;
+		L_ERROR("version is %s; must be 2.1 or higher\n", __func__, opjVersion);
+        goto err;
     }
 
         /* Get the resolution, bits/sample and codec type */
     readResolutionMemJp2k(bytes, nbytes, &xres, &yres);
     readHeaderMemJp2k(bytes, nbytes, NULL, NULL, &bps, NULL, &codec);
     if (codec != L_J2K_CODEC && codec != L_JP2_CODEC) {
-		opj_unlock(fz_get_global_context());
-        L_ERROR("valid codec not identified\n", __func__);
-		return NULL;
+		L_ERROR("valid codec not identified\n", __func__);
+		goto err;
     }
 
     if (bps != 8) {
-		opj_unlock(fz_get_global_context());
-        L_ERROR("found %d bps; can only handle 8 bps\n", __func__, bps);
-		return NULL;
+		L_ERROR("found %d bps; can only handle 8 bps\n", __func__, bps);
+		goto err;
     }
 
         /* Set decoding parameters to default values */
@@ -343,11 +344,11 @@ OpjBuffer          buffer;
          * compressed string is made.  A request for an invalid reduction
          * will cause an error in opj_read_header(), and no image will
          * be returned. */
-    for (reduce = 0; (1L << reduce) < reduction; reduce++) { }
+    for (reduce = 0; (1L << reduce) < reduction; reduce++) {
+	}
     if ((1L << reduce) != reduction) {
-		opj_unlock(fz_get_global_context());
-        L_ERROR("invalid reduction %d; not power of 2\n", __func__, reduction);
-		return NULL;
+		L_ERROR("invalid reduction %d; not power of 2\n", __func__, reduction);
+		goto err;
     }
     parameters.cp_reduce = reduce;
 
@@ -357,9 +358,8 @@ OpjBuffer          buffer;
     else if (codec == L_J2K_CODEC)
         l_codec = opj_create_decompress(OPJ_CODEC_J2K);
     if (!l_codec) {
-		opj_unlock(fz_get_global_context());
-        L_ERROR("failed to make the codec\n", __func__);
-		return NULL;
+		L_ERROR("failed to make the codec\n", __func__);
+		goto err;
     }
 
         /* Catch and report events using callbacks */
@@ -372,9 +372,8 @@ OpjBuffer          buffer;
         /* Setup the decoding parameters using user parameters */
     if (!opj_setup_decoder(l_codec, &parameters)){
         opj_destroy_codec(l_codec);
-		opj_unlock(fz_get_global_context());
         L_ERROR("failed to set up decoder\n", __func__);
-		return NULL;
+		goto err;
     }
 
         /* Open decompression 'stream'. */
@@ -384,9 +383,8 @@ OpjBuffer          buffer;
     buffer.pos  = 0;
     if ((l_stream = opjCreateMemoryStream(&buffer, 1)) == NULL) {
         opj_destroy_codec(l_codec);
-		opj_unlock(fz_get_global_context());
         L_ERROR("failed to open the stream\n", __func__);
-		return NULL;
+		goto err;
     }
 
         /* Read the main header of the codestream and, if necessary,
@@ -395,9 +393,8 @@ OpjBuffer          buffer;
         opj_stream_destroy(l_stream);
         opj_destroy_codec(l_codec);
         opj_image_destroy(image);
-		opj_unlock(fz_get_global_context());
         L_ERROR("failed to read the header\n", __func__);
-		return NULL;
+		goto err;
     }
 
         /* Set up to decode a rectangular region */
@@ -408,9 +405,8 @@ OpjBuffer          buffer;
             opj_stream_destroy(l_stream);
             opj_destroy_codec(l_codec);
             opj_image_destroy(image);
-			opj_unlock(fz_get_global_context());
             L_ERROR("failed to set the region for decoding\n", __func__);
-			return NULL;
+			goto err;
         }
     }
 
@@ -420,9 +416,8 @@ OpjBuffer          buffer;
         opj_destroy_codec(l_codec);
         opj_stream_destroy(l_stream);
         opj_image_destroy(image);
-		opj_unlock(fz_get_global_context());
         L_ERROR("failed to decode the image\n", __func__);
-		return NULL;
+		goto err;
     }
 
         /* Finished with the byte stream and the codec */
@@ -500,7 +495,13 @@ OpjBuffer          buffer;
         /* Free the opj image data structure */
     opj_image_destroy(image);
 
-	opj_unlock(fz_get_global_context());
+	if (FALSE) {
+err:
+		pix = NULL;
+	}
+#if defined(BUILD_MONOLITHIC)
+	opj_unlock(ctx);
+#endif
 
 	return pix;
 }
@@ -775,33 +776,46 @@ opj_image_t       *image = NULL;
  * </pre>
  */
 l_ok
-pixWriteStreamJp2k(FILE    *fp,
-                   PIX     *pix,
-                   l_int32  quality,
-                   l_int32  nlevels,
-                   l_int32  codec,
-                   l_int32  hint,
-                   l_ok     debugflag)
+pixWriteStreamJp2k(FILE* fp,
+	PIX* pix,
+	l_int32  quality,
+	l_int32  nlevels,
+	l_int32  codec,
+	l_int32  hint,
+	l_ok     debugflag)
 {
-l_ok           ok;
-opj_stream_t  *l_stream;
+	l_ok           ok;
+	opj_stream_t* l_stream;
 
-    if (!fp)
-        return ERROR_INT("stream not open", __func__, 1);
+	if (!fp)
+		return ERROR_INT("stream not open", __func__, 1);
 
-        /* Open a compression stream for writing, borrowed from
-         * the 2.0 implementation because the file stream interface
-         * was removed in 2.1.  */
-    rewind(fp);
-    if ((l_stream = opjCreateStream(fp, 0)) == NULL)
-        return ERROR_INT("failed to open l_stream\n", __func__, 1);
+	/* Open a compression stream for writing, borrowed from
+	 * the 2.0 implementation because the file stream interface
+	 * was removed in 2.1.  */
+	rewind(fp);
 
-    ok = pixWriteOpjStreamJp2k(l_stream, pix, quality, nlevels,
-                               codec, hint, debugflag);
+#if defined(BUILD_MONOLITHIC)
+	fz_context* ctx = fz_get_global_context();
+	assert(ctx != NULL);
+	opj_lock(ctx);
+#endif
 
-        /* Clean up */
-    opj_stream_destroy(l_stream);
-    return ok;
+	if ((l_stream = opjCreateStream(fp, 0)) == NULL) {
+		L_ERROR("failed to open l_stream\n", __func__);
+		ok = 1;
+	}
+	else {
+		ok = pixWriteOpjStreamJp2k(l_stream, pix, quality, nlevels,
+			codec, hint, debugflag);
+
+		/* Clean up */
+		opj_stream_destroy(l_stream);
+	}
+#if defined(BUILD_MONOLITHIC)
+	opj_unlock(ctx);
+#endif
+	return ok;
 }
 
 
