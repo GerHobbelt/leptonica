@@ -216,7 +216,7 @@ l_int32  prevq, newq;
 l_int32
 l_pngSetQuality(l_int32  new_quality)
 {
-	l_int32  prevq, newq;
+	l_int32  prevq;
 
 	prevq = var_PNG_QUALITY;
 	if (new_quality == 0) {
