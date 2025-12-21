@@ -68,7 +68,7 @@
  *       L_REGPARAMS  *rp;  // holds data required by the test functions
  *
  *       // Setup variables; optionally open stream
- *       if (regTestSetup(argc, argv, &rp))
+ *       if (regTestSetup(argc, argv, NULL, &rp))
  *           return 1;
  *
  *       // Test pairs of generated pix for identity.  This compares

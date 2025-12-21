@@ -2332,7 +2332,7 @@ LEPT_DLL extern l_ok recogDebugAverages ( L_RECOG *recog );
 LEPT_DLL extern l_int32 recogShowAverageTemplates ( L_RECOG *recog );
 LEPT_DLL extern l_ok recogShowMatchesInRange ( L_RECOG *recog, PIXA *pixa, l_float32 minscore, l_float32 maxscore, l_int32 display );
 LEPT_DLL extern PIX * recogShowMatch ( L_RECOG *recog, PIX *pix1, PIX *pix2, BOX *box, l_int32 index, l_float32 score );
-LEPT_DLL extern l_ok regTestSetup ( int argc, const char **argv, const char *output_path_base, L_REGPARAMS **prp );
+LEPT_DLL extern l_ok regTestSetup ( int argc, const char **argv, const char *output_path_base, const L_REG_EXTRA_CONFIG *extras, L_REGPARAMS **prp );
 LEPT_DLL extern l_ok regTestCleanup ( L_REGPARAMS *rp );
 LEPT_DLL extern l_ok regTestCompareValues ( L_REGPARAMS *rp, l_float32 val1, l_float32 val2, l_float32 delta );
 LEPT_DLL extern l_ok regTestCompareStrings ( L_REGPARAMS *rp, l_uint8 *string1, size_t bytes1, l_uint8 *string2, size_t bytes2 );

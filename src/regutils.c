@@ -55,7 +55,7 @@
  *  ...
  *  L_REGPARAMS  *rp;
  *
- *      if (regTestSetup(argc, argv, &rp))
+ *      if (regTestSetup(argc, argv, NULL, &rp))
  *          return 1;
  *      ...
  *      regTestWritePixAndCheck(rp, pix, IFF_PNG);  // 0
@@ -129,10 +129,11 @@ static const char* argstr(const char** argv, int index)
  * </pre>
  */
 l_ok
-regTestSetup(int argc,
-	const char** argv,
-	const char* output_path_base,
-	L_REGPARAMS** prp)
+regTestSetup(int                        argc,
+			 const char              ** argv,
+			 const char               * output_path_base,
+			 const L_REG_EXTRA_CONFIG * extras,
+			 L_REGPARAMS             ** prp)
 {
 	char*         testname;
 	const char*   vers;
@@ -156,7 +157,7 @@ regTestSetup(int argc,
 
 	rp->cmd_mode = -1;
 	rp->testappmode = 0;
-	rp->argv_search_mode = L_LOCATE_IN_FIRST_ANY;
+	rp->argv_search_mode = (extras ? extras->argv_search_mode : L_LOCATE_IN_FIRST_ANY);
 	rp->help_mode = (argc <= 1 ? stringNew("?") : NULL);
 	rp->outpath = NULL;
 	rp->searchpaths = sarrayCreate(4);
@@ -166,9 +167,12 @@ regTestSetup(int argc,
 	if (!rp->argvfiles)
 		return ERROR_INT("argvfiles[] array could not be allocated.", __func__, 1);
 
+	static const char* const short_options = "s::d::h::q:l?::";
 	const struct option options[] = {
 		{ "debug", optional_argument, &debug_mode, 1 },
 		{ "no-debug", no_argument, &debug_mode, 0 },
+		{ "gplot", optional_argument, &gplot_mode, 1 },
+		{ "no-gplot", no_argument, &gplot_mode, 0 },
 		{ "tmppath", required_argument, NULL, 1 },
 		{ "outpath", required_argument, NULL, 2 },
 		{ "inpath", required_argument, NULL, 3 },
@@ -181,13 +185,124 @@ regTestSetup(int argc,
 		{ "display", no_argument, &rp->cmd_mode, L_REG_DISPLAY },
 		{ NULL }
 	};
+	const char* options_str = stringNew(short_options);
+	const struct option* options_arr = options;
+	const L_REGCMD_OPTION_SPEC extra_options = (extras ? extras->extra_options : NULL);
+	if (extra_options != NULL) {
+		int count1 = 0;
+		for (const struct option* opt = options_arr; opt->name; opt++)
+			count1++;
+		int count2 = 1;
+		const char *hit_optional_nonarg = NULL;
+		for (L_REGCMD_OPTION_SPEC opt = extra_options; opt->type != L_CMD_OPT_NIL; opt++) {
+			switch (opt->type) {
+			case L_CMD_OPT_W_NO_ARG:
+			case L_CMD_OPT_W_REQUIRED_ARG:
+			case L_CMD_OPT_W_OPTIONAL_ARG:
+				count2++;
+				continue;
+
+			case L_CMD_PLAIN_OPTIONAL_ARGUMENT:
+				assert(opt->name);
+				hit_optional_nonarg = opt->name;
+				continue;
+
+			case L_CMD_PLAIN_REQUIRED_ARGUMENT:
+				assert(opt->name);
+				if (hit_optional_nonarg) {
+					L_ERROR("caller-supplied extra options: mandatory positional argument '%s' follows previous OPTIONAL positional argument '%s'; this does not parse. Code MUST list all mandatory positional arguments before the optional ones!\n", __func__, opt->name, hit_optional_nonarg);
+					fail = TRUE;
+				}
+				continue;
+
+			default:
+				assert(opt->name);
+				continue;
+			}
+		}
+
+		size_t size = (count1 + count2) * sizeof(options_arr[0]);
+		options_arr = (const struct option*)LEPT_MALLOC(size);
+		if (!options_arr)
+			return ERROR_INT("options_arr[] array could not be allocated.", __func__, 1);
+		size_t shorts_len = strlen(short_options);
+		char* options2 = (char*)LEPT_MALLOC(count2 * 3 + shorts_len + 1);
+		if (!options2)
+			return ERROR_INT("options string could not be allocated.", __func__, 1);
+
+		memcpy((void*)options_arr, options, count1 * sizeof(options_arr[0]));
+		strcpy(options2, short_options);
+
+		const struct option* d__ = options_arr + count1;
+		struct option* dst = (struct option *)d__;				// const-removal-cast, because we can and we need it
+		char* optstr2 = options2 + shorts_len;
+		for (int i = 0; extra_options[i].type != L_CMD_OPT_NIL; i++) {
+			L_REGCMD_OPTION_SPEC opt = extra_options + i;
+			if (strlen(opt->name) == 1) {
+				// short option, e.g. 'x' for '-x'
+				if (strchr(short_options, opt->name[0])) {
+					L_ERROR("caller-supplied extra options: short option '%s' clashes with the default set '%s': this extra option would be unreachable from the command line!\n", __func__, opt->name, short_options);
+					fail = TRUE;
+					continue;
+				}
+				*optstr2++ = opt->name[0];
+				switch (opt->type) {
+				case L_CMD_OPT_W_NO_ARG:
+					continue;
+				case L_CMD_OPT_W_REQUIRED_ARG:
+					*optstr2++ = ':';
+					continue;
+				case L_CMD_OPT_W_OPTIONAL_ARG:
+					*optstr2++ = ':';
+					*optstr2++ = ':';
+					continue;
+
+				default:
+					continue;
+				}
+			}
+			else {
+				// long option, e.g. '--long-named-opt'
+				dst->name = opt->name;
+				dst->flag = NULL;
+				dst->val = 128 + i;
+				switch (opt->type) {
+				case L_CMD_OPT_W_NO_ARG:
+					dst->has_arg = no_argument;
+					dst++;
+					continue;
+				case L_CMD_OPT_W_REQUIRED_ARG:
+					dst->has_arg = required_argument;
+					dst++;
+					continue;
+				case L_CMD_OPT_W_OPTIONAL_ARG:
+					dst->has_arg = optional_argument;
+					dst++;
+					continue;
+
+				default:
+					continue;
+				}
+			}
+		}
+		dst->name = NULL;
+		dst->flag = NULL;
+		dst->val = 0;
+		dst->has_arg = 0;
+
+		*optstr2++ = 0;
+
+		stringDestroy(&options_str);
+
+		options_str = options2;
+	}
 
 	// reset the getopt_long parser:
 	optind = 0;
 	longopt_index = -1;
 
 	for (;;) {
-		opt = getopt_long(argc, argv, "s::d::h::q:l", options, &longopt_index);
+		opt = getopt_long(argc, argv, options_str, options_arr, &longopt_index);
 		if (opt == -1)
 			break;
 
@@ -265,41 +380,170 @@ regTestSetup(int argc,
 			continue;
 
 		default:
-			L_ERROR("Unknown/unsupported command line option %c has been specified: %s %s%s ...\n", __func__,
-				(opt > ' ' ? opt : '?'), argstr(argv, optind), argstr(argv, optind + 1), argstr(argv, optind + 2));
-			fail = TRUE;
+			if (TRUE) {
+				int extras_idx = -1;
+				if (opt >= 128) {
+					// one of our long-named extras was mentioned on the command line. yay!
+					extras_idx = opt - 128;
+				}
+				else {
+					// extra short option, e.g. 'x' for '-x'?
+					for (int i = 0; extra_options[i].name != L_CMD_OPT_NIL; i++) {
+						L_REGCMD_OPTION_SPEC o = extra_options + i;
+						switch (o->type) {
+						case L_CMD_OPT_W_NO_ARG:
+						case L_CMD_OPT_W_REQUIRED_ARG:
+						case L_CMD_OPT_W_OPTIONAL_ARG:
+							if (strlen(o->name) == 1 && o->name[0] == opt) {
+								extras_idx = i;
+								break;
+							}
+							continue;
+
+						default:
+							continue;
+						}
+						break;
+					}
+				}
+				if (extras_idx >= 0) {
+					L_REGCMD_OPTION_SPEC o = extra_options + extras_idx;
+					int pos = argc - optind;
+					assert(o->handler);
+					if (o->handler(o, optarg, &pos, argv + pos)) {
+						L_ERROR("caller-supplied extra option ('%s') handler has reported failure to process.\n", __func__, o->name);
+						fail = TRUE;
+						continue;
+					}
+				}
+				else {
+					L_ERROR("Unknown/unsupported command line option %c has been specified: %s %s%s ...\n", __func__,
+						(opt > ' ' ? opt : '?'), argstr(argv, optind), argstr(argv, optind + 1), argstr(argv, optind + 2));
+					fail = TRUE;
+				}
+			}
 			continue;
 		}
 	}
 
-	// process the remaining non-options in argv[]:
-	for ( ; optind < argc; optind++) {
-		optarg = argv[optind];
+	stringDestroy(&options_str);
+	if (options_arr != options) {
+		LEPT_FREE(options_arr);
+		options_arr = NULL;
+	}
 
-		if (rp->cmd_mode == -1) {
-			if (!strcmp(optarg, "compare")) {
-				rp->cmd_mode = L_REG_COMPARE;
-				continue;
+	// process the remaining non-options in argv[]:
+	{
+		L_REGCMD_OPTION_SPEC extra_positional_arguments = extra_options;
+		for (; optind < argc; optind++) {
+			optarg = argv[optind];
+
+			if (rp->cmd_mode == -1) {
+				if (!strcmp(optarg, "compare")) {
+					rp->cmd_mode = L_REG_COMPARE;
+					continue;
+				}
+				else if (!strcmp(optarg, "generate")) {
+					rp->cmd_mode = L_REG_GENERATE;
+					continue;
+				}
+				else if (!strcmp(optarg, "display")) {
+					rp->cmd_mode = L_REG_DISPLAY;
+					continue;
+				}
 			}
-			else if (!strcmp(optarg, "generate")) {
-				rp->cmd_mode = L_REG_GENERATE;
-				continue;
+
+			if (extra_positional_arguments) {
+				const char* p = strchr(optarg, '=');
+				if (p) {
+					int dealt_with = 0;
+
+					// check assignment-style argument expressions:
+					for (L_REGCMD_OPTION_SPEC o = extra_options; o->type != L_CMD_OPT_NIL; o++) {
+						if (o->type == L_CMD_VAR_ASSIGNMENT) {
+							size_t len = p - optarg;
+							if (strlen(o->name) == len && 0 == strncmp(o->name, optarg, len)) {
+								assert(o->handler);
+								int pos = argc - optind;
+								if (o->handler(o, optarg, &pos, argv + pos)) {
+									L_ERROR("caller-supplied extra option ('%s') handler has reported failure to process.\n", __func__, o->name);
+									fail = TRUE;
+								}
+								dealt_with = 1;
+								break;
+							}
+						}
+					}
+
+					if (!dealt_with) {
+						L_WARNING("Looks like you have an assignment statement as part of your commandline argument, yet we have not been able to locate a predefined handler for it:\n", __func__);
+						L_WARNING("    %s\n", __func__, optarg);
+						L_WARNING("are you sure this is correct input?\n", __func__);
+						L_WARNING("Alas, we will be proceeding anyway...\n", __func__);
+					}
+					else {
+						continue;
+					}
+				}
+
+				// resolve to the next available 'positional' argument:
+				assert(L_CMD_PLAIN_REQUIRED_ARGUMENT == L_CMD_PLAIN_OPTIONAL_ARGUMENT + 1);
+				assert(L_CMD_OPT_NIL < L_CMD_PLAIN_OPTIONAL_ARGUMENT);
+				assert(L_CMD_OPT_W_NO_ARG < L_CMD_PLAIN_OPTIONAL_ARGUMENT);
+				assert(L_CMD_OPT_W_REQUIRED_ARG < L_CMD_PLAIN_OPTIONAL_ARGUMENT);
+				assert(L_CMD_OPT_W_OPTIONAL_ARG < L_CMD_PLAIN_OPTIONAL_ARGUMENT);
+				assert(L_CMD_VAR_ASSIGNMENT < L_CMD_PLAIN_OPTIONAL_ARGUMENT);
+
+				while (extra_positional_arguments->type < L_CMD_PLAIN_OPTIONAL_ARGUMENT && extra_positional_arguments->type != L_CMD_OPT_NIL) {
+					extra_positional_arguments++;
+				}
+
+				const L_REGCMD_OPTION_SPEC o = extra_positional_arguments;
+				if (o->type != L_CMD_OPT_NIL) {
+					assert(o->handler);
+					int pos = argc - optind;
+					if (o->handler(o, optarg, &pos, argv + pos)) {
+						L_ERROR("caller-supplied extra option ('%s') handler has reported failure to process.\n", __func__, o->name);
+						fail = TRUE;
+					}
+
+					// once a positional has been dealt with, it's time to proceed and attempt to fill the next one in the set on the next round...
+					++extra_positional_arguments;
+					continue;
+				}
 			}
-			else if (!strcmp(optarg, "display")) {
-				rp->cmd_mode = L_REG_DISPLAY;
-				continue;
-			}
+
+			// do we expand @xyz responsefiles? yes, we do; we deal with those at the end
+			sarrayAddString(rp->argvfiles, optarg, L_COPY);
 		}
 
-		// do we expand @xyz responsefiles? yes, we do; we deal with those at the end
-		sarrayAddString(rp->argvfiles, optarg, L_COPY);
+		// when all available positional argv[] arguments have been consumed and one or more *mandatory* positional options are still yet to be filled, that's an incomplete command line
+		if (extra_positional_arguments) {
+			while (extra_positional_arguments->type < L_CMD_PLAIN_OPTIONAL_ARGUMENT && extra_positional_arguments->type != L_CMD_OPT_NIL) {
+				extra_positional_arguments++;
+			}
+			if (extra_positional_arguments->type == L_CMD_PLAIN_REQUIRED_ARGUMENT) {
+				L_ERROR("The commandline lacks: these mandatory positional arguments must be specified as well:\n", __func__);
+				fail = TRUE;
+				do {
+					if (extra_positional_arguments->type == L_CMD_PLAIN_REQUIRED_ARGUMENT) {
+						L_ERROR("    %s: [mandatory] %s\n", __func__, extra_positional_arguments->name, extra_positional_arguments->help_description);
+					}
+					++extra_positional_arguments;
+				} while (extra_positional_arguments->type != L_CMD_OPT_NIL);
+			}
+		}
 	}
 
 	if (rp->cmd_mode == -1) {
 		rp->cmd_mode = L_REG_BASIC_EXEC;
 	}
 
-	if ((testname = getRootNameFromArgv0(argv[0])) == NULL)
+	testname = NULL;
+	if (extras && extras->testname) {
+		testname = stringNew(extras->testname);
+	}
+	if (!testname && (testname = getRootNameFromArgv0(argv[0])) == NULL)
 		return ERROR_INT("invalid root", __func__, 1);
 
 	if (fail) {
@@ -350,6 +594,87 @@ regTestSetup(int argc,
 			}
 			lept_stderr("--%s %s%s%c\n", opt->name, argtypes[opt->has_arg & 0x03], eqvmsg, cmd_chr);
 		}
+		if (extra_options) {
+			lept_stderr("\n"
+				"These additional options are also supported:\n"
+			);
+			int has_var_assignments = 0;
+			int has_positionals = 0;
+			for (int i = 0; extra_options[i].name != L_CMD_OPT_NIL; i++) {
+				L_REGCMD_OPTION_SPEC o = extra_options + i;
+				switch (o->type) {
+				case L_CMD_OPT_W_NO_ARG:
+					lept_stderr("-%s           %s\n", o->name, o->help_description);
+					continue;
+				case L_CMD_OPT_W_REQUIRED_ARG:
+					lept_stderr("-%s val       %s\n", o->name, o->help_description);
+					continue;
+				case L_CMD_OPT_W_OPTIONAL_ARG:
+					lept_stderr("-%s [v]       %s\n", o->name, o->help_description);
+					continue;
+
+				case L_CMD_VAR_ASSIGNMENT:
+					has_var_assignments = 1;
+					continue;
+
+				case L_CMD_PLAIN_OPTIONAL_ARGUMENT:
+				case L_CMD_PLAIN_REQUIRED_ARGUMENT:
+					has_positionals = 1;
+					continue;
+
+				default:
+					break;
+				}
+			}
+			if (has_var_assignments) {
+				lept_stderr("\n"
+					"Plus these non-option 'assignment' arguments:\n"
+				);
+				for (int i = 0; extra_options[i].name != L_CMD_OPT_NIL; i++) {
+					L_REGCMD_OPTION_SPEC o = extra_options + i;
+					switch (o->type) {
+					case L_CMD_OPT_W_NO_ARG:
+					case L_CMD_OPT_W_REQUIRED_ARG:
+					case L_CMD_OPT_W_OPTIONAL_ARG:
+						continue;
+
+					case L_CMD_VAR_ASSIGNMENT:
+						lept_stderr("%s=value\n"
+							"              %s\n", o->name, o->help_description);
+						continue;
+					case L_CMD_PLAIN_OPTIONAL_ARGUMENT:
+					case L_CMD_PLAIN_REQUIRED_ARGUMENT:
+						continue;
+					default:
+						break;
+					}
+				}
+			}
+			if (has_positionals) {
+				lept_stderr("\n"
+					"Also please do note these non-option ('positional') arguments are compulsatory:\n"
+				);
+				for (int i = 0; extra_options[i].name != L_CMD_OPT_NIL; i++) {
+					L_REGCMD_OPTION_SPEC o = extra_options + i;
+					switch (o->type) {
+					case L_CMD_OPT_W_NO_ARG:
+					case L_CMD_OPT_W_REQUIRED_ARG:
+					case L_CMD_OPT_W_OPTIONAL_ARG:
+					case L_CMD_VAR_ASSIGNMENT:
+						continue;
+
+					case L_CMD_PLAIN_OPTIONAL_ARGUMENT:
+						lept_stderr("[value]       %s: [optional] %s\n", o->name, o->help_description);
+						continue;
+					case L_CMD_PLAIN_REQUIRED_ARGUMENT:
+						lept_stderr("value         %s: [mandatory] %s\n", o->name, o->help_description);
+						continue;
+					default:
+						break;
+					}
+				}
+			}
+		}
 
         return 1;
     }
@@ -366,7 +691,7 @@ regTestSetup(int argc,
 
         /* Initialize to true.  A failure in any test is registered
          * as a failure of the regression test. */
-    rp->success = !!fail;
+    rp->success = !fail;
 
 #if 0
 	/* Make sure the lept/regout subdirectory exists */
@@ -429,12 +754,25 @@ regTestSetup(int argc,
 	{
 		char* cdir = getcwd(NULL, 0);
 		if (cdir == NULL) {
+			rp->success = FALSE;
 			return ERROR_INT("no current dir found", __func__, 1);
 		}
 		SARRAY* lcl_arr = pathDeducePathSet(rp->searchpaths, cdir, !(rp->argv_search_mode & L_LOCATE_IGNORE_CURRENT_DIR_FLAG));
 		sarrayDestroy(&rp->searchpaths);
 		rp->searchpaths = lcl_arr;
 		free(cdir);
+	}
+
+	if (rp->cmd_mode != L_REG_BASIC_EXEC && rp->results_file_path == NULL) {
+		rp->results_file_path = stringNew("/tmp/lept/reg_results.txt");
+	}
+	else if (rp->results_file_path == NULL) {
+		rp->results_file_path = string_asprintf("/tmp/lept/%s_results.txt", rp->testname);
+	}
+
+	if (rp->results_file_path == NULL) {
+		rp->success = FALSE;
+		return ERROR_INT("rp->results_file_path could not be allocated", __func__, 1);
 	}
 
 	if (list_argv_mode) {
@@ -467,7 +805,7 @@ regTestSetup(int argc,
 	rp->argvfiles = lcl_arr;
 	if (lcl_arr == NULL) {
 		rp->success = FALSE;
-		return ERROR_INT("lcl_arr could not be allocated", __func__, 1);
+		return ERROR_INT("lcl_Arr could not be allocated", __func__, 1);
 	}
 
 	// heuristic estimate for a good display width of the step numbers:
@@ -527,55 +865,64 @@ l_ok
 regTestCleanup(L_REGPARAMS  *rp)
 {
 char     result[512];
-char    *results_file;  /* success/failure output in 'compare' mode */
 char    *text, *message;
 l_int32  retval;
+l_ok     append_results = FALSE;
 size_t   nbytes;
 
     if (!rp)
         return ERROR_INT("rp not defined", __func__, 1);
 
-    lept_stderr("Time: %7.3f sec\n", stopTimerNested(rp->tstart));
+	leptDebugPopStepLevelTo(rp->base_step_level);
 
-	retval = (rp->success) ? 0 : 1;
+	lept_stderr("Time: %7.3f sec\n", stopTimerNested(rp->tstart));
 
 		/* If generating golden files or running in display mode, release rp */
-    if (!rp->fp) {
-		if (rp->success)
-			L_INFO("SUCCESS: %s\n", rp->testname);
-		else
-			L_INFO("FAILURE: %s\n", rp->testname);
-		LEPT_FREE(rp->testname);
-        LEPT_FREE(rp->tempfile);
-        LEPT_FREE(rp);
-        return retval;
-    }
 
-        /* Compare mode: read back data from temp file */
-    fclose(rp->fp);
-    text = (char *)l_binaryRead(rp->tempfile, &nbytes);
-    LEPT_FREE(rp->tempfile);
-    if (!text) {
-        rp->success = FALSE;
-        LEPT_FREE(rp->testname);
-        LEPT_FREE(rp);
-        return ERROR_INT("text not returned", __func__, 1);
-    }
+	text = NULL;
+	if (rp->fp != NULL) {
+		/* Compare mode: read back data from temp file */
+		append_results = TRUE;
+		fclose(rp->fp);
+		rp->fp = NULL;
+		if (rp->tempfile) {
+			text = (char*)l_binaryRead(rp->tempfile, &nbytes);
+			if (!text) {
+				rp->success = FALSE;
+				L_ERROR("text not returned", __func__);
+			}
+		}
+	}
 
         /* Prepare result message */
-    if (rp->success)
-        snprintf(result, sizeof(result), "SUCCESS: %s\n", rp->testname);
-    else
-        snprintf(result, sizeof(result), "FAILURE: %s\n", rp->testname);
+	if (rp->success)
+		snprintf(result, sizeof(result), "SUCCESS: %s\n", rp->testname);
+	else
+		snprintf(result, sizeof(result), "FAILURE: %s\n", rp->testname);
     message = stringJoin(text, result);
     LEPT_FREE(text);
-    results_file = stringNew("/tmp/lept/reg_results.txt");
-    fileAppendString(results_file, message);
-    LEPT_FREE(results_file);
-    LEPT_FREE(message);
+	if (rp->results_file_path != NULL && message != NULL && append_results) {
+		fileAppendString(rp->results_file_path, message);
+	}
+	lept_stderr("\n%s", result);
+	stringDestroy(&message);
 
 	leptDestroyDiagnoticsSpecInstance();
-    LEPT_FREE(rp->testname);
+
+    stringDestroy(&rp->testname);
+	stringDestroy(&rp->results_file_path);
+	assert(rp->fp == NULL);
+	stringDestroy(&rp->tempfile);
+	stringDestroy(&rp->help_mode);
+	stringDestroy(&rp->tmpdirpath);
+	stringDestroy(&rp->outpath);
+	stringDestroy(&rp->results_file_path);
+
+	sarrayDestroy(&rp->searchpaths);
+	sarrayDestroy(&rp->argvfiles);
+
+	retval = (rp->success ? EXIT_SUCCESS : EXIT_FAILURE);
+
     LEPT_FREE(rp);
     return retval;
 }
@@ -1248,7 +1595,7 @@ regGetFileArgOrDefault(L_REGPARAMS* rp, const char* default_filepath)
 		if (idx >= sarrayGetCount(rp->argvfiles)) {
 			if (default_filepath) {
 				SARRAY* sa = sarrayCreateInitialized(1, default_filepath);
-				SARRAY* lcl_arr = leptProcessResponsefileLines(sa, rp->searchpaths, L_LOCATE_IN_FIRST_ONE, rp->tmpdirpath, "\x01" /* stmt marker */, "\x02 FAIL: " /* fail marker */, "\x03# " /* ignore marker */);
+				SARRAY* lcl_arr = leptProcessResponsefileLines(sa, rp->searchpaths, L_LOCATE_IN_FIRST_ONE, rp->outpath, "\x01" /* stmt marker */, "\x02 FAIL: " /* fail marker */, "\x03# " /* ignore marker */);
 				int n = sarrayGetCount(lcl_arr);
 				for (int i = 0; i < n; i++) {
 					const char* line = sarrayGetString(lcl_arr, i, L_NOCOPY);
@@ -1311,9 +1658,13 @@ regMarkEndOfTestround(L_REGPARAMS* rp)
 		rp->argv_index_base += rp->argv_step_size_per_round;
 	}
 
-	if (rp->argv_fake_extra > 0) {
-		rp->argv_fake_extra--;
+	if (rp->argv_index_base >= sarrayGetCount(rp->argvfiles)) {
+		if (rp->argv_fake_extra > 0) {
+			rp->argv_fake_extra--;
+		}
 	}
+
+	rp->argv_index = 0;
 }
 
 
