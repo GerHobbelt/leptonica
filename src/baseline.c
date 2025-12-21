@@ -257,8 +257,8 @@ PTA       *pta;
                             "rasterline", "height");
         gplotAddPlot(gplot, naloc, naval, GPLOT_POINTS, "locs");
         gplotMakeOutput(gplot);
-        gplotDestroy(&gplot);
-        pix2 = pixRead("/tmp/lept/baseline/loc.png");
+		pix2 = pixRead(gplot->outname);
+		gplotDestroy(&gplot);
         pixaAddPix(pixadb, pix2, L_INSERT);
     }
     numaDestroy(&naval);
