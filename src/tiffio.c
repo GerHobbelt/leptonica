@@ -1142,8 +1142,23 @@ char      *text;
         TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_ADOBE_DEFLATE);
     } else if (comptype == IFF_TIFF_JPEG) {
         TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JPEG);
-    } else {
-        L_WARNING("unknown tiff compression; using none\n", __func__);
+		{
+			l_int32 q = l_tiffGetQuality();
+			if (q < 0 || q > 100)
+				q = 0;
+			else if (q == 0)
+				q = 75;
+			if (q != 0) {
+				TIFFSetField(tif, TIFFTAG_JPEGQUALITY, q);
+			}
+		}
+	} else {
+#if 0
+		TIFFSetField(tif, TIFFTAG_WEBP_LEVEL, 75);
+		TIFFSetField(tif, TIFFTAG_WEBP_LOSSLESS, 0);
+		TIFFSetField(tif, TIFFTAG_WEBP_LOSSLESS_EXACT, 0);
+#endif
+		L_WARNING("unknown tiff compression; using none\n", __func__);
         TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
     }
 

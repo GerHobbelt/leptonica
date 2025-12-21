@@ -176,6 +176,10 @@ static const struct ExtensionMap extension_map[] =
  *---------------------------------------------------------------------*/
     /* Parameter that controls jpeg quality for high-level calls. */
 static l_int32  var_JPEG_QUALITY = 75;   /* default */
+static l_int32  var_PNG_QUALITY = -1;   /* default: Z_DEFAULT_COMPRESSION */
+static l_int32  var_TIFF_QUALITY = 75;   /* default */
+static l_int32  var_WEBP_QUALITY = 80;   /* default */
+static l_int32  var_JP2_QUALITY = 34;   /* default */
 
 /*!
  * \brief   l_jpegSetQuality()
@@ -206,6 +210,99 @@ l_int32  prevq, newq;
     else
         var_JPEG_QUALITY = newq;
     return prevq;
+}
+
+
+l_int32
+l_pngSetQuality(l_int32  new_quality)
+{
+	l_int32  prevq, newq;
+
+	prevq = var_PNG_QUALITY;
+	if (new_quality == 0) {
+		var_PNG_QUALITY = -1; /* Z_DEFAULT_COMPRESSION */
+	}
+	else
+	if (new_quality < 1 || new_quality > 100)
+		L_ERROR("invalid png quality; unchanged\n", __func__);
+	else
+		var_PNG_QUALITY = new_quality;
+	return prevq;
+}
+
+
+l_int32
+l_tiffSetQuality(l_int32  new_quality)
+{
+	l_int32  prevq, newq;
+
+	prevq = var_TIFF_QUALITY;
+	newq = (new_quality == 0) ? 75 : new_quality;
+	if (newq < 1 || newq > 100)
+		L_ERROR("invalid tiff quality; unchanged\n", __func__);
+	else
+		var_TIFF_QUALITY = newq;
+	return prevq;
+}
+
+
+l_int32
+l_webpSetQuality(l_int32  new_quality)
+{
+	l_int32  prevq, newq;
+
+	prevq = var_WEBP_QUALITY;
+	newq = (new_quality == 0) ? 80 : new_quality;
+	if (newq < 1 || newq > 100)
+		L_ERROR("invalid webp quality; unchanged\n", __func__);
+	else
+		var_WEBP_QUALITY = newq;
+	return prevq;
+}
+
+
+l_int32
+l_jp2SetQuality(l_int32  new_quality)
+{
+	l_int32  prevq, newq;
+
+	prevq = var_JP2_QUALITY;
+	newq = (new_quality == 0) ? 34 : new_quality;
+	if (newq < 1 || newq > 100)
+		L_ERROR("invalid jp2 quality; unchanged\n", __func__);
+	else
+		var_JP2_QUALITY = newq;
+	return prevq;
+}
+
+
+l_int32 l_jpegGetQuality(void)
+{
+	return var_JPEG_QUALITY;
+}
+
+
+l_int32 l_pngGetQuality(void)
+{
+	return var_PNG_QUALITY;
+}
+
+
+l_int32 l_tiffGetQuality(void)
+{
+	return var_TIFF_QUALITY;
+}
+
+
+l_int32 l_webpGetQuality(void)
+{
+	return var_WEBP_QUALITY;
+}
+
+
+l_int32 l_jp2GetQuality(void)
+{
+	return var_JP2_QUALITY;
 }
 
 
@@ -423,7 +520,21 @@ pixWriteStream(FILE    *fp,
         return pixWriteStreamJpeg(fp, pix, var_JPEG_QUALITY, 0);
 
     case IFF_PNG:   /* no gamma value stored */
-        return pixWriteStreamPng(fp, pix, 0.0);
+		/* With best zlib compression (9), get between 1 and 10% improvement
+		 * over default (6), but the compression is 3 to 10 times slower.
+		 * Use the zlib default (6) as our default compression unless
+		 * pix->special falls in the range [10 ... 19]; then subtract 10
+		 * to get the compression value.  */
+		if (pixGetSpecial(pix) == 0 && var_PNG_QUALITY > 0) {
+			int compval = ((var_PNG_QUALITY + 5) / 10);
+			compval--;
+			if (compval < 0)
+				compval = 0;
+			else if (compval > 9)
+				compval = 9;
+			pixSetSpecial(pix, 10 + compval);
+		}
+		return pixWriteStreamPng(fp, pix, 0.0);
 
     case IFF_TIFF:           /* uncompressed */
     case IFF_TIFF_PACKBITS:  /* compressed, binary only */
@@ -445,10 +556,10 @@ pixWriteStream(FILE    *fp,
         return pixWriteStreamGif(fp, pix);
 
     case IFF_JP2:
-        return pixWriteStreamJp2k(fp, pix, 34, 0, L_JP2_CODEC, 0, 0);
+        return pixWriteStreamJp2k(fp, pix, var_JP2_QUALITY, 0, L_JP2_CODEC, 0, 0);
 
     case IFF_WEBP:
-        return pixWriteStreamWebP(fp, pix, 80, 0);
+        return pixWriteStreamWebP(fp, pix, var_WEBP_QUALITY, (var_WEBP_QUALITY == 100));
 
     case IFF_LPDF:
         return pixWriteStreamPdf(fp, pix, 0, NULL);
