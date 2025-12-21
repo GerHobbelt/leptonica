@@ -2346,6 +2346,7 @@ LEPT_DLL extern char * regTestGenLocalFilename ( L_REGPARAMS *rp, l_int32 index,
 LEPT_DLL extern const char *regGetRawArgOrDefault ( L_REGPARAMS* rp, const char *default_value );
 LEPT_DLL extern const char *regGetFileArgOrDefault ( L_REGPARAMS* rp, const char *default_value );
 LEPT_DLL extern l_int32 regGetArgCount ( L_REGPARAMS* rp );
+LEPT_DLL extern l_int32 regGetFileArgCount ( L_REGPARAMS* rp );
 LEPT_DLL extern l_ok regHasAnyArgsAvailable ( L_REGPARAMS* rp );
 LEPT_DLL extern l_ok regHasFileArgsAvailable ( L_REGPARAMS* rp );
 LEPT_DLL extern l_int32 regGetCurrentArgIndex ( L_REGPARAMS* rp );

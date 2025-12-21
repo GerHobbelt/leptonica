@@ -428,7 +428,7 @@ regTestSetup(int                        argc,
 
 	stringDestroy(&options_str);
 	if (options_arr != options) {
-		LEPT_FREE(options_arr);
+		LEPT_FREE((void *)options_arr);
 		options_arr = NULL;
 	}
 
@@ -805,7 +805,7 @@ regTestSetup(int                        argc,
 	rp->argvfiles = lcl_arr;
 	if (lcl_arr == NULL) {
 		rp->success = FALSE;
-		return ERROR_INT("lcl_Arr could not be allocated", __func__, 1);
+		return ERROR_INT("lcl_arr could not be allocated", __func__, 1);
 	}
 
 	// heuristic estimate for a good display width of the step numbers:
@@ -842,6 +842,24 @@ regTestSetup(int                        argc,
 			lept_stderr("#%0*d: %s\n", width, i + 1, line);
 		}
 		lept_stderr("======================= (total: %3d lines) ===========================\n", count);
+	}
+
+	rp->argv_index_base = 0;
+	rp->argv_index = 0;
+	rp->argv_fake_extra = 0;
+
+	if (extras) {
+		// verify the extra conditions we received re commandline content:
+		int argv_count = regGetFileArgCount(rp);
+
+		if (argv_count < extras->min_required_argc) {
+			L_ERROR("The commandline does not list the minimum required number of file paths: %d are required, while %d are actually provided.\n", __func__, extras->min_required_argc, argv_count);
+			return 1;
+		}
+		if (argv_count > extras->max_required_argc) {
+			L_ERROR("The commandline lists too many file paths: %d are allowed, while %d are actually provided.\n", __func__, extras->max_required_argc, argv_count);
+			return 1;
+		}
 	}
 
 	rp->tstart = startTimerNested();
@@ -1640,6 +1658,44 @@ regGetArgCount(L_REGPARAMS* rp)
 		return ERROR_INT("rp not defined", __func__, 0);
 
 	return sarrayGetCount(rp->argvfiles);
+}
+
+
+l_int32
+regGetFileArgCount(L_REGPARAMS* rp)
+{
+	if (!rp)
+		return ERROR_INT("rp not defined", __func__, 0);
+
+	// save the old index values for recovery when we're done:
+	int old_base = rp->argv_index_base;
+	int old_index = rp->argv_index;
+	int old_fake = rp->argv_fake_extra;
+
+	// reset? nope, we deliver the count as of this moment in time...
+#if 0
+	rp->argv_index_base = 0;
+	rp->argv_index = 0;
+#endif
+	rp->argv_fake_extra = 0;
+
+	int argv_count = 0;
+
+	for (;;) {
+		// count only the actual files mentioned; ignore the rest
+		const char* arg = regGetFileArgOrDefault(rp, NULL);
+		if (!arg)
+			break;
+		++argv_count;
+		stringDestroy(&arg);
+	}
+
+	// recover the argv scan indexes:
+	rp->argv_index_base = old_base;
+	rp->argv_index = old_index;
+	rp->argv_fake_extra = old_fake;
+
+	return argv_count;
 }
 
 
