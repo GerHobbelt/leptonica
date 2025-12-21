@@ -29,11 +29,46 @@
 
 #ifndef DEMOPATH
 #if defined(BUILD_MONOLITHIC)
-#define DEMOPATH(p)				lept_locate_file_in_searchpath(p)
+#define DEMOPATH(p)				p
 #else
 #define DEMOPATH(p)				p
 #endif
 #endif
+
+
+#ifdef HAVE_CONFIG_H
+#include <config_auto.h>
+#endif  /* HAVE_CONFIG_H */
+
+#include "allheaders.h"
+
+#if !defined(_MSC_VER) && !defined(_WIN32)
+#include <unistd.h>
+#else
+#include <direct.h>
+#include <winsock2.h>   // prevent clashes about redefinition of certain defines...
+#include <windows.h>
+
+#ifndef getcwd
+#define getcwd _getcwd  /* fix MSVC warning */
+#endif
+
+#endif  /* !_MSC_VER */
+
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <assert.h>
+#include <math.h>
+#include <stdint.h>
+#include <ctype.h>
+#include <float.h>
+
+#include "plf_nanotimer.hpp"
+
+#include "pix_internal.h"
+
+#include "../src/environ.h"
 
 
 /*! String array: an array of C strings */
@@ -42,10 +77,6 @@ typedef struct Sarray SARRAY;
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
-
-	const char *lept_locate_file_in_searchpath(const char *file);
-
-	SARRAY *lept_locate_all_files_in_searchpaths(int count, const char **array);
 
 #ifdef __cplusplus
 }
