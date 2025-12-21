@@ -2268,7 +2268,8 @@ pixcompWriteStreamInfo(FILE        *fp,
         fprintf(fp, "    has colormap\n");
     else
         fprintf(fp, "    no colormap\n");
-    if (!isSupportedFormat(pixc->comptype)) {
+    if (isSupportedFormat(pixc->comptype)) {
+		assert(getFormatExtension(pixc->comptype) != NULL);
         fprintf(fp, "    comptype = %s (%d)\n",
 			    getFormatExtension(pixc->comptype), pixc->comptype);
     } else {
@@ -2378,8 +2379,15 @@ char   buf[128];
     if (!pixc)
         return ERROR_INT("pixc not defined", __func__, 1);
 
-    snprintf(buf, sizeof(buf), "%s.%s", rootname,
-		     getFormatExtension(pixc->comptype));
-    l_binaryWrite(buf, "w", pixc->data, pixc->size);
-    return 0;
+	if (isSupportedFormat(pixc->comptype)) {
+		assert(getFormatExtension(pixc->comptype) != NULL);
+		snprintf(buf, sizeof(buf), "%s.%s", rootname,
+			getFormatExtension(pixc->comptype));
+		l_binaryWrite(buf, "w", pixc->data, pixc->size);
+		return 0;
+	}
+	else {
+		L_ERROR("Invalid comptype index: %d\n", pixc->comptype);
+		return 1;
+	}
 }
