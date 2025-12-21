@@ -87,6 +87,84 @@
 #include <math.h>
 #include "allheaders.h"
 
+l_ok
+numaSplitDistribution_Old(NUMA* na,
+	l_float32   scorefract,
+	l_int32* psplitindex,
+	l_float32* pave1,
+	l_float32* pave2,
+	l_float32* pnum1,
+	l_float32* pnum2,
+	NUMA** pnascore);
+l_ok
+grayHistogramsToEMD_Old(NUMAA* naa1,
+	NUMAA* naa2,
+	NUMA** pnad);
+l_ok
+numaEarthMoverDistance_Old(NUMA* na1,
+	NUMA* na2,
+	l_float32* pdist);
+l_ok
+grayInterHistogramStats_Old(NUMAA* naa,
+	l_int32  wc,
+	NUMA** pnam,
+	NUMA** pnams,
+	NUMA** pnav,
+	NUMA** pnarv);
+NUMA*
+numaFindPeaks_Old(NUMA* nas,
+	l_int32    nmax,
+	l_float32  fract1,
+	l_float32  fract2);
+NUMA*
+numaFindExtrema_Old(NUMA* nas,
+	l_float32  delta,
+	NUMA** pnav);
+l_ok
+numaFindLocForThreshold_Old(NUMA* na,
+	l_int32     skip,
+	l_int32* pthresh,
+	l_float32* pfract);
+l_ok
+numaCountReversals_Old(NUMA* nas,
+	l_float32   minreversal,
+	l_int32* pnr,
+	l_float32* prd);
+l_ok
+numaSelectCrossingThreshold_Old(NUMA* nax,
+	NUMA* nay,
+	l_float32   estthresh,
+	l_float32* pbestthresh);
+NUMA*
+numaCrossingsByThreshold_Old(NUMA* nax,
+	NUMA* nay,
+	l_float32  thresh);
+NUMA*
+numaCrossingsByPeaks_Old(NUMA* nax,
+	NUMA* nay,
+	l_float32  delta);
+l_ok
+numaEvalBestHaarParameters_Old(NUMA* nas,
+	l_float32   relweight,
+	l_int32     nwidth,
+	l_int32     nshift,
+	l_float32   minwidth,
+	l_float32   maxwidth,
+	l_float32* pbestwidth,
+	l_float32* pbestshift,
+	l_float32* pbestscore);
+l_ok
+numaEvalHaarSum_Old(NUMA* nas,
+	l_float32   width,
+	l_float32   shift,
+	l_float32   relweight,
+	l_float32* pscore);
+NUMA*
+genConstrainedNumaInRange_Old(l_int32  first,
+	l_int32  last,
+	l_int32  nmax,
+	l_int32  use_pairs);
+
 
 /*----------------------------------------------------------------------*
  *                      Splitting a distribution                        *
@@ -141,7 +219,7 @@
  * </pre>
  */
 l_ok
-numaSplitDistribution(NUMA       *na,
+numaSplitDistribution_Old(NUMA       *na,
                       l_float32   scorefract,
                       l_int32    *psplitindex,
                       l_float32  *pave1,
@@ -277,7 +355,7 @@ NUMA      *nascore, *naave1, *naave2, *nanum1, *nanum2;
  *                         Comparing histograms                         *
  *----------------------------------------------------------------------*/
 /*!
- * \brief   grayHistogramsToEMD()
+ * \brief   grayHistogramsToEMD_Old()
  *
  * \param[in]    naa1, naa2    two numaa, each with one or more 256-element
  *                             histograms
@@ -301,7 +379,7 @@ NUMA      *nascore, *naave1, *naave2, *nanum1, *nanum2;
  * </pre>
  */
 l_ok
-grayHistogramsToEMD(NUMAA  *naa1,
+grayHistogramsToEMD_Old(NUMAA  *naa1,
                     NUMAA  *naa2,
                     NUMA  **pnad)
 {
@@ -328,7 +406,7 @@ NUMA       *na1, *na2, *nad;
     for (i = 0; i < n; i++) {
         na1 = numaaGetNuma(naa1, i, L_CLONE);
         na2 = numaaGetNuma(naa2, i, L_CLONE);
-        numaEarthMoverDistance(na1, na2, &dist);
+        numaEarthMoverDistance_Old(na1, na2, &dist);
         numaAddNumber(nad, dist / 255.f);  /* normalize to [0.0 - 1.0] */
         numaDestroy(&na1);
         numaDestroy(&na2);
@@ -338,7 +416,7 @@ NUMA       *na1, *na2, *nad;
 
 
 /*!
- * \brief   numaEarthMoverDistance()
+ * \brief   numaEarthMoverDistance_Old()
  *
  * \param[in]    na1, na2    two numas of the same size, typically histograms
  * \param[out]   pdist       earthmover distance
@@ -365,7 +443,7 @@ NUMA       *na1, *na2, *nad;
  * </pre>
  */
 l_ok
-numaEarthMoverDistance(NUMA       *na1,
+numaEarthMoverDistance_Old(NUMA       *na1,
                        NUMA       *na2,
                        l_float32  *pdist)
 {
@@ -409,7 +487,7 @@ NUMA       *na3;
 
 
 /*!
- * \brief   grayInterHistogramStats()
+ * \brief   grayInterHistogramStats_Old()
  *
  * \param[in]    naa      numaa with two or more 256-element histograms
  * \param[in]    wc       half-width of the smoothing window
@@ -454,7 +532,7 @@ NUMA       *na3;
  * </pre>
  */
 l_ok
-grayInterHistogramStats(NUMAA   *naa,
+grayInterHistogramStats_Old(NUMAA   *naa,
                         l_int32  wc,
                         NUMA   **pnam,
                         NUMA   **pnams,
@@ -526,7 +604,7 @@ NUMA        *na1, *na2, *na3, *na4;
  *                             Extrema finding                          *
  *----------------------------------------------------------------------*/
 /*!
- * \brief   numaFindPeaks()
+ * \brief   numaFindPeaks_Old()
  *
  * \param[in]    nas      source numa
  * \param[in]    nmax     max number of peaks to be found
@@ -542,7 +620,7 @@ NUMA        *na1, *na2, *na3, *na4;
  * </pre>
  */
 NUMA *
-numaFindPeaks(NUMA      *nas,
+numaFindPeaks_Old(NUMA      *nas,
               l_int32    nmax,
               l_float32  fract1,
               l_float32  fract2)
@@ -629,7 +707,7 @@ NUMA      *na, *napeak;
 
 
 /*!
- * \brief   numaFindExtrema()
+ * \brief   numaFindExtrema_Old()
  *
  * \param[in]    nas     input values
  * \param[in]    delta   relative amount to resolve peaks and valleys
@@ -658,7 +736,7 @@ NUMA      *na, *napeak;
  * </pre>
  */
 NUMA *
-numaFindExtrema(NUMA      *nas,
+numaFindExtrema_Old(NUMA      *nas,
                 l_float32  delta,
                 NUMA     **pnav)
 {
@@ -738,7 +816,7 @@ NUMA      *nav, *nad;
 
 
 /*!
- * \brief   numaFindLocForThreshold()
+ * \brief   numaFindLocForThreshold_Old()
  *
  * \param[in]    nas       input histogram
  * \param[in]    skip      look-ahead distance to avoid false mininma;
@@ -764,7 +842,7 @@ NUMA      *nav, *nad;
  * </pre>
  */
 l_ok
-numaFindLocForThreshold(NUMA       *na,
+numaFindLocForThreshold_Old(NUMA       *na,
                         l_int32     skip,
                         l_int32    *pthresh,
                         l_float32  *pfract)
@@ -855,7 +933,7 @@ l_float32  *fa;
 
 
 /*!
- * \brief   numaCountReversals()
+ * \brief   numaCountReversals_Old()
  *
  * \param[in]    nas          input values
  * \param[in]    minreversal  relative amount to resolve peaks and valleys
@@ -876,7 +954,7 @@ l_float32  *fa;
  * </pre>
  */
 l_ok
-numaCountReversals(NUMA       *nas,
+numaCountReversals_Old(NUMA       *nas,
                    l_float32   minreversal,
                    l_int32    *pnr,
                    l_float32  *prd)
@@ -925,7 +1003,7 @@ NUMA      *nat;
             LEPT_FREE(ia);
         }
     } else {
-        nat = numaFindExtrema(nas, minreversal, NULL);
+        nat = numaFindExtrema_Old(nas, minreversal, NULL);
         nr = numaGetCount(nat);
         numaDestroy(&nat);
     }
@@ -944,7 +1022,7 @@ NUMA      *nat;
  *                Threshold crossings and frequency analysis            *
  *----------------------------------------------------------------------*/
 /*!
- * \brief   numaSelectCrossingThreshold()
+ * \brief   numaSelectCrossingThreshold_Old()
  *
  * \param[in]    nax          [optional] numa of abscissa values; can be NULL
  * \param[in]    nay          signal
@@ -958,19 +1036,19 @@ NUMA      *nat;
  *     (1) When a valid threshold is used, the number of crossings is
  *         a maximum, because none are missed.  If no threshold intersects
  *         all the crossings, the crossings must be determined with
- *         numaCrossingsByPeaks().
+ *         numaCrossingsByPeaks_Old().
  *     (2) %estthresh is an input estimate of the threshold that should
  *         be used.  We compute the crossings with 41 thresholds
  *         (20 below and 20 above).  There is a range in which the
  *         number of crossings is a maximum.  Return a threshold
  *         in the center of this stable plateau of crossings.
- *         This can then be used with numaCrossingsByThreshold()
+ *         This can then be used with numaCrossingsByThreshold_Old()
  *         to get a good estimate of crossing locations.
  *     (3) If the count of nay is less than 2, a warning is issued.
  * </pre>
  */
 l_ok
-numaSelectCrossingThreshold(NUMA       *nax,
+numaSelectCrossingThreshold_Old(NUMA       *nax,
                             NUMA       *nay,
                             l_float32   estthresh,
                             l_float32  *pbestthresh)
@@ -994,7 +1072,7 @@ NUMA      *nat, *nac;
     nat = numaCreate(41);
     for (i = 0; i < 41; i++) {
         thresh = estthresh - 80.0f + 4.0f * i;
-        nac = numaCrossingsByThreshold(nax, nay, thresh);
+        nac = numaCrossingsByThreshold_Old(nax, nay, thresh);
         numaAddNumber(nat, numaGetCount(nac));
         numaDestroy(&nac);
     }
@@ -1065,7 +1143,7 @@ NUMA      *nat, *nac;
 
 
 /*!
- * \brief   numaCrossingsByThreshold()
+ * \brief   numaCrossingsByThreshold_Old()
  *
  * \param[in]    nax     [optional] numa of abscissa values; can be NULL
  * \param[in]    nay     numa of ordinate values, corresponding to nax
@@ -1079,7 +1157,7 @@ NUMA      *nat, *nac;
  * </pre>
  */
 NUMA *
-numaCrossingsByThreshold(NUMA      *nax,
+numaCrossingsByThreshold_Old(NUMA      *nax,
                          NUMA      *nay,
                          l_float32  thresh)
 {
@@ -1129,7 +1207,7 @@ NUMA      *nad;
 
 
 /*!
- * \brief   numaCrossingsByPeaks()
+ * \brief   numaCrossingsByPeaks_Old()
  *
  * \param[in]    nax     [optional] numa of abscissa values
  * \param[in]    nay     numa of ordinate values, corresponding to nax
@@ -1143,7 +1221,7 @@ NUMA      *nad;
  * </pre>
  */
 NUMA *
-numaCrossingsByPeaks(NUMA      *nax,
+numaCrossingsByPeaks_Old(NUMA      *nax,
                      NUMA      *nay,
                      l_float32  delta)
 {
@@ -1163,7 +1241,7 @@ NUMA      *nap, *nad;
         /* Find the extrema.  Also add last point in nay to get
          * the last transition (from the last peak to the end).
          * The number of crossings is 1 more than the number of extrema. */
-    nap = numaFindExtrema(nay, delta, NULL);
+    nap = numaFindExtrema_Old(nay, delta, NULL);
     numaAddNumber(nap, n - 1);
     np = numaGetCount(nap);
     L_INFO("Number of crossings: %d\n", __func__, np);
@@ -1215,7 +1293,7 @@ NUMA      *nap, *nad;
 
 
 /*!
- * \brief   numaEvalBestHaarParameters()
+ * \brief   numaEvalBestHaarParameters_Old()
  *
  * \param[in]    nas         numa of non-negative signal values
  * \param[in]    relweight   relative weight of (-1 comb) / (+1 comb)
@@ -1252,7 +1330,7 @@ NUMA      *nap, *nad;
  * </pre>
  */
 l_ok
-numaEvalBestHaarParameters(NUMA       *nas,
+numaEvalBestHaarParameters_Old(NUMA       *nas,
                            l_float32   relweight,
                            l_int32     nwidth,
                            l_int32     nshift,
@@ -1281,7 +1359,7 @@ l_float32  bestwidth, bestshift, bestscore;
         delshift = width / (l_float32)(nshift);
         for (j = 0; j < nshift; j++) {
             shift = j * delshift;
-            numaEvalHaarSum(nas, width, shift, relweight, &score);
+            numaEvalHaarSum_Old(nas, width, shift, relweight, &score);
             if (score > bestscore) {
                 bestscore = score;
                 bestwidth = width;
@@ -1303,7 +1381,7 @@ l_float32  bestwidth, bestshift, bestscore;
 
 
 /*!
- * \brief   numaEvalHaarSum()
+ * \brief   numaEvalHaarSum_Old()
  *
  * \param[in]    nas         numa of non-negative signal values
  * \param[in]    width       distance between +1 and -1 in convolution comb
@@ -1335,7 +1413,7 @@ l_float32  bestwidth, bestshift, bestscore;
  * </pre>
  */
 l_ok
-numaEvalHaarSum(NUMA       *nas,
+numaEvalHaarSum_Old(NUMA       *nas,
                 l_float32   width,
                 l_float32   shift,
                 l_float32   relweight,
@@ -1370,7 +1448,7 @@ l_float32  score, weight, val;
  *            Generating numbers in a range under constraints           *
  *----------------------------------------------------------------------*/
 /*!
- * \brief   genConstrainedNumaInRange()
+ * \brief   genConstrainedNumaInRange_Old()
  *
  * \param[in]    first     first number to choose; >= 0
  * \param[in]    last      biggest possible number to reach; >= first
@@ -1390,7 +1468,7 @@ l_float32  score, weight, val;
  * </pre>
  */
 NUMA *
-genConstrainedNumaInRange(l_int32  first,
+genConstrainedNumaInRange_Old(l_int32  first,
                           l_int32  last,
                           l_int32  nmax,
                           l_int32  use_pairs)
@@ -1431,3 +1509,4 @@ NUMA      *na;
 
     return na;
 }
+

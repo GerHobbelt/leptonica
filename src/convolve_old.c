@@ -29,8 +29,8 @@
  * <pre>
  *
  *      Grayscale block convolution
- *          PIX          *pixBlockconvGray_old()
- *          static void   blockconvLow_old()
+ *          PIX          *pixBlockconvGray_Old()
+ *          static void   blockconvLow_Old()
  * </pre>
  */
 
@@ -41,14 +41,8 @@
 #include <math.h>
 #include "allheaders.h"
 
-    /* These globals determine the subsampling factors for
-     * generic convolution of pix and fpix.  Declare extern to use.
-     * To change the values, use l_setConvolveSampling(). */
-LEPT_DLL l_int32  ConvolveSamplingFactX = 1;
-LEPT_DLL l_int32  ConvolveSamplingFactY = 1;
-
     /* Low-level static functions */
-static void blockconvLow_old(l_uint32 *data, l_int32 w, l_int32 h, l_int32 wpl,
+static void blockconvLow_Old(l_uint32 *data, l_int32 w, l_int32 h, l_int32 wpl,
                          l_uint32 *dataa, l_int32 wpla, l_int32 wc,
                          l_int32 hc);
 
@@ -57,7 +51,7 @@ static void blockconvLow_old(l_uint32 *data, l_int32 w, l_int32 h, l_int32 wpl,
  *                     Grayscale block convolution                      *
  *----------------------------------------------------------------------*/
 /*!
- * \brief   pixBlockconvGray_old()
+ * \brief   pixBlockconvGray_Old()
  *
  * \param[in]    pixs     8 bpp
  * \param[in]    pixacc   pix 32 bpp; can be null
@@ -77,7 +71,7 @@ static void blockconvLow_old(l_uint32 *data, l_int32 w, l_int32 h, l_int32 wpl,
  * </pre>
  */
 PIX *
-pixBlockconvGray_old(PIX     *pixs,
+pixBlockconvGray_Old(PIX     *pixs,
                  PIX     *pixacc,
                  l_int32  wc,
                  l_int32  hc)
@@ -142,7 +136,7 @@ PIX       *pixd, *pixt;
     wpla = pixGetWpl(pixt);
     datad = pixGetData(pixd);
     dataa = pixGetData(pixt);
-    blockconvLow_old(datad, w, h, wpl, dataa, wpla, wc, hc);
+    blockconvLow_Old(datad, w, h, wpl, dataa, wpla, wc, hc);
 
     pixDestroy(&pixt);
 	if (edge_fix) {
@@ -160,7 +154,7 @@ PIX       *pixd, *pixt;
 
 
 /*!
- * \brief   blockconvLow_old()
+ * \brief   blockconvLow_Old()
  *
  * \param[in]    data      data of input image, to be convolved
  * \param[in]    w, h, wpl
@@ -207,7 +201,7 @@ PIX       *pixd, *pixt;
  * </pre>
  */
 static void
-blockconvLow_old(l_uint32  *data,
+blockconvLow_Old(l_uint32  *data,
              l_int32    w,
              l_int32    h,
              l_int32    wpl,
