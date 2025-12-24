@@ -26,6 +26,16 @@
 
 #include "tests_collective.h"
 
+#if __has_include("mupdf/fitz.h")
+
+#include "mupdf/mutool.h"
+#include "mupdf/fitz.h"
+#include "mupdf/helpers/jmemcust.h"
+
+#define HAS_FZ_CTX  1
+
+#endif
+
 
 #if defined(BUILD_MONOLITHIC)
 #define main	leptonica_unittest_utils2_main
@@ -33,6 +43,48 @@
 
 int main(int argc, const char** argv) {
 	printf("Running main() from %s\n", __FILE__);
+
+#if defined(HAS_FZ_CTX)
+	fz_context* ctx = NULL;
+
+	if (!fz_has_global_context())
+	{
+		ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
+		if (!ctx)
+		{
+			fz_error(ctx, "cannot initialise MuPDF context");
+			return EXIT_FAILURE;
+		}
+		fz_set_global_context(ctx);
+	}
+
+	ctx = fz_new_context(NULL, NULL, FZ_STORE_DEFAULT);
+	if (!ctx)
+	{
+		fz_error(ctx, "cannot initialise MuPDF context");
+		return EXIT_FAILURE;
+	}
+
+	if (argc == 0)
+	{
+		fz_error(ctx, "No command name found!");
+		return EXIT_FAILURE;
+	}
+
+	// register a mupdf-aligned default heap memory manager for jpeg/jpeg-turbo
+	fz_set_default_jpeg_sys_mem_mgr();
+
+	fz_set_leptonica_mem(ctx);
+#endif
+
 	testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
+	int rv = RUN_ALL_TESTS();
+
+#if defined(HAS_FZ_CTX)
+	fz_clear_leptonica_mem(ctx);
+
+	fz_drop_context(ctx);
+#endif
+
+	return rv;
 }

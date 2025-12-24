@@ -37,9 +37,6 @@
 #include <crtdbg.h>
 #include <process.h>
 #include <direct.h>
-#ifndef getcwd
-#define getcwd _getcwd  /* fix MSVC warning */
-#endif
 #else
 #include <unistd.h>
 #endif   /* _MSC_VER */
@@ -70,6 +67,15 @@
 
 #include <gtest/gtest.h>
 
+#if __has_include("mupdf/fitz.h")
+
+#include "mupdf/mutool.h"
+#include "mupdf/fitz.h"
+
+#define HAS_FZ_CTX  1
+
+#endif
+
 #include "allheaders.h"
 
 
@@ -96,6 +102,12 @@ protected:
 		// warm up the stderr streams, or we will face heap memory leaks reported for that one!
 		fputs("\n", stderr);
 		fflush(stderr);
+#endif
+
+#ifdef HAS_FZ_CTX
+		// making sure we don't get any '... repeated N times...' messages that implicitly reference error/warning reports from a previous test.
+		fz_flush_warnings(NULL);
+		fz_flush_all_std_logging_channels(NULL);
 #endif
 
 		lept_old_err_handler = leptSetStderrHandler(test_lept_errormsg_handler);
@@ -126,16 +138,21 @@ protected:
 
 	virtual void TearDown() override
 	{
-		_CrtMemState hs2;
-		_CrtMemCheckpoint(&hs2);
+#ifdef HAS_FZ_CTX  
+		fz_flush_warnings(NULL);
+		fz_flush_all_std_logging_channels(NULL);
+#endif
 
 		fflush(stderr);
 #if 0
 		setvbuf(stderr, NULL, _IONBF, 0);
 #endif
 
+		_CrtMemState hs2;
+		_CrtMemCheckpoint(&hs2);
+
 		_CrtMemState hs3;
-		if (_CrtMemDifference(&hs3, &hs1, &hs2)) {
+		if (!::testing::Test::HasFailure() && _CrtMemDifference(&hs3, &hs1, &hs2)) {
 			fputs("\nHeap memory leakage:\n", stderr);
 			_CrtMemDumpStatistics(&hs3);
 			fputs("\n", stderr);
