@@ -80,7 +80,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "projective", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 	pixsc = pixScale(pixs, 0.3, 0.3);
 
 #if ALL
@@ -149,7 +149,7 @@ L_REGPARAMS* rp;
         /* Test invertability of interpolation on color */
     lept_stderr("Test invertability of color interpolation\n");
     pixa = pixaCreate(0);
-	pixc = pixRead(DEMOPATH("test24.jpg"));
+	pixc = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	pixcs = pixScale(pixc, 0.3, 0.3);
     for (i = 0; i < 5; i++) {
         if (i == 2) continue;

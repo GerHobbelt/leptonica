@@ -62,7 +62,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "warp", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("feyn-word.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-word.tif"));
 	pixt = pixAddBorder(pixs, 25, 0);
     pixg = pixConvertTo8(pixt, 0);
 

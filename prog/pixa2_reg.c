@@ -71,7 +71,7 @@ L_REGPARAMS* rp;
     /* ---------------- Use replace to fill up a pixa -------------------*/
     pixa = pixaCreate(1);
 	pixaExtendArrayToSize(pixa, n);
-    if ((pix0 = pixRead(DEMOPATH("marge.jpg"))) == NULL)
+    if ((pix0 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"))) == NULL)
         rp->success = FALSE;
 	pix1 = pixScaleToSize(pix0, 144, 108);  /* scale 0.25 */
     pixDestroy(&pix0);

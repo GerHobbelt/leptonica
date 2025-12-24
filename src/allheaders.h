@@ -2913,6 +2913,8 @@ LEPT_DLL extern SARRAY* leptProcessResponsefileLines ( SARRAY* const lines, cons
 
 LEPT_DLL extern l_ok lept_is_special_UNIX_directory ( const char* path, size_t pathlen );
 
+LEPT_DLL extern const char* lept_getcwd ( void );
+
 /* defined in morph.c */
 LEPT_DLL extern l_int32 MORPH_BC;
 

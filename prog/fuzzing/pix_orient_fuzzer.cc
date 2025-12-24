@@ -12,7 +12,7 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     pix1 = pixReadMemSpix(data,size);
     if(pix1==NULL) return 0;
-    pix2 = pixOrientCorrect(pix1, 1.0, 1.0, &upconf1, &leftconf1, &rotation, 0);
+    pix2 = pixOrientCorrect(pix1, 1.0, 1.0, &upconf1, &leftconf1, &rotation);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
     return 0;

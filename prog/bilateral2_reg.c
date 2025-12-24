@@ -59,7 +59,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "bilateral", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	DoTestsOnImage(pixs, rp);  /* 0 - 7 */
     pixDestroy(&pixs);
 

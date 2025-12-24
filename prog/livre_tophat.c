@@ -52,7 +52,7 @@ L_REGPARAMS* rp;
 		return ERROR_INT(" Syntax: livre_tophat", __func__, 1);
 
         /* Read the image in at 150 ppi. */
-    pixs = pixRead(DEMOPATH("brothers.150.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "brothers.150.jpg"));
     pixa = pixaCreate(0);
     pixaAddPix(pixa, pixs, L_INSERT);
 

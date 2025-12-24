@@ -56,7 +56,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "pixa1", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
 
 	//lept_mkdir("lept/pixa");
 

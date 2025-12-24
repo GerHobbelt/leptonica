@@ -70,7 +70,7 @@ L_REGPARAMS* rp;
          *      you add a red boundary, you will see errors in the boundary
          *      width.
          */
-    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
     pixGetDimensions(pixs, &w, NULL, &d);
     pixa = pixaSplitPix(pixs, nx, ny, 0, 0);
 /*    pixa = pixaSplitPix(pixs, nx, ny, 2, 0xff000000);  */ /* red border */

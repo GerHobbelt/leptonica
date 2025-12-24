@@ -36,14 +36,14 @@
 #include "monolithic_examples.h"
 
 
-#define   BINARY_IMAGE              DEMOPATH("test1.png")
-#define   TWO_BPP_IMAGE             DEMOPATH("weasel2.4c.png")
-#define   FOUR_BPP_IMAGE1           DEMOPATH("weasel4.11c.png")
-#define   FOUR_BPP_IMAGE2           DEMOPATH("weasel4.16g.png")
-#define   EIGHT_BPP_IMAGE           DEMOPATH("test8.jpg")
-#define   EIGHT_BPP_CMAP_IMAGE1     DEMOPATH("dreyfus8.png")
-#define   EIGHT_BPP_CMAP_IMAGE2     DEMOPATH("test24.jpg")
-#define   RGB_IMAGE                 DEMOPATH("marge.jpg")
+#define   BINARY_IMAGE              regGetFileArgOrDefault(rp, "test1.png")
+#define   TWO_BPP_IMAGE             regGetFileArgOrDefault(rp, "weasel2.4c.png")
+#define   FOUR_BPP_IMAGE1           regGetFileArgOrDefault(rp, "weasel4.11c.png")
+#define   FOUR_BPP_IMAGE2           regGetFileArgOrDefault(rp, "weasel4.16g.png")
+#define   EIGHT_BPP_IMAGE           regGetFileArgOrDefault(rp, "test8.jpg")
+#define   EIGHT_BPP_CMAP_IMAGE1     regGetFileArgOrDefault(rp, "dreyfus8.png")
+#define   EIGHT_BPP_CMAP_IMAGE2     regGetFileArgOrDefault(rp, "test24.jpg")
+#define   RGB_IMAGE                 regGetFileArgOrDefault(rp, "marge.jpg")
 
 static const l_int32    MODSIZE = 11;  /* set to 11 for display */
 

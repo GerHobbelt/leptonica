@@ -50,7 +50,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "edge", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("test8.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 
         /* Test speed: about 60 Mpix/sec/GHz */
     startTimer();

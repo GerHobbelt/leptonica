@@ -76,7 +76,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "low_access", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
     pixGetDimensions(pixs, &w, &h, NULL);
     data1 = pixGetData(pixs);
     wpl = pixGetWpl(pixs);

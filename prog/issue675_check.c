@@ -54,10 +54,10 @@ L_REGPARAMS* rp;
 	lept_rmdir("lept/bmp-test");
 	//lept_mkdir("lept/bmp-test");
 
-	pix[1] = pixRead(DEMOPATH("bmp_format2.png"));
+	pix[1] = pixRead(regGetFileArgOrDefault(rp, "bmp_format2.png"));
 	ret = pixWrite("/tmp/lept/bmp-test/target-png.bmp", pix[1], IFF_BMP);
 
-	pix[2] = pixRead(DEMOPATH("bmp_format2.bmp"));
+	pix[2] = pixRead(regGetFileArgOrDefault(rp, "bmp_format2.bmp"));
 	ret |= pixWrite("/tmp/lept/bmp-test/target-bmp.bmp", pix[2], IFF_BMP);
 
 	pix[3] = pixRead("/tmp/lept/bmp-test/target-png.bmp");
@@ -69,10 +69,10 @@ L_REGPARAMS* rp;
 
 	//-------------------------------------
 
-	pix[5] = pixReadWithHint(DEMOPATH("test-rgba.bmp"), IFF_BMP);
+	pix[5] = pixReadWithHint(regGetFileArgOrDefault(rp, "test-rgba.bmp"), IFF_BMP);
 	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba1.bmp", pix[5], IFF_BMP);
 
-	pix[6] = pixRead(DEMOPATH("test-rgba.bmp"));
+	pix[6] = pixRead(regGetFileArgOrDefault(rp, "test-rgba.bmp"));
 	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba2.bmp", pix[6], IFF_BMP);
 	ret |= pixWrite("/tmp/lept/bmp-test/target-rgba2.png", pix[6], IFF_PNG);
 
@@ -91,7 +91,7 @@ L_REGPARAMS* rp;
 
 	//-------------------------------------
 
-	pix[10] = pixRead(DEMOPATH("target.bmp"));
+	pix[10] = pixRead(regGetFileArgOrDefault(rp, "target.bmp"));
 	int d = pixGetDepth(pix[10]);
 	assert(d == 32);
 	int spp = pixGetSpp(pix[10]);

@@ -56,8 +56,8 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("lept/dewarp4");
 
-/*    pixs = pixRead(DEMOPATH("1555.007.jpg")); */
-    pixs = pixRead(DEMOPATH("cat.035.jpg"));
+/*    pixs = pixRead(regGetFileArgOrDefault(rp, "1555.007.jpg")); */
+    pixs = pixRead(regGetFileArgOrDefault(rp, "cat.035.jpg"));
     dewa1 = dewarpaCreate(40, 30, 1, 15, 10);
     dewarpaUseBothArrays(dewa1, 1);
 
@@ -78,8 +78,8 @@ L_REGPARAMS* rp;
 	dewarpaApplyDisparity(dewa1, 35, pixg, 200, 0, 0, &pixd);
 
         /* Normalize another image. */
-/*    pixs2 = pixRead(DEMOPATH("1555.003.jpg")); */
-    pixs2 = pixRead(DEMOPATH("cat.007.jpg"));
+/*    pixs2 = pixRead(regGetFileArgOrDefault(rp, "1555.003.jpg")); */
+    pixs2 = pixRead(regGetFileArgOrDefault(rp, "cat.007.jpg"));
     pixn2 = pixBackgroundNormSimple(pixs2, NULL, NULL);
     pixg2 = pixConvertRGBToGray(pixn2, 0.5, 0.3, 0.2);
     pixb2 = pixThresholdToBinary(pixg2, 130);

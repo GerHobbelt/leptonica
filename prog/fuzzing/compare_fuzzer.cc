@@ -8,7 +8,7 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     leptSetStdNullHandler();
 
     l_float32 fract;
-    l_int32 psame, comptype;
+    l_int32 psame;
     PIX *pixs1, *pixs2, *pixs3, *pixs4, *pixs5, *pixs6, *pixs7, *pixs8;
     PIX *pixd1, *pixd2;
 

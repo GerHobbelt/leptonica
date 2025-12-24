@@ -296,7 +296,7 @@ L_REGPARAMS* rp;
     l_dnaDestroy(&da5);
 
         /* Test pixel counting operations with hashmap and ordered map */
-    pix1 = pixRead(DEMOPATH("wet-day.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "wet-day.jpg"));
     pixCountRGBColorsByHash(pix1, &c1);
     pixCountRGBColors(pix1, 1, &c2);
     regTestCompareValues(rp, 42427, c1, 0);  /* 26 */

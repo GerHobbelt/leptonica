@@ -188,12 +188,14 @@
 #define _GNU_SOURCE /* needed for (v)asprintf, affects '#include <stdio.h>' */
 #endif
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && defined(_WIN32)
 #ifndef _CRTDBG_MAP_ALLOC
 #define _CRTDBG_MAP_ALLOC
 #endif
 #include <crtdbg.h>
 #include <process.h>
+#include <winsock2.h>   // prevent clashes about redefinition of certain defines...
+#include <windows.h>
 #include <direct.h>
 #ifndef getcwd
 #define getcwd _getcwd  /* fix MSVC warning */
@@ -228,13 +230,9 @@
 #include <stdlib.h> 
 #include <stdarg.h>
 #include <stdint.h>
+#include <assert.h>
 
 #include "allheaders.h"
-
-#if defined(__APPLE__) || defined(_WIN32)
-/* Rewrite paths starting with /tmp for macOS, iOS and Windows. */
-#define REWRITE_TMP
-#endif
 
 #if defined(_MSC_VER)
 #ifndef __attribute__
@@ -280,6 +278,9 @@ char    *dest;
  *
  * \param[in]    src_ref
  */
+#pragma push_macro("stringDestroy")
+#undef stringDestroy
+
 void
 stringDestroy(const char **src_ref)
 {
@@ -297,6 +298,8 @@ stringDestroy(const char **src_ref)
 	LEPT_FREE((void *)*src_ref);
 	*src_ref = NULL;
 }
+
+#pragma pop_macro("stringDestroy")
 
 
 /*!
@@ -3709,7 +3712,8 @@ char *
 genPathname(const char* dir,
 	const char* fname)
 {
-	char* cdir, * pathout;
+	const char* cdir;
+	char* pathout;
 	char* basedir;
 	l_int32  dir_root_len;
 
@@ -3751,7 +3755,7 @@ genPathname(const char* dir,
 	else {
 		/* Handle the case where we start from the current directory */
 		if (dir_root_len == 0) {
-			if ((cdir = getcwd(NULL, 0)) == NULL)
+			if ((cdir = lept_getcwd()) == NULL)
 				return (char*)ERROR_PTR("no current dir found", __func__, NULL);
 			dir_root_len = getPathRootLength(cdir);
 		}
@@ -4038,3 +4042,11 @@ string_vasprintf(_In_z_ _Printf_format_string_ const char* filename_fmt_str, va_
 	return buf;
 }
 
+
+const char* lept_getcwd(void)
+{
+	char* cdir = getcwd(NULL, 0);
+	if (cdir == NULL)
+		return (const char*)ERROR_PTR("no current dir found", __func__, NULL);
+	return cdir;
+}

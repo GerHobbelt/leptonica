@@ -55,10 +55,10 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/projection");
 
         /* Use for input two different images */
-    pixs = pixRead(DEMOPATH("projectionstats.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "projectionstats.jpg"));
 	pix1 = pixConvertTo8(pixs, 0);
     pixDestroy(&pixs);
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 	pix2 = pixScaleToGray4(pixs);
     pixDestroy(&pixs);
 

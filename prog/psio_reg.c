@@ -98,7 +98,7 @@ SARRAY       *sa;
     factor = 0.95;
 
         /* Uncompressed PS with scaling but centered on the page */
-    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
     pixGetDimensions(pixs, &w, &h, NULL);
     scale = L_MIN(factor * 2550 / w, factor * 3300 / h);
     fp1 = lept_fopen("/tmp/lept/regout/psio0.ps", "wb+");
@@ -108,7 +108,7 @@ SARRAY       *sa;
     pixDestroy(&pixs);
 
         /* Uncompressed PS with scaling, with LL corner at (1500, 1500) mils */
-    pixs = pixRead(DEMOPATH("weasel4.11c.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "weasel4.11c.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     scale = L_MIN(factor * 2550 / w, factor * 3300 / h);
     box = boxCreate(1500, 1500, (l_int32)(1000 * scale * w / 300),
@@ -121,7 +121,7 @@ SARRAY       *sa;
     pixDestroy(&pixs);
 
         /* DCT compressed PS with LL corner at (300, 1000) pixels */
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     pixt = pixConvertTo32(pixs);
     pixWrite("/tmp/lept/regout/psio2.jpg", pixt, IFF_JFIF_JPEG);
     convertJpegToPS("/tmp/lept/regout/psio2.jpg", "/tmp/lept/regout/psio3.ps",
@@ -132,27 +132,27 @@ SARRAY       *sa;
     pixDestroy(&pixs);
 
         /* For each page, apply tiff g4 image first; then jpeg or png over it */
-    convertG4ToPS(DEMOPATH("feyn.tif"), "/tmp/lept/regout/psio4.ps", "w",
+    convertG4ToPS(regGetFileArgOrDefault(rp, "feyn.tif"), "/tmp/lept/regout/psio4.ps", "w",
                   0, 0, 0, 1.0, 1, 1, 0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio4.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio4.ps",
                     "a", 500, 100, 300, 2.0, 1,  0);
-    convertFlateToPS(DEMOPATH("weasel4.11c.png"), "/tmp/lept/regout/psio4.ps",
+    convertFlateToPS(regGetFileArgOrDefault(rp, "weasel4.11c.png"), "/tmp/lept/regout/psio4.ps",
                      "a", 300, 400, 300, 6.0, 1,  0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio4.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio4.ps",
                     "a", 100, 800, 300, 1.5, 1, 1);
 
-    convertG4ToPS(DEMOPATH("feyn.tif"), "/tmp/lept/regout/psio4.ps",
+    convertG4ToPS(regGetFileArgOrDefault(rp, "feyn.tif"), "/tmp/lept/regout/psio4.ps",
                   "a", 0, 0, 0, 1.0, 2, 1, 0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio4.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio4.ps",
                     "a", 1000, 700, 300, 2.0, 2, 0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio4.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio4.ps",
                     "a", 100, 200, 300, 2.0, 2, 1);
 
-    convertG4ToPS(DEMOPATH("feyn.tif"), "/tmp/lept/regout/psio4.ps",
+    convertG4ToPS(regGetFileArgOrDefault(rp, "feyn.tif"), "/tmp/lept/regout/psio4.ps",
                   "a", 0, 0, 0, 1.0, 3, 1, 0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio4.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio4.ps",
                     "a", 200, 200, 300, 2.0, 3, 0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio4.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio4.ps",
                     "a", 200, 900, 300, 2.0, 3, 1);
     regTestCheckFile(rp, "/tmp/lept/regout/psio4.ps");  /* 4 */
 
@@ -172,58 +172,58 @@ SARRAY       *sa;
          * that we're painting black through.  If the text layer
          * is painted first, the following images occlude it; otherwise,
          * the images remain in the background of the text. */
-    pixs = pixRead(DEMOPATH("wyom.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "wyom.jpg"));
     pixt = pixScaleToSize(pixs, 2528, 3300);
     pixWrite("/tmp/lept/regout/psio5.jpg", pixt, IFF_JFIF_JPEG);
     pixDestroy(&pixs);
     pixDestroy(&pixt);
     convertJpegToPS("/tmp/lept/regout/psio5.jpg", "/tmp/lept/regout/psio5.ps",
                       "w", 0, 0, 300, 1.0, 1, 0);
-    convertFlateToPS(DEMOPATH("weasel8.240c.png"), "/tmp/lept/regout/psio5.ps",
+    convertFlateToPS(regGetFileArgOrDefault(rp, "weasel8.240c.png"), "/tmp/lept/regout/psio5.ps",
                      "a", 100, 100, 300, 5.0, 1, 0);
-    convertFlateToPS(DEMOPATH("weasel8.149g.png"), "/tmp/lept/regout/psio5.ps",
+    convertFlateToPS(regGetFileArgOrDefault(rp, "weasel8.149g.png"), "/tmp/lept/regout/psio5.ps",
                      "a", 200, 300, 300, 5.0, 1, 0);
-    convertFlateToPS(DEMOPATH("weasel4.11c.png"), "/tmp/lept/regout/psio5.ps",
+    convertFlateToPS(regGetFileArgOrDefault(rp, "weasel4.11c.png"), "/tmp/lept/regout/psio5.ps",
                      "a", 300, 500, 300, 5.0, 1, 0);
-    convertG4ToPS(DEMOPATH("feyn.tif"), "/tmp/lept/regout/psio5.ps",
+    convertG4ToPS(regGetFileArgOrDefault(rp, "feyn.tif"), "/tmp/lept/regout/psio5.ps",
                   "a", 0, 0, 0, 1.0, 1, 1, 1);
 
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio5.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio5.ps",
                     "a", 500, 100, 300, 2.0, 2,  0);
-    convertFlateToPS(DEMOPATH("weasel4.11c.png"), "/tmp/lept/regout/psio5.ps",
+    convertFlateToPS(regGetFileArgOrDefault(rp, "weasel4.11c.png"), "/tmp/lept/regout/psio5.ps",
                      "a", 300, 400, 300, 6.0, 2,  0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio5.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio5.ps",
                     "a", 100, 800, 300, 1.5, 2, 0);
-    convertG4ToPS(DEMOPATH("feyn.tif"), "/tmp/lept/regout/psio5.ps",
+    convertG4ToPS(regGetFileArgOrDefault(rp, "feyn.tif"), "/tmp/lept/regout/psio5.ps",
                   "a", 0, 0, 0, 1.0, 2, 1, 1);
 
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio5.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio5.ps",
                     "a", 500, 100, 300, 2.0, 3,  0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio5.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio5.ps",
                     "a", 100, 800, 300, 2.0, 3, 0);
-    convertG4ToPS(DEMOPATH("feyn.tif"), "/tmp/lept/regout/psio5.ps",
+    convertG4ToPS(regGetFileArgOrDefault(rp, "feyn.tif"), "/tmp/lept/regout/psio5.ps",
                   "a", 0, 0, 0, 1.0, 3, 1, 1);
 
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio5.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio5.ps",
                     "a", 700, 700, 300, 2.0, 4, 0);
-    convertFlateToPS(DEMOPATH("weasel8.149g.png"), "/tmp/lept/regout/psio5.ps",
+    convertFlateToPS(regGetFileArgOrDefault(rp, "weasel8.149g.png"), "/tmp/lept/regout/psio5.ps",
                      "a", 400, 400, 300, 5.0, 4, 0);
-    convertG4ToPS(DEMOPATH("feyn.tif"), "/tmp/lept/regout/psio5.ps",
+    convertG4ToPS(regGetFileArgOrDefault(rp, "feyn.tif"), "/tmp/lept/regout/psio5.ps",
                   "a", 0, 0, 0, 1.0, 4, 1, 0);
-    convertFlateToPS(DEMOPATH("weasel8.240c.png"), "/tmp/lept/regout/psio5.ps",
+    convertFlateToPS(regGetFileArgOrDefault(rp, "weasel8.240c.png"), "/tmp/lept/regout/psio5.ps",
                      "a", 100, 220, 300, 5.0, 4, 0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio5.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio5.ps",
                     "a", 100, 200, 300, 2.0, 4, 1);
 
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio5.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio5.ps",
                     "a", 200, 200, 300, 1.5, 5, 0);
-    convertFlateToPS(DEMOPATH("weasel8.240c.png"), "/tmp/lept/regout/psio5.ps",
+    convertFlateToPS(regGetFileArgOrDefault(rp, "weasel8.240c.png"), "/tmp/lept/regout/psio5.ps",
                      "a", 140, 80, 300, 7.0, 5, 0);
-    convertG4ToPS(DEMOPATH("feyn.tif"), "/tmp/lept/regout/psio5.ps",
+    convertG4ToPS(regGetFileArgOrDefault(rp, "feyn.tif"), "/tmp/lept/regout/psio5.ps",
                   "a", 0, 0, 0, 1.0, 5, 1, 0);
-    convertFlateToPS(DEMOPATH("weasel8.149g.png"), "/tmp/lept/regout/psio5.ps",
+    convertFlateToPS(regGetFileArgOrDefault(rp, "weasel8.149g.png"), "/tmp/lept/regout/psio5.ps",
                      "a", 280, 310, 300, 5.0, 4, 0);
-    convertJpegToPS(DEMOPATH("marge.jpg"), "/tmp/lept/regout/psio5.ps",
+    convertJpegToPS(regGetFileArgOrDefault(rp, "marge.jpg"), "/tmp/lept/regout/psio5.ps",
                     "a", 200, 900, 300, 2.0, 5, 1);
     regTestCheckFile(rp, "/tmp/lept/regout/psio5.ps");  /* 5 */
 
@@ -234,13 +234,13 @@ SARRAY       *sa;
     regTestCheckFile(rp, "/tmp/lept/regout/psio6.ps");  /* 6 */
 
         /* PS generation for embeddding */
-    convertJpegToPSEmbed(DEMOPATH("tetons.jpg"), "/tmp/lept/regout/psio7.ps");
+    convertJpegToPSEmbed(regGetFileArgOrDefault(rp, "tetons.jpg"), "/tmp/lept/regout/psio7.ps");
     regTestCheckFile(rp, "/tmp/lept/regout/psio7.ps");  /* 7 */
 
-    convertG4ToPSEmbed(DEMOPATH("feyn-fract.tif"), "/tmp/lept/regout/psio8.ps");
+    convertG4ToPSEmbed(regGetFileArgOrDefault(rp, "feyn-fract.tif"), "/tmp/lept/regout/psio8.ps");
     regTestCheckFile(rp, "/tmp/lept/regout/psio8.ps");  /* 8 */
 
-    convertFlateToPSEmbed(DEMOPATH("weasel8.240c.png"), "/tmp/lept/regout/psio9.ps");
+    convertFlateToPSEmbed(regGetFileArgOrDefault(rp, "weasel8.240c.png"), "/tmp/lept/regout/psio9.ps");
     regTestCheckFile(rp, "/tmp/lept/regout/psio9.ps");  /* 9 */
 
         /* Writing compressed from a pixa */

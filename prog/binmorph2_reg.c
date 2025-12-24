@@ -62,7 +62,7 @@ L_REGPARAMS* rp;
     if (argc != 1)
         return ERROR_INT(" Syntax:  binmorph2_reg", __func__, 1);
 
-    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
     pixsd = pixMorphCompSequence(pixs, "d5.5", 0);
     success = TRUE;
     for (i = 1; i < MAX_SEL_SIZE; i++) {

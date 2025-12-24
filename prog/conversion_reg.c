@@ -57,15 +57,15 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "conversion", NULL, &rp))
 		return 1;
 
-    pixs1 = pixRead(DEMOPATH("test1.png"));
-    pixs2 = pixRead(DEMOPATH("dreyfus2.png"));
-    pixc2 = pixRead(DEMOPATH("weasel2.4c.png"));
-    pixs4 = pixRead(DEMOPATH("weasel4.16g.png"));
-    pixc4 = pixRead(DEMOPATH("weasel4.11c.png"));
-    pixs8 = pixRead(DEMOPATH("karen8.jpg"));
-    pixc8 = pixRead(DEMOPATH("weasel8.240c.png"));
-    pixs16 = pixRead(DEMOPATH("test16.tif"));
-    pixs32 = pixRead(DEMOPATH("marge.jpg"));
+    pixs1 = pixRead(regGetFileArgOrDefault(rp, "test1.png"));
+    pixs2 = pixRead(regGetFileArgOrDefault(rp, "dreyfus2.png"));
+    pixc2 = pixRead(regGetFileArgOrDefault(rp, "weasel2.4c.png"));
+    pixs4 = pixRead(regGetFileArgOrDefault(rp, "weasel4.16g.png"));
+    pixc4 = pixRead(regGetFileArgOrDefault(rp, "weasel4.11c.png"));
+    pixs8 = pixRead(regGetFileArgOrDefault(rp, "karen8.jpg"));
+    pixc8 = pixRead(regGetFileArgOrDefault(rp, "weasel8.240c.png"));
+    pixs16 = pixRead(regGetFileArgOrDefault(rp, "test16.tif"));
+    pixs32 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	error = FALSE;
     sa = sarrayCreate(0);
 

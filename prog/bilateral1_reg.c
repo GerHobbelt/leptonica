@@ -57,15 +57,15 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "bilateral", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("rock.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "rock.png"));
 	DoTestsOnImage(pixs, rp, 2000);  /* 0 - 16 */
     pixDestroy(&pixs);
 
-    pixs = pixRead(DEMOPATH("church.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "church.png"));
 	DoTestsOnImage(pixs, rp, 1500);  /* 17 - 33 */
     pixDestroy(&pixs);
 
-    pixs = pixRead(DEMOPATH("color-wheel-hue.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "color-wheel-hue.jpg"));
 	DoTestsOnImage(pixs, rp, 1000);  /* 34 - 50 */
     pixDestroy(&pixs);
 

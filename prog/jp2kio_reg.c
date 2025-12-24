@@ -81,11 +81,11 @@ int main(int    argc,
 
 	//lept_mkdir("lept/regout");
 
-    DoJp2kTest1(rp, DEMOPATH("karen8.jpg"));
-    DoJp2kTest1(rp, DEMOPATH("test24.jpg"));
-/*    DoJp2kTest2(rp, DEMOPATH("karen8.jpg"));  */  /* encode fails on smallest image */
-    DoJp2kTest2(rp, DEMOPATH("test24.jpg"));
-    DoJp2kTest3(rp, DEMOPATH("wyom.jpg"));
+    DoJp2kTest1(rp, regGetFileArgOrDefault(rp, "karen8.jpg"));
+    DoJp2kTest1(rp, regGetFileArgOrDefault(rp, "test24.jpg"));
+/*    DoJp2kTest2(rp, regGetFileArgOrDefault(rp, "karen8.jpg"));  */  /* encode fails on smallest image */
+    DoJp2kTest2(rp, regGetFileArgOrDefault(rp, "test24.jpg"));
+    DoJp2kTest3(rp, regGetFileArgOrDefault(rp, "wyom.jpg"));
     return regTestCleanup(rp);
 }
 

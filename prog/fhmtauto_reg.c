@@ -59,7 +59,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "fhmt_auto", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
     sela = selaAddHitMiss(NULL);
     nsels = selaGetCount(sela);
 

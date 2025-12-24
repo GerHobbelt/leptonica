@@ -85,12 +85,12 @@ L_REGPARAMS* rp;
 	leptDebugAddStepLevel();
 
         /* Using a variety of different thresholds */
-    GenCleans(DEMOPATH("cavalerie.29.jpg"), &index, 80, bmf, rp);
-    GenCleans(DEMOPATH("cavalerie.29.jpg"), &index, 60, bmf, rp);
-    GenCleans(DEMOPATH("cavalerie.29.jpg"), &index, 40, bmf, rp);
-    GenCleans(DEMOPATH("cavalerie.11.jpg"), &index, 80, bmf, rp);
-    GenCleans(DEMOPATH("cavalerie.11.jpg"), &index, 60, bmf, rp);
-    GenCleans(DEMOPATH("cavalerie.11.jpg"), &index, 40, bmf, rp);
+    GenCleans(regGetFileArgOrDefault(rp, "cavalerie.29.jpg"), &index, 80, bmf, rp);
+    GenCleans(regGetFileArgOrDefault(rp, "cavalerie.29.jpg"), &index, 60, bmf, rp);
+    GenCleans(regGetFileArgOrDefault(rp, "cavalerie.29.jpg"), &index, 40, bmf, rp);
+    GenCleans(regGetFileArgOrDefault(rp, "cavalerie.11.jpg"), &index, 80, bmf, rp);
+    GenCleans(regGetFileArgOrDefault(rp, "cavalerie.11.jpg"), &index, 60, bmf, rp);
+    GenCleans(regGetFileArgOrDefault(rp, "cavalerie.11.jpg"), &index, 40, bmf, rp);
 
         /* Read the images and convert to a 4-up pixa */
     pixa1 = convertToNUpPixa(leptDebugGenFilepath(""), "adapt_", 2, 2, 500,

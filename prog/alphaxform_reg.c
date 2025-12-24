@@ -79,9 +79,9 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "alpha_xform", NULL, &rp))
 		return 1;
 
-    pixc1 = pixRead(DEMOPATH("test24.jpg"));
-    pixc2 = pixRead(DEMOPATH("wyom.jpg"));
-    pixc3 = pixRead(DEMOPATH("marge.jpg"));
+    pixc1 = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
+    pixc2 = pixRead(regGetFileArgOrDefault(rp, "wyom.jpg"));
+    pixc3 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 
         /* Test alpha blend scaling */
     pixd = pixCreate(900, 400, 32);

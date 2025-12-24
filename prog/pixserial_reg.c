@@ -77,7 +77,7 @@ L_REGPARAMS* rp;
             /* Test basic serialization/deserialization */
     data32 = NULL;
     for (i = 0; i < nfiles; i++) {
-		pixs = pixRead(DEMOPATH(filename[i]));
+		pixs = pixRead(regGetFileArgOrDefault(rp, filename[i]));
             /* Serialize to memory */
         pixSerializeToMemory(pixs, &data32, &size);
             /* Just for fun, write and read back from file */
@@ -94,7 +94,7 @@ L_REGPARAMS* rp;
 
             /* Test read/write fileio interface */
     for (i = 0; i < nfiles; i++) {
-        pixs = pixRead(DEMOPATH(filename[i]));
+        pixs = pixRead(regGetFileArgOrDefault(rp, filename[i]));
         pixGetDimensions(pixs, &w, &h, NULL);
         box = boxCreate(0, 0, L_MIN(150, w), L_MIN(150, h));
         pixt = pixClipRectangle(pixs, box, NULL);
@@ -114,7 +114,7 @@ L_REGPARAMS* rp;
              * but for 32 bpp spix, we set spp = 4. */
     data = NULL;
     for (i = 0; i < nfiles; i++) {
-		const char* fname = DEMOPATH(filename[i]);
+		const char* fname = regGetFileArgOrDefault(rp, filename[i]);
 		pixs = pixRead(fname);
         pixWriteMem(&data, &size, pixs, IFF_SPIX);
         pixReadHeader(fname, &format, &w, &h, &bps, &spp, &iscmap);
@@ -134,7 +134,7 @@ L_REGPARAMS* rp;
 
         /* Do timing */
     for (i = 0; i < nfiles; i++) {
-		const char* fname = DEMOPATH(filename[i]);
+		const char* fname = regGetFileArgOrDefault(rp, filename[i]);
         pixs = pixRead(fname);
         startTimer();
         pixSerializeToMemory(pixs, &data32, &size);

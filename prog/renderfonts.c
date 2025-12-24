@@ -35,7 +35,7 @@
 #include "monolithic_examples.h"
 
 
-#define   DIRECTORY    DEMOPATH("fonts")
+#define   DIRECTORY    regGetFileArgOrDefault(rp, "fonts")
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -61,7 +61,7 @@ L_REGPARAMS* rp;
 
         /* Render a character of text */
     bmf = bmfCreate(DIRECTORY, 20);
-    pixs = pixRead(DEMOPATH("dreyfus8.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "dreyfus8.png"));
     lept_stderr("n = %d\n", pixaGetCount(bmf->pixa));
     pix = pixaGetPix(bmf->pixa, 6, L_CLONE);
     pixSetMaskedGeneral(pixs, pix, 0x45, 140, 165);
@@ -73,7 +73,7 @@ L_REGPARAMS* rp;
 
         /* Render a line of text */
     bmf = bmfCreate(DIRECTORY, 8);
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     bmfGetStringWidth(bmf, "This is a funny cat!", &width);
     lept_stderr("String width: %d pixels\n", width);
 
@@ -89,7 +89,7 @@ L_REGPARAMS* rp;
 
         /* Render a block of text */
     bmf = bmfCreate(DIRECTORY, 10);
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     textstr = stringNew("This is a cat! This is a funny cat! "
                         "This is a funny funny cat! This is a "
                         "funny funny funny cat!");

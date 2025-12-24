@@ -50,7 +50,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "logic_ops", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("test1.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test1.png"));
 
         /* pixInvert */
     pix1 = pixInvert(NULL, pixs);
@@ -59,7 +59,7 @@ L_REGPARAMS* rp;
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     regTestComparePix(rp, pix1, pix2);  /* 1 */
 
-    pix3 = pixRead(DEMOPATH("marge.jpg"));  /* into pixd of different size */
+    pix3 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));  /* into pixd of different size */
     pixInvert(pix3, pixs);
     regTestComparePix(rp, pix1, pix3);  /* 2 */
     pixDestroy(&pix1);
@@ -161,7 +161,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix3);
     pixDestroy(&pix4);
 
-    pix4 = pixRead(DEMOPATH("marge.jpg"));
+    pix4 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     pixSubtract(pix4, pixs, pixs);  /* subtract from itself; should be empty */
     pix3 = pixCreateTemplate(pixs);
     regTestComparePix(rp, pix3, pix4);  /* 27*/

@@ -320,7 +320,7 @@ leptLocateFileInSearchpath(const char* file, const SARRAY* searchpaths, l_ok ign
 		*pLocatedSearchPath = NULL;
 
 	if (!file)
-		return ERROR_PTR("file path is not defined", __func__, NULL);
+		return (char *)ERROR_PTR("file path is not defined", __func__, NULL);
 
 	// when file already has an absolute path, we don't need to apply the search paths:
 	int file_root_len = getPathRootLength(file);
@@ -335,14 +335,14 @@ leptLocateFileInSearchpath(const char* file, const SARRAY* searchpaths, l_ok ign
 			return NULL;
 		}
 
-		char* cdir = getcwd(NULL, 0);
+		const char* cdir = lept_getcwd();
 		if (cdir == NULL)
-			return ERROR_PTR("no current dir found", __func__, NULL);
+			return (char *)ERROR_PTR("no current dir found", __func__, NULL);
 
 		char* p = pathJoin(cdir, file);
 		char* rv = locate_wildcarded_filepath(p, FALSE, NULL);
 		stringDestroy(&p);
-		free(cdir);
+		stringDestroy(&cdir);
 		return rv;
 	}
 
@@ -377,9 +377,9 @@ leptLocateAllMatchingFilesInAnySearchpath(const char* filespec, const SARRAY* se
 		*pLocatedSearchPaths = NULL;
 
 	if (!filespec)
-		return ERROR_PTR("filespec is not defined", __func__, NULL);
+		return (SARRAY *)ERROR_PTR("filespec is not defined", __func__, NULL);
 
-	l_LocateMode_t m = mode;
+	int m = +mode;
 	m &= ~L_LOCATE_IGNORE_CURRENT_DIR_FLAG;
 
 	// do we really need to report them all, or only *one*?!
@@ -394,7 +394,7 @@ leptLocateAllMatchingFilesInAnySearchpath(const char* filespec, const SARRAY* se
 
 	SARRAY* rv_arr = sarrayCreate(0);
 	if (!rv_arr)
-		return ERROR_PTR("rv_arr[] cannot be allocated", __func__, NULL);
+		return (SARRAY *)ERROR_PTR("rv_arr[] cannot be allocated", __func__, NULL);
 
 	// when file already has an absolute path, we don't need to apply the search paths:
 	int file_root_len = getPathRootLength(filespec);
@@ -412,15 +412,15 @@ leptLocateAllMatchingFilesInAnySearchpath(const char* filespec, const SARRAY* se
 		}
 
 		// when no searchpaths are specified, assume this path is relative to the 'current directory':
-		char* cdir = getcwd(NULL, 0);
+		const char* cdir = lept_getcwd();
 		if (cdir == NULL)
-			return ERROR_PTR("no current dir found", __func__, NULL);
+			return (SARRAY *)ERROR_PTR("no current dir found", __func__, NULL);
 
 		char* p = pathJoin(cdir, filespec);
 		char* rv = locate_wildcarded_filepath(p, FALSE, &rv_arr);
 		stringDestroy(&rv);
 		stringDestroy(&p);
-		free(cdir);
+		stringDestroy(&cdir);
 		return rv_arr;
 	}
 
@@ -444,15 +444,15 @@ leptLocateAllMatchingFilesInAnySearchpath(const char* filespec, const SARRAY* se
 		}
 		else {
 			// not an absolute path: assume this path is relative to the 'current directory':
-			char* cdir = getcwd(NULL, 0);
+			const char* cdir = lept_getcwd();
 			if (cdir == NULL)
-				return ERROR_PTR("no current dir found", __func__, NULL);
+				return (SARRAY *)ERROR_PTR("no current dir found", __func__, NULL);
 
 			char* p = pathJoin(cdir, slot_path);
 			char* rv = locate_wildcarded_filepath(p, FALSE, &lcl_arr);
 			stringDestroy(&rv);
 			stringDestroy(&p);
-			free(cdir);
+			stringDestroy(&cdir);
 		}
 		stringDestroy(&slot_path);
 
@@ -656,19 +656,19 @@ pathDeducePathSet(const SARRAY *pathset, const char *abs_basedir_path, l_ok add_
 //
 // - use locate %mode L_LOCATE_
 //
-SARRAY* leptProcessResponsefileLines(SARRAY* const lines, const SARRAY* const searchpath_set, l_LocateMode_t search_mode, const char *output_basedir, const char *stmt_prefix, const char *fail_marker, const char* ignore_marker)
+SARRAY* leptProcessResponsefileLines(SARRAY* const lines, const SARRAY* const searchpath_set, l_LocateMode_t search_mode__, const char *output_basedir, const char *stmt_prefix, const char *fail_marker, const char* ignore_marker)
 {
 	if (!lines)
-		return ERROR_PTR("lines input array is not defined", __func__, NULL);
+		return (SARRAY *)ERROR_PTR("lines input array is not defined", __func__, NULL);
 
 	SARRAY* in = lines;
 	int count = sarrayGetCount(in);
 	SARRAY* rv = sarrayCreate(count);
 	if (!rv)
-		return ERROR_PTR("result array rv[] cannot be allocated", __func__, NULL);
+		return (SARRAY *)ERROR_PTR("result array rv[] cannot be allocated", __func__, NULL);
 	SARRAY* locatedSearchPaths = sarrayCreate(0);
 	if (!rv)
-		return ERROR_PTR("locatedSearchPaths[] cannot be allocated", __func__, NULL);
+		return (SARRAY *)ERROR_PTR("locatedSearchPaths[] cannot be allocated", __func__, NULL);
 	const char* active_responsefile;
 	SARRAY* active_searchpaths;
 	int files_collected_via_lines_cnt = 0;
@@ -677,14 +677,15 @@ SARRAY* leptProcessResponsefileLines(SARRAY* const lines, const SARRAY* const se
 	// the only time we MAY be requiring the CWD, so we better patch that one into
 	// the searchpath set, hence we can permanently flag the search_mode with
 	// the 'ignore CWD' flag.
-	char* cdir = getcwd(NULL, 0);
+	const char* cdir = lept_getcwd();
 	if (cdir == NULL) {
-		return ERROR_PTR("no current dir found", __func__, NULL);
+		return (SARRAY *)ERROR_PTR("no current dir found", __func__, NULL);
 	}
 	const char* fake_respfile = pathJoin(cdir, "(dummy)");
+	int search_mode = search_mode__;							// fix for obnoxious compile-as-C++ errors due to enum bit fiddling we do in here.
 	active_searchpaths = pathDeducePathSet(searchpath_set, cdir, !(search_mode & L_LOCATE_IGNORE_CURRENT_DIR_FLAG));
 	active_responsefile = fake_respfile;
-	free(cdir);
+	stringDestroy(&cdir);
 	search_mode |= L_LOCATE_IGNORE_CURRENT_DIR_FLAG;
 
 	//
@@ -741,7 +742,7 @@ copy_verbatim_with_fail:
 			continue;
 
 		default:
-		treat_as_a_regular_line:
+treat_as_a_regular_line:
 			;
 			// all the other lines can be either '='-carrying assignment statements or filespecs.
 			// Here we decide which and treat both types.
@@ -774,7 +775,7 @@ copy_verbatim_with_fail:
 				// else: a filespec! time to do some wildcard resolving, if any! :-)
 				const char* locatedSearchPath = NULL;
 				// search_mode determines whether we'll accept a SET or a SINGLE filespec as a result.
-				SARRAY* file_set = leptLocateAllMatchingFilesInAnySearchpath(entry, active_searchpaths, search_mode, &locatedSearchPaths);
+				SARRAY* file_set = leptLocateAllMatchingFilesInAnySearchpath(entry, active_searchpaths, (l_LocateMode_t)search_mode, &locatedSearchPaths);
 				// either way, we append the produce to the output lines set.
 				sarrayJoin(rv, file_set);
 				sarrayDestroy(&file_set);
@@ -783,7 +784,8 @@ copy_verbatim_with_fail:
 
 			// check if this is a (non-recursive) response file; if it is, do expand it!
 		case '@':
-			const char* filepath = leptLocateFileInSearchpath(entry + 1, active_searchpaths, !!(search_mode & L_LOCATE_IGNORE_CURRENT_DIR_FLAG), NULL);
+		{
+			const char* filepath = leptLocateFileInSearchpath(entry + 1, active_searchpaths, TRUE /* !!(search_mode & L_LOCATE_IGNORE_CURRENT_DIR_FLAG) */, NULL);
 			if (!filepath)
 			{
 				L_ERROR("Failed to locate responsefile in the searchpath; skipping this one. File: %s", __func__, entry + 1);
@@ -816,7 +818,7 @@ copy_verbatim_with_fail:
 				sarrayDestroy(&sublines);
 				stringDestroy(&filepath);
 				sarrayDestroy(&rv);
-				return ERROR_PTR("SEARCHPATH=<paths> stack depth exhausted. You need to flatten/simplify your response files.", __func__, NULL);
+				return (SARRAY*)ERROR_PTR("SEARCHPATH=<paths> stack depth exhausted. You need to flatten/simplify your response files.", __func__, NULL);
 			}
 			else {
 #if 0
@@ -830,7 +832,7 @@ copy_verbatim_with_fail:
 
 				// replace any './' relative path references in the responsefile's lines with the basedir, based on the responsefile path itself:
 				// all relative-path filespecs in a responsefile are *local* to the responsefile.
-				const char* respfile_dirname;
+				char* respfile_dirname;
 				splitPathAtDirectory(filepath, &respfile_dirname, NULL);
 
 				active_searchpaths = sp_stack[sp_stackpos].sp_base = pathDeducePathSet(active_searchpaths, respfile_dirname, TRUE);
@@ -848,6 +850,7 @@ copy_verbatim_with_fail:
 				sarrayDestroy(&sublines);
 				count = sarrayGetCount(in);
 			}
+		}
 			continue;
 
 		case 'S':
@@ -865,11 +868,11 @@ copy_verbatim_with_fail:
 					++sp_stackpos;
 					if (sp_stackpos == sp_stack_size) {
 						sarrayDestroy(&rv);
-						return ERROR_PTR("SEARCHPATH=<paths> stack depth exhausted. You need to flatten/simplify your response files.", __func__, NULL);
+						return (SARRAY *)ERROR_PTR("SEARCHPATH=<paths> stack depth exhausted. You need to flatten/simplify your response files.", __func__, NULL);
 					}
 					else {
 						// all relative-path filespecs in a responsefile are *local* to the responsefile.
-						const char* respfile_dirname;
+						char* respfile_dirname;
 						splitPathAtDirectory(active_responsefile, &respfile_dirname, NULL);
 
 						SARRAY* lcl_arr = pathDeducePathSet(active_searchpaths, respfile_dirname, TRUE);
@@ -912,14 +915,14 @@ copy_verbatim_with_fail:
 			}
 
 			// process the searchpaths list: first, determine which separator has been used: | ;
-			char* sep_marker_p = strpbrk(searchdir_list_str, "|;");
+			const char* sep_marker_p = strpbrk(searchdir_list_str, "|;");
 			char sep_marker[2] = { (sep_marker_p ? *sep_marker_p : ';'), 0 };
 			SARRAY* srch_arr = sarrayCreate(1);
 			sarraySplitString(srch_arr, searchdir_list_str, sep_marker);
 
 			// replace any './' relative path references with our new basedir, based of the responsefile path itself:
 			// all relative-path filespecs in a responsefile are *local* to the responsefile.
-			const char* respfile_dirname;
+			char* respfile_dirname;
 			splitPathAtDirectory(active_responsefile, &respfile_dirname, NULL);
 
 			SARRAY* lcl_arr = pathDeducePathSet(srch_arr, respfile_dirname, TRUE);

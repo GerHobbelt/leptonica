@@ -58,7 +58,7 @@ L_REGPARAMS* rp;
 
         /* Set 1 */
     startTimer();
-    pix1 = pixRead(DEMOPATH("rabi.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "rabi.png"));
 	pixWrite("/tmp/lept/run/pix-orig.png", pix1, IFF_PNG);
 	pix2 = pixRunlengthTransform(pix1, 0, L_HORIZONTAL_RUNS, 8);
     pix3 = pixRunlengthTransform(pix1, 0, L_VERTICAL_RUNS, 8);
@@ -89,7 +89,7 @@ L_REGPARAMS* rp;
 
         /* Set 2 */
     startTimer();
-    pix1 = pixRead(DEMOPATH("test24.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	pixWrite("/tmp/lept/run/junk-orig.png", pix1, IFF_PNG);
 	pixWriteJpeg("/tmp/lept/run/junk24.jpg", pix1, 5, 0);
     pix2 = pixRead("/tmp/lept/run/junk24.jpg");

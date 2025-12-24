@@ -51,7 +51,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "gray_morph", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("test8.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 
         /* Dilation */
     pixa = pixaCreate(0);

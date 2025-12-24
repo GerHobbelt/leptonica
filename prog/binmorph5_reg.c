@@ -83,7 +83,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "binmorph", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
     TestAll(rp, pixs, FALSE);
     TestAll(rp, pixs, TRUE);
     pixDestroy(&pixs);

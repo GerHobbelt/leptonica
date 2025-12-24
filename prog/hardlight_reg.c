@@ -50,8 +50,8 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "hard_light", NULL, &rp))
 		return 1;
 
-    TestHardlight(DEMOPATH("hardlight1_1.jpg"), DEMOPATH("hardlight1_2.jpg"), rp);
-    TestHardlight(DEMOPATH("hardlight2_1.jpg"), DEMOPATH("hardlight2_2.jpg"), rp);
+    TestHardlight(regGetFileArgOrDefault(rp, "hardlight1_1.jpg"), regGetFileArgOrDefault(rp, "hardlight1_2.jpg"), rp);
+    TestHardlight(regGetFileArgOrDefault(rp, "hardlight2_1.jpg"), regGetFileArgOrDefault(rp, "hardlight2_2.jpg"), rp);
     return regTestCleanup(rp);
 }
 

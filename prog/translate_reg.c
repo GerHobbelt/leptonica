@@ -35,11 +35,11 @@
 #include "monolithic_examples.h"
 
 
-#define   BINARY_IMAGE        DEMOPATH("test1.png")
-#define   GRAYSCALE_IMAGE     DEMOPATH("test8.jpg")
-#define   FOUR_BPP_IMAGE      DEMOPATH("weasel4.8g.png")
-#define   COLORMAP_IMAGE      DEMOPATH("dreyfus8.png")
-#define   RGB_IMAGE           DEMOPATH("marge.jpg")
+#define   BINARY_IMAGE        regGetFileArgOrDefault(rp, "test1.png")
+#define   GRAYSCALE_IMAGE     regGetFileArgOrDefault(rp, "test8.jpg")
+#define   FOUR_BPP_IMAGE      regGetFileArgOrDefault(rp, "weasel4.8g.png")
+#define   COLORMAP_IMAGE      regGetFileArgOrDefault(rp, "dreyfus8.png")
+#define   RGB_IMAGE           regGetFileArgOrDefault(rp, "marge.jpg")
 
 void TranslateAndSave1(PIXA *pixa, l_int32 depth, PIX *pix,
                        l_int32 xshift, l_int32 yshift);
@@ -65,7 +65,7 @@ L_REGPARAMS* rp;
 		return 1;
 
         /* Set up images */
-    pix1 = pixRead(DEMOPATH("weasel2.4c.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "weasel2.4c.png"));
 	pix2 = pixScaleBySampling(pix1, 3.0, 3.0);
     box = boxCreate(0, 0, 209, 214);
     pixs = pixClipRectangle(pix2, box, NULL);

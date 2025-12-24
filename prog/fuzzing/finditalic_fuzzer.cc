@@ -10,7 +10,7 @@ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 	if(pixs_payload == NULL) return 0;
 
 	BOXA *boxa1;
-	pixItalicWords(pixs_payload, NULL, NULL, &boxa1, 1);
+	pixItalicWords(pixs_payload, NULL, NULL, &boxa1);
 
 	pixDestroy(&pixs_payload);
 	boxaDestroy(&boxa1);

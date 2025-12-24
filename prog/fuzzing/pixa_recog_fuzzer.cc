@@ -1,6 +1,5 @@
 #include "leptfuzz.h"
 #include <sys/types.h>
-#include <unistd.h>
 
 
 extern "C" int
@@ -25,7 +24,7 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
         recog1 = recogCreateFromPixa(pixa1, 0, 40, 1, 128, 1);
 
-        pixa2 = recogTrainFromBoot(recog1, pixa1, 0.75, 128, 1);
+        pixa2 = recogTrainFromBoot(recog1, pixa1, 0.75, 128);
 
         pixa3 = pixaRemoveOutliers1(pixa1, 0.8, 4, 3, &pix1, &pix2);
         pixa4 = pixaRemoveOutliers2(pixa1, 0.8, 4, &pix3, &pix4);

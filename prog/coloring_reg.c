@@ -76,7 +76,7 @@ PIXCMAP      *cmap;
     bmf = bmfCreate("fonts", 8);
 
         /* Get the input image (100 ppi resolution) */
-    pix0 = pixRead(DEMOPATH("harmoniam100-11.png"));
+    pix0 = pixRead(regGetFileArgOrDefault(rp, "harmoniam100-11.png"));
     cmap = pixGetColormap(pix0);
     pixa = pixaCreate(0);
 

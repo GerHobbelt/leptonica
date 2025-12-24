@@ -97,7 +97,7 @@ PIX     *pixc1, *pixc2, *pixc3, *pixd;
 PIXA    *pixa;
 SEL     *selhm;
 
-    if ((pixs = pixRead(DEMOPATH(patname[patno]))) == NULL) {
+    if ((pixs = pixRead(regGetFileArgOrDefault(rp, patname[patno]))) == NULL) {
         rp->success = FALSE;
         return ERROR_INT("pixs not made", __func__, 1);
     }
@@ -131,7 +131,7 @@ SEL     *selhm;
     pixDestroy(&pixd);
 
         /* Use the sel to find all instances in the page */
-    pix = pixRead(DEMOPATH("tribune-page-4x.png"));  /* 4x reduced */
+    pix = pixRead(regGetFileArgOrDefault(rp, "tribune-page-4x.png"));  /* 4x reduced */
 	if (red == 4)
         pixr = pixClone(pix);
     else if (red == 8)

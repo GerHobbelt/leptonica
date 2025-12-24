@@ -78,7 +78,7 @@ BOXAA        *baa;
     lept_free(data);
 
         /* Test quadtree stats generation */
-    pixs = pixRead(DEMOPATH("rabi.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "rabi.png"));
 	pixg = pixScaleToGray4(pixs);
     pixDestroy(&pixs);
     pixQuadtreeMean(pixg, 8, NULL, &fpixam);

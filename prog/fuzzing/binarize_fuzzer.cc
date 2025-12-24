@@ -39,7 +39,7 @@ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 	pix1 = pixRead("../test8.jpg");
 	pix_copy1 = pixCopy(NULL, pixs_payload);
 	pixThresholdByConnComp(pix_copy1, pix1, 10, 10, 10, 5.5, 5.5, 
-						   &l_i, &pix2, 1);
+						   &l_i, &pix2);
 	pixDestroy(&pix1);
 	pixDestroy(&pix2);
 	pixDestroy(&pix_copy1);

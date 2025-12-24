@@ -62,7 +62,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "conn_comp", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 
     /* --------------------------------------------------------------- *
      *         Test pixConnComp() and pixCountConnComp(),              *
@@ -147,7 +147,7 @@ L_REGPARAMS* rp;
      *  Test iterative covering of connected components by rectangles  *
      * --------------------------------------------------------------- */
     pixa1 = pixaCreate(0);
-	pix1 = pixRead(DEMOPATH("rabi.png"));
+	pix1 = pixRead(regGetFileArgOrDefault(rp, "rabi.png"));
 	pix2 = pixReduceRankBinaryCascade(pix1, 1, 1, 1, 0);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 12 -  */
     pixaAddPix(pixa1, pix2, L_INSERT);

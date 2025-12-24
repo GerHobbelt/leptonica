@@ -60,8 +60,8 @@ L_REGPARAMS* rp;
 		return 1;
 
     pixa = pixaCreate(0);
-	pix32 = pixRead(DEMOPATH("marge.jpg"));
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+	pix32 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 	box = boxCreate(683, 799, 970, 479);
     pix1 = pixClipRectangle(pixs, box, NULL);
     boxDestroy(&box);
@@ -150,7 +150,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix32);
 
         /* pixaMakeFromTiledPix() and pixaDisplayOnLattice()  */
-    pix1 = pixRead(DEMOPATH("sevens.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "sevens.tif"));
 	pixa1 = pixaMakeFromTiledPix(pix1, 20, 30, 0, 0, NULL);
     pix2 = pixaDisplayOnLattice(pixa1, 20, 30, NULL, NULL);
     regTestComparePix(rp, pix1, pix2);  /* 10 */
@@ -172,7 +172,7 @@ L_REGPARAMS* rp;
         /* pixaDisplayPairTiledInColumns */
     sa1 = sarrayCreate(7);
     for (i = 0; i < 7; i++)
-        sarrayAddString(sa1, DEMOPATH(files[i]), L_COPY);
+        sarrayAddString(sa1, regGetFileArgOrDefault(rp, files[i]), L_COPY);
     pixa1 = pixaCreate(7);
     pixa2 = pixaCreate(7);
 	sa2 = sarrayCreate(7);

@@ -77,7 +77,7 @@ L_REGPARAMS* rp;
 
     /* --------   Stereoscopic warping --------------*/
 #if RUN_WARP
-    pixs = pixRead(DEMOPATH("german.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "german.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     pixa = pixaCreate(50);
     for (i = 0; i < 50; i++) {  /* need to test > 2 widths ! */
@@ -140,7 +140,7 @@ L_REGPARAMS* rp;
 
     /* --------  Linear Horizontal stretching  --------------*/
 #if RUN_LIN_HORIZ_STRETCH
-    pixs = pixRead(DEMOPATH("german.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "german.png"));
     pixa = pixaCreate(50);
     for (k = 0; k < 2; k++) {
         for (i = 0; i < 25; i++) {
@@ -170,7 +170,7 @@ L_REGPARAMS* rp;
 
     /* --------  Quadratic Horizontal stretching  --------------*/
 #if RUN_QUAD_HORIZ_STRETCH
-    pixs = pixRead(DEMOPATH("german.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "german.png"));
     pixa = pixaCreate(50);
     for (k = 0; k < 2; k++) {
         for (i = 0; i < 25; i++) {
@@ -200,7 +200,7 @@ L_REGPARAMS* rp;
 
     /* --------  Horizontal Shear --------------*/
 #if RUN_HORIZ_SHEAR
-    pixs = pixRead(DEMOPATH("german.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "german.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     pixa = pixaCreate(50);
     for (i = 0; i < 25; i++) {
@@ -230,7 +230,7 @@ L_REGPARAMS* rp;
 
     /* --------  Vertical Shear --------------*/
 #if RUN_VERT_SHEAR
-    pixs = pixRead(DEMOPATH("german.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "german.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     pixa = pixaCreate(50);
     for (i = 0; i < 25; i++) {

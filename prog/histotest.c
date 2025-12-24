@@ -112,11 +112,11 @@ L_REGPARAMS* rp;
 
         /* Test behavior of pixThresholdByHisto() */
 #if 0  /* for valgrind, use pnm instead of jpg */
-    pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "lyra.005.jpg"));
 	pixWrite("/tmp/lyra.005.pnm", pix1, IFF_PNM);
 #endif
 /*    pix1 = pixRead("/tmp/lyra.005.pnm"); */
-    pixs = pixRead(DEMOPATH("lyra.005.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "lyra.005.jpg"));
 	box1 = boxCreate(0, 173, 350, 580);
     pix1 = pixClipRectangle(pixs, box1, 0);
     pix2 = pixRotateOrth(pix1, 1);

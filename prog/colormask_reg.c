@@ -79,7 +79,7 @@ PTA          *ptapk;
     }
 
         /* Place an image inside the frame and convert to HSV */
-    pix1 = pixRead(DEMOPATH("1555.003.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "1555.003.jpg"));
 	pix2 = pixScale(pix1, 0.5, 0.5);
     pixRasterop(pixs, 100, 100, 2000, 2000, PIX_SRC, pix2, 0, 0);
     pixDestroy(&pix1);

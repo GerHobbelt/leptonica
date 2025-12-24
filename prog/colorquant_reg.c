@@ -81,7 +81,7 @@ l_float32  factor;
 PIX       *pix, *pixs, *pixc, *pix32, *pixt, *pixd;
 PIXA      *pixa;
 
-	snprintf(buf, sizeof(buf), "%s%s", DEMOPATH(""), filename);
+	snprintf(buf, sizeof(buf), "%s%s", regGetFileArgOrDefault(rp, ""), filename);
     if ((pix = pixRead(buf)) == NULL) {
         rp->success = FALSE;
         return ERROR_INT_1("pix not made", buf, __func__, 1);

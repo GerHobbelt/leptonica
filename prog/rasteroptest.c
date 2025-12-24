@@ -66,7 +66,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "raster_op", NULL, &rp))
 		return 1;
 
-    pix1 = pixRead(DEMOPATH("test24.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
     box1 = boxCreate(243, 127, 513, 359);
     box2 = boxCreate(541, 312, 513, 359);
     niters = 10000;

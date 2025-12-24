@@ -64,7 +64,7 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(setsize);
 	for (i = 0; i < setsize; i++) {
 		char fname[256];
-		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), fnames[i]);
+		snprintf(fname, sizeof(fname), "%s%s", regGetFileArgOrDefault(rp, ""), fnames[i]);
         pixs = pixRead(fname);
         spp = pixGetSpp(pixs);
         pixGetBlackOrWhiteVal(pixs, L_GET_WHITE_VAL, &wval);
@@ -93,7 +93,7 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(setsize);
 	for (i = 0; i < setsize; i++) {
 		char fname[256];
-		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), fnames[i]);
+		snprintf(fname, sizeof(fname), "%s%s", regGetFileArgOrDefault(rp, ""), fnames[i]);
 		pixs = pixRead(fname);
         spp = pixGetSpp(pixs);
         pixGetBlackOrWhiteVal(pixs, L_GET_WHITE_VAL, &wval);

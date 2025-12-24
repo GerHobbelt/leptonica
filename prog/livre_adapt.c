@@ -56,7 +56,7 @@ L_REGPARAMS* rp;
         return ERROR_INT(" Syntax:  livre_adapt", __func__, 1);
 
         /* Read the image in at 150 ppi. */
-    if ((pixs = pixRead(DEMOPATH("brothers.150.jpg"))) == NULL)
+    if ((pixs = pixRead(regGetFileArgOrDefault(rp, "brothers.150.jpg"))) == NULL)
         return ERROR_INT("pix not made", __func__, 1);
     pixa = pixaCreate(0);
     pixaAddPix(pixa, pixs, L_INSERT);

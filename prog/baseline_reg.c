@@ -64,7 +64,7 @@ L_REGPARAMS  *rp;
 
 	//lept_mkdir("lept/baseline");
 
-	const char* sourcefilepath = DEMOPATH("keystone.png");
+	const char* sourcefilepath = regGetFileArgOrDefault(rp, "keystone.png");
 	leptDebugSetFilePathPartFromTail(sourcefilepath, -2);
     pixs = pixRead(sourcefilepath);
 
@@ -115,7 +115,7 @@ L_REGPARAMS  *rp;
         /* Another test for baselines, with dark image.
          * With minw = 60, the number at the top of the page is skipped. */
     pixadb = pixaCreate(6);
-	pixs = pixRead(DEMOPATH("pedante.079.jpg"));  /* 75 ppi */
+	pixs = pixRead(regGetFileArgOrDefault(rp, "pedante.079.jpg"));  /* 75 ppi */
     pix1 = pixRemoveBorder(pixs, 30);
     pixaAddPix(pixadb, pix1, L_COPY);
     pix2 = pixConvertRGBToGray(pix1, 0.33, 0.34, 0.33);

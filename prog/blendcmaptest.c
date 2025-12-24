@@ -59,8 +59,8 @@ L_REGPARAMS* rp;
 
     pixa = pixaCreate(0);
 
-    pixs = pixRead(DEMOPATH("rabi.png"));  /* blendee */
-    pixb = pixRead(DEMOPATH("weasel4.11c.png"));   /* blender */
+    pixs = pixRead(regGetFileArgOrDefault(rp, "rabi.png"));  /* blendee */
+    pixb = pixRead(regGetFileArgOrDefault(rp, "weasel4.11c.png"));   /* blender */
 
         /* Fade the blender */
     pixcmapShiftIntensity(pixGetColormap(pixb), FADE_FRACTION);

@@ -68,7 +68,7 @@ PIXA         *pixa;
 
 	//lept_mkdir("lept/rank");
 
-    pixs = pixRead(DEMOPATH("lucasta.150.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "lucasta.150.jpg"));
 	pixGetDimensions(pixs, &w, &h, NULL);
 
     startTimer();
@@ -152,7 +152,7 @@ PIXA         *pixa;
     pixDestroy(&pixs);
 
     /* ------------------     Gray tests    ------------------ */
-    pixs = pixRead(DEMOPATH("test8.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	pixa = pixaCreate(4);
 	for (i = 1; i <= 4; i++) {
         pix1 = pixScaleGrayRank2(pixs, i);
@@ -165,7 +165,7 @@ PIXA         *pixa;
     pixDestroy(&pix1);
     pixaDestroy(&pixa);
 
-    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	pix1 = pixConvertRGBToLuminance(pixs);
     pix2 = pixScale(pix1, 1.5, 1.5);
     pixa = pixaCreate(5);
@@ -185,7 +185,7 @@ PIXA         *pixa;
     pixaDestroy(&pixa);
 
     /* ---------- Compare color morph with rank operator ---------- */
-    pixs = pixRead(DEMOPATH("wyom.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "wyom.jpg"));
 	box = boxCreate(400, 220, 300, 250);
     pix0 = pixClipRectangle(pixs, box, NULL);
     boxDestroy(&box);

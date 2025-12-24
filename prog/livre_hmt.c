@@ -81,7 +81,7 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("lept/livre");
 
-    if ((pixs = pixRead(DEMOPATH(patname[patno]))) == NULL)
+    if ((pixs = pixRead(regGetFileArgOrDefault(rp, patname[patno]))) == NULL)
         return ERROR_INT("pixs not made", __func__, 1);
     if (reduction != 4 && reduction != 8 && reduction != 16)
         return ERROR_INT("reduction not 4, 8 or 16", __func__, 1);
@@ -107,7 +107,7 @@ L_REGPARAMS* rp;
     pixWrite("/tmp/lept/livre/pixsel1", pixsel, IFF_PNG);
 
         /* Use the Sel to find all instances in the page */
-    pix = pixRead(DEMOPATH("tribune-page-4x.png"));  /* 4x reduced */
+    pix = pixRead(regGetFileArgOrDefault(rp, "tribune-page-4x.png"));  /* 4x reduced */
     if (reduction == 4)
         pixr = pixClone(pix);
     else if (reduction == 8)

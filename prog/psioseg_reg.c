@@ -92,8 +92,8 @@ PIX          *pix4c, *pix8c, *pix8g, *pix32, *pixcs, *pixcs2;
 #endif  /* abort */
 
         /* Source for generating images */
-    pixs = pixRead(DEMOPATH("pageseg2.tif"));   /* 1 bpp */
-    pixc = pixRead(DEMOPATH("tetons.jpg"));     /* 32 bpp */
+    pixs = pixRead(regGetFileArgOrDefault(rp, "pageseg2.tif"));   /* 1 bpp */
+    pixc = pixRead(regGetFileArgOrDefault(rp, "tetons.jpg"));     /* 32 bpp */
 
         /* Get a halftone segmentation mask for pixs */
     pixGetRegionsBinary(pixs, &pixht, NULL, NULL, 0);

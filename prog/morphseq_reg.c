@@ -64,7 +64,7 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("lept/morphseq");
 
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 
         /* 1 bpp */
     pixd = pixMorphSequence(pixs, SEQUENCE1, -1);
@@ -107,7 +107,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixd);
 
         /* 32 bpp */
-    pixc = pixRead(DEMOPATH("wyom.jpg"));
+    pixc = pixRead(regGetFileArgOrDefault(rp, "wyom.jpg"));
     pixd = pixColorMorphSequence(pixc, SEQUENCE5, -7, 150);
     pixDestroy(&pixd);
     pixd = pixColorMorphSequence(pixc, SEQUENCE5, DISPLAY_SEPARATION, 450);

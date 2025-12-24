@@ -63,7 +63,7 @@ PIXA         *pixadb;
 
 	//lept_mkdir("lept/ital");
 
-    pixs = pixRead(DEMOPATH("italic.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "italic.png"));
 
         /* Basic functionality with debug flag */
     pixItalicWords(pixs, NULL, NULL, &boxa1);

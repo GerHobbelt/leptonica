@@ -69,7 +69,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "color_seg", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("tetons.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "tetons.jpg"));
 	for (k = 0; k < 3; k++) {
         maxcolors = MaxColors[k];
         finalcolors = FinalColors[k];
@@ -92,7 +92,7 @@ L_REGPARAMS* rp;
     }
     pixDestroy(&pixs);
 
-    pixs = pixRead(DEMOPATH("wyom.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "wyom.jpg"));
 	pix1 = pixColorSegment(pixs, 50, 6, 6, 6);
     cmap = pixGetColormap(pix1);
     nc = pixcmapGetCount(cmap);

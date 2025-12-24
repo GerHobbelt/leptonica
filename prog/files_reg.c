@@ -256,11 +256,11 @@ void TestGenPathname(L_REGPARAMS  *rp,
                      const char   *result)
 {
 	char  expect[512];
-	char *localdir;
+	const char *localdir;
 
     char *path = genPathname(dir, fname);
     if (!dir || dir[0] == '\0') {
-		if ((localdir = getcwd(NULL, 0)) == NULL) {
+		if ((localdir = lept_getcwd()) == NULL) {
 			L_ERROR("bad bad bad -- no local directory!\n", __func__);
 		}
         snprintf(expect, sizeof(expect), "%s/%s", localdir, result);

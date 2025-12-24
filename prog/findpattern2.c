@@ -73,7 +73,7 @@ L_REGPARAMS* rp;
         /* -------------------------------------------- *
          * Extract the pattern for a single character   *
          * ---------------------------------------------*/
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
     box = boxCreate(599, 1055, 18, 23);
     pixc = pixClipRectangle(pixs, box, NULL);
 

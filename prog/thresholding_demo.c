@@ -1070,12 +1070,12 @@ int main(int    argc,
 {
 PIX* pix[50] = { NULL };
 l_ok ret = 0;
-const char* sourcefile = DEMOPATH("Dance.Troupe.jpg");
-
 L_REGPARAMS* rp;
 
 	if (regTestSetup(argc, argv, "thresholding", NULL, &rp))
 		return 1;
+
+	const char* sourcefile = regGetFileArgOrDefault(rp, "Dance.Troupe.jpg");
 
 	if (argc >= 3)
 	{
@@ -1814,7 +1814,7 @@ if (01)
 		// --------------------------------------------------------------------------------
 
 		// create checkerboard, then smooth it using convolution
-		sourcefile = DEMOPATH("blur-mask.png");
+		sourcefile = regGetFileArgOrDefault(rp, "blur-mask.png");
 
 		pix[2] = pixRead(sourcefile);
 		ret |= pixWrite(mk_dst_filename("bm-source.png"), pix[2], IFF_PNG);

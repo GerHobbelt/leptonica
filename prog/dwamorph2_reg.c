@@ -67,7 +67,7 @@ L_REGPARAMS* rp;
     if (argc != 1)
         return ERROR_INT(" Syntax: dwamorph2_reg", __func__, 1);
 
-    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
     pixt = pixCreateTemplate(pixs);
     selalinear = selaAddDwaLinear(NULL);
     nsels = selaGetCount(selalinear);

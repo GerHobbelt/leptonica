@@ -49,7 +49,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "livre", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("pageseg2.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "pageseg2.tif"));
 
     startTimer();
     for (i = 0; i < 100; i++) {

@@ -61,14 +61,14 @@ L_REGPARAMS* rp;
 		return 1;
 
         /* Set up blenders */
-    pixg = pixRead(DEMOPATH("blender8.png"));
-    pix1 = pixRead(DEMOPATH("weasel4.11c.png"));
+    pixg = pixRead(regGetFileArgOrDefault(rp, "blender8.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "weasel4.11c.png"));
 	pixc = pixRemoveColormap(pix1, REMOVE_CMAP_TO_FULL_COLOR);
     pixDestroy(&pix1);
     pixa = pixaCreate(0);
 
         /* Gray blend (straight) */
-    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	pix1 = pixScale(pixs, 0.4, 0.4);
     GrayBlend(pix1, pixg, L_BLEND_GRAY, 0.3);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 0 */
@@ -76,13 +76,13 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pix1, 0, 100, NULL);
     pixDestroy(&pixs);
 
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	GrayBlend(pixs, pixg, L_BLEND_GRAY, 0.2);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 1 */
     pixaAddPix(pixa, pixs, L_INSERT);
     pixDisplayWithTitle(pixs, 100, 100, NULL);
 
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	pix1 = pixConvertRGBToLuminance(pixs);
     GrayBlend(pix1, pixg, L_BLEND_GRAY, 0.2);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 2 */
@@ -91,7 +91,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
 
         /* Gray blend (inverse) */
-    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	pix1 = pixScale(pixs, 0.4, 0.4);
     GrayBlend(pix1, pixg, L_BLEND_GRAY_WITH_INVERSE, 0.6);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 3 */
@@ -99,13 +99,13 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pix1, 300, 100, NULL);
     pixDestroy(&pixs);
 
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	GrayBlend(pixs, pixg, L_BLEND_GRAY_WITH_INVERSE, 0.6);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 4 */
     pixaAddPix(pixa, pixs, L_INSERT);
     pixDisplayWithTitle(pixs, 400, 100, NULL);
 
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	pix1 = pixConvertRGBToLuminance(pixs);
     GrayBlend(pix1, pixg, L_BLEND_GRAY_WITH_INVERSE, 0.6);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 5 */
@@ -126,7 +126,7 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pixs, 0, 750, NULL);
 
         /* Adaptive gray blend */
-    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	pix1 = pixScale(pixs, 0.4, 0.4);
     AdaptiveGrayBlend(pix1, pixg, 0.8);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 8 */
@@ -134,7 +134,7 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pix1, 600, 100, NULL);
     pixDestroy(&pixs);
 
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	AdaptiveGrayBlend(pixs, pixg, 0.8);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 9 */
     pixaAddPix(pixa, pixs, L_INSERT);
@@ -159,7 +159,7 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pixs, 0, 1050, NULL);
 
         /* Color blend */
-    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	pix1 = pixScale(pixs, 0.4, 0.4);
     ColorBlend(pix1, pixc, 0.3);
     regTestWritePixAndCheck(rp, pix1, IFF_JFIF_JPEG);  /* 13 */
@@ -167,13 +167,13 @@ L_REGPARAMS* rp;
     pixDisplayWithTitle(pix1, 900, 100, NULL);
     pixDestroy(&pixs);
 
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	ColorBlend(pixs, pixc, 0.30);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 14 */
     pixaAddPix(pixa, pixs, L_INSERT);
     pixDisplayWithTitle(pixs, 1000, 100, NULL);
 
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	ColorBlend(pixs, pixc, 0.15);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 15 */
     pixaAddPix(pixa, pixs, L_INSERT);

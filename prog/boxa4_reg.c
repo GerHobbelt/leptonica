@@ -66,7 +66,7 @@ PIXA         *pixa1, *pixa2;
 	//lept_mkdir("lept/boxa");
 
         /* Input is a fairly clean boxa */
-    boxa1 = boxaRead(DEMOPATH("boxa1.ba"));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, "boxa1.ba"));
     boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
@@ -81,7 +81,7 @@ PIXA         *pixa1, *pixa2;
     boxaDestroy(&boxa3);
 
         /* Input is an unsmoothed and noisy boxa */
-    boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, "boxa2.ba"));
     boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MAX, 50, 0);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);
@@ -96,7 +96,7 @@ PIXA         *pixa1, *pixa2;
     boxaDestroy(&boxa3);
 
         /* Input is an unsmoothed and noisy boxa */
-    boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, "boxa2.ba"));
     boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_LOC_DIFF, 80, 20);
     boxa3 = boxaSmoothSequenceMedian(boxa1, 10, L_SUB_ON_SIZE_DIFF, 80, 20);
 	boxaPlotSides(boxa1, "initial", NULL, NULL, NULL, NULL, &pix1);
@@ -116,7 +116,7 @@ PIXA         *pixa1, *pixa2;
     boxaDestroy(&boxa3);
 
         /* Reconcile all sides by median */
-    boxa1 = boxaRead(DEMOPATH("boxa5.ba"));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, "boxa5.ba"));
     pixa1 = pixaCreate(0);
 
 	boxa2 = boxaReconcileAllByMedian(boxa1, L_ADJUST_LEFT_AND_RIGHT,
@@ -148,7 +148,7 @@ PIXA         *pixa1, *pixa2;
     pixDestroy(&pix1);
 
         /* Split even/odd and reconcile all sides by median */
-    boxa1 = boxaRead(DEMOPATH("boxa5.ba"));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, "boxa5.ba"));
     pixa1 = pixaCreate(0);
 
     boxaSplitEvenOdd(boxa1, 0, &boxa1e, &boxa1o);
@@ -180,7 +180,7 @@ PIXA         *pixa1, *pixa2;
     boxaDestroy(&boxa3o);
 
         /* Input is a boxa smoothed with a median window filter */
-    boxa1 = boxaRead(DEMOPATH("boxa3.ba"));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, "boxa3.ba"));
     boxa2 = boxaSmoothSequenceMedian(boxa1, 10, L_USE_CAPPED_MIN, 20, 0);
     width = 100;
     boxaGetExtent(boxa2, &w, &h, NULL);

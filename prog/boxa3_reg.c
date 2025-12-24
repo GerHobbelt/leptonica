@@ -84,7 +84,7 @@ l_float32  scalefact, ratiowh, fvarp, fvarm;
 BOXA      *boxa1, *boxa2, *boxa3;
 PIX       *pix1;
 
-    boxa1 = boxaRead(DEMOPATH(boxafiles[index]));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, boxafiles[index]));
 
         /* Read and display initial boxa */
     boxaGetExtent(boxa1, &w, &h, NULL);
@@ -165,7 +165,7 @@ BOXA  *boxa1, *boxa2;
 PIX   *pix1, *pix2, *pix3;
 PIXA  *pixa;
 
-    boxa1 = boxaRead(DEMOPATH(boxafiles[index]));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, boxafiles[index]));
 
         /* Read and display initial boxa */
     boxaPlotSizes(boxa1, NULL, NULL, NULL, &pix1);

@@ -94,7 +94,7 @@ PIXA         *pixa1, *pixa2, *pixa3, *pixa4;
     numaDestroy(&na2);
 
     /* ----------------- Test boxa operations -------------------- */
-    pix1 = pixRead(DEMOPATH("feyn.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
     box = boxCreate(1138, 1666, 1070, 380);
     pix2 = pixClipRectangle(pix1, box, NULL);
     boxDestroy(&box);
@@ -116,7 +116,7 @@ PIXA         *pixa1, *pixa2, *pixa3, *pixa4;
     boxaDestroy(&boxa2);
 
     /* ----------------- Test pixa operations -------------------- */
-    pix1 = pixRead(DEMOPATH("feyn.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
     box = boxCreate(1138, 1666, 1070, 380);
     pix2 = pixClipRectangle(pix1, box, NULL);
     boxDestroy(&box);

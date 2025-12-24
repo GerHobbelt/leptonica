@@ -79,7 +79,7 @@ L_REGPARAMS* rp;
 
 	//lept_mkdir("lept/map");
 
-    pix = pixRead(DEMOPATH("weasel8.240c.png"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "weasel8.240c.png"));
     pixGetDimensions(pix, &w, &h, NULL);
     lept_stderr("Image area in pixels: %d\n", w * h);
     cmap = pixGetColormap(pix);
@@ -144,7 +144,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix);
 
         /* Build and display a real RGB histogram */
-    pix = pixRead(DEMOPATH("wyom.jpg"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "wyom.jpg"));
     m = pixGetColorAmapHistogram(pix, 1);
     DisplayMapRGBHistogram(m, "/tmp/lept/map/map4");
     pixNumColors(pix, 1, &ncolors);

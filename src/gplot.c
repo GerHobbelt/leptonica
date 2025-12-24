@@ -149,8 +149,9 @@
 #include <config_auto.h>
 #endif  /* HAVE_CONFIG_H */
 
-#include <string.h>
 #include "allheaders.h"
+
+#include <assert.h>
 
 #define Bufsize 512  /* hardcoded below in fscanf */
 

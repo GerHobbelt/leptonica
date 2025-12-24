@@ -49,7 +49,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "dither", NULL, &rp))
 		return 1;
 
-    pix = pixRead(DEMOPATH("test8.jpg"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	pixs = pixGammaTRC(NULL, pix, 1.3, 0, 255);  /* gamma of 1.3, for fun */
 
         /* Dither to 1 bpp */

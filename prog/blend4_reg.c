@@ -66,11 +66,11 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(0);
 
         /* Blending on a light image */
-    pix1 = pixRead(DEMOPATH("fish24.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "fish24.jpg"));
 	pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 3; i++) {
 		char fname[256];
-		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), blenders[i]);
+		snprintf(fname, sizeof(fname), "%s%s", regGetFileArgOrDefault(rp, ""), blenders[i]);
 		pix2 = pixRead(fname);
         if (i == 2) {
             pix3 = pixScale(pix2, 0.5, 0.5);
@@ -90,12 +90,12 @@ L_REGPARAMS* rp;
     pixDestroy(&pix1);
 
         /* Blending on a dark image */
-    pix0 = pixRead(DEMOPATH("karen8.jpg"));
+    pix0 = pixRead(regGetFileArgOrDefault(rp, "karen8.jpg"));
 	pix1 = pixScale(pix0, 2.0, 2.0);
     pixGetDimensions(pix1, &w, &h, NULL);
     for (i = 0; i < 2; i++) {
 		char fname[256];
-		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), blenders[i]);
+		snprintf(fname, sizeof(fname), "%s%s", regGetFileArgOrDefault(rp, ""), blenders[i]);
 		pix2 = pixRead(fname);
 		pix3 = pixAddAlphaToBlend(pix2, 0.3, 1);
         pix4 = pixMirroredTiling(pix3, w, h);

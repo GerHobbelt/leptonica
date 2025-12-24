@@ -67,7 +67,7 @@ L_REGPARAMS* rp;
          * values transform to a valid value of yuv, so when transforming
          * back we get the same rgb values that we started with. */
     pixa = pixaCreate(0);
-    bmf = bmfCreate(DEMOPATH("fonts"), 6);
+    bmf = bmfCreate(regGetFileArgOrDefault(rp, "fonts"), 6);
     for (gval = 0; gval <= 255; gval += 20)
         AddTransformsRGB(pixa, bmf, gval);
 

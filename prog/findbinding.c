@@ -72,7 +72,7 @@ L_REGPARAMS* rp;
 
     pixa = pixaCreate(0);
 
-    pix1 = pixRead(DEMOPATH("binding-example.45.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "binding-example.45.jpg"));
     pix2 = pixConvertTo8(pix1, 0);
 
         /* Find the skew angle */

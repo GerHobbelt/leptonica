@@ -71,7 +71,7 @@ PIXA         *pixa;
      *                             Rank extraction                        *
      * -------------------------------------------------------------------*/
         /* Rank extraction with interpolation */
-    pixs = pixRead(DEMOPATH("test8.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	nasy = pixGetGrayHistogramMasked(pixs, NULL, 0, 0, 1);
     numaMakeRankFromHistogram(0.0, 1.0, nasy, 350, &nax, &nay);
     pix1 = gplotGeneralPix2(nax, nay, GPLOT_LINES, "/tmp/lept/numa3/rank1",
@@ -82,7 +82,7 @@ PIXA         *pixa;
     pixDestroy(&pixs);
 
         /* Rank extraction, point by point */
-    pixs = pixRead(DEMOPATH("test8.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	nap = numaCreate(200);
     pixGetRankValueMasked(pixs, NULL, 0, 0, 2, 0.0, &val, &na);
     for (i = 0; i < 101; i++) {
@@ -110,7 +110,7 @@ PIXA         *pixa;
     /* -------------------------------------------------------------------*
      *                           Numa-morphology                          *
      * -------------------------------------------------------------------*/
-    na = numaRead(DEMOPATH("lyra.5.na"));
+    na = numaRead(regGetFileArgOrDefault(rp, "lyra.5.na"));
     pix1 = gplotGeneralPix1(na, GPLOT_LINES, "/tmp/lept/numa3/lyra1",
                             "Original", NULL, NULL);
     na1 = numaErode(na, 21);
@@ -152,7 +152,7 @@ PIXA         *pixa;
     /* -------------------------------------------------------------------*
      *                   Find threshold from numa                         *
      * -------------------------------------------------------------------*/
-    na1 = numaRead(DEMOPATH("two-peak-histo.na"));
+    na1 = numaRead(regGetFileArgOrDefault(rp, "two-peak-histo.na"));
     na4 = numaCreate(0);
     pixa = pixaCreate(0);
 	for (hw = 2; hw < 21; hw += 2) {
@@ -181,7 +181,7 @@ PIXA         *pixa;
     numaDestroy(&na4);
     pixaDestroy(&pixa);
 
-    pixs = pixRead(DEMOPATH("lyra.005.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "lyra.005.jpg"));
 	box1 = boxCreate(0, 173, 350, 580);
     pix1 = pixClipRectangle(pixs, box1, 0);
     pix2 = pixRotateOrth(pix1, 1);

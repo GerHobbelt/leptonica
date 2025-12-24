@@ -360,7 +360,7 @@ FILE     *fp;
 PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
-    pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn-fract2.tif"));
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 180, 130, 220, 0);  /* transparent */
@@ -395,7 +395,7 @@ FILE     *fp;
 PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
-    pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn-fract2.tif"));
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 180, 130, 220, 255);  /* color, opaque */
@@ -429,7 +429,7 @@ l_int32   same;
 PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
-    pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn-fract2.tif"));
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 180, 180, 180, 255);  /* light, opaque */
@@ -454,7 +454,7 @@ l_int32   same;
 PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
-    pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn-fract2.tif"));
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 0, 0, 0, 255);  /* black, opaque */
@@ -479,7 +479,7 @@ l_int32   same;
 PIX      *pix1, *pix2;
 PIXCMAP  *cmap;
 
-    pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn-fract2.tif"));
 	cmap = pixcmapCreate(1);
     pixSetColormap(pix1, cmap);
     pixcmapAddRGBA(cmap, 255, 255, 255, 255);  /* white, opaque */
@@ -512,7 +512,7 @@ PIXCMAP  *cmap;
     }
     pixDestroy(&pix1);
 
-    pix1 = pixRead(DEMOPATH("weasel2.4g.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "weasel2.4g.png"));
 	cmap = pixGetColormap(pix1);
     pixcmapSetAlpha(cmap, 2, 100);
     pixWrite("/tmp/lept/regout/2bpp-cmap-trans.png", pix1, IFF_PNG);
@@ -543,7 +543,7 @@ PIXCMAP  *cmap;
     }
     pixDestroy(&pix1);
 
-    pix1 = pixRead(DEMOPATH("weasel4.5g.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "weasel4.5g.png"));
 	cmap = pixGetColormap(pix1);
     pixcmapSetAlpha(cmap, 2, 60);
     pixWrite("/tmp/lept/regout/4bpp-cmap-trans.png", pix1, IFF_PNG);
@@ -574,7 +574,7 @@ PIXCMAP  *cmap;
     }
     pixDestroy(&pix1);
 
-    pix1 = pixRead(DEMOPATH("weasel8.5g.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "weasel8.5g.png"));
 	cmap = pixGetColormap(pix1);
     pixcmapSetAlpha(cmap, 2, 80);
     pixcmapSetAlpha(cmap, 3, 80);
@@ -599,7 +599,7 @@ FILE     *fp;
 PIX      *pix1, *pix2, *pix3;
 PIXCMAP  *cmap;
 
-    pix1 = pixRead(DEMOPATH("wyom.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "wyom.jpg"));
 	pix2 = pixColorSegment(pix1, 75, 10, 8, 7);
     cmap = pixGetColormap(pix2);
     pixcmapSetAlpha(cmap, 0, 0);  /* set blueish sky color to transparent */

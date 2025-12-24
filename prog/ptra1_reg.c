@@ -64,7 +64,7 @@ L_REGPARAMS* rp;
     pixac1 = pixaCreate(0);
 	pixac2 = pixaCreate(0);
 
-    pixs = pixRead(DEMOPATH("lucasta.1.300.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "lucasta.1.300.tif"));
 	pixGetDimensions(pixs, &w, &h, NULL);
     boxa = pixConnComp(pixs, &pixas, 8);
     pixDestroy(&pixs);

@@ -64,7 +64,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "dwamorph", NULL, &rp))
 		return 1;
 
-    if ((pixs = pixRead(DEMOPATH("feyn-fract.tif"))) == NULL) {
+    if ((pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"))) == NULL) {
         rp->success = FALSE;
         return regTestCleanup(rp);
     }

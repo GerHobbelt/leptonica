@@ -65,7 +65,7 @@ L_REGPARAMS* rp;
 
 	//lept_mkdir("lept/digitprep");
 
-	if ((pixs = pixRead(DEMOPATH("barcode-digits.png"))) == NULL)
+	if ((pixs = pixRead(regGetFileArgOrDefault(rp, "barcode-digits.png"))) == NULL)
         return ERROR_INT("pixs not read", __func__, 1);
 
         /* Extract the digits and scale to HEIGHT */

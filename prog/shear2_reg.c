@@ -61,7 +61,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "shear", NULL, &rp))
 		return 1;
 
-    bmf = bmfCreate(DEMOPATH("fonts"), 8);
+    bmf = bmfCreate(regGetFileArgOrDefault(rp, "fonts"), 8);
     pixs1 = pixCreate(301, 301, 32);
     pixs2 = pixCreate(601, 601, 32);
     pixSetAll(pixs1);

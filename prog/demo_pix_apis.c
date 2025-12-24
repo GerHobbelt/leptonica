@@ -889,7 +889,7 @@ pixaConvertToPdf(pixa1, 75, 1.0, L_JPEG_ENCODE, 0, "Profiles",
 pixaDestroy(&pixa1);
 
 /* Test rectangle clipping with border */
-pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
+pix1 = pixRead(regGetFileArgOrDefault(rp, "lyra.005.jpg"));
 pix2 = pixScale(pix1, 0.5, 0.5);
 box1 = boxCreate(125, 50, 180, 230);  /* fully contained */
 pix3 = pixClipRectangleWithBorder(pix2, box1, 30, &box2);

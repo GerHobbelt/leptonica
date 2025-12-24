@@ -59,7 +59,7 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("lept/comp");
 
-    pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "lucasta.047.jpg"));
     pixb1 = pixConvertTo1(pixs, 128);
     pixGetWordBoxesInTextlines(pixb1, 10, 10, 500, 50, &boxa1, &nai1);
     pixt = pixDrawBoxaRandom(pixs, boxa1, 2);

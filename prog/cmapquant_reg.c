@@ -59,7 +59,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "cmap_quant", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("lucasta-frag.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "lucasta-frag.jpg"));
 
         /* Convert to 4 bpp with 6 levels and a colormap */
     pix1 = pixThresholdTo4bpp(pixs, 6, 1);

@@ -177,7 +177,7 @@ L_REGPARAMS* rp;
     /* ----------------------------------------------------------- */
 
     recog1 = recogMakeBootDigitRecog(0, 40, 0, 1);
-    pix1 = pixRead(DEMOPATH("test-87220.59.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "test-87220.59.png"));
     recogIdentifyMultiple(recog1, pix1, 0, 1, &boxa1, NULL, NULL, 0);
     sa = recogExtractNumbers(recog1, boxa1, 0.75, -1, &baa, &naa);
     pixa1 = showExtractNumbers(pix1, sa, baa, naa, &pix3);

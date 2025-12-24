@@ -55,8 +55,8 @@ static const l_int32 nlevels = 4;
 static const l_int32 ntimes = 30;
 
 
-PIXA *GenerateSetOfMargePix(void);
-void CopyStoreClean(PIXA *pixas, l_int32 nlevels, l_int32 ncopies);
+static PIXA *GenerateSetOfMargePix(L_REGPARAMS* rp);
+static void CopyStoreClean(PIXA *pixas, l_int32 nlevels, l_int32 ncopies);
 
 static void *dflt_malloc(size_t size) {
     return malloc(size);
@@ -97,7 +97,7 @@ L_REGPARAMS* rp;
     pmsCreate(200000, 400000, nas, "/tmp/lept/alloc/file1.log");
 
         /* Make the pix and do successive copies and removals of the copies */
-    pixas = GenerateSetOfMargePix();
+    pixas = GenerateSetOfMargePix(rp);
     startTimer();
     for (i = 0; i < ntimes; i++)
         CopyStoreClean(pixas, nlevels, ncopies);
@@ -114,7 +114,7 @@ L_REGPARAMS* rp;
 
         /* Make the pix and do successive copies and removals of the copies */
     startTimer();
-    pixas = GenerateSetOfMargePix();
+    pixas = GenerateSetOfMargePix(rp);
     for (i = 0; i < ntimes; i++)
         CopyStoreClean(pixas, nlevels, ncopies);
     lept_stderr("Time (big pix; standard) = %7.3f sec\n", stopTimer());
@@ -136,7 +136,7 @@ L_REGPARAMS* rp;
         pmsCreate(20, 40, nab, "/tmp/lept/alloc/file2.log");
     else
         pmsCreate(20, 40, nab, NULL);
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 
     startTimer();
     for (i = 0; i < 5; i++) {
@@ -153,7 +153,7 @@ L_REGPARAMS* rp;
 
     /* ----------------- Standard with many small pix -----------------*/
     setPixMemoryManager(dflt_malloc, dflt_free);
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 
     startTimer();
     for (i = 0; i < 5; i++) {
@@ -168,15 +168,15 @@ L_REGPARAMS* rp;
 }
 
 
-PIXA *
-GenerateSetOfMargePix(void)
+static PIXA *
+GenerateSetOfMargePix(L_REGPARAMS* rp)
 {
 l_float32  factor;
 BOX   *box;
 PIX   *pixs, *pixt1, *pixt2, *pixt3, *pixt4;
 PIXA  *pixa;
 
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     box = boxCreate(130, 93, 263, 253);
     factor = sqrt(2.0);
     pixt1 = pixClipRectangle(pixs, box, NULL);  /* 266 KB */
@@ -194,7 +194,7 @@ PIXA  *pixa;
 }
 
 
-void
+static void
 CopyStoreClean(PIXA    *pixas,
                l_int32  nlevels,
                l_int32  ncopies)

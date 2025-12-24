@@ -77,19 +77,19 @@ int main(int    argc,
 
 	//lept_mkdir("lept/regout");
 
-    DoJpegTest1(rp, DEMOPATH("test8.jpg"));
-    DoJpegTest1(rp, DEMOPATH("fish24.jpg"));
-    DoJpegTest1(rp, DEMOPATH("test24.jpg"));
-    DoJpegTest2(rp, DEMOPATH("weasel2.png"));
-    DoJpegTest2(rp, DEMOPATH("weasel2.4g.png"));
-    DoJpegTest2(rp, DEMOPATH("weasel4.png"));
-    DoJpegTest2(rp, DEMOPATH("weasel4.5g.png"));
-    DoJpegTest2(rp, DEMOPATH("weasel4.16c.png"));
-    DoJpegTest2(rp, DEMOPATH("weasel8.16g.png"));
-    DoJpegTest2(rp, DEMOPATH("weasel8.240c.png"));
-    DoJpegTest3(rp, DEMOPATH("lucasta.150.jpg"));
-    DoJpegTest3(rp, DEMOPATH("tetons.jpg"));
-    DoJpegTest4(rp, DEMOPATH("karen8.jpg"));
+    DoJpegTest1(rp, regGetFileArgOrDefault(rp, "test8.jpg"));
+    DoJpegTest1(rp, regGetFileArgOrDefault(rp, "fish24.jpg"));
+    DoJpegTest1(rp, regGetFileArgOrDefault(rp, "test24.jpg"));
+    DoJpegTest2(rp, regGetFileArgOrDefault(rp, "weasel2.png"));
+    DoJpegTest2(rp, regGetFileArgOrDefault(rp, "weasel2.4g.png"));
+    DoJpegTest2(rp, regGetFileArgOrDefault(rp, "weasel4.png"));
+    DoJpegTest2(rp, regGetFileArgOrDefault(rp, "weasel4.5g.png"));
+    DoJpegTest2(rp, regGetFileArgOrDefault(rp, "weasel4.16c.png"));
+    DoJpegTest2(rp, regGetFileArgOrDefault(rp, "weasel8.16g.png"));
+    DoJpegTest2(rp, regGetFileArgOrDefault(rp, "weasel8.240c.png"));
+    DoJpegTest3(rp, regGetFileArgOrDefault(rp, "lucasta.150.jpg"));
+    DoJpegTest3(rp, regGetFileArgOrDefault(rp, "tetons.jpg"));
+    DoJpegTest4(rp, regGetFileArgOrDefault(rp, "karen8.jpg"));
 
     return regTestCleanup(rp);
 }

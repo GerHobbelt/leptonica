@@ -71,7 +71,7 @@ PIXA         *pixas, *pixa1, *pixa2;
 		return 1;
 
 	/* Read the images */
-    pixas = pixaRead(DEMOPATH("circles.pa"));
+    pixas = pixaRead(regGetFileArgOrDefault(rp, "circles.pa"));
     n = pixaGetCount(pixas);
 
     pixa2 = pixaCreate(0);

@@ -108,9 +108,6 @@
 #include <crtdbg.h>
 #include <process.h>
 #include <direct.h>
-#ifndef getcwd
-#define getcwd _getcwd  /* fix MSVC warning */
-#endif
 #else
 #include <unistd.h>
 #endif   /* _MSC_VER */
@@ -138,6 +135,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <assert.h>
 
 #ifdef _WIN32
 #include <intrin.h>			// __rdtsc()
@@ -661,7 +659,8 @@ updateStepId(void)
 
 		if (steps_is_level_forever_increasing(diag_spec.steps.actual_depth, diag_spec.step_id_is_forever_increasing)) {
 			assert(diag_spec.steps.forever_incrementing_val >= diag_spec.steps.vals[diag_spec.steps.actual_depth]);
-			diag_spec.steps.vals[diag_spec.steps.actual_depth] = diag_spec.steps.forever_incrementing_val;
+			// (int) cast fixes compile-as-C++ error C2280: 'std::atomic<int> &std::atomic<int>::operator =(const std::atomic<int> &)': attempting to reference a deleted function
+			diag_spec.steps.vals[diag_spec.steps.actual_depth] = (int)diag_spec.steps.forever_incrementing_val;
 		}
 
 		stringDestroy(&diag_spec.last_generated_step_id_string);
@@ -1355,6 +1354,23 @@ latest3(FILETIME ftCreationTime, FILETIME ftLastAccessTime, FILETIME ftLastWrite
 	return t;
 }
 
+#else
+
+static uint64_t
+latest3t(time_t ftCreationTime, time_t ftLastAccessTime, time_t ftLastWriteTime)
+{
+	uint64_t ct = ftCreationTime;
+	uint64_t wt = ftLastAccessTime;
+	uint64_t at = ftLastWriteTime;
+
+	uint64_t t = ct;
+	if (wt > t)
+		t = wt;
+	if (at > t)
+		t = at;
+	return t;
+}
+
 #endif
 
 
@@ -1510,6 +1526,10 @@ mkTmpDirPath(void)
 				else if ((pdir = opendir(realdir)) != NULL) {
 					const char* current_match = stringNew("");
 
+					const uint64_t one_hour = 1 * 3600;
+					const uint64_t one_month = 30 * 24 * one_hour;
+					uint64_t current_time = 0;
+
 					while ((pdirentry = readdir(pdir))) {
 						if (strcmp(pdirentry->d_name, "..") == 0 || strcmp(pdirentry->d_name, ".") == 0)
 							continue;
@@ -1531,9 +1551,19 @@ mkTmpDirPath(void)
 						const char* str = pdirentry->d_name;
 						if (strncasecmp(str, "lept-", 5) == 0) {
 							// a match: decide if this one is 'later' than what we have
-							if (strcasecmp(current_match, str + 5) > 0) {
+							uint64_t dt = latest3t(st.st_ctime, st.st_mtime, st.st_atime);
+							if (dt > current_time) {
 								stringDestroy(&current_match);
 								current_match = stringNew(str + 5);
+								current_time = dt;
+							}
+							// here we take the 'sorts as higher' directory entry when it occurred within the last 30 days.
+							else if (dt + one_hour >= current_time) {
+								if (strcasecmp(current_match, str + 5) < 0) {
+									stringDestroy(&current_match);
+									current_match = stringNew(str + 5);
+									current_time = dt;
+								}
 							}
 						}
 					}
@@ -1578,7 +1608,7 @@ mkTmpDirPath(void)
 
 						// FILETIME contains the number of 100-nanosecond intervals since January 1, 1601 (UTC).
 						const uint64_t one_hour = 1 * 3600.0 * 1e9 / 100;
-						//const uint64_t one_month = 30 * 24 * one_hour;
+						const uint64_t one_month = 30 * 24 * one_hour;
 						uint64_t current_time = 0;
 
 						if (0 != (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && strcmp(ffd.cFileName, "..") != 0 && strcmp(ffd.cFileName, ".") != 0)  /* pick up subdir */
@@ -1593,8 +1623,8 @@ mkTmpDirPath(void)
 									current_match = stringNew(str + 5);
 									current_time = dt;
 								}
-								// here we take the 'sorts as higher' directory entry when it occurred within the last hour.
-								else if (dt + one_hour >= current_time) {
+								// here we take the 'sorts as higher' directory entry when it occurred within the last 30 days.
+								else if (dt + one_month >= current_time) {
 									if (strcasecmp(current_match, str + 5) < 0) {
 										stringDestroy(&current_match);
 										current_match = stringNew(str + 5);
@@ -1618,8 +1648,8 @@ mkTmpDirPath(void)
 									current_match = stringNew(str + 5);
 									current_time = dt;
 								}
-								// here we take the 'sorts as higher' directory entry when it occurred within the last hour.
-								else if (dt + one_hour >= current_time) {
+								// here we take the 'sorts as higher' directory entry when it occurred within the last 30 days.
+								else if (dt + one_month >= current_time) {
 									if (strcasecmp(current_match, str + 5) < 0) {
 										stringDestroy(&current_match);
 										current_match = stringNew(str + 5);

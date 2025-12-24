@@ -66,7 +66,7 @@ L_REGPARAMS* rp;
 		return 1;
 
     //lept_mkdir("lept/boxa");
-    boxa1 = boxaRead(DEMOPATH("boxa4.ba"));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, "boxa4.ba"));
 
 	l_ok dispdebugflag = leptIsDebugModeActive() || leptIsInDisplayMode();
 

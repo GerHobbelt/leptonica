@@ -81,7 +81,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixm);
 
     /* ---------------- Shortest path in gray maze ---------------- */
-    pixg = pixRead(DEMOPATH("test8.jpg"));
+    pixg = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	pixGetDimensions(pixg, &w, &h, NULL);
     ptaa = ptaaCreate(NPATHS);
     for (i = 0; i < NPATHS; i++) {

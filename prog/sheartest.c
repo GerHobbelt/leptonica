@@ -61,7 +61,7 @@ L_REGPARAMS* rp;
                          __func__, 1);
 
         /* Compare in-place H shear with H shear to a new pix */
-    pixt1 = pixRead(DEMOPATH("marge.jpg"));
+    pixt1 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     pixGetDimensions(pixt1, &w, &h, NULL);
     pixt2 = pixHShear(NULL, pixt1, (l_int32)(0.3 * h), 0.17, L_BRING_IN_WHITE);
     pixHShearIP(pixt1, (l_int32)(0.3 * h), 0.17, L_BRING_IN_WHITE);
@@ -74,7 +74,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixt2);
 
         /* Compare in-place V shear with V shear to a new pix */
-    pixt1 = pixRead(DEMOPATH("marge.jpg"));
+    pixt1 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     pixGetDimensions(pixt1, &w, &h, NULL);
     pixt2 = pixVShear(NULL, pixt1, (l_int32)(0.3 * w), 0.17, L_BRING_IN_WHITE);
     pixVShearIP(pixt1, (l_int32)(0.3 * w), 0.17, L_BRING_IN_WHITE);

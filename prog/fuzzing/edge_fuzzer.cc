@@ -12,7 +12,7 @@ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     l_float32 l_f1;
     l_float32 l_f2;
     l_float32 l_f3;
-    pixMeasureEdgeSmoothness(pixs_payload, 1, 1, 1, &l_f1, &l_f2, &l_f3, NULL);
+    pixMeasureEdgeSmoothness(pixs_payload, 1, 1, 1, &l_f1, &l_f2, &l_f3);
     pixDestroy(&pixs_payload);
     return 0;
 }

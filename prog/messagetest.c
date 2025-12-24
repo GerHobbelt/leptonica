@@ -91,8 +91,8 @@
 #include "monolithic_examples.h"
 
 
-void TestMessageControl(l_int32  severity);
-void TestStderrRedirect(void);
+static void TestMessageControl(l_int32  severity);
+static void TestStderrRedirect(L_REGPARAMS* rp);
 
     /* dev null callback for stderr redirect */
 static void send_to_devnull(const char *msg) {}
@@ -120,13 +120,13 @@ L_REGPARAMS* rp;
         /* Part 2: test combination of severity and redirect */
     lept_stderr("\nRedirect Tests\n\n");
     setMsgSeverity(L_SEVERITY_INFO);
-    TestStderrRedirect();
+    TestStderrRedirect(rp);
     setMsgSeverity(L_SEVERITY_WARNING);
-    TestStderrRedirect();
+    TestStderrRedirect(rp);
     setMsgSeverity(L_SEVERITY_ERROR);
-    TestStderrRedirect();
+    TestStderrRedirect(rp);
     setMsgSeverity(L_SEVERITY_NONE);
-    TestStderrRedirect();
+    TestStderrRedirect(rp);
 
         /* Part 3: test of naked fprintf and output with callback handler.
          * All lines should print except for line 4.  */
@@ -142,7 +142,7 @@ L_REGPARAMS* rp;
 	return regTestCleanup(rp);
 }
 
-void TestMessageControl(l_int32  severity)
+static void TestMessageControl(l_int32  severity)
 {
 l_int32  orig_severity;
 
@@ -165,26 +165,26 @@ l_int32  orig_severity;
     L_ERROR   ("Second message\n", "messagetest");
 }
 
-void TestStderrRedirect(void) {
+static void TestStderrRedirect(L_REGPARAMS* rp) {
 PIX  *pix1;
 
         /* Output to stderr works */
     L_INFO("test output 1 to stderr\n", "messagetest");
     L_WARNING("test output 1 to stderr\n", "messagetest");
     L_ERROR("test output 1 to stderr\n", "messagetest");
-    pix1 = pixRead(DEMOPATH("doesn't_exist"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "doesn't_exist"));
         /* There is no "test output 2" */
     leptSetStderrHandler(send_to_devnull);
     L_INFO("test output 2 to stderr\n", "messagetest");
     L_WARNING("test output 2 to stderr\n", "messagetest");
     L_ERROR("test output 2 to stderr\n", "messagetest");
-    pix1 = pixRead(DEMOPATH("doesn't_exist"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "doesn't_exist"));
     leptSetStderrHandler(NULL);
         /* Output is restored to stderr */
     L_INFO("test output 3 to stderr\n", "messagetest");
     L_WARNING("test output 3 to stderr\n", "messagetest");
     L_ERROR("test output 3 to stderr\n", "messagetest");
-    pix1 = pixRead(DEMOPATH("doesn't_exist"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "doesn't_exist"));
     lept_stderr("---------------------------------\n");
 }
 

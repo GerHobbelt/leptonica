@@ -142,7 +142,7 @@ SARRAY       *sa;
 
         /* Test convolution with kel1 */
     pixa = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("test24.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	pixg = pixScaleRGBToGrayFast(pixs, 3, COLOR_GREEN);
     pixaAddPix(pixa, pixg, L_INSERT);
     kel1 = kernelCreateFromString(5, 5, 2, 2, kdatastr);
@@ -157,7 +157,7 @@ SARRAY       *sa;
         /* Test convolution with flat rectangular kel; also test
          * block convolution with tiling. */
     pixa = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("test24.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	pixg = pixScaleRGBToGrayFast(pixs, 3, COLOR_GREEN);
     kel2 = makeFlatKernel(11, 11, 5, 5);
     pixd = pixConvolve(pixg, kel2, 8, 1);
@@ -206,7 +206,7 @@ SARRAY       *sa;
          * the pixConvolve() and pixBlockconv().  For what it's worth,
          * pixConvolve() gives the more accurate result; namely, 255 for
          * pixels at the edge. */
-    pix = pixRead(DEMOPATH("pageseg1.tif"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "pageseg1.tif"));
 	box = boxCreate(100, 100, 2260, 3160);
     pixb = pixClipRectangle(pix, box, NULL);
     pixs = pixScaleToGray4(pixb);
@@ -245,7 +245,7 @@ SARRAY       *sa;
 
         /* Do yet another set of flat rectangular tests, this time
          * on an RGB image */
-    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
 	kel4 = makeFlatKernel(7, 7, 3, 3);
     startTimer();
     pix1 = pixConvolveRGB(pixs, kel4);
@@ -279,7 +279,7 @@ SARRAY       *sa;
 
         /* Test generation and convolution with gaussian kernel */
     pixa = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("test8.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	pixaAddPix(pixa, pixs, L_COPY);
     kel1 = makeGaussianKernel(5, 5, 3.0, 5.0);
     kernelGetSum(kel1, &sum);
@@ -300,7 +300,7 @@ SARRAY       *sa;
 
         /* Test generation and convolution with separable gaussian kernel */
     pixa = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("test8.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	pixaAddPix(pixa, pixs, L_INSERT);
     makeGaussianKernelSep(5, 5, 3.0, 5.0, &kelx, &kely);
     kernelGetSum(kelx, &sum);
@@ -326,11 +326,11 @@ SARRAY       *sa;
     kernelDestroy(&kely);
 
         /* Test generation and convolution with diff of gaussians kernel */
-/*    pix1 = pixRead(DEMOPATH("marge.jpg"));
+/*    pix1 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     pixs = pixConvertRGBToLuminance(pix1);
     pixDestroy(&pix1); */
     pixa = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("test8.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	pixaAddPix(pixa, pixs, L_INSERT);
     kel1 = makeDoGKernel(7, 7, 1.5, 2.7);
     kernelGetSum(kel1, &sum);

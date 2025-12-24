@@ -85,7 +85,7 @@ L_REGPARAMS* rp;
 
     /* ------------------------ (1) ----------------------------*/
         /* Blend with a white background */
-    pix1 = pixRead(DEMOPATH("books_logo.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "books_logo.png"));
 	pixDisplayWithTitle(pix1, 100, 0, NULL);
     pix2 = pixAlphaBlendUniform(pix1, 0xffffff00);
     pixDisplayWithTitle(pix2, 100, 150, NULL);
@@ -119,7 +119,7 @@ L_REGPARAMS* rp;
          * pixs is the mask.  We turn it into a transparency (alpha)
          * layer by converting to 8 bpp.  A small convolution fuzzes
          * the mask edges so that you don't see the pixels. */
-    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
 	pixGetDimensions(pixs, &w, &h, NULL);
     pixg = pixConvert1To8(NULL, pixs, 0, 255);
     pixg2 = pixBlockconvGray(pixg, NULL, 1, 1);
@@ -133,7 +133,7 @@ L_REGPARAMS* rp;
          * when displayed over a black background, create the black
          * background image, pixb, and do the blending with pixcs1
          * explicitly using the alpha layer pixg2. */
-    pixc = pixRead(DEMOPATH("tetons.jpg"));
+    pixc = pixRead(regGetFileArgOrDefault(rp, "tetons.jpg"));
 	pixcs1 = pixScaleToSize(pixc, w, h);
     regTestWritePixAndCheck(rp, pixcs1, IFF_JFIF_JPEG);  /* 6 */
     pixDisplayWithTitle(pixcs1, 300, 0, "viewable");
@@ -201,17 +201,17 @@ L_REGPARAMS* rp;
     maxval = 200;
     box = boxCreate(0, 85, 600, 100);
     pixa = pixaCreate(6);
-	pix1 = pixRead(DEMOPATH("blend-green1.jpg"));
+	pix1 = pixRead(regGetFileArgOrDefault(rp, "blend-green1.jpg"));
 	pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = pixRead(DEMOPATH("blend-green2.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "blend-green2.png"));
 	pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = pixRead(DEMOPATH("blend-green3.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "blend-green3.png"));
 	pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = pixRead(DEMOPATH("blend-orange.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "blend-orange.jpg"));
 	pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = pixRead(DEMOPATH("blend-yellow.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "blend-yellow.jpg"));
 	pixaAddPix(pixa, pix1, L_INSERT);
-    pix1 = pixRead(DEMOPATH("blend-red.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "blend-red.png"));
 	pixaAddPix(pixa, pix1, L_INSERT);
     n = pixaGetCount(pixa);
     pixa2 = pixaCreate(n);
@@ -241,8 +241,8 @@ L_REGPARAMS* rp;
 
     /* ------------------------ (4) ----------------------------*/
         /* Use one image as the alpha component for a second image */
-    pix1 = pixRead(DEMOPATH("test24.jpg"));
-	pix2 = pixRead(DEMOPATH("marge.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
+	pix2 = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	pix3 = pixScale(pix2, 1.9, 2.2);
     pix4 = pixConvertTo8(pix3, 0);
     pixSetRGBComponent(pix1, pix4, L_ALPHA_CHANNEL);

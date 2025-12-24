@@ -78,7 +78,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "bilinear", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
     pixg = pixScaleToGray(pixs, 0.2);
     pixDestroy(&pixs);
 
@@ -147,7 +147,7 @@ L_REGPARAMS* rp;
     lept_stderr("Test invertability of color interpolation\n");
     pixa = pixaCreate(0);
 
-	pixc = pixRead(DEMOPATH("test24.jpg"));
+	pixc = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
     pixcs = pixScale(pixc, 0.3, 0.3);
     for (i = 1; i < 3; i++) {
         pixb = pixAddBorder(pixcs, ADDED_BORDER_PIXELS / 2, 0xffffff00);
@@ -215,7 +215,7 @@ L_REGPARAMS* rp;
     MakePtas(0, &ptas, &ptad);
     pixa = pixaCreate(0);
 
-	pixs = pixRead(DEMOPATH("marge.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     pixg = pixConvertTo8(pixs, 0);
 
     pix1 = pixBilinearSampledPta(pixg, ptas, ptad, L_BRING_IN_WHITE);

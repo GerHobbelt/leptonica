@@ -69,9 +69,10 @@
 #include <config_auto.h>
 #endif  /* HAVE_CONFIG_H */
 
-#include <string.h>
-#include <getopt.h>
 #include "allheaders.h"
+
+#include <assert.h>
+#include <getopt.h>
 
 static char *getRootNameFromArgv0(const char *argv0);
 
@@ -388,7 +389,7 @@ regTestSetup(int                        argc,
 				}
 				else {
 					// extra short option, e.g. 'x' for '-x'?
-					for (int i = 0; extra_options[i].name != L_CMD_OPT_NIL; i++) {
+					for (int i = 0; extra_options[i].type != L_CMD_OPT_NIL; i++) {
 						L_REGCMD_OPTION_SPEC o = extra_options + i;
 						switch (o->type) {
 						case L_CMD_OPT_W_NO_ARG:
@@ -600,7 +601,7 @@ regTestSetup(int                        argc,
 			);
 			int has_var_assignments = 0;
 			int has_positionals = 0;
-			for (int i = 0; extra_options[i].name != L_CMD_OPT_NIL; i++) {
+			for (int i = 0; extra_options[i].type != L_CMD_OPT_NIL; i++) {
 				L_REGCMD_OPTION_SPEC o = extra_options + i;
 				switch (o->type) {
 				case L_CMD_OPT_W_NO_ARG:
@@ -630,7 +631,7 @@ regTestSetup(int                        argc,
 				lept_stderr("\n"
 					"Plus these non-option 'assignment' arguments:\n"
 				);
-				for (int i = 0; extra_options[i].name != L_CMD_OPT_NIL; i++) {
+				for (int i = 0; extra_options[i].type != L_CMD_OPT_NIL; i++) {
 					L_REGCMD_OPTION_SPEC o = extra_options + i;
 					switch (o->type) {
 					case L_CMD_OPT_W_NO_ARG:
@@ -654,7 +655,7 @@ regTestSetup(int                        argc,
 				lept_stderr("\n"
 					"Also please do note these non-option ('positional') arguments are compulsatory:\n"
 				);
-				for (int i = 0; extra_options[i].name != L_CMD_OPT_NIL; i++) {
+				for (int i = 0; extra_options[i].type != L_CMD_OPT_NIL; i++) {
 					L_REGCMD_OPTION_SPEC o = extra_options + i;
 					switch (o->type) {
 					case L_CMD_OPT_W_NO_ARG:
@@ -752,7 +753,7 @@ regTestSetup(int                        argc,
 
 	// post-work: clean up our search paths set (deduplicate, etc.)
 	{
-		char* cdir = getcwd(NULL, 0);
+		const char* cdir = lept_getcwd();
 		if (cdir == NULL) {
 			rp->success = FALSE;
 			return ERROR_INT("no current dir found", __func__, 1);
@@ -760,7 +761,7 @@ regTestSetup(int                        argc,
 		SARRAY* lcl_arr = pathDeducePathSet(rp->searchpaths, cdir, !(rp->argv_search_mode & L_LOCATE_IGNORE_CURRENT_DIR_FLAG));
 		sarrayDestroy(&rp->searchpaths);
 		rp->searchpaths = lcl_arr;
-		free(cdir);
+		stringDestroy(&cdir);
 	}
 
 	if (rp->cmd_mode != L_REG_BASIC_EXEC && rp->results_file_path == NULL) {
@@ -1630,6 +1631,7 @@ regGetFileArgOrDefault(L_REGPARAMS* rp, const char* default_filepath)
 						return line;
 					}
 				}
+				sarrayDestroy(&lcl_arr);
 			}
 
 			return default_filepath ? stringNew(default_filepath) : NULL;

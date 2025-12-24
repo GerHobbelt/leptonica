@@ -54,7 +54,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "color_morph", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("wyom.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "wyom.jpg"));
     pixa = pixaCreate(0);
 
     pix1 = pixColorMorph(pixs, L_MORPH_DILATE, SIZE, SIZE);

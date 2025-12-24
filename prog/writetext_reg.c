@@ -88,9 +88,9 @@ SARRAY       *sa;
 	if (regTestSetup(argc, argv, "write_text", NULL, &rp))
 		return 1;
 
-	bmf = bmfCreate(DEMOPATH("fonts"), 6);
-    bmftop = bmfCreate(DEMOPATH("fonts"), 10);
-    pixs = pixRead(DEMOPATH("lucasta.047.jpg"));
+	bmf = bmfCreate(regGetFileArgOrDefault(rp, "fonts"), 6);
+    bmftop = bmfCreate(regGetFileArgOrDefault(rp, "fonts"), 10);
+    pixs = pixRead(regGetFileArgOrDefault(rp, "lucasta.047.jpg"));
 	pix1 = pixScale(pixs, 0.4, 0.4);          /* 8 bpp grayscale */
     pix2 = pixConvertTo32(pix1);              /* 32 bpp rgb */
     pix3 = pixThresholdOn8bpp(pix1, 12, 1);   /* 8 bpp cmapped */
@@ -134,14 +134,14 @@ SARRAY       *sa;
 
         /* Write multiple lines in different colors, filling up
          * the colormap and requesting even more colors. */
-    pixs = pixRead(DEMOPATH("weasel4.11c.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "weasel4.11c.png"));
 	pix1 = pixConvertTo8(pixs, 0);
     pix2 = pixScale(pixs, 8.0, 8.0);
     pix3 = pixQuantFromCmap(pix2, pixGetColormap(pixs), 4, 5,
                             L_EUCLIDEAN_DISTANCE);
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 5 */
     pixDisplayWithTitle(pix3, 0, 500, NULL);
-    bmf = bmfCreate(DEMOPATH("fonts"), 10);
+    bmf = bmfCreate(regGetFileArgOrDefault(rp, "fonts"), 10);
     sa = sarrayCreate(6);
     for (i = 0; i < 6; i++) {
         snprintf(buf, sizeof(buf), "This is textline %d\n", i);

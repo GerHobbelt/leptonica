@@ -61,7 +61,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "binarize", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("w91frag.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "w91frag.jpg"));
 
         /* Compare Sauvola binarization with and without tiles */
     pix1 = PixTest1(pixs, 7, 0.34, rp);  /* 0, 1 */

@@ -64,24 +64,24 @@
 #include "monolithic_examples.h"
 
 
-#define   BMP_FILE             DEMOPATH("test1.bmp")
-#define   FILE_1BPP            DEMOPATH("feyn.tif")
-#define   FILE_2BPP            DEMOPATH("speckle2.png")
-#define   FILE_2BPP_C          DEMOPATH("weasel2.4g.png")
-#define   FILE_4BPP            DEMOPATH("speckle4.png")
-#define   FILE_4BPP_C          DEMOPATH("weasel4.16c.png")
-#define   FILE_8BPP_1          DEMOPATH("dreyfus8.png")
-#define   FILE_8BPP_2          DEMOPATH("weasel8.240c.png")
-#define   FILE_8BPP_3          DEMOPATH("test8.jpg")
-#define   FILE_16BPP           DEMOPATH("test16.tif")
-#define   FILE_32BPP           DEMOPATH("marge.jpg")
-#define   FILE_32BPP_ALPHA     DEMOPATH("test32-alpha.png")
-#define   FILE_1BIT_ALPHA      DEMOPATH("test-1bit-alpha.png")
-#define   FILE_CMAP_ALPHA      DEMOPATH("test-cmap-alpha.png")
-#define   FILE_TRANS_ALPHA     DEMOPATH("test-fulltrans-alpha.png")
-#define   FILE_GRAY_ALPHA      DEMOPATH("test-gray-alpha.png")
-#define   FILE_GRAY_ALPHA_TIF  DEMOPATH("gray-alpha.tif")
-#define   FILE_RGB16_TIF       DEMOPATH("rgb16.tif")
+#define   BMP_FILE             regGetFileArgOrDefault(rp, "test1.bmp")
+#define   FILE_1BPP            regGetFileArgOrDefault(rp, "feyn.tif")
+#define   FILE_2BPP            regGetFileArgOrDefault(rp, "speckle2.png")
+#define   FILE_2BPP_C          regGetFileArgOrDefault(rp, "weasel2.4g.png")
+#define   FILE_4BPP            regGetFileArgOrDefault(rp, "speckle4.png")
+#define   FILE_4BPP_C          regGetFileArgOrDefault(rp, "weasel4.16c.png")
+#define   FILE_8BPP_1          regGetFileArgOrDefault(rp, "dreyfus8.png")
+#define   FILE_8BPP_2          regGetFileArgOrDefault(rp, "weasel8.240c.png")
+#define   FILE_8BPP_3          regGetFileArgOrDefault(rp, "test8.jpg")
+#define   FILE_16BPP           regGetFileArgOrDefault(rp, "test16.tif")
+#define   FILE_32BPP           regGetFileArgOrDefault(rp, "marge.jpg")
+#define   FILE_32BPP_ALPHA     regGetFileArgOrDefault(rp, "test32-alpha.png")
+#define   FILE_1BIT_ALPHA      regGetFileArgOrDefault(rp, "test-1bit-alpha.png")
+#define   FILE_CMAP_ALPHA      regGetFileArgOrDefault(rp, "test-cmap-alpha.png")
+#define   FILE_TRANS_ALPHA     regGetFileArgOrDefault(rp, "test-fulltrans-alpha.png")
+#define   FILE_GRAY_ALPHA      regGetFileArgOrDefault(rp, "test-gray-alpha.png")
+#define   FILE_GRAY_ALPHA_TIF  regGetFileArgOrDefault(rp, "gray-alpha.tif")
+#define   FILE_RGB16_TIF       regGetFileArgOrDefault(rp, "rgb16.tif")
 
 static l_int32 testcomp(const char *filename, PIX *pix, l_int32 comptype);
 static l_int32 testcomp_mem(PIX *pixs, PIX **ppixt, l_int32 index,
@@ -292,7 +292,7 @@ PIXCMAP      *cmap;
 
         /* Test writing and reading 1 bpp tiff with colormap */
     lept_stderr("Tiff read/write 1 bpp with cmap\n");
-    pix1 = pixRead(DEMOPATH("feyn-fract2.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn-fract2.tif"));
     cmap = pixcmapCreate(1);
     pixcmapAddColor(cmap, 0, 0, 0);  /* inverted b/w */
     pixcmapAddColor(cmap, 255, 255, 255);
@@ -369,7 +369,7 @@ PIXCMAP      *cmap;
 
         /* Test reading 32 bit rgb with approx half-sized tiff buffer */
     lept_stderr("Tiff read/write rgb with half-sized tiff buffer\n");
-    pix1 = pixRead(DEMOPATH("testbuffer.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "testbuffer.tif"));
     pixWrite("/tmp/lept/regout/testbuffer.tif", pix1, IFF_TIFF_ZIP);
     readHeaderTiff("/tmp/lept/regout/testbuffer.tif", 0, &w, &h, &bps, &spp,
                    &res, &iscmap, NULL);
@@ -501,7 +501,7 @@ PIXCMAP      *cmap;
     /* ------------ Part 5: Test multipage tiff r/w to memory ------------ */
 
         /* Make a multipage tiff file, and read it back into memory */
-    pix = pixRead(DEMOPATH("feyn.tif"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
     pixa = pixaSplitPix(pix, 3, 3, 0, 0);
     for (i = 0; i < 9; i++) {
         if ((pixt = pixaGetPix(pixa, i, L_CLONE)) == NULL)
@@ -560,7 +560,7 @@ part6:
 
         /* Generate a 24 bpp (not 32 bpp !!) rgb pix and write it out */
     success = TRUE;
-    if ((pix = pixRead(DEMOPATH("marge.jpg"))) == NULL)
+    if ((pix = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"))) == NULL)
         success = FALSE;
     pixt = make_24_bpp_pix(pix);
     pixWrite("/tmp/lept/regout/junk24.png", pixt, IFF_PNG);
@@ -597,14 +597,14 @@ part6:
 
     /* ------------- Part 7: Miscellaneous additional tests ------------ */
         /* Test writing and reading alpha */
-    pix1 = pixRead(DEMOPATH("test32-alpha.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "test32-alpha.png"));
     lept_stderr("Test write/read of BMP with alpha\n");
     if (test_writemem(pix1, IFF_BMP, NULL)) success = FALSE;
     lept_stderr("Test write/read of PNG with alpha\n");
     if (test_writemem(pix1, IFF_PNG, NULL)) success = FALSE;
     pixDestroy(&pix1);
 
-    pix1 = pixRead(DEMOPATH("test-rgba.bmp"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "test-rgba.bmp"));
     pixWrite("/tmp/lept/regout/alpha1.bmp", pix1, IFF_BMP);
     pixWrite("/tmp/lept/regout/alpha1.png", pix1, IFF_PNG);
     pix2 = pixRead("/tmp/lept/regout/alpha1.bmp");

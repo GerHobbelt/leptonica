@@ -77,7 +77,7 @@ L_REGPARAMS* rp;
     pixas = pixaCreate(11);
 	for (i = 0; i < 10; i++) {  /* this preserves any alpha */
 		char filename[256];
-		snprintf(filename, sizeof(filename), "%s%s", DEMOPATH(""), fnames[i]);
+		snprintf(filename, sizeof(filename), "%s%s", regGetFileArgOrDefault(rp, ""), fnames[i]);
 		pix1 = pixRead(filename);
 		pix2 = pixScaleBySamplingToSize(pix1, 250, 150);
         pixaAddPix(pixas, pix2, L_INSERT);

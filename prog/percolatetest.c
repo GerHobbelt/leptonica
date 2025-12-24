@@ -243,7 +243,7 @@ L_REGPARAMS* rp;
         /* Fill in a larger pix; 8 connected; init with feyn-word.tif */
     pixa = pixaCreate(0);
     na1 = numaCreate(20000);
-    pixs = pixRead(DEMOPATH("feyn-word.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-word.tif"));
     pixConnCompIncrInit(pixs, 8, &pix1, &ptaa, &ncc);
     srand(26);
     lept_stderr("ncc = %d, npta = %d\n", ncc, ptaaGetCount(ptaa));
@@ -278,7 +278,7 @@ L_REGPARAMS* rp;
          * is used to write the 280MB plot data file and then generate
          * the plot (percolate-4cc.png, percolate-8cc.png). */
 #if 1
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 //    pixs = pixCreate(2500, 3200, 1);
     na1 = numaCreate(10000000);
     pixConnCompIncrInit(pixs, 4, &pix1, &ptaa, &ncc);

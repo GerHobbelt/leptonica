@@ -168,7 +168,7 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(0);
 
         /* Test the best 4 and 8 cc thinning */
-    pix2 = pixRead(DEMOPATH("feyn.tif"));
+    pix2 = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 	box = boxCreate(683, 799, 970, 479);
     pix1 = pixClipRectangle(pix2, box, NULL);
     boxDestroy(&box);

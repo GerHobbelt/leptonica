@@ -78,7 +78,7 @@ PIXA        *pixa1;
     /* -------------------------------------------------------------------*
      *                         Numa-windowed stats                        *
      * -------------------------------------------------------------------*/
-    na = numaRead(DEMOPATH("lyra.5.na"));
+    na = numaRead(regGetFileArgOrDefault(rp, "lyra.5.na"));
     numaWindowedStats(na, 5, &na1, &na2, &na3, &na4);
 	pix1 = gplotSimplePix1(na, "lept/numa2/lyra1", "Original");
 	pix2 = gplotSimplePix1(na1, "lept/numa2/lyra2", "Mean");
@@ -166,7 +166,7 @@ PIXA        *pixa1;
      *                     Row and column pixel sums                      *
      * -------------------------------------------------------------------*/
         /* Sum by columns in two halves (left and right) */
-    pixs = pixRead(DEMOPATH("test8.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	pixGetDimensions(pixs, &w, &h, NULL);
     box1 = boxCreate(0, 0, w / 2, h);
     box2 = boxCreate(w / 2, 0, w - 2 / 2, h);
@@ -279,7 +279,7 @@ PIXA        *pixa1;
     pixDestroy(&pixs);
 
         /* Again on a different image */
-    pix1 = pixRead(DEMOPATH("boxedpage.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "boxedpage.jpg"));
 	pix2 = pixConvertTo8(pix1, 0);
     pixGetDimensions(pix2, &w, &h, NULL);
     na1 = pixVarianceByRow(pix2, NULL);
@@ -321,7 +321,7 @@ PIXA        *pixa1;
     /* -------------------------------------------------------------------*
      *                    Windowed variance along a line                  *
      * -------------------------------------------------------------------*/
-    pix1 = pixRead(DEMOPATH("boxedpage.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "boxedpage.jpg"));
 	pix2 = pixConvertTo8(pix1, 0);
     pixGetDimensions(pix2, &w, &h, NULL);
     pix3 = pixCopy(NULL, pix1);
@@ -359,7 +359,7 @@ PIXA        *pixa1;
     /* -------------------------------------------------------------------*
      *               Test pixel average function for gray                 *
      * -------------------------------------------------------------------*/
-    pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "lyra.005.jpg"));
 	pix2 = pixConvertRGBToLuminance(pix1);
     box1 = boxCreate(20, 150, 700, 515);
     pix3 = pixClipRectangle(pix2, box1, NULL);
@@ -428,7 +428,7 @@ PIXA        *pixa1;
     /* -------------------------------------------------------------------*
      *               Test pixel average function for color                *
      * -------------------------------------------------------------------*/
-    pix1 = pixRead(DEMOPATH("lyra.005.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "lyra.005.jpg"));
 	box1 = boxCreate(20, 150, 700, 515);
     pix2 = pixClipRectangle(pix1, box1, NULL);
     pixa1 = pixaCreate(0);

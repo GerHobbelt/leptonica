@@ -75,7 +75,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "gray_morph", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("aneurisms8.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "aneurisms8.jpg"));
 	pixa = pixaCreate(0);
 
     /* =========================================================== */
@@ -272,7 +272,7 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(0);
 
     /* ----  Tophat result on feynman stamp, to extract diagrams ----- */
-    pixs = pixRead(DEMOPATH("feynman-stamp.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feynman-stamp.jpg"));
 	pixGetDimensions(pixs, &w, &h, NULL);
 
         /* Make output image to hold five intermediate images */

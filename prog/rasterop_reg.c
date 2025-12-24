@@ -57,7 +57,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "raster_op", NULL, &rp))
 		return 1;
 
-    pix0 = pixRead(DEMOPATH("feyn-fract.tif"));
+    pix0 = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
     box = boxCreate(293, 37, pixGetWidth(pix0) - 691, pixGetHeight(pix0) -145);
     pixs = pixClipRectangle(pix0, box, NULL);
     boxDestroy(&box);

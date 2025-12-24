@@ -56,7 +56,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "thresh_norm", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("stampede2.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "stampede2.jpg"));
 	pixa = pixaCreate(0);
 
     AddTestSet(pixa, pixs, L_SOBEL_EDGE, 18, 40, 40, 0.7, -25, 280, 128);

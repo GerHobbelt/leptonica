@@ -57,7 +57,7 @@ L_REGPARAMS* rp;
     //lept_mkdir("lept/lowsat");
 
     pixa = pixaCreate(0);
-	pix1 = pixRead(DEMOPATH("zier.jpg"));
+	pix1 = pixRead(regGetFileArgOrDefault(rp, "zier.jpg"));
 	regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 0 */
     pixDisplayWithTitle(pix1, 0, 100, NULL);
     pixaAddPix(pixa, pix1, L_INSERT);

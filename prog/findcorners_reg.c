@@ -93,7 +93,7 @@ L_REGPARAMS* rp;
 
 	//lept_mkdir("lept/regout");
 
-    pixs = pixRead(DEMOPATH("tickets.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "tickets.tif"));
 
 	flag = leptIsInDisplayMode();
 

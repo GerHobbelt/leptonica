@@ -68,7 +68,7 @@ L_REGPARAMS* rp;
                          __func__, 1);
 
 	if (argc == 2) {
-        pixs = pixRead(DEMOPATH("cat.035.jpg"));
+        pixs = pixRead(regGetFileArgOrDefault(rp, "cat.035.jpg"));
         pageno = 35;
     }
     else {

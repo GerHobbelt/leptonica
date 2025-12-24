@@ -69,14 +69,14 @@ L_REGPARAMS* rp;
     //lept_mkdir("lept/class");
 
         /* Set up the input data */
-    pix1 = pixRead(DEMOPATH("pageseg1.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "pageseg1.tif"));
 	pixGetDimensions(pix1, &w, &h, NULL);
     box = boxCreate(0, 0, w, h / 2);
     pix2 = pixClipRectangle(pix1, box, NULL);
     pixWrite("/tmp/lept/class/pix1.tif", pix2, IFF_TIFF_G4);
     pixDestroy(&pix1);
     pixDestroy(&pix2);
-    pix1 = pixRead(DEMOPATH("pageseg4.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "pageseg4.tif"));
 	pix2 = pixClipRectangle(pix1, box, NULL);
     pixWrite("/tmp/lept/class/pix2.tif", pix2, IFF_TIFF_G4);
     pixDestroy(&pix1);

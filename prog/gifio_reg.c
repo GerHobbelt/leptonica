@@ -73,7 +73,7 @@
 #define   FILE_32BPP    "marge.jpg"
 
 static void test_gif(const char *fname, PIXA *pixa, L_REGPARAMS *rp);
-static l_int32 test_mem_gif(const char *fname, l_int32 index);
+static l_int32 test_mem_gif(const char *fname, l_int32 index, L_REGPARAMS* rp);
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -145,14 +145,14 @@ L_REGPARAMS* rp;
 
     /* ------------ Part 2: Test lossless r/w to memory ------------ */
     success = TRUE;
-    if (test_mem_gif(FILE_1BPP, 0)) success = FALSE;
-    if (test_mem_gif(FILE_2BPP, 1)) success = FALSE;
-    if (test_mem_gif(FILE_4BPP, 2)) success = FALSE;
-    if (test_mem_gif(FILE_8BPP_1, 3)) success = FALSE;
-    if (test_mem_gif(FILE_8BPP_2, 4)) success = FALSE;
-    if (test_mem_gif(FILE_8BPP_3, 5)) success = FALSE;
-    if (test_mem_gif(FILE_16BPP, 6)) success = FALSE;
-    if (test_mem_gif(FILE_32BPP, 7)) success = FALSE;
+    if (test_mem_gif(FILE_1BPP, 0, rp)) success = FALSE;
+    if (test_mem_gif(FILE_2BPP, 1, rp)) success = FALSE;
+    if (test_mem_gif(FILE_4BPP, 2, rp)) success = FALSE;
+    if (test_mem_gif(FILE_8BPP_1, 3, rp)) success = FALSE;
+    if (test_mem_gif(FILE_8BPP_2, 4, rp)) success = FALSE;
+    if (test_mem_gif(FILE_8BPP_3, 5, rp)) success = FALSE;
+    if (test_mem_gif(FILE_16BPP, 6, rp)) success = FALSE;
+    if (test_mem_gif(FILE_32BPP, 7, rp)) success = FALSE;
     if (success)
         lept_stderr("\n  ****** Success on lossless r/w to memory *****\n\n");
     else
@@ -174,7 +174,7 @@ char     buf[256];
 l_int32  same;
 PIX     *pixs, *pix1, *pix2;
 
-	snprintf(buf, sizeof(buf), "%s%s", DEMOPATH(""), fname);
+	snprintf(buf, sizeof(buf), "%s%s", regGetFileArgOrDefault(rp, ""), fname);
     pixs = pixRead(buf);
     snprintf(buf, sizeof(buf), "/tmp/lept/gif/gifio-a.%d.gif", rp->index + 1);
     pixWrite(buf, pixs, IFF_GIF);
@@ -204,7 +204,8 @@ PIX     *pixs, *pix1, *pix2;
     /* Returns 1 on error */
 static l_int32
 test_mem_gif(const char  *fname,
-             l_int32      index)
+             l_int32      index,
+	         L_REGPARAMS* rp)
 {
 l_uint8  *data = NULL;
 l_int32   same;
@@ -213,7 +214,7 @@ PIX      *pixs;
 PIX      *pixd = NULL;
 char      buf[256];
 
-	snprintf(buf, sizeof(buf), "%s%s", DEMOPATH(""), fname);
+	snprintf(buf, sizeof(buf), "%s%s", regGetFileArgOrDefault(rp, ""), fname);
     if ((pixs = pixRead(buf)) == NULL) {
         lept_stderr("Failure to read gif file: %s\n", buf);
         return 1;

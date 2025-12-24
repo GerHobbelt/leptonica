@@ -39,7 +39,7 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     pix8 = pixOctreeQuantByPopulation(pixs, 0, 0);
     pix9 = pixFewColorsOctcubeQuantMixed(pix4, 3, 20, 244, 20, 0.05, 15);
-    pix10 = pixColorSegment(pixs, 50, 6, 6, 6, 0);
+    pix10 = pixColorSegment(pixs, 50, 6, 6, 6);
 
     for(int i=128; i<257; i++){
         pix11 = pixOctreeColorQuant(pixs, i, 0);

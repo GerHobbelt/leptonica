@@ -77,7 +77,7 @@ L_REGPARAMS* rp;
     /* ----------------------------------------------------------- *
      *                Test hash rendering in 3 modes               *
      * ----------------------------------------------------------- */
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
     box = boxCreate(461, 429, 1393, 342);
     pix1 = pixClipRectangle(pixs, box, NULL);
     boxa = pixConnComp(pix1, NULL, 8);
@@ -111,7 +111,7 @@ L_REGPARAMS* rp;
     /* ----------------------------------------------------------- *
      *        Test orthogonal box rotation and hash rendering      *
      * ----------------------------------------------------------- */
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 	box = boxCreate(461, 429, 1393, 342);
     pix1 = pixClipRectangle(pixs, box, NULL);
     pixc = pixConvertTo32(pix1);
@@ -146,7 +146,7 @@ L_REGPARAMS* rp;
      *    not matter; different hashing schemes end up in the      *
      *    identical boxes.                                         *
      * ----------------------------------------------------------- */
-    pix = pixRead(DEMOPATH("feyn.tif"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 	box = boxCreate(420, 360, 1500, 465);
     pixt = pixClipRectangle(pix, box, NULL);
     pixs = pixAddBorderGeneral(pixt, 0, 200, 0, 0, 0);
@@ -232,7 +232,7 @@ L_REGPARAMS* rp;
      * ----------------------------------------------------------- */
         /* Set up pix and boxa */
     pixa = pixaCreate(0);
-	pix = pixRead(DEMOPATH("lucasta.1.300.tif"));
+	pix = pixRead(regGetFileArgOrDefault(rp, "lucasta.1.300.tif"));
 	pixTranslate(pix, pix, 70, 0, L_BRING_IN_WHITE);
     pixt = pixCloseBrick(NULL, pix, 14, 5);
     pixOpenBrick(pixt, pixt, 1, 2);

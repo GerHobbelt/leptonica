@@ -63,8 +63,8 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("lept/dewarp");
 
-    pixs = pixRead(DEMOPATH("cat.035.jpg"));
-/*    pixs = pixRead(DEMOPATH("zanotti-78.jpg")); */
+    pixs = pixRead(regGetFileArgOrDefault(rp, "cat.035.jpg"));
+/*    pixs = pixRead(regGetFileArgOrDefault(rp, "zanotti-78.jpg")); */
 
         /* Normalize for varying background and binarize */
     pixn = pixBackgroundNormSimple(pixs, NULL, NULL);

@@ -69,7 +69,7 @@ L_REGPARAMS  *rp;
 
     //lept_mkdir("lept/adapt");
 
-    pixs = pixRead(DEMOPATH("wet-day.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "wet-day.jpg"));
     pixa = pixaCreate(0);
     pixg = pixConvertRGBToGray(pixs, 0.33, 0.34, 0.33);
     pixaAddPix(pixa, pixs, L_INSERT);
@@ -172,7 +172,7 @@ L_REGPARAMS  *rp;
 
         /* Check pixFillMapHoles() */
     pixa = pixaCreate(3);
-	pix1 = pixRead(DEMOPATH("weasel8.png"));  /* use this as the map */
+	pix1 = pixRead(regGetFileArgOrDefault(rp, "weasel8.png"));  /* use this as the map */
     pixGammaTRC(pix1, pix1, 1.0, 0, 270);  /* darken white pixels */
     pixaAddPix(pixa, pix1, L_COPY);
     pixGetDimensions(pix1, &w, &h, NULL);

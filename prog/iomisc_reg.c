@@ -77,7 +77,7 @@ L_REGPARAMS* rp;
     //lept_mkdir("lept/io");
 
         /* Test 16 to 8 stripping */
-    pixs = pixRead(DEMOPATH("test16.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test16.tif"));
 	pixWrite("/tmp/lept/io/test16.png", pixs, IFF_PNG);
     regTestCheckFile(rp, "/tmp/lept/io/test16.png");  /* 0 */
     pix1 = pixRead("/tmp/lept/io/test16.png");
@@ -92,7 +92,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
 
         /* Test chroma sampling options in jpeg */
-    pixs = pixRead(DEMOPATH("marge.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
 	pixWrite("/tmp/lept/io/chromatest1.jpg", pixs, IFF_JFIF_JPEG);
     regTestCheckFile(rp, "/tmp/lept/io/chromatest1.jpg");  /* 3 */
     if (leptIsInDisplayMode()) {
@@ -116,7 +116,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
 
         /* Test read/write of alpha with png */
-    pixs = pixRead(DEMOPATH("books_logo.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "books_logo.png"));
 	pixDisplayWithTitle(pixs, 0, 100, NULL);
     pixg = pixGetRGBComponent(pixs, L_ALPHA_CHANNEL);
     regTestWritePixAndCheck(rp, pixg, IFF_PNG);  /* 6 */
@@ -144,7 +144,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
 
         /* A little fun with rgb colormaps */
-    pixs = pixRead(DEMOPATH("weasel4.11c.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "weasel4.11c.png"));
 	pixa = pixaCreate(6);
 	pixaAddPix(pixa, pixs, L_CLONE);
     pixGetDimensions(pixs, &w, &h, &d);
@@ -182,7 +182,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix2);
 
        /* Remove and regnerate gray colormap */
-    pixs = pixRead(DEMOPATH("weasel4.5g.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "weasel4.5g.png"));
 	pixaAddPix(pixa, pixs, L_CLONE);
     pix1 = pixRemoveColormap(pixs, REMOVE_CMAP_BASED_ON_SRC);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 15 */
@@ -210,7 +210,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
 
         /* Some tiff compression and headers */
-    readHeaderTiff(DEMOPATH("feyn-fract.tif"), 0, &w, &h, &bps, &spp,
+    readHeaderTiff(regGetFileArgOrDefault(rp, "feyn-fract.tif"), 0, &w, &h, &bps, &spp,
                    &res, &iscmap, &format);
     if (leptIsInDisplayMode()) {
         lept_stderr("w = %d, h = %d, bps = %d, spp = %d, res = %d, cmap = %d\n",
@@ -218,7 +218,7 @@ L_REGPARAMS* rp;
         lept_stderr("Input format extension: %s\n",
 			        getFormatExtension(format));
     }
-    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
 	pixWrite("/tmp/lept/io/fract1.tif", pixs, IFF_TIFF);
     regTestCheckFile(rp, "/tmp/lept/io/fract1.tif");  /* 18 */
     size = nbytesInFile("/tmp/lept/io/fract1.tif");
@@ -258,7 +258,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
 
         /* Test read/write of alpha with pnm */
-    pixs = pixRead(DEMOPATH("books_logo.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "books_logo.png"));
 	pixWrite("/tmp/lept/io/alpha1.pnm", pixs, IFF_PNM);
     regTestCheckFile(rp, "/tmp/lept/io/alpha1.pnm");  /* 30 */
     pix1 = pixRead("/tmp/lept/io/alpha1.pnm");

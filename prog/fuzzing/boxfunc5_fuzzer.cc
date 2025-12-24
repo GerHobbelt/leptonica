@@ -10,7 +10,7 @@ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 	boxa_payload = boxaReadMem(data, size);
 	if(boxa_payload == NULL) return 0;
 
-	l_float32  fvarp, fvarm, devw, devh;
+	l_float32  fvarp, fvarm;
 	l_float32  del_evenodd, rms_even, rms_odd, rms_all;
 	l_int32    isame;
 
@@ -37,7 +37,7 @@ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
 	boxa1 = boxaSmoothSequenceMedian(boxa_payload, 10,
 					 L_SUB_ON_LOC_DIFF,
-					 80, 20, 1);
+					 80, 20);
 	boxaDestroy(&boxa1);
 	boxaDestroy(&boxa_payload);
 	return 0;

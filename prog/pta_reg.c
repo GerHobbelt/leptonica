@@ -70,7 +70,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "pta", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("feyn-fract.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
 	boxa = pixConnComp(pixs, NULL, 8);
     nbox = boxaGetCount(boxa);
     regTestCompareValues(rp, nbox, 464, 0);  /* 0 */
@@ -159,7 +159,7 @@ L_REGPARAMS* rp;
     boxaDestroy(&boxa);
 
         /* Test rotation */
-    pix1 = pixRead(DEMOPATH("feyn-word.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn-word.tif"));
 	pix2 = pixAddBorderGeneral(pix1, 200, 200, 200, 200, 0);
     pixa = pixaCreate(0);
     pix3 = PtaDisplayRotate(pix2, 0, 0);
@@ -179,7 +179,7 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixa);
 
         /* Test pta sort and pta equality */
-    pix1 = pixRead(DEMOPATH("feyn-word.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn-word.tif"));
 	pixGetDimensions(pix1, &w, &h, NULL);
     pta1 = ptaGetPixelsFromPix(pix1, NULL);
     ptaGetIPt(pta1, 0, &x, &y);  /* add copy of first point */

@@ -9,7 +9,7 @@ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     PIX *pixs_payload = pixReadMemSpix(data, size);
     if(pixs_payload == NULL) return 0;
 
-    PIX *pix1, *pix2, *return_pix, *pix_copy;
+    PIX *pix1, *return_pix, *pix_copy;
 
     for(int i=0; i<10; i++) {
         pix1 = pixRead("../test8.jpg");

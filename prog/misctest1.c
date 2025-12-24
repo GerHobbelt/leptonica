@@ -78,9 +78,9 @@ L_REGPARAMS* rp;
         /* Combine two grayscale images using a mask */
     lept_stderr("Combine two grayscale images using a mask\n");
     pixa1 = pixaCreate(0);
-	pixd = pixRead(DEMOPATH("feyn.tif"));
-    pixs = pixRead(DEMOPATH("rabi.png"));
-    pixm = pixRead(DEMOPATH("pageseg2-seed.png"));
+	pixd = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "rabi.png"));
+    pixm = pixRead(regGetFileArgOrDefault(rp, "pageseg2-seed.png"));
 	pixd2 = pixScaleToGray2(pixd);
     pixs2 = pixScaleToGray2(pixs);
     pixaAddPix(pixa1, pixd2, L_COPY);
@@ -110,8 +110,8 @@ L_REGPARAMS* rp;
         /* Do a restricted seedfill */
     lept_stderr("Do a restricted seedfill\n");
     pixa1 = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("pageseg2-seed.png"));
-    pixm = pixRead(DEMOPATH("pageseg2-mask.png"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "pageseg2-seed.png"));
+    pixm = pixRead(regGetFileArgOrDefault(rp, "pageseg2-mask.png"));
 	pixd = pixSeedfillBinaryRestricted(NULL, pixs, pixm, 8, 50, 175);
     pixaAddPix(pixa1, pixs, L_INSERT);
     pixaAddPix(pixa1, pixm, L_INSERT);
@@ -127,7 +127,7 @@ L_REGPARAMS* rp;
     lept_stderr("Colorize a grayscale image\n");
     paa = pixaaCreate(0);
     pixa1 = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("lucasta.150.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "lucasta.150.jpg"));
 	pixGetDimensions(pixs, &w, &h, NULL);
     pixb = pixThresholdToBinary(pixs, 128);
     boxa1 = pixConnComp(pixb, &pixa2, 8);
@@ -147,7 +147,7 @@ L_REGPARAMS* rp;
         /* Convert color to gray */
     lept_stderr("Convert color to gray\n");
     pixa1 = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("weasel4.16c.png"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "weasel4.16c.png"));
 	pixaAddPix(pixa1, pixs, L_INSERT);
     pixc = pixConvertTo32(pixs);
     pix1 = pixConvertRGBToGray(pixc, 3., 7., 5.);  /* bad weights */
@@ -170,7 +170,7 @@ L_REGPARAMS* rp;
 
         /* Extract text lines */
     lept_stderr("Extract text lines\n");
-    pix1 = pixRead(DEMOPATH("feyn.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 	pixa1 = pixExtractTextlines(pix1, 150, 150, 0, 0, 5, 5, NULL);
     boxa1 = pixaGetBoxa(pixa1, L_CLONE);
     boxaWrite("/tmp/lept/misc/lines1.ba", boxa1);
@@ -183,7 +183,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix2);
     pixaDestroy(&pixa1);
 
-    pix1 = pixRead(DEMOPATH("arabic.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "arabic.png"));
     pixa1 = pixExtractTextlines(pix1, 150, 150, 0, 0, 5, 5, NULL);
     pix2 = pixaDisplayRandomCmap(pixa1, 0, 0);
     pixcmapResetColor(pixGetColormap(pix2), 0, 255, 255, 255);
@@ -193,7 +193,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pix2);
     pixaDestroy(&pixa1);
 
-    pix1 = pixRead(DEMOPATH("arabic2.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "arabic2.png"));
     pixa1 = pixExtractTextlines(pix1, 150, 150, 0, 0, 5, 5, NULL);
     pix2 = pixaDisplayRandomCmap(pixa1, 0, 0);
     pixcmapResetColor(pixGetColormap(pix2), 0, 255, 255, 255);
@@ -206,7 +206,7 @@ L_REGPARAMS* rp;
         /* Plot box side locations and dimensions of a boxa */
     lept_stderr("Plot box side locations and dimensions of a boxa\n");
     pixa1 = pixaCreate(0);
-    boxa1 = boxaRead(DEMOPATH("boxa2.ba"));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, "boxa2.ba"));
     boxaSplitEvenOdd(boxa1, 0, &boxae, &boxao);
     boxaPlotSides(boxae, "1-sides-even", NULL, NULL, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
@@ -219,7 +219,7 @@ L_REGPARAMS* rp;
     boxaDestroy(&boxae);
     boxaDestroy(&boxao);
     boxaDestroy(&boxa1);
-    boxa1 = boxaRead(DEMOPATH("boxa3.ba"));
+    boxa1 = boxaRead(regGetFileArgOrDefault(rp, "boxa3.ba"));
     boxaSplitEvenOdd(boxa1, 0, &boxae, &boxao);
     boxaPlotSides(boxae, "2-sides-even", NULL, NULL, NULL, NULL, &pix1);
     pixaAddPix(pixa1, pix1, L_INSERT);
@@ -240,7 +240,7 @@ L_REGPARAMS* rp;
 
         /* Extract and display rank sized components */
     lept_stderr("Extract and display rank sized components\n");
-    pixs = pixRead(DEMOPATH("rabi-tiny.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "rabi-tiny.png"));
     pixa1 = pixaCreate(0);
     for (i = 1; i <= 5; i++) {
         pixaAddPix(pixa1, pixs, L_COPY);
@@ -271,7 +271,7 @@ L_REGPARAMS* rp;
 
         /* Extract parts of an image using a boxa */
     lept_stderr("Extract parts of an image using a boxa\n");
-    pix1 = pixRead(DEMOPATH("feyn-fract.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "feyn-fract.tif"));
     boxa1 = pixConnCompBB(pix1, 4);
     boxa2 = boxaSelectBySize(boxa1, 0, 28, L_SELECT_HEIGHT, L_SELECT_IF_GT,
                              NULL),
@@ -285,7 +285,7 @@ L_REGPARAMS* rp;
 
         /* Display pixaa in row major order by component pixa. */
     lept_stderr("Display pixaa in row major order by component pixa\n");
-    pix1 = pixRead(DEMOPATH("char.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "char.tif"));
     paa = pixaaCreate(100);
     for (i = 0; i < 50; i++) {
         pixa1 = pixaCreate(100);
@@ -304,7 +304,7 @@ L_REGPARAMS* rp;
     lept_stderr("Test the set and clear block functions in cmapped pix\n");
     lept_stderr("******************************************************\n");
     lept_stderr("* Testing error checking: ignore two reported errors *\n");
-    pix1 = pixRead(DEMOPATH("weasel4.11c.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "weasel4.11c.png"));
     pixa1 = pixaCreate(0);
     pix2 = pixCopy(NULL, pix1);
     pixClearAll(pix2);
@@ -343,7 +343,7 @@ L_REGPARAMS* rp;
 
         /* Test zlib compression in png */
         /* Note that delta may be nonzero with some libraries */
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
     for (i = 0; i < 5; i++) {
         pixSetZlibCompression(pixs, 2 * i);
         pixWrite("/tmp/lept/misc/zlibtest.png", pixs, IFF_PNG);

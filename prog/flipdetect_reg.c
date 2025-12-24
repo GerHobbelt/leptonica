@@ -59,7 +59,7 @@ L_REGPARAMS* rp;
 
 	l_ok debugflag = leptIsDebugModeActive();
 
-    pix = pixRead(DEMOPATH("feyn.tif"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
     pixs = pixScale(pix, 0.5, 0.5);
     pixDestroy(&pix);
 

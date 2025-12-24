@@ -27,33 +27,11 @@
 #ifndef  LEPTONICA_DEMO_SETTINGS_H
 #define  LEPTONICA_DEMO_SETTINGS_H
 
-#ifndef DEMOPATH
-#if defined(BUILD_MONOLITHIC)
-#define DEMOPATH(p)				p
-#else
-#define DEMOPATH(p)				p
-#endif
-#endif
-
-
 #ifdef HAVE_CONFIG_H
 #include <config_auto.h>
 #endif  /* HAVE_CONFIG_H */
 
 #include "allheaders.h"
-
-#if !defined(_MSC_VER) && !defined(_WIN32)
-#include <unistd.h>
-#else
-#include <direct.h>
-#include <winsock2.h>   // prevent clashes about redefinition of certain defines...
-#include <windows.h>
-
-#ifndef getcwd
-#define getcwd _getcwd  /* fix MSVC warning */
-#endif
-
-#endif  /* !_MSC_VER */
 
 #include <string.h>
 #include <sys/stat.h>

@@ -67,28 +67,28 @@ L_REGPARAMS* rp;
 
 #if DO_ALL
         /* Make word boxes using pixWordMaskByDilation() */
-    pix1 = pixRead(DEMOPATH("lucasta.150.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "lucasta.150.jpg"));
 	MakeWordBoxes1(pix1, 1.0, 140, 0, rp);  /* 0 */
     MakeWordBoxes1(pix1, 0.6, 140, 1, rp);  /* 1 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
-    pix1 = pixRead(DEMOPATH("zanotti-78.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "zanotti-78.jpg"));
 	MakeWordBoxes1(pix1, 1.0, 140, 2, rp);  /* 2 */
     MakeWordBoxes1(pix1, 0.6, 140, 3, rp);  /* 3 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
-    pix1 = pixRead(DEMOPATH("words.15.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "words.15.tif"));
 	MakeWordBoxes1(pix1, 1.0, 140, 4, rp);  /* 4 */
     MakeWordBoxes1(pix1, 0.6, 140, 5, rp);  /* 5 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
-    pix1 = pixRead(DEMOPATH("words.44.tif"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "words.44.tif"));
 	MakeWordBoxes1(pix1, 1.0, 140, 6, rp);  /* 6 */
     MakeWordBoxes1(pix1, 0.6, 140, 7, rp);  /* 7 */
     pixDestroy(&pix1);
@@ -98,27 +98,27 @@ L_REGPARAMS* rp;
         /* Make word boxes using the higher-level functions
          * pixGetWordsInTextlines() and pixGetWordBoxesInTextlines() */
 
-    pix1 = pixRead(DEMOPATH("lucasta.150.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "lucasta.150.jpg"));
 	MakeWordBoxes2(pix1, 0.7, 140, rp);  /* 8, 9 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
-    pix1 = pixRead(DEMOPATH("zanotti-78.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "zanotti-78.jpg"));
 	MakeWordBoxes2(pix1, 0.7, 140, rp);  /* 10, 11 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
         /* Test boxa adjacency function */
-    pix1 = pixRead(DEMOPATH("lucasta.150.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "lucasta.150.jpg"));
 	TestBoxaAdjacency(pix1, rp);  /* 12 - 15 */
     pixDestroy(&pix1);
 #endif
 
 #if DO_ALL
         /* Test word and character box finding */
-    pix1 = pixRead(DEMOPATH("zanotti-78.jpg"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "zanotti-78.jpg"));
     box1 = boxCreate(0, 0, 1500, 700);
     pix2 = pixClipRectangle(pix1, box1, NULL);
     box2 = boxCreate(150, 130, 1500, 355);

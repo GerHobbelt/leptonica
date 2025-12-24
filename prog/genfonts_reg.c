@@ -146,7 +146,7 @@ PIXA         *pixa;
 
     for (i = 0; i < 9; i++) {
         fontsize = 2 * i + 4;
-        pathname = pathJoin(DEMOPATH("fonts"), inputfonts[i]);
+        pathname = pathJoin(regGetFileArgOrDefault(rp, "fonts"), inputfonts[i]);
         data1 = l_binaryRead(pathname, &nbytes);
         datastr = encodeBase64(data1, nbytes, &sbytes);
         if (leptIsInDisplayMode())

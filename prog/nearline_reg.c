@@ -62,7 +62,7 @@ PIX          *pixs, *pix1, *pix2, *pix3, *pix4;
 
 	//lept_mkdir("lept/regout");
 
-    pixs = pixRead(DEMOPATH("feyn.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 	pix1 = pixScaleToGray6(pixs);
     pixDisplayWithTitle(pix1, 100, 600, NULL);
 

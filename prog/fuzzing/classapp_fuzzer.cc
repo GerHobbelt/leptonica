@@ -13,7 +13,7 @@ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 	BOXA *boxa1;
 	BOXAA *boxaa1;
 	PIX *pix_copy = pixCopy(NULL, pixs_payload);
-	pixFindWordAndCharacterBoxes(pix_copy, box1, 120, &boxa1, &boxaa1, NULL);
+	pixFindWordAndCharacterBoxes(pix_copy, box1, 120, &boxa1, &boxaa1);
 	boxDestroy(&box1);
 	boxaDestroy(&boxa1);
 	boxaaDestroy(&boxaa1);

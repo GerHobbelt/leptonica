@@ -58,7 +58,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "smooth", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("raggededge.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "raggededge.png"));
     w = pixGetWidth(pixs);
     pixa = pixaCreate(0);
     PixAddEdgeData(pixa, pixs, L_FROM_RIGHT, MIN_JUMP, MIN_REVERSAL, rp);

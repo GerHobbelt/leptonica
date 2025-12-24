@@ -59,7 +59,7 @@ L_REGPARAMS* rp;
 
 	//lept_mkdir("lept/regout");
 
-    pixs = pixRead(DEMOPATH("scots-frag.tif"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "scots-frag.tif"));
 	pixa1 = pixaCreate(12);
 
     pixt = pixScaleToGray4(pixs);

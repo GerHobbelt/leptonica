@@ -63,7 +63,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "distance", NULL, &rp))
 		return 1;
 
-    pix = pixRead(DEMOPATH("feyn.tif"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "feyn.tif"));
 	box = boxCreate(383, 338, 1480, 1050);
     pixs = pixClipRectangle(pix, box, NULL);
     regTestWritePixAndCheck(rp, pixs, IFF_PNG);  /* 0 */

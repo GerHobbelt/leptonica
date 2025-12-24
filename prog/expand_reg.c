@@ -73,7 +73,7 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(0);
     for (i = 0; i < 8; i++) {
 		char fname[256];
-		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), filename[i]);
+		snprintf(fname, sizeof(fname), "%s%s", regGetFileArgOrDefault(rp, ""), filename[i]);
 		pixs = pixRead(fname);
         pix1 = pixExpandReplicate(pixs, 2);
         format = (i == 7) ? IFF_JFIF_JPEG : IFF_PNG;
@@ -83,7 +83,7 @@ L_REGPARAMS* rp;
     }
     for (i = 0; i < 8; i++) {
 		char fname[256];
-		snprintf(fname, sizeof(fname), "%s%s", DEMOPATH(""), filename[i]);
+		snprintf(fname, sizeof(fname), "%s%s", regGetFileArgOrDefault(rp, ""), filename[i]);
 		pixs = pixRead(fname);
         pix1 = pixExpandReplicate(pixs, 3);
         format = (i == 7) ? IFF_JFIF_JPEG : IFF_PNG;
@@ -92,7 +92,7 @@ L_REGPARAMS* rp;
         pixDestroy(&pixs);
     }
 
-    pixs = pixRead(DEMOPATH("test1.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test1.png"));
     pixGetDimensions(pixs, &w, &h, NULL);
     for (i = 1; i <= 15; i++) {
         box = boxCreate(13 * i, 13 * i, w - 13 * i, h - 13 * i);
@@ -106,7 +106,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixs);
 
     /* --------- Power of 2 expansion and reduction -------- */
-    pixs = pixRead(DEMOPATH("speckle.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "speckle.png"));
 
         /* Test 2x expansion of 1 bpp */
     pix1 = pixExpandBinaryPower2(pixs, 2);

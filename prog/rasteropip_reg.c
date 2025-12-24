@@ -52,7 +52,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "raster_op_ip", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("test8.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	pixt = pixCopy(NULL, pixs);
 
         /* Copy, in-place and one COLUMN at a time, from the right
@@ -73,7 +73,7 @@ L_REGPARAMS* rp;
 
         /* Show the mirrored border, which uses the general
            pixRasterop() on an image in-place.  */
-    pixs = pixRead(DEMOPATH("test8.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
 	pixt = pixRemoveBorder(pixs, 40);
     pixd = pixAddMirroredBorder(pixt, 40, 40, 40, 40);
     regTestWritePixAndCheck(rp, pixd, IFF_PNG);  /* 1 */

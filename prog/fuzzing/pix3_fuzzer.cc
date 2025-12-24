@@ -113,7 +113,7 @@ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 	pixDestroy(&pix_pointer_payload);
 	
 	pix_pointer_payload = pixCopy(NULL, pixs_payload);
-	return_pix = pixSetUnderTransparency(pix_pointer_payload, 0, 0);
+	return_pix = pixSetUnderTransparency(pix_pointer_payload, 0);
 	pixDestroy(&pix_pointer_payload);
 	pixDestroy(&return_pix);
 	

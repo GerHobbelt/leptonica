@@ -72,8 +72,8 @@ L_REGPARAMS* rp;
 
     //lept_mkdir("lept/color");
 
-    pix1 = pixRead(DEMOPATH("colorpage.030.jpg"));
-/*    pix1 = pixRead(DEMOPATH("map.057.jpg")); */
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "colorpage.030.jpg"));
+/*    pix1 = pixRead(regGetFileArgOrDefault(rp, "map.057.jpg")); */
 
         /* More general method */
     pixadb = pixaCreate(0);

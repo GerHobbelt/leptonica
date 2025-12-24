@@ -83,7 +83,7 @@ L_REGPARAMS* rp;
 
 	if (select == 0) {
             /* Extract the basic grid from the sudoku image */
-        pixs = pixRead(DEMOPATH("warped_sudoku.jpg"));
+        pixs = pixRead(regGetFileArgOrDefault(rp, "warped_sudoku.jpg"));
 		pixGetDimensions(pixs, &w, &h, NULL);
         pix1 = pixConvertTo1(pixs, 220);
         boxa1 = pixConnComp(pix1, &pixa1, 8);
@@ -94,7 +94,7 @@ L_REGPARAMS* rp;
         pixDisplay(pix2, 100, 100);
     } else {  /* select == 1 */
             /* Extract the grid from the graph paper image */
-        pixs = pixRead(DEMOPATH("warped_paper.jpg"));
+        pixs = pixRead(regGetFileArgOrDefault(rp, "warped_paper.jpg"));
 		pixDisplay(pixs, 1500, 1000);
         pix3 = pixConvertTo8(pixs, 0);
         pix4 = pixBackgroundNormSimple(pix3, NULL, NULL);

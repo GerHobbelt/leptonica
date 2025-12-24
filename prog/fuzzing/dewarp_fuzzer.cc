@@ -8,7 +8,6 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     PIX *pixs, *pixd;
     L_DEWARPA *dewa1;
     PIXAC *pixac;
-    SARRAY *sa;
 
     leptSetStdNullHandler();
 
@@ -16,7 +15,7 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     if(pixs==NULL) return 0;
     
     // Don't use debug, because it requires writing to /tmp
-    dewarpSinglePage(pixs, 0, 1, 1, 0, &pixd, NULL, 0);
+    dewarpSinglePage(pixs, 0, 1, 1, 0, &pixd, NULL);
 	
     pixac = pixacompReadMem(data, size);
     dewa1 = dewarpaCreateFromPixacomp(pixac, 1, 0, 10, -1);

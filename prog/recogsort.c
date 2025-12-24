@@ -70,7 +70,7 @@ L_REGPARAMS* rp;
     pixaDestroy(&pixat);
 
         /* Read the data from all samples */
-    pix1 = pixRead(DEMOPATH("recog/sets/samples06.png"));
+    pix1 = pixRead(regGetFileArgOrDefault(rp, "recog/sets/samples06.png"));
     boxatxt = pixGetText(pix1);
     lept_stderr("%s\n", boxatxt);
     boxa1 = boxaReadMem((l_uint8 *)boxatxt, strlen(boxatxt));

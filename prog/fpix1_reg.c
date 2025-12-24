@@ -121,8 +121,8 @@ PTA          *ptas, *ptad;
 
         /* Use pixRasterop() to generate source image */
     pixa = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("test8.jpg"));
-    pixs2 = pixRead(DEMOPATH("karen8.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "test8.jpg"));
+    pixs2 = pixRead(regGetFileArgOrDefault(rp, "karen8.jpg"));
 	pixRasterop(pixs, 150, 125, 150, 100, PIX_SRC, pixs2, 75, 100);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 4 */
 
@@ -194,7 +194,7 @@ PTA          *ptas, *ptad;
 
         /* Test some more convolutions, with sampled output. First on pix */
     pixa = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("1555.007.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "1555.007.jpg"));
 	pixg = pixConvertTo8(pixs, 0);
     l_setConvolveSampling(5, 5);
     pix1 = pixConvolve(pixg, kel, 8, 1);
@@ -237,7 +237,7 @@ PTA          *ptas, *ptad;
         /* Test extension (continued and slope).
          * First, build a smooth vertical disparity array;
          * then extend and show the contours. */
-    pixs = pixRead(DEMOPATH("cat.035.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "cat.035.jpg"));
 	pixn = pixBackgroundNormSimple(pixs, NULL, NULL);
     pixg = pixConvertRGBToGray(pixn, 0.5, 0.3, 0.2);
     pixb = pixThresholdToBinary(pixg, 130);
@@ -259,7 +259,7 @@ PTA          *ptas, *ptad;
     pix2 = fpixRenderContours(fpixs2, 2.0, 0.2);
     pix3 = fpixRenderContours(fpixs3, 2.0, 0.2);
     pix4 = fpixRenderContours(fpixs4, 2.0, 0.2);
-    pix5 = pixRead(DEMOPATH("karen8.jpg"));
+    pix5 = pixRead(regGetFileArgOrDefault(rp, "karen8.jpg"));
 	dpix2 = pixConvertToDPix(pix5, 1);
     pix6 = dpixConvertToPix(dpix2, 8, L_CLIP_TO_ZERO, 0);
     regTestWritePixAndCheck(rp, pix1, IFF_PNG);  /* 22 */

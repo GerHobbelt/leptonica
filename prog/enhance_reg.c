@@ -74,7 +74,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
 	//lept_mkdir("lept/regout");
     //lept_mkdir("lept/enhance");
 
-    pix = pixRead(DEMOPATH("test24.jpg"));  /* rgb */
+    pix = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));  /* rgb */
 	w = pixGetWidth(pix);
     scalefact = 150.0 / (l_float32)w;  /* scale to w = 150 */
     pixs = pixScale(pix, scalefact, scalefact);
@@ -162,8 +162,8 @@ PIXA         *pixa1, *pixa2, *pixaf;
 
         /* Hue constant mapping to lighter background */
     pixa2 = pixaCreate(2);
-	bmf10 = bmfCreate(DEMOPATH("fonts"), 10);
-    pix0 = pixRead(DEMOPATH("candelabrum.011.jpg"));
+	bmf10 = bmfCreate(regGetFileArgOrDefault(rp, "fonts"), 10);
+    pix0 = pixRead(regGetFileArgOrDefault(rp, "candelabrum.011.jpg"));
 	composeRGBPixel(230, 185, 144, &srcval);  /* select typical bg pixel */
     for (k = 1; k > -2; k -= 2) {
         pixa1 = pixaCreate(11);
@@ -206,7 +206,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
     pixDestroy(&pixs);
 
         /* More trc testing */
-    pix = pixRead(DEMOPATH("test24.jpg"));  /* rgb */
+    pix = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));  /* rgb */
 	pixs = pixScale(pix, 0.3, 0.3);
     pixDestroy(&pix);
     pixa1 = pixaCreate(5);
@@ -269,7 +269,7 @@ PIXA         *pixa1, *pixa2, *pixaf;
      *           Test global color transforms         *
      * -----------------------------------------------*/
         /* Make identical cmap and rgb images */
-    pix = pixRead(DEMOPATH("wet-day.jpg"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "wet-day.jpg"));
 	pixs1 = pixOctreeColorQuant(pix, 200, 0);
     pixs2 = pixRemoveColormap(pixs1, REMOVE_CMAP_TO_FULL_COLOR);
     regTestComparePix(rp, pixs1, pixs2);  /* 15 */

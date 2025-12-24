@@ -87,7 +87,7 @@ PIXCMAP      *cmap;
     pixaDestroy(&pixat);
 
         /* Colorspace conversion in rgb */
-    pixs = pixRead(DEMOPATH("wyom.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "wyom.jpg"));
 	pixaAddPix(pixa, pixs, L_INSERT);
     pix3 = pixConvertRGBToHSV(NULL, pixs);
     regTestWritePixAndCheck(rp, pix3, IFF_JFIF_JPEG);  /* 1 */

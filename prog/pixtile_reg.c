@@ -53,7 +53,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "pix_tile", NULL, &rp))
 		return 1;
 
-    pixs = pixRead(DEMOPATH("test24.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "test24.jpg"));
     pixd = pixCreateTemplateNoInit(pixs);
 
     TestTiling(pixd, pixs, 1, 1, 0, 0, 183, 83);

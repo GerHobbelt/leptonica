@@ -60,7 +60,7 @@ L_REGPARAMS* rp;
 	if (regTestSetup(argc, argv, "set", NULL, &rp))
 		return 1;
 
-    pix = pixRead(DEMOPATH("weasel8.240c.png"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "weasel8.240c.png"));
 
         /* Build the set from all the pixels. */
     s = BuildSet(pix, 1, FALSE);
@@ -73,7 +73,7 @@ L_REGPARAMS* rp;
     l_asetDestroy(&s);
     pixDestroy(&pix);
 
-    pix = pixRead(DEMOPATH("marge.jpg"));
+    pix = pixRead(regGetFileArgOrDefault(rp, "marge.jpg"));
     startTimer();
     s = BuildSet(pix, 1, FALSE);
     lept_stderr("Time (250K pixels): %7.3f sec\n", stopTimer());

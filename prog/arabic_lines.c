@@ -91,7 +91,7 @@ L_REGPARAMS* rp;
     pixa = pixaCreate(0);
 
         /* Binarize input */
-    pixs = pixRead(DEMOPATH("arabic.png"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "arabic.png"));
     pixGetDimensions(pixs, &w, &h, &d);
     pix = pixConvertTo1(pixs, 128);
     pixDestroy(&pixs);

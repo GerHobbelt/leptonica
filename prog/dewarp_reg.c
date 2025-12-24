@@ -65,7 +65,7 @@ L_REGPARAMS* rp;
 	//lept_mkdir("lept/regout");
 
         /* Read page 7, normalize for varying background and binarize */
-    pixs = pixRead(DEMOPATH("1555.007.jpg"));
+    pixs = pixRead(regGetFileArgOrDefault(rp, "1555.007.jpg"));
 
     pixn = pixBackgroundNormSimple(pixs, NULL, NULL);
     pixg = pixConvertRGBToGray(pixn, 0.5, 0.3, 0.2);
@@ -118,7 +118,7 @@ L_REGPARAMS* rp;
     pixDestroy(&pixd);
 
         /* Read page 3, normalize background and binarize */
-    pixs2 = pixRead(DEMOPATH("1555.003.jpg"));
+    pixs2 = pixRead(regGetFileArgOrDefault(rp, "1555.003.jpg"));
 
     pixn2 = pixBackgroundNormSimple(pixs2, NULL, NULL);
     pixg2 = pixConvertRGBToGray(pixn2, 0.5, 0.3, 0.2);

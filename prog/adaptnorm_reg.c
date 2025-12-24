@@ -60,7 +60,7 @@ L_REGPARAMS* rp;
      * ---------------------------------------------------------- */
     pixa1 = pixaCreate(0);
 
-	pixs = pixRead(DEMOPATH("lighttext.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "lighttext.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 0 */
     pixaAddPix(pixa1, pixs, L_INSERT);
@@ -104,7 +104,7 @@ L_REGPARAMS* rp;
      *          Normalize for rapidly varying background          *
      * ---------------------------------------------------------- */
     pixa1 = pixaCreate(0);
-	pixs = pixRead(DEMOPATH("w91frag.jpg"));
+	pixs = pixRead(regGetFileArgOrDefault(rp, "w91frag.jpg"));
     pixGetDimensions(pixs, &w, &h, NULL);
     pixaAddPix(pixa1, pixs, L_INSERT);
     regTestWritePixAndCheck(rp, pixs, IFF_JFIF_JPEG);  /* 8 */
