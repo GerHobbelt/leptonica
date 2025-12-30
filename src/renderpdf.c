@@ -114,10 +114,11 @@ l_pdfRenderFile(const char  *filename,
 l_int32  ret;
 SARRAY  *sain;
 
-    if (!psaout)
+	if (!psaout)
         return ERROR_INT("&saout not defined", __func__, 1);
-    *psaout = NULL;
-    if (!filename)
+	*psaout = NULL;
+
+	if (!filename)
         return ERROR_INT("filename not defined", __func__, 1);
 
     sain = sarrayCreate(1);
@@ -166,6 +167,10 @@ char    *imagedir, *firstfile, *fname, *basename, *tail;
 l_int32  i, nfiles, render_res;
 SARRAY  *sa;
 
+	if (!psaout)
+        return ERROR_INT("&saout not defined", __func__, 1);
+	*psaout = NULL;
+
     if (!LeptDebugOK) {
         L_WARNING("running pdftoppm is disabled; "
                   "use setLeptDebugOK(1) to enable\n", __func__);
@@ -176,10 +181,7 @@ SARRAY  *sa;
     return ERROR_INT("iOS 11 does not support system()", __func__, 0);
   #endif /* OS_IOS */
 
-    if (!psaout)
-        return ERROR_INT("&saout not defined", __func__, 1);
-    *psaout = NULL;
-    if (res == 0) res = 300;
+	if (res == 0) res = 300;
     if (res < 50 || res > 300)
         return ERROR_INT("res not in range [50 ... 300]", __func__, 1);
     if (!dir && !sain)
@@ -263,7 +265,9 @@ SARRAY  *sa;
 
 l_ok l_pdfRenderFile(const char *filename, l_int32 res, SARRAY **psaout)
 {
-    return ERROR_INT("function not present", __func__, 1);
+	*psaout = NULL;
+
+	return ERROR_INT("function not present", __func__, 1);
 }
 
 /* -----------------------------------------------------------*/
@@ -271,7 +275,9 @@ l_ok l_pdfRenderFile(const char *filename, l_int32 res, SARRAY **psaout)
 l_ok l_pdfRenderFiles(const char *dir, SARRAY *sain, l_int32 res,
                       SARRAY **psaout)
 {
-    return ERROR_INT("function not present", __func__, 1);
+	*psaout = NULL;
+
+	return ERROR_INT("function not present", __func__, 1);
 }
 
 /* -----------------------------------------------------------------*/
