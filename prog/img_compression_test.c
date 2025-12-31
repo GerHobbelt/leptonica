@@ -206,6 +206,7 @@ int main(int          argc,
 					lept_stderr("Writing to: %s     @ quality: %3d%\n", pixpath, q);
 					nanotimer_start(&time);
 					l_pngSetQuality(q);
+					// see usage of pixSetSpecial(pix, ...)
 					pixWrite(pixpath, pixf, i);
 					collect(tsv_column_names, tsv_timing_values, field, nanotimer_get_elapsed_ms(&time));
 
