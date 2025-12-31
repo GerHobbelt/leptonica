@@ -1,33 +1,28 @@
-# Macros:
-[attr]tabs          whitespace=trailing-space,space-before-tab,indent-with-non-tab,tabwidth=4
-[attr]spaces        whitespace=trailing-space,space-before-tab,tabs-in-indent
-[attr]makefile      whitespace=trailing-space,space-before-tab,indent-with-non-tab,tabwidth=8
-
 # Source files:
 *               text=auto
-Make*           makefile eol=lf
-*.mk            makefile eol=lf
-*.make          makefile eol=lf
-*.props         spaces
-*.targets       spaces
-*.vcxproj       spaces
-*.vcxproj.filters   spaces
-bin2coff.xml    spaces
+Make*           eol=lf
+*.mk            eol=lf
+*.make          eol=lf
+*.props         text eol=crlf
+*.targets       text eol=crlf
+*.vcxproj       text eol=crlf
+*.vcxproj.filters   text eol=crlf
+bin2coff.xml    text eol=lf
 
 # Documentation files:
-*.txt           spaces
+*.txt           text eol=lf
 
 # Legacy source files:
-memento.*       spaces
-source/tools/extract_text.c    spaces
+memento.*       text eol=lf
+source/tools/extract_text.c    text eol=lf
 
 # Generated source files:
-source/html/css-properties.h    spaces
+source/html/css-properties.h    text eol=lf
 
 # iOS project files:
-*.xib           spaces
-*.xcscheme      spaces
-*.json          spaces
+*.xib           text eol=lf
+*.xcscheme      text eol=lf
+*.json          text eol=lf
 
 # CRLF vs LF-only
 *.ac            text eol=lf
