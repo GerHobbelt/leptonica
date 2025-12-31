@@ -67,6 +67,31 @@
 
 #include <gtest/gtest.h>
 
+#include "absl/base/config.h"
+#if defined(GTEST_HAS_ABSL) && GTEST_HAS_ABSL && !defined(GTEST_NO_ABSL_FLAGS)
+#include "absl/flags/declare.h"
+#include "absl/flags/flag.h"
+#endif
+#include "absl/base/attributes.h"
+#include "absl/base/internal/raw_logging.h"
+#include "absl/flags/internal/usage.h"
+#include "absl/base/macros.h"
+#include "absl/flags/config.h"
+#include "absl/flags/internal/flag.h"
+#include "absl/flags/marshalling.h"
+#include "absl/flags/parse.h"
+#include "absl/flags/reflection.h"
+#include "absl/flags/usage_config.h"
+#include "absl/numeric/int128.h"
+#include "absl/strings/match.h"
+#include "absl/strings/numbers.h"
+#include "absl/strings/str_cat.h"
+#include "absl/strings/str_split.h"
+#include "absl/strings/string_view.h"
+#include "absl/time/clock.h"
+#include "absl/time/time.h"
+#include "absl/types/optional.h"
+
 #if __has_include("mupdf/fitz.h")
 
 #include "mupdf/mutool.h"
@@ -80,6 +105,7 @@
 
 
 
+ABSL_DECLARE_FLAG(bool, test_flag_01);
 
 
 #if defined(_CRTDBG_MAP_ALLOC)

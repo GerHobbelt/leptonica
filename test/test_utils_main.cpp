@@ -36,6 +36,13 @@
 
 #endif
 
+#pragma push_macro("new")
+#undef new
+
+ABSL_FLAG(bool, test_flag_01, true, "test flag 01");
+
+#pragma pop_macro("new")
+
 
 #if defined(BUILD_MONOLITHIC)
 #define main	leptonica_unittest_utils2_main
