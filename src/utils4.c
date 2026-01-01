@@ -1549,7 +1549,7 @@ mkTmpDirPath(void)
 							continue;
 
 						const char* str = pdirentry->d_name;
-						if (strncasecmp(str, "lept-", 5) == 0) {
+						if (strlen(str) > 10 && strncasecmp(str, "lept-", 5) == 0) {
 							// a match: decide if this one is 'later' than what we have
 							uint64_t dt = latest3t(st.st_ctime, st.st_mtime, st.st_atime);
 							if (dt > current_time) {
@@ -1579,6 +1579,9 @@ mkTmpDirPath(void)
 							unsigned char c = *cm;
 							if (c >= 'A' && c <= 'Z') {
 								counter_prefix[i++] = c;
+							}
+							else if (c >= 'a' && c <= 'z') {
+								counter_prefix[i++] = c - ('a' - 'A');
 							}
 						}
 					}
@@ -1615,7 +1618,7 @@ mkTmpDirPath(void)
 						{
 							convertSepCharsInPath(ffd.cFileName, UNIX_PATH_SEPCHAR);
 							const char* str = ffd.cFileName;
-							if (strncasecmp(str, "lept-", 5) == 0) {
+							if (strlen(str) > 10 && strncasecmp(str, "lept-", 5) == 0) {
 								// a match: decide if this one is 'later' than what we have
 								uint64_t dt = latest3(ffd.ftCreationTime, ffd.ftLastWriteTime, ffd.ftLastAccessTime);
 								if (dt > current_time) {
@@ -1640,7 +1643,7 @@ mkTmpDirPath(void)
 
 							//convertSepCharsInPath(ffd.cFileName, UNIX_PATH_SEPCHAR);
 							const char* str = ffd.cFileName;
-							if (strncasecmp(str, "lept-", 5) == 0) {
+							if (strlen(str) > 10 && strncasecmp(str, "lept-", 5) == 0) {
 								// a match: decide if this one is 'later' than what we have
 								uint64_t dt = latest3(ffd.ftCreationTime, ffd.ftLastWriteTime, ffd.ftLastAccessTime);
 								if (dt > current_time) {
@@ -1671,6 +1674,9 @@ mkTmpDirPath(void)
 								unsigned char c = *cm;
 								if (c >= 'A' && c <= 'Z') {
 									counter_prefix[i++] = c;
+								}
+								else if (c >= 'a' && c <= 'z') {
+									counter_prefix[i++] = c - ('a' - 'A');
 								}
 							}
 						}
@@ -1725,6 +1731,8 @@ mkTmpDirPath(void)
 			arbitrar[6] = 0;
 
 			char* path = stringConcatNew(cdir, "/lept-", counter_prefix, "-", arbitrar, NULL);
+			// --> "lept-ABCD-123456" (length ~ 11..16)
+
 			// cleanup double slashes and other cruft that might have come in from the env.var. and/or MSWindows API:
 			{
 				char* p2 = pathSafeJoin(path, NULL);
