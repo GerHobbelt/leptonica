@@ -41,8 +41,9 @@ static const char* tsv_report_file_path = NULL;
 
 static int handle_report_option(const L_REGCMD_OPTION_SPEC spec, const char* value, int* argc_ref, const char** argv_ref) {
 	stringDestroy(&tsv_report_file_path);
-	tsv_report_file_path = stringNew(value);
-	convertSepCharsInPath(tsv_report_file_path, UNIX_PATH_SEPCHAR);
+	char* path = stringNew(value);
+	convertSepCharsInPath(path, UNIX_PATH_SEPCHAR);
+	tsv_report_file_path = path;
 	return 0;
 }
 
@@ -302,6 +303,12 @@ int main(int          argc,
 						lept_stderr("Writing to: %s     @ quality: %3d%% (special flags: 0x%04X)\n", pixpath, q, flags);
 						nanotimer_start(&time);
 						pixSetSpecial(pixf, spec);
+
+						size_t png_size;
+						l_uint8* png_data;
+						(void)pixWriteMem(&png_data, &png_size, pixf, i);
+						LEPT_FREE(png_data);
+
 						pixWrite(pixpath, pixf, i);
 						collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, field, nanotimer_get_elapsed_ms(&time), pixpath);
 
