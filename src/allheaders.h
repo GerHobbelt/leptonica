@@ -2758,6 +2758,7 @@ LEPT_DLL extern l_int32 lept_mkdir ( const char *subdir );
 LEPT_DLL extern l_int32 lept_rmdir ( const char *subdir );
 LEPT_DLL extern l_int32 lept_mkdir_basedir ( const char *filepath );
 LEPT_DLL extern l_int32 lept_rmdir_basedir ( const char *filepath );
+LEPT_DLL extern l_ok lept_get_filesize ( const char *path, size_t *pFileSize );
 LEPT_DLL extern void lept_dir_exists ( const char *dir, l_int32 *pexists );
 LEPT_DLL extern void lept_file_exists ( const char *dir, l_int32 *pexists );
 LEPT_DLL extern l_int32 lept_rm_match ( const char *subdir, const char *substr );
@@ -2777,6 +2778,7 @@ LEPT_DLL extern char * appendSubdirs ( const char *basedir, const char *subdirs 
 LEPT_DLL extern l_ok convertSepCharsInPath ( char *path, l_int32 type );
 LEPT_DLL extern l_int32 getPathRootLength ( const char* path );
 LEPT_DLL extern char * pathExtractTail ( const char* path, l_int32 strip_off_parts_code );
+LEPT_DLL extern char * pathBasedir ( const char *path );
 LEPT_DLL extern uint64_t getPathHash ( const char* path );
 LEPT_DLL extern char * genPathname ( const char *dir, const char *fname );
 //LEPT_DLL extern char * sanitizePathToIdentifier ( char *dst, size_t dstsize, const char *str, const char *additional_acceptable_set );

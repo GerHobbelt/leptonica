@@ -397,6 +397,42 @@ pathExtractTail(const char* path, l_int32 strip_off_parts_code)
 
 
 /*!
+ * \brief   pathBasedir()
+ *
+ * \param[in]    path                  the path to the file; may be relative or absolute or just the file name itself. Anything goes.
+ * \return  the dirname part of the given path, e.g. /a/b/ccc.x --> /a/b (without the trailing path separator)
+ *
+ * <pre>
+ * Notes:
+ *      (1) The returned path must be freed by the caller, using lept_free.
+ *      (2) Usually, the trailing path separator '/' is removed, unless the result is the root directory '/' itself.
+ *      (3) When the input path is a root path, it is not reduced: '/' --> '/'
+ * </pre>
+ */
+char*
+pathBasedir(const char* path)
+{
+	if (!path)
+		return (char*)ERROR_PTR("path not defined", __func__, NULL);
+
+	char* cpathname = stringNew(path);
+	convertSepCharsInPath(cpathname, UNIX_PATH_SEPCHAR);
+
+	l_int32 rootlen = getPathRootLength(cpathname);
+	char* base_end = strrchr(cpathname + rootlen, '/');
+	if (base_end)
+		*base_end = '\0';
+	else {
+		// special case on Windows: drive-relative path "C:xyz" --> "C:"
+		if (rootlen > 0) {
+			cpathname[rootlen] = '\0';
+		}
+	}
+	return cpathname;
+}
+
+
+/*!
  * \brief   sanitizePathToASCII()
  *
  * \param[in]    str            the string/path to sanitize.

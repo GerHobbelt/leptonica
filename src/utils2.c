@@ -2612,6 +2612,74 @@ lept_file_exists(const char* dir,
 
 
 /*!
+ * \brief   lept_get_filesize()
+ *
+ * \param[in]    path
+ * \return       filesize
+ *
+ * <pre>
+ * Notes:
+ *      (1) Always use unix pathname separators.
+ *      (2) By calling genPathname(), if the pathname begins with "/tmp"
+ *          this does an automatic directory translation for operating
+ *          systems that use a different path for /tmp.
+ * </pre>
+ */
+l_ok
+lept_get_filesize(const char* path, size_t *pFileSize)
+{
+	char* realdir;
+	int rv = 1;
+
+	if (!pFileSize)
+		return ERROR_INT("pFileSize not defined", __func__, 1);
+	*pFileSize = 0;
+
+	if (!path)
+		return ERROR_INT("path not defined", __func__, 1);
+	if ((realdir = genPathname(path, NULL)) == NULL)
+		return ERROR_INT("path cannot be resolved by genPathname()", __func__, 1);
+	
+#ifndef _WIN32
+	{
+		struct stat s;
+		l_int32 err = stat(realdir, &s);
+		if (err != -1 && !S_ISDIR(s.st_mode)) {
+			*pFileSize = s.st_size;
+			rv = 0;
+		}
+		LEPT_FREE(realdir);
+	}
+#else  /* _WIN32 */
+	{
+		HANDLE hFind = INVALID_HANDLE_VALUE;
+		WIN32_FIND_DATAA  ffd;
+
+		hFind = FindFirstFileA(realdir, &ffd);
+		if (INVALID_HANDLE_VALUE == hFind) {
+			L_ERROR("FindFirstFile returned an error for the given path: probably a non-existent dir/path: \"%s\"\n", __func__, path);
+		}
+		else if (ffd.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_REPARSE_POINT)) {
+			// not a file. return filesize := 0
+			L_WARNING("path \"%s\" is not a file.\n", __func__, path);
+		}
+		else {
+			uint64_t size = ffd.nFileSizeHigh;
+			size <<= 32;
+			size |= ffd.nFileSizeLow;
+			*pFileSize = size;
+			rv = 0;
+		}
+
+		FindClose(hFind);
+		LEPT_FREE(realdir);
+		return rv;
+	}
+#endif  /* _WIN32 */
+}
+
+
+/*!
  * \brief   lept_rm_match()
  *
  * \param[in]    subdir    [optional] if NULL, the removed files are in /tmp
