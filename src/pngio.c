@@ -2081,7 +2081,8 @@ MEMIODATA    state;
     }
 
         /* Do not set pad bits for d = 24 ! */
-    if (d != 24) pixSetPadBits(pix, 0);
+    if (d != 24)
+		pixSetPadBits(pix, 0);
 
         /* Set the color type and bit depth. */
     if (d == 32 && spp == 4) {
@@ -2134,6 +2135,71 @@ MEMIODATA    state;
     if (pix->special >= 10 && pix->special < 20)
         compval = pix->special - 10;
     png_set_compression_level(png_ptr, compval);
+
+	/*
+	* When pix->special is 100 or larger, it encodes several PNG tweakable
+	* settings, which may be used to produce tighter PNGs or to produce
+	* them faster (lower CPU effort/cost).
+	*/
+	if (pix->special >= 100) {
+		/*
+		 * Definition of methods:
+		 *
+		 * - PNG defines 4 filters, which may be combined, plus 'none':
+		 *   PNG_FILTER_NONE or { PNG_FILTER_SUB, PNG_FILTER_UP, PNG_FILTER_AVG, PNG_FILTER_PAETH }
+		 *
+		 * - 9 compression levels 1..9 + 0 = no compression, which makes 10 levels.
+		 *
+		 * - 4 strategies, where only Z_FILTERED will apply the filters, AFAICT.
+		 *
+		 * - RLE compression window 8..15, which is unused when the strategy is Z_HUFFMAN_ONLY.
+		 *   Meanwhile RLE compression is more or less independent of the compression level 1..9:
+		 *   pngcrush says 1..3 are the same and so are 4..9.
+		 *
+		 */
+		unsigned int spec = pix->special - 100;
+		int filter_type = spec & 0x1F;
+		spec >>= 5;
+		int strategy = spec & 0x07;   // 4 strategies + 0 = 'default' makes 5, taking up 3 bits.
+		spec >>= 3;
+		int compression = spec & 0x0F;   // 10 compression levels, taking up 4 bits.
+		spec >>= 4;
+		int window = spec;			   // 8 window sizes, taking up 3 bits.
+
+		filter_type <<= 3;				// 0b01 --> PNG_FILTER_NONE, etc.
+		if (filter_type < PNG_FILTER_NONE || filter_type > PNG_ALL_FILTERS)
+			filter_type = PNG_NO_FILTERS;
+
+		if (compression < Z_NO_COMPRESSION || compression > Z_BEST_COMPRESSION)
+			compression = Z_DEFAULT_COMPRESSION;
+
+		window += 8;
+		if (window < 8 || window > 15)
+			window = 15;
+
+		if (strategy < Z_FILTERED || strategy > Z_FIXED)
+			strategy = Z_DEFAULT_STRATEGY;
+
+		png_set_compression_level(png_ptr, compression);
+
+		png_set_filter(png_ptr, 0, filter_type);
+
+		/* Set other zlib parameters for compressing IDAT */
+		png_set_compression_mem_level(png_ptr, 8);
+		png_set_compression_strategy(png_ptr, strategy);
+		png_set_compression_window_bits(png_ptr, window);
+		//png_set_compression_method(png_ptr, Z_DEFLATED);
+		//png_set_compression_buffer_size(png_ptr, PNG_ZBUF_SIZE);
+
+			/* Set zlib parameters for text compression
+			 * If you don't call these, the parameters
+			 * fall back on those defined for IDAT chunks
+			 */
+		png_set_text_compression_mem_level(png_ptr, 8);
+		png_set_text_compression_strategy(png_ptr, strategy);
+		png_set_text_compression_window_bits(png_ptr, window);
+		//png_set_text_compression_method(png_ptr, Z_DEFLATED);
+	}
 
     png_set_IHDR(png_ptr, info_ptr, w, h, bit_depth, color_type,
                  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
