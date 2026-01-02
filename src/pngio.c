@@ -1224,7 +1224,7 @@ char        *text;
 		if (window < 8 || window > 15)
 			window = 15;
 
-		if (strategy < Z_FILTERED || strategy > Z_FIXED)
+		if (strategy < Z_DEFAULT_STRATEGY || strategy > Z_FIXED)
 			strategy = Z_DEFAULT_STRATEGY;
 
 		png_set_compression_level(png_ptr, compression);
@@ -2215,7 +2215,7 @@ MEMIODATA    state;
 		if (window < 8 || window > 15)
 			window = 15;
 
-		if (strategy < Z_FILTERED || strategy > Z_FIXED)
+		if (strategy < Z_DEFAULT_STRATEGY || strategy > Z_FIXED)
 			strategy = Z_DEFAULT_STRATEGY;
 
 		png_set_compression_level(png_ptr, compression);
