@@ -269,7 +269,7 @@ int main(int          argc,
 		 const char** argv)
 {
 	char       textstr[L_MAX(256, MAX_PATH)];
-	PIX* pixs, * pixg, * pixf;
+	PIX* pixs, * pixg, * pixf, * pixbw;
 	L_REGPARAMS* rp;
 	FILE* report_t_file = NULL;
 	FILE* report_s_file = NULL;
@@ -357,6 +357,9 @@ int main(int          argc,
 		pixg = pixConvertTo8(pixs, 0);
 		pixSetText(pixg, "(grayscale)");
 
+		pixbw = pixConvertTo1Adaptive(pixg);
+		pixSetText(pixbw, "(black&white)");
+
 		pixf = pixConvertTo32(pixs);
 		pixSetText(pixf, "(RGB)");
 
@@ -424,12 +427,20 @@ int main(int          argc,
 					filesize_norm *= h;
 					filesize_norm *= 4; // RGBA = 4 bytes
 
-					struct stat_data_elem st[10000];
-					static struct stat_data_elem st_accu[10000] = { { 0 } };
+#ifndef NDEBUG
+#define SPEC_SPEED_STEPPING             23
+#else
+#define SPEC_SPEED_STEPPING             1
+#endif
+
+#define STAT_ARR_SIZE					(12500 / SPEC_SPEED_STEPPING)
+
+					struct stat_data_elem st[STAT_ARR_SIZE];
+					static struct stat_data_elem st_accu[STAT_ARR_SIZE] = { { 0 } };
 					static int init = 0;
 					int max_pos = 0;
 
-					for (unsigned int spec_bits = 0; ; spec_bits++) {
+					for (unsigned int spec_bits = 0; ; spec_bits += SPEC_SPEED_STEPPING) {
 						/*
 						 * Definition of methods:
 						 *
@@ -471,19 +482,21 @@ int main(int          argc,
 							continue;
 						}
 
-						if (strategy < Z_FILTERED || strategy > Z_FIXED) {
+						if (strategy < Z_DEFAULT_STRATEGY || strategy > Z_FIXED) {
 							continue;
 						}
 
 						// don't run this 10K test loop for (very) large images as it'll take ages!
-						if (!init || (w <= 1400 && h <= 1400)) {
+						if (!init || (w <= 1600 && h <= 1600)) {
 							nanotimer_start(&time);
 							pixSetSpecial(pixf, spec_bits + 100);
 
-							size_t png_size;
+							size_t png_size = 0;
+#if 01
 							l_uint8* png_data;
 							(void)pixWriteMem(&png_data, &png_size, pixf, i);
 							LEPT_FREE(png_data);
+#endif
 
 							double elapsed = nanotimer_get_elapsed_ms(&time);
 							double filesize_normalized = png_size;
@@ -508,7 +521,7 @@ int main(int          argc,
 
 							if ((max_pos & 0x1F) == 0) {
 								float progress = max_pos;
-								progress /= 10000;
+								progress /= STAT_ARR_SIZE;
 								progress *= 100.0;
 #if 0
 								lept_stderr("Testing @ %0.2f%%\n", progress);
@@ -528,9 +541,10 @@ int main(int          argc,
 						}
 
 						max_pos++;
+						assert(max_pos < STAT_ARR_SIZE);
 					}
 
-					assert(max_pos < sizeof(st) / sizeof(st[0]));
+					assert(max_pos < STAT_ARR_SIZE);
 
 					if (!init) {
 						memcpy(st_accu, st, sizeof(st_accu));
@@ -548,7 +562,7 @@ int main(int          argc,
 					// 'faster' slot(s), hence we need to do the non-obvious instead and discover the cluster boundaries
 					// for N clusters.
 
-					float log_time[10000];
+					float log_time[STAT_ARR_SIZE];
 					for (int i = 0; i < max_pos; i++) {
 #if 0
 						// we assume a log(time) distribution, so we construct a histogram on log(time) basis instead of (time) itself:
@@ -821,106 +835,65 @@ int main(int          argc,
 					for (int q = 100; q >= 0; ) {
 						char field[40];
 						unsigned int idx = q / 5;
-						unsigned int spec = pngBespokeSpecials[idx];
-						unsigned int flags = spec;
-						spec += 100;
+						unsigned int flags = pngBespokeSpecials[idx];
 
 						snprintf(field, sizeof(field), "%s@%d.%04X", getFormatExtension(i), q, flags);
 						pixpath = leptDebugGenFilepath("%s-Qual-%03d.%04X-%03d.%s", source_fname, q, flags, i, getFormatExtension(i));
 						lept_stderr("Writing to: %s     @ quality: %3d%% (special flags: 0x%04X)\n", pixpath, q, flags);
 						nanotimer_start(&time);
-						pixSetSpecial(pixf, spec);
+						pixSetSpecial(pixf, flags + 100);
 						pixWrite(pixpath, pixf, i);
 						collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, field, nanotimer_get_elapsed_ms(&time), pixpath);
 
-						q--;
+						q -= 5;
 					}
 				}
 #endif
 				continue;
 
 			case IFF_TIFF:
-				for (int q = 100; q >= 0; ) {
-					char field[40];
-					snprintf(field, sizeof(field), "%s@%d", getFormatExtension(i), q);
-					pixpath = leptDebugGenFilepath("%s-Qual-%03d-std-%03d.%s", source_fname, q, i, getFormatExtension(i));
-					lept_stderr("Writing to: %s     @ quality: %3d%%\n", pixpath, q);
-					nanotimer_start(&time);
-					l_tiffSetQuality(q);
-					pixWrite(pixpath, pixf, i);
-					collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, field, nanotimer_get_elapsed_ms(&time), pixpath);
-
-					if (q == 100)
-						q = 99;
-					else if (q == 99)
-						q = 95;
-					else if (q > 80)
-						q -= 5;
-					else if (q > 0)
-						q -= 10;
-					else
-						--q;
-				}
+				// uncompressed TIFF
+				pixpath = leptDebugGenFilepath("%s-std-%03d.%s", source_fname, i, getFormatExtension(i));
+				lept_stderr("Writing to: %s\n", pixpath);
+				nanotimer_start(&time);
+				pixWrite(pixpath, pixf, i);
+				collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, getFormatExtension(i), nanotimer_get_elapsed_ms(&time), pixpath);
 				continue;
 
 			case IFF_TIFF_PACKBITS:
-#if 01		// this mode only supports binary images and we're not testing those ATM!
-				if (img_depth == 1) {
-					pixpath = leptDebugGenFilepath("%s-packbits-%03d.%s", source_fname, i, getFormatExtension(i));
-					lept_stderr("Writing to: %s\n", pixpath);
-					nanotimer_start(&time);
-					pixWrite(pixpath, pixs, i);
-					collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-packbits", nanotimer_get_elapsed_ms(&time), pixpath);
-				}
-				else {
-					collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-packbits", NAN, NULL);
-				}
-#endif
+				// this mode only supports binary images 
+				pixpath = leptDebugGenFilepath("%s-packbits-%03d.%s", source_fname, i, getFormatExtension(i));
+				lept_stderr("Writing to: %s\n", pixpath);
+				nanotimer_start(&time);
+				pixWrite(pixpath, pixbw, i);
+				collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-packbits", nanotimer_get_elapsed_ms(&time), pixpath);
 				continue;
 
 			case IFF_TIFF_RLE:
-#if 01		// this mode only supports binary images and we're not testing those ATM!
-				if (img_depth == 1) {
-					pixpath = leptDebugGenFilepath("%s-rle-%03d.%s", source_fname, i, getFormatExtension(i));
-					lept_stderr("Writing to: %s\n", pixpath);
-					nanotimer_start(&time);
-					pixWrite(pixpath, pixs, i);
-					collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-rle", nanotimer_get_elapsed_ms(&time), pixpath);
-				}
-				else {
-					collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-rle", NAN, NULL);
-				}
-#endif
+				// this mode only supports binary images 
+				pixpath = leptDebugGenFilepath("%s-rle-%03d.%s", source_fname, i, getFormatExtension(i));
+				lept_stderr("Writing to: %s\n", pixpath);
+				nanotimer_start(&time);
+				pixWrite(pixpath, pixbw, i);
+				collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-rle", nanotimer_get_elapsed_ms(&time), pixpath);
 				continue;
 
 			case IFF_TIFF_G3:
-#if 01		// this mode only supports binary images and we're not testing those ATM!
-				if (img_depth == 1) {
-					pixpath = leptDebugGenFilepath("%s-G3-%03d.%s", source_fname, i, getFormatExtension(i));
-					lept_stderr("Writing to: %s\n", pixpath);
-					nanotimer_start(&time);
-					pixWrite(pixpath, pixs, i);
-					collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-g3", nanotimer_get_elapsed_ms(&time), pixpath);
-				}
-				else {
-					collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-g3", NAN, NULL);
-				}
-#endif
+				// this mode only supports binary images 
+				pixpath = leptDebugGenFilepath("%s-G3-%03d.%s", source_fname, i, getFormatExtension(i));
+				lept_stderr("Writing to: %s\n", pixpath);
+				nanotimer_start(&time);
+				pixWrite(pixpath, pixbw, i);
+				collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-g3", nanotimer_get_elapsed_ms(&time), pixpath);
 				continue;
 
 			case IFF_TIFF_G4:
-#if 01		// this mode only supports binary images and we're not testing those ATM!
-				if (img_depth == 1) {
-					pixpath = leptDebugGenFilepath("%s-G4-%03d.%s", source_fname, i, getFormatExtension(i));
-					lept_stderr("Writing to: %s\n", pixpath);
-					nanotimer_start(&time);
-					pixWrite(pixpath, pixs, i);
-					collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-g4", nanotimer_get_elapsed_ms(&time), pixpath);
-				}
-				else {
-					collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-g4", NAN, NULL);
-				}
-#endif
+				// this mode only supports binary images 
+				pixpath = leptDebugGenFilepath("%s-G4-%03d.%s", source_fname, i, getFormatExtension(i));
+				lept_stderr("Writing to: %s\n", pixpath);
+				nanotimer_start(&time);
+				pixWrite(pixpath, pixbw, i);
+				collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, "tiff-g4", nanotimer_get_elapsed_ms(&time), pixpath);
 				continue;
 
 			case IFF_TIFF_LZW:
