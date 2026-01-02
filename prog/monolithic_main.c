@@ -340,7 +340,14 @@ static void custom_prep(void)
 #endif
 }
 
-#define MONOLITHIC_SUBCLUSTER_MAIN_INIT()  custom_prep()
+static void custom_post(void)
+{
+	fz_clear_leptonica_mem(fz_get_global_context());
+	//fz_drop_context(fz_get_global_context());
+}
+
+#define MONOLITHIC_SUBCLUSTER_MAIN_INIT()		custom_prep()
+#define MONOLITHIC_SUBCLUSTER_MAIN_FINISH()		custom_post()
 
 
 // load the monolithic core dispatcher
