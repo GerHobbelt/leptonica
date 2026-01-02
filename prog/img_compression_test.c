@@ -89,7 +89,7 @@ struct stat_data_elem {
 	uint16_t compression;
 	uint16_t window;
 
-	double filesize;  // as we want to compare these to discover the 'tightest' output for various input files, we need this to be the 'normalized' filesize.
+	float filesize;		// as we want to compare these to discover the 'tightest' output for various input files, we need this to be the 'normalized' filesize.
 	float time_spent;
 
 	unsigned int flags;
@@ -213,7 +213,7 @@ static float calc_BH_attract(const float log_time[], int c_idx, int end_idx)
 	}
 }
 
-static int locate_nearby_best_compression(const float log_time[], const struct stat_data_elem st[], int c_idx, int start_idx, int end_idx)
+static int locate_nearby_best_compression(const float log_time[], const struct stat_data_elem st[], int c_idx, int start_idx, int end_idx, int prev_opti_idx)
 {
 	// - end_idx and start_idx are EXCLUSIVE indices.
 	// - as the previous round of the calling code has updated the previous center index, which is 'start_idx' now,
@@ -222,7 +222,7 @@ static int locate_nearby_best_compression(const float log_time[], const struct s
 	// Hence we can drop the distance/6 criterium: this may deliver a (rare) better compression at a slightly lower
 	// speed, since we now will be looking *beyond* the current cluster: halfway into the next cluster!
 
-	double cfs = st[c_idx].filesize;
+	float cfs = st[c_idx].filesize;
 
 	float cv = log_time[c_idx];
 	float ev = log_time[end_idx - 1];
@@ -236,11 +236,20 @@ static int locate_nearby_best_compression(const float log_time[], const struct s
 		float d = iv - cv;
 		d *= d;
 		/* if (d < ed)    <-- see notes above */ {
-			double ifs = st[start_idx + i].filesize;
+			float ifs = st[start_idx + i].filesize;
 			if (ifs < cfs) {
 				c_idx = start_idx + i;
 				cfs = ifs;
 			}
+		}
+	}
+
+	// now that we have this number (index), *anything* faster & tighter wins anyhow, *iff* it hasn't been selected as the next-faster setting already:
+	for (int i = prev_opti_idx + 1, l = c_idx; i < l; i++) {
+		float ifs = st[i].filesize;
+		if (ifs < cfs) {
+			c_idx = i;
+			cfs = ifs;
 		}
 	}
 
@@ -404,6 +413,7 @@ int main(int          argc,
 					q -= 10;
 				}
 #else
+				if (01)
 				{
 					l_int32 w, h;
 
@@ -416,6 +426,7 @@ int main(int          argc,
 					static struct stat_data_elem st_accu[10000] = { { 0 } };
 					static int init = 0;
 					int max_pos = 0;
+
 					for (unsigned int spec_bits = 0; ; spec_bits++) {
 						/*
 						 * Definition of methods:
@@ -462,47 +473,53 @@ int main(int          argc,
 							continue;
 						}
 
-						nanotimer_start(&time);
-						pixSetSpecial(pixf, spec_bits + 100);
+						// don't run this 10K test loop for (very) large images as it'll take ages!
+						if (!init || (w <= 1400 && h <= 1400)) {
+							nanotimer_start(&time);
+							pixSetSpecial(pixf, spec_bits + 100);
 
-						size_t png_size;
-						l_uint8* png_data;
-						(void)pixWriteMem(&png_data, &png_size, pixf, i);
-						LEPT_FREE(png_data);
+							size_t png_size;
+							l_uint8* png_data;
+							(void)pixWriteMem(&png_data, &png_size, pixf, i);
+							LEPT_FREE(png_data);
 
-						double elapsed = nanotimer_get_elapsed_ms(&time);
-						double filesize_normalized = png_size;
-						filesize_normalized /= filesize_norm;
+							double elapsed = nanotimer_get_elapsed_ms(&time);
+							double filesize_normalized = png_size;
+							filesize_normalized /= filesize_norm;
 
-						struct stat_data_elem info = {
-						.filter_type = filter_type,
-						.strategy = strategy,
-						.compression = compression,
-						.window = window,
+							struct stat_data_elem info = {
+							.filter_type = filter_type,
+							.strategy = strategy,
+							.compression = compression,
+							.window = window,
 
-						.filesize = filesize_normalized,
-						.time_spent = elapsed,
+							.filesize = filesize_normalized,
+							.time_spent = elapsed,
 
-						.flags = spec_bits
-						};
+							.flags = spec_bits
+							};
 
-						st[max_pos] = info;
+							st[max_pos] = info;
 
-						st_accu[max_pos].filesize += filesize_normalized;
-						st_accu[max_pos].time_spent += elapsed;
+							st_accu[max_pos].filesize += filesize_normalized;
+							st_accu[max_pos].time_spent += elapsed;
 
-						if ((max_pos & 0x1F) == 0) {
-							float progress = max_pos;
-							progress /= 10000;
-							progress *= 100.0;
-							lept_stderr("Testing @ %0.3f%%\n", progress);
+							if ((max_pos & 0x1F) == 0) {
+								float progress = max_pos;
+								progress /= 10000;
+								progress *= 100.0;
+								lept_stderr("Testing @ %0.3f%%\n", progress);
+							}
+
+							// Also:
+							// tweak the current stats[] as we are interested in producing a 'global optimum' anyway,
+							// not something bespoke for the current pix.
+							st[max_pos].filesize = st_accu[max_pos].filesize;
+							st[max_pos].time_spent = st_accu[max_pos].time_spent;
 						}
-
-						// Also:
-						// tweak the current stats[] as we are interested in producing a 'global optimum' anyway,
-						// not something bespoke for the current pix.
-						st[max_pos].filesize = st_accu[max_pos].filesize;
-						st[max_pos].time_spent = st_accu[max_pos].filesize;
+						else {
+							st[max_pos] = st_accu[max_pos];
+						}
 
 						max_pos++;
 					}
@@ -633,7 +650,7 @@ int main(int          argc,
 
 						int c_idx = clusters[0].center_idx;
 						int nc_idx = clusters[1].center_idx;
-						c_idx = locate_nearby_best_compression(log_time, st, c_idx, -1, nc_idx);
+						c_idx = locate_nearby_best_compression(log_time, st, c_idx, -1, nc_idx, -1);
 						opti[0].center_idx = c_idx;
 
 						for (int i = 1; i < N - 1; i++) {
@@ -641,14 +658,14 @@ int main(int          argc,
 							int pc_idx = clusters[i - 1].center_idx;
 							int nc_idx = clusters[i + 1].center_idx;
 
-							c_idx = locate_nearby_best_compression(log_time, st, c_idx, pc_idx, nc_idx);
+							c_idx = locate_nearby_best_compression(log_time, st, c_idx, pc_idx, nc_idx, opti[i - 1].center_idx);
 							opti[i].center_idx = c_idx;
 						}
 
 						c_idx = clusters[N - 1].center_idx;
 						int pc_idx = clusters[N - 2].center_idx;
 
-						c_idx = locate_nearby_best_compression(log_time, st, c_idx, pc_idx, max_pos);
+						c_idx = locate_nearby_best_compression(log_time, st, c_idx, pc_idx, max_pos, opti[N - 2].center_idx);
 						opti[N - 1].center_idx = c_idx;
 
 						for (int i = 0; i < N; i++) {
@@ -667,7 +684,7 @@ int main(int          argc,
 								"	uint16_t compression;\n"
 								"	uint16_t window;\n"
 								"\n"
-								"	double filesize;  // as we want to compare these to discover the 'tightest' output for various input files, we need this to be the 'normalized' filesize.\n"
+								"	float filesize;    // as we want to compare these to discover the 'tightest' output for various input files, we need this to be the 'normalized' filesize.\n"
 								"	float time_spent;\n"
 								"\n"
 								"	unsigned int flags;\n"
@@ -675,7 +692,7 @@ int main(int          argc,
 								"*/\n"
 								"\n");
 							fprintf(f, "\n"
-								"static unsigned int pngBespokeSpecials[%d] = {\n",
+								"static const unsigned int pngBespokeSpecials[%d + 1] = {\n",
 								N);
 							for (int i = 0; i < N; i++) {
 								unsigned int idx = clusters[i].center_idx;
@@ -683,8 +700,38 @@ int main(int          argc,
 								unsigned int spec = info->flags;
 								unsigned int flags = spec;
 								spec += 100;
-								fprintf(f, "  %d, // filter_type: %d, strategy: %d, compression: %d, window: %d, filesize:ratio: %lf, time_spent: %f, flags: 0x%04X\n",
+								fprintf(f, "  %d, // filter_type: 0x%02X, strategy: %d, compression: %d, window: %d, filesize:ratio: %f, time_spent: %f, flags: 0x%04X\n",
 									spec,
+
+									info->filter_type,
+									info->strategy,
+									info->compression,
+									info->window,
+									info->filesize,
+									info->time_spent,
+									info->flags);
+							}
+							fprintf(f, "  0  // all defaults\n"
+								"};\n"
+								"\n");
+
+							fprintf(f, "\n"
+								"static const struct kpi_datapoint {\n"
+								"  unsigned int spec;\n"
+								"  float filesize_norm_sum;\n"
+								"  float elapsed_sum;\n"
+								"} pngSpecialsKPI[%d] = {\n",
+								max_pos);
+							for (int i = 0; i < max_pos; i++) {
+								struct stat_data_elem* info = &st[i];
+								unsigned int spec = info->flags;
+								unsigned int flags = spec;
+								spec += 100;
+								fprintf(f, "  { %d, %f, %f }, // filter_type: 0x%02X, strategy: %d, compression: %d, window: %d, filesize:ratio: %f, time_spent: %f, flags: 0x%04X\n",
+									spec,
+									info->filesize,
+									info->time_spent,
+
 									info->filter_type,
 									info->strategy,
 									info->compression,
@@ -695,6 +742,7 @@ int main(int          argc,
 							}
 							fprintf(f, "};\n"
 								"\n");
+
 							fclose(f);
 						}
 					}
@@ -706,6 +754,71 @@ int main(int          argc,
 						unsigned int spec = info->flags;
 						unsigned int flags = spec;
 						spec += 100;
+
+						snprintf(field, sizeof(field), "%s@%d.%04X", getFormatExtension(i), q, flags);
+						pixpath = leptDebugGenFilepath("%s-Qual-%03d.%04X-%03d.%s", source_fname, q, flags, i, getFormatExtension(i));
+						lept_stderr("Writing to: %s     @ quality: %3d%% (special flags: 0x%04X)\n", pixpath, q, flags);
+						nanotimer_start(&time);
+						pixSetSpecial(pixf, spec);
+						pixWrite(pixpath, pixf, i);
+						collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, field, nanotimer_get_elapsed_ms(&time), pixpath);
+
+						q--;
+					}
+				}
+				else
+				{
+					/*
+					struct stat_data_elem {
+						uint16_t filter_type;
+						uint16_t strategy;
+						uint16_t compression;
+						uint16_t window;
+
+						float filesize;   // as we want to compare these to discover the 'tightest' output for various input files, we need this to be the 'normalized' filesize.
+						float time_spent;
+
+						unsigned int flags;
+					};
+
+					// strategies:
+					#define Z_FILTERED            1
+					#define Z_HUFFMAN_ONLY        2
+					#define Z_RLE                 3
+					#define Z_FIXED               4
+					#define Z_DEFAULT_STRATEGY    0
+
+					*/
+
+					static const unsigned int pngBespokeSpecials[20 + 1] = {
+					  31131, // filter_type: 0xB8, strategy: 1, compression: 9, window: 15, filesize:ratio: 33.802606, time_spent: 33.802605, flags: 0x7937
+					  31130, // filter_type: 0xB0, strategy: 1, compression: 9, window: 15, filesize:ratio: 33.844317, time_spent: 33.844318, flags: 0x7936
+					  22934, // filter_type: 0x90, strategy: 1, compression: 9, window: 13, filesize:ratio: 35.037457, time_spent: 35.037457, flags: 0x5932
+					  22419, // filter_type: 0x78, strategy: 1, compression: 7, window: 13, filesize:ratio: 36.293918, time_spent: 36.293919, flags: 0x572F
+					  29575, // filter_type: 0x18, strategy: 1, compression: 3, window: 15, filesize:ratio: 37.615841, time_spent: 37.615841, flags: 0x7323
+					  5525, // filter_type: 0x88, strategy: 1, compression: 5, window: 9, filesize:ratio: 39.003235, time_spent: 39.003235, flags: 0x1531
+					  6026, // filter_type: 0x30, strategy: 1, compression: 7, window: 9, filesize:ratio: 40.438882, time_spent: 40.438881, flags: 0x1726
+					  4753, // filter_type: 0x68, strategy: 1, compression: 2, window: 9, filesize:ratio: 41.920971, time_spent: 41.920971, flags: 0x122D
+					  25595, // filter_type: 0xB8, strategy: 4, compression: 3, window: 14, filesize:ratio: 43.517432, time_spent: 43.517433, flags: 0x6397
+					  18684, // filter_type: 0xC0, strategy: 4, compression: 8, window: 12, filesize:ratio: 45.159742, time_spent: 45.159740, flags: 0x4898
+					  26348, // filter_type: 0x40, strategy: 4, compression: 6, window: 14, filesize:ratio: 46.864986, time_spent: 46.864986, flags: 0x6688
+					  25064, // filter_type: 0x20, strategy: 4, compression: 1, window: 14, filesize:ratio: 48.672084, time_spent: 48.672085, flags: 0x6184
+					  13799, // filter_type: 0x18, strategy: 4, compression: 5, window: 11, filesize:ratio: 50.588918, time_spent: 50.588917, flags: 0x3583
+					  12792, // filter_type: 0xA0, strategy: 4, compression: 1, window: 11, filesize:ratio: 52.588924, time_spent: 52.588924, flags: 0x3194
+					  5117, // filter_type: 0xC8, strategy: 4, compression: 3, window: 9, filesize:ratio: 54.679033, time_spent: 54.679031, flags: 0x1399
+					  17840, // filter_type: 0x60, strategy: 2, compression: 5, window: 12, filesize:ratio: 56.958549, time_spent: 56.958549, flags: 0x454C
+					  8678, // filter_type: 0x10, strategy: 4, compression: 1, window: 10, filesize:ratio: 59.277160, time_spent: 59.277161, flags: 0x2182
+					  30405, // filter_type: 0x08, strategy: 3, compression: 6, window: 15, filesize:ratio: 61.972674, time_spent: 61.972675, flags: 0x7661
+					  492, // filter_type: 0x40, strategy: 4, compression: 1, window: 8, filesize:ratio: 65.095407, time_spent: 65.095406, flags: 0x0188
+					  18597, // filter_type: 0x08, strategy: 2, compression: 8, window: 12, filesize:ratio: 74.805086, time_spent: 74.805084, flags: 0x4841
+					  0  // all defaults
+					};
+
+					for (int q = 100; q >= 0; ) {
+						char field[40];
+						unsigned int idx = q / 5;
+						unsigned int spec = pngBespokeSpecials[idx];
+						unsigned int flags = (spec ? spec - 100 : 0);
 
 						snprintf(field, sizeof(field), "%s@%d.%04X", getFormatExtension(i), q, flags);
 						pixpath = leptDebugGenFilepath("%s-Qual-%03d.%04X-%03d.%s", source_fname, q, flags, i, getFormatExtension(i));
