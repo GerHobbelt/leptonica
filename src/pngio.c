@@ -153,6 +153,30 @@ static l_int32   var_PNG_STRIP_16_TO_8 = 1;
 #endif  /* ~NO_CONSOLE_IO */
 
 
+static const unsigned int pngBespokeSpecials[20] = {
+  31131, // filter_type: 0xB8, strategy: 1, compression: 9, window: 15, filesize:ratio: 33.802606, time_spent: 33.802605, flags: 0x7937
+  31130, // filter_type: 0xB0, strategy: 1, compression: 9, window: 15, filesize:ratio: 33.844317, time_spent: 33.844318, flags: 0x7936
+  22934, // filter_type: 0x90, strategy: 1, compression: 9, window: 13, filesize:ratio: 35.037457, time_spent: 35.037457, flags: 0x5932
+  22419, // filter_type: 0x78, strategy: 1, compression: 7, window: 13, filesize:ratio: 36.293918, time_spent: 36.293919, flags: 0x572F
+  29575, // filter_type: 0x18, strategy: 1, compression: 3, window: 15, filesize:ratio: 37.615841, time_spent: 37.615841, flags: 0x7323
+  5525, // filter_type: 0x88, strategy: 1, compression: 5, window: 9, filesize:ratio: 39.003235, time_spent: 39.003235, flags: 0x1531
+  6026, // filter_type: 0x30, strategy: 1, compression: 7, window: 9, filesize:ratio: 40.438882, time_spent: 40.438881, flags: 0x1726
+  4753, // filter_type: 0x68, strategy: 1, compression: 2, window: 9, filesize:ratio: 41.920971, time_spent: 41.920971, flags: 0x122D
+  25595, // filter_type: 0xB8, strategy: 4, compression: 3, window: 14, filesize:ratio: 43.517432, time_spent: 43.517433, flags: 0x6397
+  18684, // filter_type: 0xC0, strategy: 4, compression: 8, window: 12, filesize:ratio: 45.159742, time_spent: 45.159740, flags: 0x4898
+  26348, // filter_type: 0x40, strategy: 4, compression: 6, window: 14, filesize:ratio: 46.864986, time_spent: 46.864986, flags: 0x6688
+  25064, // filter_type: 0x20, strategy: 4, compression: 1, window: 14, filesize:ratio: 48.672084, time_spent: 48.672085, flags: 0x6184
+  13799, // filter_type: 0x18, strategy: 4, compression: 5, window: 11, filesize:ratio: 50.588918, time_spent: 50.588917, flags: 0x3583
+  12792, // filter_type: 0xA0, strategy: 4, compression: 1, window: 11, filesize:ratio: 52.588924, time_spent: 52.588924, flags: 0x3194
+  5117, // filter_type: 0xC8, strategy: 4, compression: 3, window: 9, filesize:ratio: 54.679033, time_spent: 54.679031, flags: 0x1399
+  17840, // filter_type: 0x60, strategy: 2, compression: 5, window: 12, filesize:ratio: 56.958549, time_spent: 56.958549, flags: 0x454C
+  8678, // filter_type: 0x10, strategy: 4, compression: 1, window: 10, filesize:ratio: 59.277160, time_spent: 59.277161, flags: 0x2182
+  30405, // filter_type: 0x08, strategy: 3, compression: 6, window: 15, filesize:ratio: 61.972674, time_spent: 61.972675, flags: 0x7661
+  492, // filter_type: 0x40, strategy: 4, compression: 1, window: 8, filesize:ratio: 65.095407, time_spent: 65.095406, flags: 0x0188
+  18597, // filter_type: 0x08, strategy: 2, compression: 8, window: 12, filesize:ratio: 74.805086, time_spent: 74.805084, flags: 0x4841
+};
+
+
 /*---------------------------------------------------------------------*
  *                     Reading png through stream                      *
  *---------------------------------------------------------------------*/
@@ -1156,8 +1180,11 @@ char        *text;
 		* When pix->special is 100 or larger, it encodes several PNG tweakable
 		* settings, which may be used to produce tighter PNGs or to produce
 		* them faster (lower CPU effort/cost).
+		*
+		* When pix->special is in the range 80..99, one of 20 presets is used
+		* instead.
 		*/
-	if (pix->special >= 100) {
+	if (pix->special >= 80) {
 		/*
 		 * Definition of methods:
 		 *
@@ -1174,6 +1201,10 @@ char        *text;
 		 *
 		 */
 		unsigned int spec = pix->special - 100;
+		if (pix->special < 100) {
+			// 80..99 are preset indices:
+			spec = pngBespokeSpecials[pix->special - 80];
+		}
 		int filter_type = spec & 0x1F;
 		spec >>= 5;
 		int strategy = spec & 0x07;   // 4 strategies + 0 = 'default' makes 5, taking up 3 bits.
@@ -2136,12 +2167,15 @@ MEMIODATA    state;
         compval = pix->special - 10;
     png_set_compression_level(png_ptr, compval);
 
-	/*
-	* When pix->special is 100 or larger, it encodes several PNG tweakable
-	* settings, which may be used to produce tighter PNGs or to produce
-	* them faster (lower CPU effort/cost).
-	*/
-	if (pix->special >= 100) {
+		/*
+		* When pix->special is 100 or larger, it encodes several PNG tweakable
+		* settings, which may be used to produce tighter PNGs or to produce
+		* them faster (lower CPU effort/cost).
+		*
+		* When pix->special is in the range 80..99, one of 20 presets is used
+		* instead.
+		*/
+	if (pix->special >= 80) {
 		/*
 		 * Definition of methods:
 		 *
@@ -2158,6 +2192,10 @@ MEMIODATA    state;
 		 *
 		 */
 		unsigned int spec = pix->special - 100;
+		if (pix->special < 100) {
+			// 80..99 are preset indices:
+			spec = pngBespokeSpecials[pix->special - 80];
+		}
 		int filter_type = spec & 0x1F;
 		spec >>= 5;
 		int strategy = spec & 0x07;   // 4 strategies + 0 = 'default' makes 5, taking up 3 bits.

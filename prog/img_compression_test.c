@@ -74,7 +74,9 @@ static void collect(SARRAY * tsv_column_names, NUMA * tsv_timing_values, NUMA* t
 	}
 
 	size_t fsize = 0;
-	(void)lept_get_filesize(target_fpath, &fsize);
+	if (target_fpath != NULL) {
+		(void)lept_get_filesize(target_fpath, &fsize);
+	}
 	numaAddNumber(tsv_fsize_values, fsize);
 
 	numaAddNumber(tsv_timing_values, elapsed);
@@ -508,7 +510,11 @@ int main(int          argc,
 								float progress = max_pos;
 								progress /= 10000;
 								progress *= 100.0;
-								lept_stderr("Testing @ %0.3f%%\n", progress);
+#if 0
+								lept_stderr("Testing @ %0.2f%%\n", progress);
+#else
+								fprintf(stderr, "Testing @ %0.2f%%\r", progress);
+#endif
 							}
 
 							// Also:
@@ -542,10 +548,14 @@ int main(int          argc,
 					// 'faster' slot(s), hence we need to do the non-obvious instead and discover the cluster boundaries
 					// for N clusters.
 
-					// we assume a log(time) distribution, so we construct a histogram on log(time) basis instead of (time) itself:
 					float log_time[10000];
 					for (int i = 0; i < max_pos; i++) {
+#if 0
+						// we assume a log(time) distribution, so we construct a histogram on log(time) basis instead of (time) itself:
 						log_time[i] = log(st[i].time_spent + 1.0);
+#else
+						log_time[i] = st[i].time_spent;
+#endif
 					}
 
 					// we want N clusters: N=20
@@ -697,11 +707,8 @@ int main(int          argc,
 							for (int i = 0; i < N; i++) {
 								unsigned int idx = clusters[i].center_idx;
 								struct stat_data_elem* info = &st[idx];
-								unsigned int spec = info->flags;
-								unsigned int flags = spec;
-								spec += 100;
-								fprintf(f, "  %d, // filter_type: 0x%02X, strategy: %d, compression: %d, window: %d, filesize:ratio: %f, time_spent: %f, flags: 0x%04X\n",
-									spec,
+								fprintf(f, "  0x%04X, // filter_type: 0x%02X, strategy: %d, compression: %d, window: %d, filesize:ratio: %f, time_spent: %f, flags: 0x%04X\n",
+									info->flags,
 
 									info->filter_type,
 									info->strategy,
@@ -724,11 +731,8 @@ int main(int          argc,
 								max_pos);
 							for (int i = 0; i < max_pos; i++) {
 								struct stat_data_elem* info = &st[i];
-								unsigned int spec = info->flags;
-								unsigned int flags = spec;
-								spec += 100;
-								fprintf(f, "  { %d, %f, %f }, // filter_type: 0x%02X, strategy: %d, compression: %d, window: %d, filesize:ratio: %f, time_spent: %f, flags: 0x%04X\n",
-									spec,
+								fprintf(f, "  { 0x%04X, %f, %f }, // filter_type: 0x%02X, strategy: %d, compression: %d, window: %d, filesize:ratio: %f, time_spent: %f, flags: 0x%04X\n",
+									info->flags,
 									info->filesize,
 									info->time_spent,
 
@@ -818,7 +822,8 @@ int main(int          argc,
 						char field[40];
 						unsigned int idx = q / 5;
 						unsigned int spec = pngBespokeSpecials[idx];
-						unsigned int flags = (spec ? spec - 100 : 0);
+						unsigned int flags = spec;
+						spec += 100;
 
 						snprintf(field, sizeof(field), "%s@%d.%04X", getFormatExtension(i), q, flags);
 						pixpath = leptDebugGenFilepath("%s-Qual-%03d.%04X-%03d.%s", source_fname, q, flags, i, getFormatExtension(i));
