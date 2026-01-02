@@ -83,6 +83,171 @@ static void collect(SARRAY * tsv_column_names, NUMA * tsv_timing_values, NUMA* t
 	}
 }
 
+struct stat_data_elem {
+	uint16_t filter_type;
+	uint16_t strategy;
+	uint16_t compression;
+	uint16_t window;
+
+	double filesize;  // as we want to compare these to discover the 'tightest' output for various input files, we need this to be the 'normalized' filesize.
+	float time_spent;
+
+	unsigned int flags;
+};
+
+static int compare_png_test_results(const void* a, const void* b)
+{
+	struct stat_data_elem* ea = (struct stat_data_elem*)a;
+	struct stat_data_elem* eb = (struct stat_data_elem*)b;
+
+	// what is smaller?
+	//
+	// we focus on SPEED here, so first is time, then is size.
+	// and to keep the elements sorted in stable order, we also compare the other members (guaranteed unique as a set, per element)
+	if (ea->time_spent < eb->time_spent)
+		return -1;
+	if (ea->time_spent > eb->time_spent)
+		return +1;
+
+	if (ea->filesize < eb->filesize)
+		return -1;
+	if (ea->filesize > eb->filesize)
+		return +1;
+
+	if (ea->strategy < eb->strategy)
+		return -1;
+	if (ea->strategy > eb->strategy)
+		return +1;
+
+	if (ea->compression < eb->compression)
+		return -1;
+	if (ea->compression > eb->compression)
+		return +1;
+
+	if (ea->window < eb->window)
+		return -1;
+	if (ea->window > eb->window)
+		return +1;
+
+	if (ea->filter_type < eb->filter_type)
+		return -1;
+	if (ea->filter_type > eb->filter_type)
+		return +1;
+
+	if (ea->flags < eb->flags)
+		return -1;
+	if (ea->flags > eb->flags)
+		return +1;
+
+	return 0;
+}
+
+static float calc_BH_attract(const float log_time[], int c_idx, int end_idx)
+{
+	if (end_idx >= c_idx) {
+		float sum = 0;
+		float cv = log_time[c_idx];
+		int i = 1;
+		int l = end_idx - c_idx;
+		if (i < l) {
+			float ev = log_time[end_idx];
+			float ed = ev - cv;
+			ed /= 3;
+
+			float iv = log_time[c_idx + i];
+			float d1 = iv - cv;
+			if (d1 <= ed) {
+				float pwr1 = i * i;
+				pwr1 *= d1 * d1;
+				sum = 1.0 / (pwr1 + 1e-9);
+
+				for (i = 2; i < l; i++) {
+					float iv = log_time[c_idx + i];
+					float d = iv - cv;
+					if (d <= ed) {
+						float pwr = i * i;
+						pwr *= d * d;
+						sum += 1.0 / (pwr + 1e-9);
+					}
+					else {
+						break;
+					}
+				}
+			}
+		}
+		return sum;
+	}
+	else {
+		// end_idx < c_idx
+		float sum = 0;
+		float cv = log_time[c_idx];
+		int i = 1;
+		int l = c_idx - end_idx;
+		if (i < l) {
+			float ev = log_time[end_idx];
+			float ed = cv - ev;
+			ed /= 3;
+
+			float iv = log_time[c_idx - i];
+			float d1 = cv - iv;
+			if (d1 <= ed) {
+				float pwr1 = i * i;
+				pwr1 *= d1 * d1;
+				sum = 1.0 / (pwr1 + 1e-9);
+
+				for (i = 2; i < l; i++) {
+					float iv = log_time[c_idx - i];
+					float d = cv - iv;
+					if (d <= ed) {
+						float pwr = i * i;
+						pwr *= d * d;
+						sum += 1.0 / (pwr + 1e-9);
+					}
+					else {
+						break;
+					}
+				}
+			}
+		}
+		return sum;
+	}
+}
+
+static int locate_nearby_best_compression(const float log_time[], const struct stat_data_elem st[], int c_idx, int start_idx, int end_idx)
+{
+	// - end_idx and start_idx are EXCLUSIVE indices.
+	// - as the previous round of the calling code has updated the previous center index, which is 'start_idx' now,
+	//   we virtually guarantee that two subsequent clusters cannot ever have the same center index after we are done here!
+	//
+	// Hence we can drop the distance/6 criterium: this may deliver a (rare) better compression at a slightly lower
+	// speed, since we now will be looking *beyond* the current cluster: halfway into the next cluster!
+
+	double cfs = st[c_idx].filesize;
+
+	float cv = log_time[c_idx];
+	float ev = log_time[end_idx - 1];
+	float sv = log_time[start_idx + 1];
+	float ed = ev - sv;
+	ed /= 3 * 2;
+	ed *= ed;
+
+	for (int i = 1, l = end_idx - start_idx; i < l; i++) {
+		float iv = log_time[start_idx + i];
+		float d = iv - cv;
+		d *= d;
+		/* if (d < ed)    <-- see notes above */ {
+			double ifs = st[start_idx + i].filesize;
+			if (ifs < cfs) {
+				c_idx = start_idx + i;
+				cfs = ifs;
+			}
+		}
+	}
+
+	return c_idx;
+}
+
+
 
 
 #if defined(BUILD_MONOLITHIC)
@@ -240,7 +405,16 @@ int main(int          argc,
 				}
 #else
 				{
-					unsigned int sp[10000] = { 0 };
+					l_int32 w, h;
+
+					pixGetDimensions(pixf, &w, &h, NULL);
+					size_t filesize_norm = w;
+					filesize_norm *= h;
+					filesize_norm *= 4; // RGBA = 4 bytes
+
+					struct stat_data_elem st[10000];
+					static struct stat_data_elem st_accu[10000] = { { 0 } };
+					static int init = 0;
 					int max_pos = 0;
 					for (unsigned int spec_bits = 0; ; spec_bits++) {
 						/*
@@ -288,27 +462,256 @@ int main(int          argc,
 							continue;
 						}
 
-						sp[max_pos++] = spec_bits + 100;
-					}
-
-					sp[max_pos] = 0;
-					assert(max_pos < sizeof(sp) / sizeof(sp[0]));
-
-					for (int q = max_pos; q >= 0; ) {
-						char field[40];
-						unsigned int spec = sp[q];
-						unsigned int flags = (spec >= 100 ? spec - 100 : 0);
-						snprintf(field, sizeof(field), "%s@%d.%04X", getFormatExtension(i), q, flags);
-						pixpath = leptDebugGenFilepath("%s-Qual-%03d.%04X-%03d.%s", source_fname, q, flags, i, getFormatExtension(i));
-						lept_stderr("Writing to: %s     @ quality: %3d%% (special flags: 0x%04X)\n", pixpath, q, flags);
 						nanotimer_start(&time);
-						pixSetSpecial(pixf, spec);
+						pixSetSpecial(pixf, spec_bits + 100);
 
 						size_t png_size;
 						l_uint8* png_data;
 						(void)pixWriteMem(&png_data, &png_size, pixf, i);
 						LEPT_FREE(png_data);
 
+						double elapsed = nanotimer_get_elapsed_ms(&time);
+						double filesize_normalized = png_size;
+						filesize_normalized /= filesize_norm;
+
+						struct stat_data_elem info = {
+						.filter_type = filter_type,
+						.strategy = strategy,
+						.compression = compression,
+						.window = window,
+
+						.filesize = filesize_normalized,
+						.time_spent = elapsed,
+
+						.flags = spec_bits
+						};
+
+						st[max_pos] = info;
+
+						st_accu[max_pos].filesize += filesize_normalized;
+						st_accu[max_pos].time_spent += elapsed;
+
+						if ((max_pos & 0x1F) == 0) {
+							float progress = max_pos;
+							progress /= 10000;
+							progress *= 100.0;
+							lept_stderr("Testing @ %0.3f%%\n", progress);
+						}
+
+						// Also:
+						// tweak the current stats[] as we are interested in producing a 'global optimum' anyway,
+						// not something bespoke for the current pix.
+						st[max_pos].filesize = st_accu[max_pos].filesize;
+						st[max_pos].time_spent = st_accu[max_pos].filesize;
+
+						max_pos++;
+					}
+
+					assert(max_pos < sizeof(st) / sizeof(st[0]));
+
+					if (!init) {
+						memcpy(st_accu, st, sizeof(st_accu));
+						init = 1;
+					}
+
+					qsort(st, max_pos, sizeof(st[0]), compare_png_test_results);
+
+					// now we have a bunch of results, sorted by time ~ performance.
+					//
+					// we want to know, per time 'slot', which set of parameters produced the 'best' ~ *tightest* PNG:
+					// first we need to determine the range of each 'time slot':
+					// the obvious approach would be to get the N quantiles, but the time range has several clusters
+					// and we want one slot per cluster, without any slower cluster-element(s) leaking into our
+					// 'faster' slot(s), hence we need to do the non-obvious instead and discover the cluster boundaries
+					// for N clusters.
+
+					// we assume a log(time) distribution, so we construct a histogram on log(time) basis instead of (time) itself:
+					float log_time[10000];
+					for (int i = 0; i < max_pos; i++) {
+						log_time[i] = log(st[i].time_spent + 1.0);
+					}
+
+					// we want N clusters: N=20
+#define N 20
+					struct cluster_node {
+						//short int low_idx;	// inclusive
+						//short int max_idx;	// exclusive
+
+						short int center_idx;
+					} clusters[N] = { { 0 } };
+
+					for (int i = 1; i < N - 1; i++) {
+						int low_idx = (max_pos * i) / N;
+						int span = max_pos / N;
+						int center_idx = low_idx + span / 2;
+						clusters[i].center_idx = center_idx;
+
+						//clusters[i].low_idx = center_idx;
+						//clusters[i].max_idx = center_idx + 1;
+					}
+					clusters[0].center_idx = 0;
+					//clusters[0].low_idx = 0;
+					//clusters[0].max_idx = 1;
+					clusters[N - 1].center_idx = max_pos - 1;
+					//clusters[N - 1].low_idx = max_pos - 1;
+					//clusters[N - 1].max_idx = max_pos;
+
+					// we now have equal *sized* clusters in terms of node count.
+					// This is, of course, horrible and must be corrected: we use a Barnes-Hut type
+					// approach to 'center' each cluster node.
+
+					for (;;) {
+						int change = 0;
+
+						for (int i = 1; i < N - 1; i++) {
+							int c_idx = clusters[i].center_idx;
+							int pc_idx = clusters[i - 1].center_idx;
+							int nc_idx = clusters[i + 1].center_idx;
+
+							float cv = log_time[c_idx];
+							float lv = log_time[pc_idx];
+							float rv = log_time[nc_idx];
+							float ld = cv - lv;
+							float rd = rv - cv;
+							while (ld < rd) {
+								c_idx++;
+								cv = log_time[c_idx];
+								ld = cv - lv;
+								rd = rv - cv;
+							}
+							while (ld > rd) {
+								c_idx--;
+								cv = log_time[c_idx];
+								ld = cv - lv;
+								rd = rv - cv;
+							}
+							if (c_idx != clusters[i].center_idx) {
+								change = 1;
+								clusters[i].center_idx = c_idx;
+							}
+						}
+
+						if (!change) {
+							break;
+						}
+					}
+
+					for (;;) {
+						int change = 0;
+
+						for (int i = 1; i < N - 1; i++) {
+							int c_idx = clusters[i].center_idx;
+							int pc_idx = clusters[i - 1].center_idx;
+							int nc_idx = clusters[i + 1].center_idx;
+
+							float ld = calc_BH_attract(log_time, c_idx, pc_idx);
+							float rd = calc_BH_attract(log_time, c_idx, nc_idx);
+							while (ld < rd) {
+								c_idx++;
+								ld = calc_BH_attract(log_time, c_idx, pc_idx);
+								rd = calc_BH_attract(log_time, c_idx, nc_idx);
+							}
+							while (ld > rd) {
+								c_idx--;
+								ld = calc_BH_attract(log_time, c_idx, pc_idx);
+								rd = calc_BH_attract(log_time, c_idx, nc_idx);
+							}
+							if (c_idx != clusters[i].center_idx) {
+								change = 1;
+								clusters[i].center_idx = c_idx;
+							}
+						}
+
+						if (!change) {
+							break;
+						}
+					}
+
+					// now find the 'best compression' that's close to the cluster center:
+					{
+						struct cluster_node opti[N];
+
+						int c_idx = clusters[0].center_idx;
+						int nc_idx = clusters[1].center_idx;
+						c_idx = locate_nearby_best_compression(log_time, st, c_idx, -1, nc_idx);
+						opti[0].center_idx = c_idx;
+
+						for (int i = 1; i < N - 1; i++) {
+							int c_idx = clusters[i].center_idx;
+							int pc_idx = clusters[i - 1].center_idx;
+							int nc_idx = clusters[i + 1].center_idx;
+
+							c_idx = locate_nearby_best_compression(log_time, st, c_idx, pc_idx, nc_idx);
+							opti[i].center_idx = c_idx;
+						}
+
+						c_idx = clusters[N - 1].center_idx;
+						int pc_idx = clusters[N - 2].center_idx;
+
+						c_idx = locate_nearby_best_compression(log_time, st, c_idx, pc_idx, max_pos);
+						opti[N - 1].center_idx = c_idx;
+
+						for (int i = 0; i < N; i++) {
+							clusters[i].center_idx = opti[i].center_idx;
+						}
+
+						//---------------
+						const char* tablepath = leptDebugGenFilepath("%s-%03d.png-opti-flags.c", source_fname, i);
+						FILE* f = lept_fopen(tablepath, "w");
+						if (f) {
+							fprintf(f, "\n"
+								"/*\n"
+								"struct stat_data_elem {\n"
+								"	uint16_t filter_type;\n"
+								"	uint16_t strategy;\n"
+								"	uint16_t compression;\n"
+								"	uint16_t window;\n"
+								"\n"
+								"	double filesize;  // as we want to compare these to discover the 'tightest' output for various input files, we need this to be the 'normalized' filesize.\n"
+								"	float time_spent;\n"
+								"\n"
+								"	unsigned int flags;\n"
+								"};\n"
+								"*/\n"
+								"\n");
+							fprintf(f, "\n"
+								"static unsigned int pngBespokeSpecials[%d] = {\n",
+								N);
+							for (int i = 0; i < N; i++) {
+								unsigned int idx = clusters[i].center_idx;
+								struct stat_data_elem* info = &st[idx];
+								unsigned int spec = info->flags;
+								unsigned int flags = spec;
+								spec += 100;
+								fprintf(f, "  %d, // filter_type: %d, strategy: %d, compression: %d, window: %d, filesize:ratio: %lf, time_spent: %f, flags: 0x%04X\n",
+									spec,
+									info->filter_type,
+									info->strategy,
+									info->compression,
+									info->window,
+									info->filesize,
+									info->time_spent,
+									info->flags);
+							}
+							fprintf(f, "};\n"
+								"\n");
+							fclose(f);
+						}
+					}
+
+					for (int q = N - 1; q >= 0; ) {
+						char field[40];
+						unsigned int idx = clusters[q].center_idx;
+						struct stat_data_elem* info = &st[idx];
+						unsigned int spec = info->flags;
+						unsigned int flags = spec;
+						spec += 100;
+
+						snprintf(field, sizeof(field), "%s@%d.%04X", getFormatExtension(i), q, flags);
+						pixpath = leptDebugGenFilepath("%s-Qual-%03d.%04X-%03d.%s", source_fname, q, flags, i, getFormatExtension(i));
+						lept_stderr("Writing to: %s     @ quality: %3d%% (special flags: 0x%04X)\n", pixpath, q, flags);
+						nanotimer_start(&time);
+						pixSetSpecial(pixf, spec);
 						pixWrite(pixpath, pixf, i);
 						collect(tsv_column_names, tsv_timing_values, tsv_fsize_values, field, nanotimer_get_elapsed_ms(&time), pixpath);
 
