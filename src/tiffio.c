@@ -129,7 +129,14 @@
 #include <basetsd.h>   // prevent 'benign redefinition of INT32 type'
 #endif  /* _MSC_VER */
 #include <fcntl.h>
+
 #include "allheaders.h"
+
+#if defined(HAVE_LIBZ_NG)
+#include <zlib-ng.h>
+#elif defined(HAVE_LIBZ)
+#include <zlib.h>
+#endif
 
 /* ---------------------------------------------------------*/
 #if  HAVE_LIBTIFF && HAVE_LIBJPEG   /* defined in environ.h */
@@ -1138,9 +1145,26 @@ char      *text;
         TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_PACKBITS);
     } else if (comptype == IFF_TIFF_LZW) {
         TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_LZW);
-    } else if (comptype == IFF_TIFF_ZIP) {
+		//TIFFSetField(tif, TIFFTAG_PREDICTOR, predictor);
+	} else if (comptype == IFF_TIFF_ZIP) {
         TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_ADOBE_DEFLATE);
-    } else if (comptype == IFF_TIFF_JPEG) {
+		//TIFFSetField(tif, TIFFTAG_PREDICTOR, predictor);
+		{
+			l_int32 q = l_tiffGetQuality();
+			if (q < 0 || q > 100)
+				q = Z_DEFAULT_COMPRESSION;
+			else if (q == 0)
+				q = Z_DEFAULT_COMPRESSION;
+			else {
+				// 1..100 --> 1..9
+				q = q / 11;
+				q++;
+				if (q > Z_BEST_COMPRESSION)
+					q = Z_BEST_COMPRESSION;
+				TIFFSetField(tif, TIFFTAG_ZIPQUALITY, q);
+			}
+		}
+	} else if (comptype == IFF_TIFF_JPEG) {
         TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JPEG);
 		{
 			l_int32 q = l_tiffGetQuality();
