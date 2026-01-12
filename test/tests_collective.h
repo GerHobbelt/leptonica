@@ -108,14 +108,15 @@
 ABSL_DECLARE_FLAG(bool, test_flag_01);
 
 
-#if defined(_CRTDBG_MAP_ALLOC)
 
 constexpr const int stdio_bufsize = 1024;
 
 class HeapLeakTestFixture: public testing::Test {
+#if defined(_CRTDBG_MAP_ALLOC) && defined(_DEBUG)
 	int tmpHeapDbgFlag;
 
 	_CrtMemState hs1;
+#endif
 	static leptStderrHandler_f lept_old_err_handler;
 	static int error_count;
 
@@ -139,6 +140,7 @@ protected:
 		lept_old_err_handler = leptSetStderrHandler(test_lept_errormsg_handler);
 		error_count = 0;
 
+#if defined(_CRTDBG_MAP_ALLOC) && defined(_DEBUG)
 		tmpHeapDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_CHECK_CRT_DF);
 #if 01
@@ -160,6 +162,7 @@ protected:
 		_CrtSetReportHookW2(_CRT_RPTHOOK_INSTALL, crtdbgw_report_hook_func);
 
 		_CrtMemCheckpoint(&hs1);
+#endif // _DEBUG
 	}
 
 	virtual void TearDown() override
@@ -174,6 +177,7 @@ protected:
 		setvbuf(stderr, NULL, _IONBF, 0);
 #endif
 
+#if defined(_CRTDBG_MAP_ALLOC) && defined(_DEBUG)
 		_CrtMemState hs2;
 		_CrtMemCheckpoint(&hs2);
 
@@ -186,7 +190,7 @@ protected:
 			fputs("\n", stderr);
 			fflush(stderr);
 
-			GTEST_EXPECT_TRUE_W_MSG(!&_CrtMemDifference, "heap memory leakage detected!");
+			GTEST_EXPECT_TRUE_W_MSG(!&lept_old_err_handler, "heap memory leakage detected!");
 			GTEST_ASSERT_EQ(::testing::Test::HasFailure(), true);
 		}
 
@@ -200,10 +204,13 @@ protected:
 		_CrtSetReportHookW2(_CRT_RPTHOOK_REMOVE, crtdbgw_report_hook_func);
 
 		_CrtSetDbgFlag(tmpHeapDbgFlag);
+#endif // _DEBUG
+
 		leptSetStderrHandler(lept_old_err_handler);
 		lept_old_err_handler = nullptr;
 	}
 
+#if defined(_CRTDBG_MAP_ALLOC) && defined(_DEBUG)
 	static int crtdbg_report_hook_func(int reportType, char *message, int *returnValue)
 	{
 		switch (reportType) {
@@ -225,6 +232,7 @@ protected:
 		}
 		return FALSE;
 	}
+#endif // _DEBUG
 
 	static void test_lept_errormsg_handler(const char *msg) {
 		if (0 != strncmp("Warning in ", msg, 11))
@@ -235,6 +243,7 @@ protected:
 			lept_old_err_handler(msg);
 	}
 
+#if defined(_CRTDBG_MAP_ALLOC) && defined(_DEBUG)
 	static int crtdbgw_report_hook_func(int reportType, wchar_t *message, int *returnValue)
 	{
 		switch (reportType) {
@@ -246,6 +255,7 @@ protected:
 		}
 		return FALSE;
 	}
+#endif // _DEBUG
 
 public:
 	static int get_errormsg_count(void) {
@@ -253,21 +263,7 @@ public:
 	}
 };
 
-#else
 
-class HeapLeakTestFixture: public testing::Test {
-
-protected:
-	virtual void SetUp() override
-	{
-	}
-
-	virtual void TearDown() override
-	{
-	}
-};
-
-#endif
 
 #define TEST_FIXTURE(test_fixture, test_name, test_tag) \
   GTEST_TEST_F_C(test_fixture, "S", test_name ## _ ## test_tag, test_tag)

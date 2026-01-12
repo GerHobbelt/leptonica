@@ -1,5 +1,4 @@
 
-//implement your copy of `#include "monolithic_main_defs.h"`:
 #include "monolithic_examples.h"
 
 #include "leptonica/allheaders.h"
