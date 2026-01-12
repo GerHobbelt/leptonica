@@ -95,6 +95,8 @@
 #include "mupdf/fitz.h"
 #include "tessocr.h"
 
+#include "monolithic_examples.h"
+
 
 #define L_BUFSIZE 5120
 
@@ -322,9 +324,6 @@ char include_paths[L_BUFSIZE] = ".;../../thirdparty/leptonica/src;../../scripts/
     ba = l_byteaInitFromFile("allheaders_top.txt");
     if (!in_line) {
         snprintf(buf, sizeof(buf), "#include \"%s\"\n", outprotos);
-
-#include "monolithic_examples.h"
-
         l_byteaAppendString(ba, buf);
         l_binaryWrite(outprotos, "w", protostr, nbytes);
     } else {
