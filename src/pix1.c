@@ -335,7 +335,7 @@ PIX  *pixd;
 
     if ((pixd = pixCreateNoInit(width, height, depth)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-    memset(pixd->data, 0, 4LL * pixd->wpl * pixd->h);
+    memset(pixd->data, 0, (size_t)4 * pixd->wpl * pixd->h);
     return pixd;
 }
 
@@ -401,7 +401,7 @@ PIX  *pixd;
 
     if ((pixd = pixCreateTemplateNoInit(pixs)) == NULL)
         return (PIX *)ERROR_PTR("pixd not made", __func__, NULL);
-    memset(pixd->data, 0, 4LL * pixd->wpl * pixd->h);
+    memset(pixd->data, 0, (size_t)4 * pixd->wpl * pixd->h);
     return pixd;
 }
 
