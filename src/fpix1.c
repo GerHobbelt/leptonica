@@ -1411,8 +1411,8 @@ FPIX       *fpix;
     expected = (l_uint64)w * (l_uint64)h * sizeof(l_float32);
     if (expected != (l_uint64)nbytes) {
         L_ERROR("nbytes = %llu inconsistent with w = %llu, h = %llu, and "
-                "expected = 4 * w * h = %llu\n",
-                __func__, (l_uint64)nbytes, (l_uint64)w, (l_uint64)h, expected);
+                "expected = 4 * w * h = %llu\n", __func__,
+               (l_uint64)nbytes, (l_uint64)w, (l_uint64)h, expected);
         return NULL;
     }
 
