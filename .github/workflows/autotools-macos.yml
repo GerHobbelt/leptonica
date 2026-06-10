@@ -31,11 +31,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: macos-13, cc: clang }
+          # Job hangs  with: Waiting for a runner to pick up this job...
+          # - { os: macos-13, cc: clang }
           - { os: macos-latest, cc: clang }
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Display compiler version and latest Git history
       run: |
