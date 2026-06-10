@@ -130,7 +130,7 @@ L_REGPARAMS* rp;
     pix2 = fpixConvertToPix(fpix2, 16, L_TAKE_ABSVAL, 1);  /* save to 16 bpp */
     pix3 = pixConvert16To8(pix2, L_AUTO_BYTE);     /* convert to 8 bpp */
     regTestWritePixAndCheck(rp, pix3, IFF_PNG);  /* 6 */
-    pixDisplayWithTitle(pix3, 0, 600, NULL, rp->display);
+    pixDisplayWithTitle(pix3, 0, 600, NULL);
 
         /* Test conversion between pix and dpix, and read/write of dpix.
          * When converting dpix back to pix, one would normally save to 8 bpp,
@@ -142,7 +142,7 @@ L_REGPARAMS* rp;
     pix4 = dpixConvertToPix(dpix2, 32, L_CLIP_TO_ZERO, 0);  /* save to 32 bpp */
     pix5 = pixConvert32To8(pix4, L_LS_TWO_BYTES, L_LS_BYTE);  /* convert to 8 */
     regTestWritePixAndCheck(rp, pix5, IFF_PNG);  /* 8 */
-    pixDisplayWithTitle(pix5, 600, 600, NULL, rp->display);
+    pixDisplayWithTitle(pix5, 600, 600, NULL);
     regTestComparePix(rp, pix3, pix5);  /* 9 */
     pixDestroy(&pix1);
     pixDestroy(&pix2);

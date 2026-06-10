@@ -269,6 +269,7 @@ MONOLITHIC_CMD_TABLE_START()
 { "rotate_it", { .fa = lept_rotate_it_main } },
 { "rotatefastalt", { .fa = lept_rotatefastalt_main } },
 { "rotateorth", { .fa = lept_rotateorth_reg_main } },
+{ "rotateorth_pdf", {.fa = lept_rotateorth_pdf_main } },
 { "rotateorthtest1", { .fa = lept_rotateorthtest1_main } },
 { "rotatetest1", { .fa = lept_rotatetest1_main } },
 { "runlengthtest", { .fa = lept_runlengthtest_main } },
@@ -319,11 +320,11 @@ MONOLITHIC_CMD_TABLE_START()
 { "xformbox", { .fa = lept_xformbox_reg_main } },
 { "yuvtest", { .fa = lept_yuvtest_main } },
 { "issue675_check", { .fa = lept_issue675_check_main } },
-{ "misctest2", {.fa = lept_misctest2_main } },
-{ "message_test", {.fa = lept_message_test_main } },
+{ "misctest2", { .fa = lept_misctest2_main } },
+{ "message_test", { .fa = lept_message_test_main } },
 { "demo_pix_apis", { .fa = lept_demo_pix_apis_main } },
-{ "img_compression_test", {.fa = lept_img_compression_test_main } },
-{ "reg_test_loop_test", {.fa = lept_reg_test_loop_test_main } },
+{ "img_compression_test", { .fa = lept_img_compression_test_main } },
+{ "reg_test_loop_test", { .fa = lept_reg_test_loop_test_main } },
 
 //{ "xtractprotos", {.fa = lept_xtractprotos_main } },
 

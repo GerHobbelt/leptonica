@@ -312,6 +312,7 @@ int lept_yuvtest_main(int argc, const char **argv);
 int lept_issue675_check_main(int argc, const char **argv);
 int lept_message_test_main(int argc, const char **argv);
 int lept_misctest2_main(int argc, const char **argv);
+int lept_rotateorth_pdf_main(int argc, const char **argv);
 
 int lept_demo_pix_apis_main(int argc, const char **argv);
 int lept_img_compression_test_main(int argc, const char **argv);

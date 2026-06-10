@@ -87,14 +87,25 @@
 
 #include "allheaders.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   lept_rotateorth_pdf_main
+#endif
+
 l_int32 main(int    argc,
-             char **argv)
+             const char **argv)
 {
-char       buf[256];
-char      *rotstring, *filein, *title, *fileout;
+const char      *rotstring, *filein, *title, *fileout;
 l_int32    quality;
 l_float32  scalefactor;
 SARRAY    *safiles;
+L_REGPARAMS* rp;
+
+	if (regTestSetup(argc, argv, "rotateorthpdf", NULL, &rp))
+		return 1;
 
     if (argc != 7)
         return ERROR_INT(
@@ -123,7 +134,6 @@ SARRAY    *safiles;
                   __func__, quality);
         quality = 95;
     }
-    setLeptDebugOK(1);
 
         /* Render all images from the pdf file.
          * We could call:
@@ -145,6 +155,7 @@ SARRAY    *safiles;
     rotateorthFilesToPdf(safiles, rotstring, scalefactor, quality,
                          title, fileout);
     sarrayDestroy(&safiles);
-    return 0;
+
+	return regTestCleanup(rp);
 }
 
