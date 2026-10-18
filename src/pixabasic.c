@@ -172,21 +172,18 @@ PIXA  *pixa;
         n = InitialPtrArraySize;
 
     pixa = (PIXA *)LEPT_CALLOC(1, sizeof(PIXA));
-	if (pixa) {
-		pixa->n = 0;
-		pixa->nalloc = n;
-		pixa->refcount = 1;
-		pixa->pix = (PIX**)LEPT_CALLOC(n, sizeof(PIX*));
-		pixa->boxa = boxaCreate(n);
-		if (!pixa->pix || !pixa->boxa) {
-			pixaDestroy(&pixa);
-            return (PIXA *)ERROR_PTR("pix or boxa not made", __func__, NULL);
-		}
-		return pixa;
+    if (!pixa)
+        return (PIXA *)ERROR_PTR("pixa not made", __func__, NULL);
+	pixa->n = 0;
+	pixa->nalloc = n;
+	pixa->refcount = 1;
+	pixa->pix = (PIX**)LEPT_CALLOC(n, sizeof(PIX*));
+	pixa->boxa = boxaCreate(n);
+	if (!pixa->pix || !pixa->boxa) {
+		pixaDestroy(&pixa);
+        return (PIXA *)ERROR_PTR("pix or boxa not made", __func__, NULL);
 	}
-	else {
-		return (PIXA*)ERROR_PTR("pixa not made", __func__, NULL);
-	}
+	return pixa;
 }
 
 
