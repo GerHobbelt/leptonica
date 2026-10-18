@@ -218,7 +218,7 @@ PTA  *pta;
  * \return  copy of pta, or NULL on error
  */
 PTA *
-ptaCopy(PTA  *pta)
+ptaCopy(const PTA  *pta)
 {
 l_int32    i;
 l_float32  x, y;
@@ -498,7 +498,7 @@ ptaGetCount(const PTA  *pta)
  * \return  0 if OK; 1 on error
  */
 l_ok
-ptaGetPt(PTA        *pta,
+ptaGetPt(const PTA  *pta,
          l_int32     index,
          l_float32  *px,
          l_float32  *py)
@@ -526,10 +526,10 @@ ptaGetPt(PTA        *pta,
  * \return  0 if OK; 1 on error
  */
 l_ok
-ptaGetIPt(PTA      *pta,
-          l_int32   index,
-          l_int32  *px,
-          l_int32  *py)
+ptaGetIPt(const PTA  *pta,
+          l_int32     index,
+          l_int32    *px,
+          l_int32    *py)
 {
     if (px) *px = 0;
     if (py) *py = 0;
@@ -606,9 +606,9 @@ ptaUpdatePtYCoord(PTA* pta,
  * </pre>
  */
 l_ok
-ptaGetArrays(PTA    *pta,
-             NUMA  **pnax,
-             NUMA  **pnay)
+ptaGetArrays(const PTA  *pta,
+             NUMA      **pnax,
+             NUMA      **pnay)
 {
 l_int32  i, n;
 NUMA    *nax, *nay;
@@ -1087,9 +1087,9 @@ ptaaGetCount(const PTAA  *ptaa)
  * \return  pta, or NULL on error
  */
 PTA *
-ptaaGetPta(PTAA    *ptaa,
-           l_int32  index,
-           l_int32  accessflag)
+ptaaGetPta(const PTAA  *ptaa,
+           l_int32      index,
+           l_int32      accessflag)
 {
     if (!ptaa)
         return (PTA *)ERROR_PTR("ptaa not defined", __func__, NULL);
@@ -1116,11 +1116,11 @@ ptaaGetPta(PTAA    *ptaa,
  * \return  0 if OK; 1 on error
  */
 l_ok
-ptaaGetPt(PTAA       *ptaa,
-           l_int32     ipta,
-           l_int32     jpt,
-           l_float32  *px,
-           l_float32  *py)
+ptaaGetPt(const PTAA  *ptaa,
+          l_int32      ipta,
+          l_int32      jpt,
+          l_float32   *px,
+          l_float32   *py)
 {
 PTA  *pta;
 
@@ -1402,7 +1402,7 @@ PTAA  *ptaa;
  */
 l_ok
 ptaaWriteDebug(const char  *filename,
-               PTAA        *ptaa,
+               const PTAA  *ptaa,
                l_int32      type)
 {
     if (LeptDebugOK) {
@@ -1424,7 +1424,7 @@ ptaaWriteDebug(const char  *filename,
  */
 l_ok
 ptaaWrite(const char  *filename,
-          PTAA        *ptaa,
+          const PTAA  *ptaa,
           l_int32      type)
 {
 l_int32  ret;
@@ -1454,9 +1454,9 @@ FILE    *fp;
  * \return  0 if OK; 1 on error
  */
 l_ok
-ptaaWriteStream(FILE    *fp,
-                PTAA    *ptaa,
-                l_int32  type)
+ptaaWriteStream(FILE        *fp,
+                const PTAA  *ptaa,
+                l_int32      type)
 {
 l_int32  i, n;
 PTA     *pta;
@@ -1494,10 +1494,10 @@ PTA     *pta;
  * </pre>
  */
 l_ok
-ptaaWriteMem(l_uint8  **pdata,
-             size_t    *psize,
-             PTAA      *ptaa,
-             l_int32    type)
+ptaaWriteMem(l_uint8    **pdata,
+             size_t      *psize,
+             const PTAA  *ptaa,
+             l_int32      type)
 {
 l_int32  ret;
 FILE    *fp;

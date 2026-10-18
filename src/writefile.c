@@ -353,7 +353,7 @@ setLeptDebugOK(l_int32  allow)
  */
 l_ok
 pixaWriteFiles(const char  *rootname,
-               PIXA        *pixa,
+               const PIXA  *pixa,
                l_int32      format)
 {
 char    *destpath;

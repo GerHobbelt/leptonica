@@ -255,9 +255,9 @@ PIXA      *pixa;
  *               or NULL on error
  */
 SARRAY *
-pixReadBarcodes(PIXA     *pixa,
-                l_int32   format,
-                l_int32   method,
+pixReadBarcodes(const PIXA  *pixa,
+                l_int32      format,
+                l_int32      method,
                 SARRAY  **psaw)
 {
 char      *barstr, *data;

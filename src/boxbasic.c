@@ -229,7 +229,7 @@ boxCreateValid(l_int32  x,
  * \return  copy of box, or NULL on error
  */
 BOX *
-boxCopy(BOX  *box)
+boxCopy(const BOX  *box)
 {
 BOX  *boxc;
 
@@ -416,8 +416,8 @@ l_int32  x, y, w, h;
  * \return  0 if OK, 1 on error
  */
 l_ok
-boxIsValid(BOX      *box,
-           l_int32  *pvalid)
+boxIsValid(const BOX  *box,
+           l_int32    *pvalid)
 {
     if (!pvalid)
         return ERROR_INT("&valid not defined", __func__, 1);
@@ -687,7 +687,7 @@ boxaGetCount(const BOXA  *boxa)
  * \return  count of valid boxes; 0 if no valid boxes or on error
  */
 l_int32
-boxaGetValidCount(BOXA  *boxa)
+boxaGetValidCount(const BOXA  *boxa)
 {
 l_int32  n, i, w, h, count;
 
@@ -713,9 +713,9 @@ l_int32  n, i, w, h, count;
  * \return  box, or NULL on error
  */
 BOX *
-boxaGetBox(BOXA    *boxa,
-           l_int32  index,
-           l_int32  accessflag)
+boxaGetBox(const BOXA  *boxa,
+           l_int32      index,
+           l_int32      accessflag)
 {
     if (!boxa)
         return (BOX *)ERROR_PTR("boxa not defined", __func__, NULL);
@@ -750,9 +750,9 @@ boxaGetBox(BOXA    *boxa,
  * </pre>
  */
 BOX *
-boxaGetValidBox(BOXA    *boxa,
-                l_int32  index,
-                l_int32  accessflag)
+boxaGetValidBox(const BOXA  *boxa,
+                l_int32      index,
+                l_int32      accessflag)
 {
 l_int32  w, h;
 BOX     *box;
@@ -807,12 +807,12 @@ NUMA    *na;
  * \return  0 if OK, 1 on error
  */
 l_ok
-boxaGetBoxGeometry(BOXA     *boxa,
-                   l_int32   index,
-                   l_int32  *px,
-                   l_int32  *py,
-                   l_int32  *pw,
-                   l_int32  *ph)
+boxaGetBoxGeometry(const BOXA  *boxa,
+                   l_int32      index,
+                   l_int32     *px,
+                   l_int32     *py,
+                   l_int32     *pw,
+                   l_int32     *ph)
 {
 BOX  *box;
 
@@ -841,8 +841,8 @@ BOX  *box;
  * \return  0 if OK, 1 on error
  */
 l_ok
-boxaIsFull(BOXA     *boxa,
-           l_int32  *pfull)
+boxaIsFull(const BOXA  *boxa,
+           l_int32     *pfull)
 {
 l_int32  i, n, full;
 BOX     *box;
@@ -1377,7 +1377,7 @@ boxaaGetCount(const BOXAA  *baa)
  * \return  count number of boxes, or 0 if no boxes or on error
  */
 l_int32
-boxaaGetBoxCount(BOXAA  *baa)
+boxaaGetBoxCount(const BOXAA  *baa)
 {
 BOXA    *boxa;
 l_int32  n, sum, i;
@@ -1405,9 +1405,9 @@ l_int32  n, sum, i;
  * \return  boxa, or NULL on error
  */
 BOXA *
-boxaaGetBoxa(BOXAA   *baa,
-             l_int32  index,
-             l_int32  accessflag)
+boxaaGetBoxa(const BOXAA  *baa,
+             l_int32       index,
+             l_int32       accessflag)
 {
 l_int32  n;
 
@@ -1433,10 +1433,10 @@ l_int32  n;
  * \return  box, or NULL on error
  */
 BOX *
-boxaaGetBox(BOXAA   *baa,
-            l_int32  iboxa,
-            l_int32  ibox,
-            l_int32  accessflag)
+boxaaGetBox(const BOXAA  *baa,
+            l_int32       iboxa,
+            l_int32       ibox,
+            l_int32       accessflag)
 {
 BOX   *box;
 BOXA  *boxa;
@@ -2299,8 +2299,8 @@ FILE    *fp;
  * </pre>
  */
 l_ok
-boxPrintStreamInfo(FILE  *fp,
-                   BOX   *box)
+boxPrintStreamInfo(FILE       *fp,
+                   const BOX  *box)
 {
     if (!box)
         return ERROR_INT("box not defined", __func__, 1);

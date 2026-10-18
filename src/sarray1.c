@@ -706,9 +706,9 @@ sarrayGetCount(const SARRAY  *sa)
  * </pre>
  */
 char **
-sarrayGetArray(SARRAY   *sa,
-               l_int32  *pnalloc,
-               l_int32  *pn)
+sarrayGetArray(const SARRAY  *sa,
+               l_int32       *pnalloc,
+               l_int32       *pn)
 {
 char  **array;
 
@@ -740,8 +740,8 @@ char  **array;
  */
 char *
 sarrayGetString(const SARRAY  *sa,
-                l_int32  index,
-                l_int32  copyflag)
+                l_int32        index,
+                l_int32        copyflag)
 {
     if (!sa)
         return (char *)ERROR_PTR("sa not defined", __func__, NULL);
@@ -782,8 +782,8 @@ sarrayGetString(const SARRAY  *sa,
  * </pre>
  */
 char *
-sarrayToString(SARRAY  *sa,
-               l_int32  addnlflag)
+sarrayToString(const SARRAY  *sa,
+               l_int32        addnlflag)
 {
     if (!sa)
         return (char *)ERROR_PTR("sa not defined", __func__, NULL);
@@ -815,10 +815,10 @@ sarrayToString(SARRAY  *sa,
  * </pre>
  */
 char *
-sarrayToStringRange(SARRAY  *sa,
-                    l_int32  first,
-                    l_int32  nstrings,
-                    l_int32  addnlflag)
+sarrayToStringRange(const SARRAY  *sa,
+                    l_int32        first,
+                    l_int32        nstrings,
+                    l_int32        addnlflag)
 {
 char    *dest, *src, *str;
 l_int32  n, i, last;
@@ -1352,9 +1352,9 @@ SARRAY  *saout;
  * </pre>
  */
 SARRAY *
-sarraySelectRange(SARRAY  *sain,
-                  l_int32  first,
-                  l_int32  last)
+sarraySelectRange(const SARRAY  *sain,
+                  l_int32        first,
+                  l_int32        last)
 {
 char    *str;
 l_int32  n, i;

@@ -649,8 +649,8 @@ pixaGetCount(const PIXA  *pixa)
  */
 PIX *
 pixaGetPix(const PIXA    *pixa,
-           l_int32  index,
-           l_int32  accesstype)
+           l_int32      index,
+           l_int32      accesstype)
 {
 PIX  *pix;
 
@@ -681,11 +681,11 @@ PIX  *pix;
  * \return  0 if OK, 1 on error
  */
 l_ok
-pixaGetPixDimensions(PIXA     *pixa,
-                     l_int32   index,
-                     l_int32  *pw,
-                     l_int32  *ph,
-                     l_int32  *pd)
+pixaGetPixDimensions(const PIXA  *pixa,
+                     l_int32      index,
+                     l_int32     *pw,
+                     l_int32     *ph,
+                     l_int32     *pd)
 {
 PIX  *pix;
 
@@ -713,8 +713,8 @@ PIX  *pix;
  * \return  boxa, or NULL on error
  */
 BOXA *
-pixaGetBoxa(PIXA    *pixa,
-            l_int32  accesstype)
+pixaGetBoxa(const PIXA  *pixa,
+            l_int32      accesstype)
 {
     if (!pixa)
         return (BOXA *)ERROR_PTR("pixa not defined", __func__, NULL);
@@ -735,7 +735,7 @@ pixaGetBoxa(PIXA    *pixa,
  * \return  count, or 0 on error
  */
 l_int32
-pixaGetBoxaCount(PIXA  *pixa)
+pixaGetBoxaCount(const PIXA  *pixa)
 {
     if (!pixa)
         return ERROR_INT("pixa not defined", __func__, 0);
@@ -765,9 +765,9 @@ pixaGetBoxaCount(PIXA  *pixa)
  * </pre>
  */
 BOX *
-pixaGetBox(PIXA    *pixa,
-           l_int32  index,
-           l_int32  accesstype)
+pixaGetBox(const PIXA  *pixa,
+           l_int32      index,
+           l_int32      accesstype)
 {
 BOX  *box;
 
@@ -801,12 +801,12 @@ BOX  *box;
  * \return  0 if OK, 1 on error
  */
 l_ok
-pixaGetBoxGeometry(PIXA     *pixa,
-                   l_int32   index,
-                   l_int32  *px,
-                   l_int32  *py,
-                   l_int32  *pw,
-                   l_int32  *ph)
+pixaGetBoxGeometry(const PIXA  *pixa,
+                   l_int32      index,
+                   l_int32     *px,
+                   l_int32     *py,
+                   l_int32     *pw,
+                   l_int32     *ph)
 {
 BOX  *box;
 
@@ -901,9 +901,9 @@ pixaGetPixArray(PIXA  *pixa)
  * </pre>
  */
 l_ok
-pixaVerifyDepth(PIXA     *pixa,
-                l_int32  *psame,
-                l_int32  *pmaxd)
+pixaVerifyDepth(const PIXA  *pixa,
+                l_int32     *psame,
+                l_int32     *pmaxd)
 {
 l_int32  i, n, d, maxd, same;
 
@@ -945,10 +945,10 @@ l_int32  i, n, d, maxd, same;
  * </pre>
  */
 l_ok
-pixaVerifyDimensions(PIXA     *pixa,
-                     l_int32  *psame,
-                     l_int32  *pmaxw,
-                     l_int32  *pmaxh)
+pixaVerifyDimensions(const PIXA  *pixa,
+                     l_int32     *psame,
+                     l_int32     *pmaxw,
+                     l_int32     *pmaxh)
 {
 l_int32  i, n, w, h, maxw, maxh, same;
 
@@ -994,9 +994,9 @@ l_int32  i, n, w, h, maxw, maxh, same;
  * </pre>
  */
 l_ok
-pixaIsFull(PIXA     *pixa,
-           l_int32  *pfullpa,
-           l_int32  *pfullba)
+pixaIsFull(const PIXA  *pixa,
+           l_int32     *pfullpa,
+           l_int32     *pfullba)
 {
 l_int32  i, n, full;
 BOXA    *boxa;
@@ -1042,8 +1042,8 @@ PIX     *pix;
  * </pre>
  */
 l_ok
-pixaCountText(PIXA     *pixa,
-              l_int32  *pntext)
+pixaCountText(const PIXA  *pixa,
+              l_int32     *pntext)
 {
 char    *text;
 l_int32  i, n;
@@ -1194,8 +1194,8 @@ pixaGetText(PIXA* pixa)
  * </pre>
  */
 void ***
-pixaGetLinePtrs(PIXA     *pixa,
-                l_int32  *psize)
+pixaGetLinePtrs(const PIXA  *pixa,
+                l_int32     *psize)
 {
 l_int32  i, n, same;
 void   **lineptrs;
@@ -1240,8 +1240,8 @@ PIX     *pix;
  * </pre>
  */
 l_ok
-pixaWriteStreamInfo(FILE  *fp,
-                    PIXA  *pixa)
+pixaWriteStreamInfo(FILE        *fp,
+                    const PIXA  *pixa)
 {
 char     *text;
 l_int32   i, n, w, h, d, spp, count, hastext;
@@ -1636,10 +1636,10 @@ l_int32  i, n;
  * </pre>
  */
 l_ok
-pixaJoin(PIXA    *pixad,
-         PIXA    *pixas,
-         l_int32  istart,
-         l_int32  iend)
+pixaJoin(PIXA        *pixad,
+         const PIXA  *pixas,
+         l_int32      istart,
+         l_int32      iend)
 {
 l_int32  i, n, nb;
 BOXA    *boxas, *boxad;
@@ -1690,9 +1690,9 @@ PIX     *pix;
  * </pre>
  */
 PIXA *
-pixaInterleave(PIXA    *pixa1,
-               PIXA    *pixa2,
-               l_int32  copyflag)
+pixaInterleave(const PIXA  *pixa1,
+               const PIXA  *pixa2,
+               l_int32      copyflag)
 {
 l_int32  i, n1, n2, n, nb1, nb2;
 BOX     *box;
@@ -1852,10 +1852,10 @@ PIXAA  *paa;
  * </pre>
  */
 PIXAA *
-pixaaCreateFromPixa(PIXA    *pixa,
-                    l_int32  n,
-                    l_int32  type,
-                    l_int32  copyflag)
+pixaaCreateFromPixa(const PIXA  *pixa,
+                    l_int32      n,
+                    l_int32      type,
+                    l_int32      copyflag)
 {
 l_int32  count, i, j, npixa;
 PIX     *pix;
@@ -2673,7 +2673,7 @@ PIXA  *pixa;
  */
 l_ok
 pixaWriteDebug(const char  *fname,
-               PIXA        *pixa)
+               const PIXA  *pixa)
 {
     if (LeptDebugOK) {
         return pixaWrite(fname, pixa);
@@ -2699,7 +2699,7 @@ pixaWriteDebug(const char  *fname,
  */
 l_ok
 pixaWrite(const char  *filename,
-          PIXA        *pixa)
+          const PIXA  *pixa)
 {
 l_int32  ret;
 FILE    *fp;
@@ -2737,8 +2737,8 @@ FILE    *fp;
  * </pre>
  */
 l_ok
-pixaWriteStream(FILE  *fp,
-                PIXA  *pixa)
+pixaWriteStream(FILE        *fp,
+                const PIXA  *pixa)
 {
 l_int32  n, i;
 PIX     *pix;
@@ -2782,9 +2782,9 @@ PIX     *pix;
  * </pre>
  */
 l_ok
-pixaWriteMem(l_uint8  **pdata,
-             size_t    *psize,
-             PIXA      *pixa)
+pixaWriteMem(l_uint8    **pdata,
+             size_t      *psize,
+             const PIXA  *pixa)
 {
 l_int32  ret;
 FILE    *fp;

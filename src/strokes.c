@@ -206,8 +206,8 @@ PIX        *pix1;
  * </pre>
  */
 NUMA *
-pixaFindStrokeWidth(PIXA     *pixa,
-                   l_float32  thresh,
+pixaFindStrokeWidth(const PIXA  *pixa,
+                    l_float32    thresh,
                    l_int32   *tab8)
 {
 l_int32    i, n, same, maxd;

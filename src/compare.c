@@ -1995,7 +1995,7 @@ l_float32  mse;  /* mean squared error */
  * </pre>
  */
 l_ok
-pixaComparePhotoRegionsByHisto(PIXA        *pixa,
+pixaComparePhotoRegionsByHisto(const PIXA  *pixa,
                                l_float32    minratio,
                                l_float32    textthresh,
                                l_int32      factor,
@@ -2800,14 +2800,14 @@ l_float32  ratio;
  * </pre>
  */
 l_ok
-compareTilesByHisto(NUMAA      *naa1,
-                    NUMAA      *naa2,
-                    l_float32   minratio,
-                    l_int32     w1,
-                    l_int32     h1,
-                    l_int32     w2,
-                    l_int32     h2,
-                    l_float32  *pscore,
+compareTilesByHisto(const NUMAA  *naa1,
+                    const NUMAA  *naa2,
+                    l_float32     minratio,
+                    l_int32       w1,
+                    l_int32       h1,
+                    l_int32       w2,
+                    l_int32       h2,
+                    l_float32    *pscore,
                     PIXA       * const pixadebug)
 {
 char       buf2[128];
@@ -3318,10 +3318,10 @@ PIX       *pix3, *pix4;
  * </pre>
  */
 l_uint8 *
-l_compressGrayHistograms(NUMAA   *naa,
-                         l_int32  w,
-                         l_int32  h,
-                         size_t  *psize)
+l_compressGrayHistograms(const NUMAA  *naa,
+                         l_int32       w,
+                         l_int32       h,
+                         size_t       *psize)
 {
 l_uint8   *bytea;
 l_int32    i, j, n, nn, ival;

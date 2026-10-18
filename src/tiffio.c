@@ -1507,7 +1507,7 @@ TIFF    *tif;
  */
 l_ok
 pixaWriteMultipageTiff(const char  *fname,
-                       PIXA        *pixa)
+                       const PIXA  *pixa)
 {
 const char  *modestr;
 l_int32      i, n;
@@ -2800,9 +2800,9 @@ PIXA   *pixa;
  * </pre>
  */
 l_ok
-pixaWriteMemMultipageTiff(l_uint8  **pdata,
-                          size_t    *psize,
-                          PIXA      *pixa)
+pixaWriteMemMultipageTiff(l_uint8    **pdata,
+                          size_t      *psize,
+                          const PIXA  *pixa)
 {
 const char  *modestr;
 l_int32      i, n;

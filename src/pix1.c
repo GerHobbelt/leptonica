@@ -1443,7 +1443,7 @@ pixGetSpecial(PIX* pix)
  * </pre>
  */
 char *
-pixGetText(PIX  *pix)
+pixGetText(const PIX  *pix)
 {
     if (!pix)
         return (char *)ERROR_PTR("pix not defined", __func__, NULL);
@@ -1939,7 +1939,7 @@ pixSizesEqual(const PIX  *pix1,
  * \return  0 if OK, 1 on error
  */
 l_ok
-pixMaxAspectRatio(PIX        *pixs,
+pixMaxAspectRatio(const PIX  *pixs,
                   l_float32  *pratio)
 {
 l_int32  w, h;

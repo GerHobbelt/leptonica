@@ -138,9 +138,9 @@ static const l_uint32 rmask32[] = {0x0,
  * \return  0 if OK, 1 on error
  */
 l_ok
-pixaFindDimensions(PIXA   *pixa,
-                   NUMA  **pnaw,
-                   NUMA  **pnah)
+pixaFindDimensions(const PIXA  *pixa,
+                   NUMA       **pnaw,
+                   NUMA       **pnah)
 {
 l_int32  i, n, w, h;
 PIX     *pixt;
@@ -235,7 +235,7 @@ PIX      *pixt;
  * </pre>
  */
 NUMA *
-pixaFindPerimToAreaRatio(PIXA  *pixa)
+pixaFindPerimToAreaRatio(const PIXA  *pixa)
 {
 l_int32    i, n;
 l_int32   *tab;
@@ -335,7 +335,7 @@ PIX      *pixt;
  * </pre>
  */
 NUMA *
-pixaFindPerimSizeRatio(PIXA  *pixa)
+pixaFindPerimSizeRatio(const PIXA  *pixa)
 {
 l_int32    i, n;
 l_int32   *tab;
@@ -427,7 +427,7 @@ PIX      *pixt;
  * </pre>
  */
 NUMA *
-pixaFindAreaFraction(PIXA  *pixa)
+pixaFindAreaFraction(const PIXA  *pixa)
 {
 l_int32    i, n;
 l_int32   *tab;
@@ -514,7 +514,7 @@ l_int32  *tab8;
  * </pre>
  */
 NUMA *
-pixaFindAreaFractionMasked(PIXA    *pixa,
+pixaFindAreaFractionMasked(const PIXA  *pixa,
                            PIX     *pixm)
 {
 l_int32    i, n, full;
@@ -649,7 +649,7 @@ PIX      *pix1;
  * </pre>
  */
 NUMA *
-pixaFindWidthHeightRatio(PIXA  *pixa)
+pixaFindWidthHeightRatio(const PIXA  *pixa)
 {
 l_int32  i, n, w, h;
 NUMA    *na;
@@ -683,7 +683,7 @@ PIX     *pixt;
  * </pre>
  */
 NUMA *
-pixaFindWidthHeightProduct(PIXA  *pixa)
+pixaFindWidthHeightProduct(const PIXA  *pixa)
 {
 l_int32  i, n, w, h;
 NUMA    *na;
