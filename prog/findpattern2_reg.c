@@ -90,6 +90,7 @@ L_REGPARAMS* rp;
         pixsel = pixDisplayHitMissSel(pix1, sel_ast, 7, HitColor, MissColor);
         pixaAddPix(pixa1, pixsel, L_INSERT);
         pixDestroy(&pix1);
+        selDestroy(&sel_ast);
     }
     pix2 = pixaDisplayTiledInColumns(pixa1, 7, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 0 */
@@ -106,6 +107,7 @@ L_REGPARAMS* rp;
         pixsel = pixDisplayHitMissSel(pix1, sel_ast, 7, HitColor, MissColor);
         pixaAddPix(pixa1, pixsel, L_INSERT);
         pixDestroy(&pix1);
+        selDestroy(&sel_ast);
     }
     pix2 = pixaDisplayTiledInColumns(pixa1, 8, 1.0, 25, 2);
     regTestWritePixAndCheck(rp, pix2, IFF_PNG);  /* 1 */
@@ -190,6 +192,8 @@ L_REGPARAMS* rp;
     pixDestroy(&pix2);
     pixDestroy(&pix3);
     pixDestroy(&pix4);
+    pixDestroy(&pixs);
+    pixDestroy(&pixt);
 
     return regTestCleanup(rp);
 }

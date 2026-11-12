@@ -1234,7 +1234,7 @@ gplotRead(const char  *filename)
 {
 char     buf[512];
 char    *rootname, *title, *xlabel, *ylabel;
-l_int32  outformat, ret, version;
+l_int32  outformat, version;
 FILE    *fp;
 GPLOT   *gplot;
 
@@ -1245,8 +1245,7 @@ GPLOT   *gplot;
         return (GPLOT *)ERROR_PTR_1("stream not opened",
                                     filename, __func__, NULL);
 
-    ret = fscanf(fp, "Gplot Version %d\n", &version);
-    if (ret != 1) {
+    if (fscanf(fp, "Gplot Version %d\n", &version) != 1) {
         fclose(fp);
         return (GPLOT *)ERROR_PTR_1("not a gplot file",
                                     filename, __func__, NULL);
@@ -1257,18 +1256,43 @@ GPLOT   *gplot;
                                     filename, __func__, NULL);
     }
 
-    (void)fscanf(fp, "Rootname: %511s\n", buf);  /* Bufsize - 1 */
+    if (fscanf(fp, "Rootname: %511s\n", buf) != 1) {  /* Bufsize - 1 */
+        fclose(fp);
+        return (GPLOT *)ERROR_PTR_1("rootname not read",
+                                    filename, __func__, NULL);
+    }
     rootname = stringNew(buf);
-    (void)fscanf(fp, "Output format: %d\n", &outformat);
-    (void)fgets(buf, 512, fp);   /* Title: ... */
-    title = stringNew(buf + 7);
-    title[strlen(title) - 1] = '\0';
-    (void)fgets(buf, 512, fp);   /* X axis label: ... */
-    xlabel = stringNew(buf + 14);
-    xlabel[strlen(xlabel) - 1] = '\0';
-    (void)fgets(buf, 512, fp);   /* Y axis label: ... */
-    ylabel = stringNew(buf + 14);
-    ylabel[strlen(ylabel) - 1] = '\0';
+    if (fscanf(fp, "Output format: %d\n", &outformat) != 1) {  /* Bufsize - 1 */
+        fclose(fp);
+        return (GPLOT *)ERROR_PTR_1("output format not read",
+                                    filename, __func__, NULL);
+    }
+
+        /* Each label line must be long enough to hold its prefix
+         * and the trailing newline that is removed below.  Verify
+         * that there is at least one character after each prefix.  */
+    title = xlabel = ylabel = NULL;
+    if (fgets(buf, Bufsize, fp) && strlen(buf) > 7) {  /* Title:  */
+        title = stringNew(buf + 7);
+        title[strlen(title) - 1] = '\0';
+    }
+    if (fgets(buf, Bufsize, fp) && strlen(buf) > 14) {  /* X axis label: */
+        xlabel = stringNew(buf + 14);
+        xlabel[strlen(xlabel) - 1] = '\0';
+    }
+    if (fgets(buf, Bufsize, fp) && strlen(buf) > 14) {  /* Y axis label: */
+        ylabel = stringNew(buf + 14);
+        ylabel[strlen(ylabel) - 1] = '\0';
+    }
+    if (!title || !xlabel || !ylabel) {
+        LEPT_FREE(rootname);
+        LEPT_FREE(title);
+        LEPT_FREE(xlabel);
+        LEPT_FREE(ylabel);
+        fclose(fp);
+        return (GPLOT *)ERROR_PTR_1("labels not read",
+                                    filename, __func__, NULL);
+    }
 
     gplot = gplotCreate(rootname, outformat, title, xlabel, ylabel);
     LEPT_FREE(rootname);
