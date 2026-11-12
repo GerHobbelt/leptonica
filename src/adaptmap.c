@@ -3019,7 +3019,7 @@ PIX  *pix1, *pix2, *pixd;
 PIX *
 pixConvertTo8MinMax(PIX  *pixs)
 {
-l_int32  d;
+    l_int32 d;
 
     if (!pixs)
         return (PIX *)ERROR_PTR("pixs not defined", __func__, NULL);
